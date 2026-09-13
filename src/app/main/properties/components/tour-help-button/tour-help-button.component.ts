@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PropertiesTourService } from '../../services/properties-tour.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-tour-help-button',
@@ -187,7 +188,9 @@ import { PropertiesTourService } from '../../services/properties-tour.service';
         height: 20px;
       }
     }
-  `]
+  `],
+  standalone: true,
+  imports: [NgIf]
 })
 export class TourHelpButtonComponent implements OnInit {
   @Input() tourType: 'main' | 'details' | 'add' = 'main';
@@ -234,7 +237,7 @@ export class TourHelpButtonComponent implements OnInit {
       this.propertiesTourService.startPropertiesMainTour();
       
     } catch (error) {
-      alert('Erreur lors du démarrage du tour: ' + error.message);
+      alert(`Erreur lors du démarrage du tour: ${  error.message}`);
     }
   }
 }

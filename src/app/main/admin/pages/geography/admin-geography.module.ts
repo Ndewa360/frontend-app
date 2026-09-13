@@ -8,7 +8,6 @@ import { AdminSharedModule } from '../../admin-shared.module';
 import { AdminGeographyComponent } from './admin-geography.component';
 
 @NgModule({
-  declarations: [AdminGeographyComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -17,6 +16,7 @@ import { AdminGeographyComponent } from './admin-geography.component';
     RouterModule,
     SharedModule,
     AdminSharedModule,
-  ],
+    AdminGeographyComponent
+  ]
 })
 export class AdminGeographyModule { }

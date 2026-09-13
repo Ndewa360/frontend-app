@@ -11,17 +11,15 @@ import { AgentContactDisplaySettingsComponent } from './components/agent-contact
 
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    SharedModule,
+    UserProfileRoutingModule,
     UserProfileComponent,
     UserProfileInfosComponent,
     LocalizationSettingsComponent,
     MonthlyReportsComponent,
-    AgentContactDisplaySettingsComponent,
-  ],
-  imports: [
-    CommonModule,
-    SharedModule,
-    UserProfileRoutingModule
+    AgentContactDisplaySettingsComponent
   ]
 })
 export class UserProfileModule { }

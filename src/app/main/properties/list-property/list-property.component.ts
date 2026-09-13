@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { PropertyModel, PropertyState, RoomState } from 'src/app/shared/store';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { UpdatePropertyComponent } from '../update-property/update-property.component';
@@ -15,6 +15,8 @@ import { PropertiesTourService } from '../services/properties-tour.service';
 import { PropertyManagerState, ManagedPropertyItem, PropertyManagerAction } from 'src/app/shared/store/property-manager';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { AppLoaderComponent } from '../../../../@youpez/components/app-loader/app-loader.component';
+import { NgIf, NgFor, AsyncPipe, CurrencyPipe } from '@angular/common';
 
 /** Métriques pré-calculées par propriété pour éviter selectSnapshot dans le template */
 interface PropertyCardMetrics {
@@ -31,7 +33,9 @@ interface PropertyCardMetrics {
   templateUrl: './list-property.component.html',
   styleUrls: ['./list-property.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [NgIf, NgFor, AppLoaderComponent, AsyncPipe, CurrencyPipe, TranslatePipe]
 })
 export class ListPropertyComponent implements OnInit, OnDestroy {
 
@@ -105,7 +109,7 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
       let free     = property.freeRooms;
       let total    = property.roomLength ?? 0;
       let rate     = property.occupancyRate;
-      let monthly  = property.monthlyRevenue ?? 0;
+      const monthly  = property.monthlyRevenue ?? 0;
 
       if (occupied === undefined || occupied === null) {
         const rooms = this._store.selectSnapshot(RoomState.selectStateRoomByPropertyId(property._id)) || [];
@@ -270,10 +274,10 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
 
   canAccessManagedProperty(propertyId: string, action: string): boolean {
     switch (action) {
-      case 'finances': return this.propertyAccessService.canViewFinances(propertyId);
-      case 'tenants':  return this.propertyAccessService.canManageTenants(propertyId);
-      case 'payments': return this.propertyAccessService.canManagePayments(propertyId);
-      default: return true;
+    case 'finances': return this.propertyAccessService.canViewFinances(propertyId);
+    case 'tenants':  return this.propertyAccessService.canManageTenants(propertyId);
+    case 'payments': return this.propertyAccessService.canManagePayments(propertyId);
+    default: return true;
     }
   }
 

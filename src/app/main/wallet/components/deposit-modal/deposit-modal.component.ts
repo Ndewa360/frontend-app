@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { PaymentSessionService } from 'src/app/shared/services/payment-session.service';
+import { NgIf } from '@angular/common';
 
 const MIN_AMOUNT = 500;
 
@@ -14,6 +15,12 @@ const MIN_AMOUNT = 500;
   selector: 'app-deposit-modal',
   templateUrl: './deposit-modal.component.html',
   styleUrls: ['./deposit-modal.component.scss'],
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    NgIf
+  ]
 })
 export class DepositModalComponent implements OnInit, OnDestroy {
   form: FormGroup;
@@ -26,10 +33,10 @@ export class DepositModalComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private store: Store,
     private paymentSessionService: PaymentSessionService,
-    private router: Router,
+    private router: Router
   ) {
     this.form = this.fb.group({
-      amount: [null, [Validators.required, Validators.min(MIN_AMOUNT)]],
+      amount: [null, [Validators.required, Validators.min(MIN_AMOUNT)]]
     });
   }
 
@@ -58,7 +65,7 @@ export class DepositModalComponent implements OnInit, OnDestroy {
       userEmail: profile?.email || '',
       metadata: { lang },
       successRedirectPath: `${returnPath}?deposit=success`,
-      cancelRedirectPath: returnPath,
+      cancelRedirectPath: returnPath
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.loading = false;
@@ -68,7 +75,7 @@ export class DepositModalComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.loading = false;
         this.error = err?.error?.message?.[0] || err?.error?.message || 'Impossible de créer la session de paiement. Vérifiez votre connexion.';
-      },
+      }
     });
   }
 

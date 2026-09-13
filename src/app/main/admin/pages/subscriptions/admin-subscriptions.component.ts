@@ -9,11 +9,17 @@ import { AdminSubscriptionsState } from '../../store/subscriptions/admin-subscri
 import { AdminUserSubscription, SubscriptionFilters } from '../../store/subscriptions/admin-subscriptions.model';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, NgClass, AsyncPipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-subscriptions',
   templateUrl: './admin-subscriptions.component.html',
-  styleUrls: ['./admin-subscriptions.component.scss']
+  styleUrls: ['./admin-subscriptions.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, NgFor, SelectModule, NgClass, ExtendedModule, AsyncPipe, DecimalPipe]
 })
 export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -65,7 +71,7 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     private store: Store,
     private dialog: MatDialog,
     private subscriptionsService: AdminSubscriptionsService,
-    private currencyService: AdminCurrencyService,
+    private currencyService: AdminCurrencyService
   ) {}
 
   ngOnInit(): void {

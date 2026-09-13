@@ -1,23 +1,27 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 import { UserProfileAction, UserProfileState } from 'src/app/shared/store';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { NgIf } from '@angular/common';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
 
 @Component({
   selector: 'auth-validating-account',
   templateUrl: './auth-validating-account.component.html',
   styleUrls: ['./auth-validating-account.component.css'],
-  encapsulation: ViewEncapsulation.None
-
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [ExtendedModule, AppLogoComponent, NgIf, RouterLink, TranslatePipe]
 })
 export class AuthValidatingAccountComponent implements OnInit {
   
-  resultState: 'loading' | 'success' | 'error'='loading'
+  resultState: 'loading' | 'success' | 'error'='loading';
 
   constructor(
     private _store:Store,
@@ -31,31 +35,31 @@ export class AuthValidatingAccountComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
-    if(!this.route.snapshot.queryParamMap.has("token"))
+    if(!this.route.snapshot.queryParamMap.has('token'))
     {
       this._toastrService.error(this.translate.instant('NOTIFICATIONS.TOKEN_NOT_PROVIDED'), 'Ndewa360°');
       const currentLang = this.languageUrlService.getCurrentLanguage();
-      this.router.navigate([`/${currentLang}/auth/signin`])
+      this.router.navigate([`/${currentLang}/auth/signin`]);
       return;
     }
 
-    let token =  this.route.snapshot.queryParamMap.get("token");
-    this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.ValidateUserProfileWithToken)).subscribe((value)=>{
-        this.resultState ='success';
-        // Redirection automatique après validation réussie
-        setTimeout(() => {
-          this.redirectAfterValidation();
-        }, 2000); // Attendre 2 secondes pour que l'utilisateur voie le message de succès
-      }
+    const token =  this.route.snapshot.queryParamMap.get('token');
+    this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.ValidateUserProfileWithToken)).subscribe((value) => {
+      this.resultState ='success';
+      // Redirection automatique après validation réussie
+      setTimeout(() => {
+        this.redirectAfterValidation();
+      }, 2000); // Attendre 2 secondes pour que l'utilisateur voie le message de succès
+    }
     );
 
 
     this._ngxsAction.pipe(ofActionErrored(UserProfileAction.ValidateUserProfileWithToken)).subscribe(
       (value) => {
         this.resultState='error';        
-      })
+      });
 
-      this._store.dispatch(new UserProfileAction.ValidateUserProfileWithToken(token))
+    this._store.dispatch(new UserProfileAction.ValidateUserProfileWithToken(token));
   }
 
   private async redirectAfterValidation(): Promise<void> {

@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PaymentLinkService } from '../../services/payment-link.service';
+import { NgIf, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-payment-success',
   templateUrl: './payment-success.component.html',
-  styleUrls: ['./payment-success.component.scss']
+  styleUrls: ['./payment-success.component.scss'],
+  standalone: true,
+  imports: [NgIf, DatePipe]
 })
 export class PaymentSuccessComponent implements OnInit {
   token: string = '';
@@ -58,12 +61,12 @@ export class PaymentSuccessComponent implements OnInit {
     if (!this.paymentDetails) return '';
 
     switch (this.paymentDetails.paymentType) {
-      case 'LOCATION':
-        return 'Loyer';
-      case 'CAUTION':
-        return 'Caution';
-      default:
-        return 'Paiement';
+    case 'LOCATION':
+      return 'Loyer';
+    case 'CAUTION':
+      return 'Caution';
+    default:
+      return 'Paiement';
     }
   }
 

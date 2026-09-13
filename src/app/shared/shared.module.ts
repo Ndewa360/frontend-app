@@ -1,16 +1,16 @@
-import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core'
-import {CommonModule} from '@angular/common'
-import {YoupezModule} from "../../@youpez/youpez.module"
-import { DummyTableRichComponent } from "./components/dummy-table-rich/dummy-table-rich.component";
-import { DummyTablePaginationComponent } from './components/dummy-table-pagination/dummy-table-pagination.component'
-import { DummyTableExpansionComponent } from './components/dummy-table-expansion/dummy-table-expansion.component'
-import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component'
-import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component'
-import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component'
-import { AdvancedLanguageSwitcherComponent } from './components/advanced-language-switcher/advanced-language-switcher.component'
-import { TenantAvatarComponent } from './components/tenant-avatar/tenant-avatar.component'
-import { DataLoaderDebugComponent } from './components/data-loader-debug/data-loader-debug.component'
-import { ClickOutsideDirective } from './directives/click-outside.directive'
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {YoupezModule} from '../../@youpez/youpez.module';
+import { DummyTableRichComponent } from './components/dummy-table-rich/dummy-table-rich.component';
+import { DummyTablePaginationComponent } from './components/dummy-table-pagination/dummy-table-pagination.component';
+import { DummyTableExpansionComponent } from './components/dummy-table-expansion/dummy-table-expansion.component';
+import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component';
+import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component';
+import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component';
+import { AdvancedLanguageSwitcherComponent } from './components/advanced-language-switcher/advanced-language-switcher.component';
+import { TenantAvatarComponent } from './components/tenant-avatar/tenant-avatar.component';
+import { DataLoaderDebugComponent } from './components/data-loader-debug/data-loader-debug.component';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { NgxsModule } from '@ngxs/store';
 import {
   UserProfileState, UserState, PropertyState, RoomState, LocataireState,
@@ -68,7 +68,7 @@ const DECLARATIONS = [
   ContractTemplateSelectorComponent, DataLoaderDebugComponent, SubscriptionLimitModalComponent,
   SubscriptionStatusWidgetComponent, NavigationButtonComponent, LanguageSwitcherComponent,
   ClickOutsideDirective, AdvancedLanguageSwitcherComponent, TenantAvatarComponent,
-  NavProgressBarComponent, EmailConfirmationBannerComponent,
+  NavProgressBarComponent, EmailConfirmationBannerComponent
 ];
 
 @NgModule({
@@ -86,24 +86,24 @@ const DECLARATIONS = [
       UploadFilesState, ContractState, ProspectionState, ContractTemplateState,
       SubscriptionLimitState, SubscriptionPaymentState, PremiumAccessState,
       WalletState,
-      PropertyManagerState,
+      PropertyManagerState
     ]),
     NgxsStoragePluginModule.forRoot({ key: ['ndewa360_auth_token'] }),
     NgxsRouterPluginModule.forRoot(),
     ToastrModule.forRoot({
       progressBar: true, closeButton: true,
-      preventDuplicates: true, maxOpened: 3, autoDismiss: true,
+      preventDuplicates: true, maxOpened: 3, autoDismiss: true
     }),
     TranslateModule.forChild(),
+    ...DECLARATIONS
   ],
-  declarations: DECLARATIONS,
   exports: [
     YoupezModule, NgxsRouterPluginModule, NoDataComponent, NgxsModule,
     RouterModule, ToastrModule, MatDialogModule, FormsModule, ReactiveFormsModule,
     TranslateModule,
-    ...DECLARATIONS,
+    ...DECLARATIONS
   ],
   providers: [],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}

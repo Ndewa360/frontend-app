@@ -9,13 +9,23 @@ import { AssignationConfig } from 'src/app/shared/models/assignation-assistant.m
 import { filter } from 'rxjs/operators';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AssignLocationModalData, AssignLocationModalResult } from '../services/assign-location-modal.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AssignationAssistantComponent } from '../components/assignation-assistant/assignation-assistant.component';
+import { LoadingModule } from 'carbon-components-angular/loading';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { AppContentSimpleComponent } from '../../../../@youpez/components/app-content/app-content-simple/app-content-simple.component';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { NgIf, NgTemplateOutlet } from '@angular/common';
 
 
 @Component({
   selector: 'assign-location',
   templateUrl: './assign-location.component.html',
   styleUrls: ['./assign-location.component.css'],
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [NgIf, NgTemplateOutlet, FlexModule, NgScrollbar, AppContentSimpleComponent, AssignLocationFormComponent, ButtonModule, LoadingModule, AssignationAssistantComponent, TranslatePipe]
 })
 export class AssignLocationComponent implements OnInit, OnChanges {
 
@@ -28,9 +38,9 @@ export class AssignLocationComponent implements OnInit, OnChanges {
     initialSolde?:number
   } = {};
 
-  @Input() isAssignedOpened: boolean = false
+  @Input() isAssignedOpened: boolean = false;
   @Input() property: PropertyModel = null;
-  @Input() sideNavBarElement: AppSidenavContainerComponent = null
+  @Input() sideNavBarElement: AppSidenavContainerComponent = null;
   @Input() roomSelected:RoomModel = null;
   @Input() locataireSelected:LocataireModel = null;
   
@@ -88,12 +98,12 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       }
     }
 
-    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation)).subscribe((value)=>{
+    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation)).subscribe((value) => {
       this.waittingResponse=false;
       this.handleAssignationSuccess(value);
     });
 
-    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateAssignationWithAssistant)).subscribe((value)=>{
+    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateAssignationWithAssistant)).subscribe((value) => {
       this.waittingResponse=false;
       this.handleAssignationSuccess(value);
     });
@@ -102,19 +112,19 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       (value) => {
         this.waittingResponse=false;
       }
-    )
+    );
 
     this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateLocation)).subscribe(
       (error) => {
         this.waittingResponse = false;
         this.handleAssignationError(error);
-      })
+      });
 
     this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateAssignationWithAssistant)).subscribe(
       (error) => {
         this.waittingResponse = false;
         this.handleAssignationError(error);
-      })
+      });
   }
 
   /**
@@ -139,25 +149,25 @@ export class AssignLocationComponent implements OnInit, OnChanges {
     }
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes["isAssignedOpened"] && changes["isAssignedOpened"].currentValue && this.sideNavBarElement)this.assignLocationForm.refreshComponent() 
+    if(changes['isAssignedOpened'] && changes['isAssignedOpened'].currentValue && this.sideNavBarElement)this.assignLocationForm.refreshComponent(); 
   }
 
   onSubmit()
   {
     this.waittingResponse=true;
     
-    if(this.locataireForm.isKnowExactDateEntry) this.locataireForm.entryDate.setHours(6)
-    let bodyToSend = {
+    if(this.locataireForm.isKnowExactDateEntry) this.locataireForm.entryDate.setHours(6);
+    const bodyToSend = {
       locataireId:this.locataireForm.locataire,
       roomId:this.locataireForm.room,
       propertyId:this.property._id,
       isKnowExactDateEntry:this.locataireForm.isKnowExactDateEntry,
       initialFinancialState: this.locataireForm.initialFinancialState,
       initialSolde:this.locataireForm.initialSolde
-    }
-    if(this.locataireForm.isKnowExactDateEntry) bodyToSend["startedAt"]=this.locataireForm.entryDate.toISOString().split("T")[0]
-    else bodyToSend["startedAt"]= new Date().toISOString().split("T")[0]
-    this._store.dispatch(new LocationAction.CreateLocation(bodyToSend))
+    };
+    if(this.locataireForm.isKnowExactDateEntry) bodyToSend['startedAt']=this.locataireForm.entryDate.toISOString().split('T')[0];
+    else bodyToSend['startedAt']= new Date().toISOString().split('T')[0];
+    this._store.dispatch(new LocationAction.CreateLocation(bodyToSend));
   }
 
   // Méthodes pour l'assistant d'assignation
@@ -198,14 +208,14 @@ export class AssignLocationComponent implements OnInit, OnChanges {
   private mapTypeToFinancialState(typeAssignation: any): INITIAL_LOCATION_FINANCIAL_STATE {
     // Mapper le type d'assignation vers l'état financier initial
     switch (typeAssignation) {
-      case 'NOUVEAU':
-        return INITIAL_LOCATION_FINANCIAL_STATE.INITIAL;
-      case 'EXISTANT':
-        return INITIAL_LOCATION_FINANCIAL_STATE.EN_AVANCE;
-      case 'MIGRATION':
-        return INITIAL_LOCATION_FINANCIAL_STATE.AVEC_ARRIERE;
-      default:
-        return INITIAL_LOCATION_FINANCIAL_STATE.INITIAL;
+    case 'NOUVEAU':
+      return INITIAL_LOCATION_FINANCIAL_STATE.INITIAL;
+    case 'EXISTANT':
+      return INITIAL_LOCATION_FINANCIAL_STATE.EN_AVANCE;
+    case 'MIGRATION':
+      return INITIAL_LOCATION_FINANCIAL_STATE.AVEC_ARRIERE;
+    default:
+      return INITIAL_LOCATION_FINANCIAL_STATE.INITIAL;
     }
   }
 
@@ -228,17 +238,17 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       locataireFormData.room && 
       ( (locataireFormData.isKnowExactDateEntry && locataireFormData.entryDate) || 
         (!locataireFormData.isKnowExactDateEntry)
-    )) this.canSendingData=true;
+      )) this.canSendingData=true;
     else this.canSendingData=false;
     this.locataireForm = locataireFormData;
   }
   
   onClose(event) {
-    this.isAssignedOpened = false
+    this.isAssignedOpened = false;
   }
 
   onToggleLeftSidebar() {
-    this.leftSidebarVisibility = !this.leftSidebarVisibility
+    this.leftSidebarVisibility = !this.leftSidebarVisibility;
   }
 
   closeSideNav() {

@@ -1,21 +1,28 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RoomType } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { InputModule } from 'carbon-components-angular';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
   selector: 'find-location-form',
   templateUrl: './find-location-form.component.html',
   styleUrls: ['./find-location-form.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, FlexModule, InputModule, ButtonModule, IbmIconComponent, TranslatePipe]
 })
 export class FindLocationFormComponent implements OnInit {
-    public formGroup: UntypedFormGroup;
-    roomListType =[];
+  public formGroup: UntypedFormGroup;
+  roomListType =[];
 
   
-   constructor(
+  constructor(
     protected formBuilder: UntypedFormBuilder,
     private router: Router,
     private route: ActivatedRoute
@@ -23,22 +30,22 @@ export class FindLocationFormComponent implements OnInit {
    
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
-          location: [''],
-          propertyType: [''],
-          price: [''],
-        })
+      location: [''],
+      propertyType: [''],
+      price: ['']
+    });
 
-        //Room Type
-      this.roomListType= Object.values(RoomType).map((valueRoomType)=>({
-        content:UtilsString.getStringOfRoomType(valueRoomType), 
-        valueType:valueRoomType,
-        selected:false
-      }));
+    //Room Type
+    this.roomListType= Object.values(RoomType).map((valueRoomType) => ({
+      content:UtilsString.getStringOfRoomType(valueRoomType), 
+      valueType:valueRoomType,
+      selected:false
+    }));
   }
   
   isValid(name) {
-    const instance = this.formGroup.get(name)
-    return instance.invalid && (instance.dirty || instance.touched)
+    const instance = this.formGroup.get(name);
+    return instance.invalid && (instance.dirty || instance.touched);
   }
 
   onSubmit() {

@@ -4,6 +4,7 @@ import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { LocataireModel, LocataireAction } from 'src/app/shared/store';
+import { NgIf } from '@angular/common';
 
 export interface DeleteTenantModalData {
   tenant: LocataireModel;
@@ -13,7 +14,9 @@ export interface DeleteTenantModalData {
 @Component({
   selector: 'app-modern-delete-tenant-modal',
   templateUrl: './modern-delete-tenant-modal.component.html',
-  styleUrls: ['./modern-delete-tenant-modal.component.scss']
+  styleUrls: ['./modern-delete-tenant-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf]
 })
 export class ModernDeleteTenantModalComponent implements OnInit {
   isDeleting = false;

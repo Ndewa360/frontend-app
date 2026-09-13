@@ -1,10 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ContractTemplateAction, ContractTemplateState } from '../../../../shared/store/contract-templates';
 import { ContractTemplateModel, ContractTemplateType } from '../../../../shared/store/contract-templates/contract-template.model';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgClass, DatePipe } from '@angular/common';
 
 export interface DuplicateTemplateData {
   template: ContractTemplateModel;
@@ -13,7 +15,9 @@ export interface DuplicateTemplateData {
 @Component({
   selector: 'app-duplicate-template-modal',
   templateUrl: './duplicate-template-modal.component.html',
-  styleUrls: ['./duplicate-template-modal.component.scss']
+  styleUrls: ['./duplicate-template-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgClass, ExtendedModule, FormsModule, ReactiveFormsModule, DatePipe, TranslatePipe]
 })
 export class DuplicateTemplateModalComponent {
   duplicateForm: FormGroup;
@@ -92,14 +96,14 @@ export class DuplicateTemplateModalComponent {
 
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
-      case ContractTemplateType.CUSTOM:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
-      case ContractTemplateType.DUPLICATED:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
-      default:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
+    case ContractTemplateType.DEFAULT:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
+    case ContractTemplateType.CUSTOM:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
+    case ContractTemplateType.DUPLICATED:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
+    default:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
     }
   }
 }

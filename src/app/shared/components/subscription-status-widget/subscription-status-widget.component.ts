@@ -7,11 +7,17 @@ import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } f
 import { SubscriptionPaymentState, SubscriptionPaymentAction } from '../../store/subscription-payment';
 import { PaymentStatus } from '../../services/subscription-payment.service';
 import { SubscriptionLimitModalComponent, SubscriptionLimitModalData } from '../subscription-limit-modal/subscription-limit-modal.component';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { AppLoaderComponent } from '../../../../@youpez/components/app-loader/app-loader.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgClass, NgIf, DecimalPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-subscription-status-widget',
   templateUrl: './subscription-status-widget.component.html',
-  styleUrls: ['./subscription-status-widget.component.scss']
+  styleUrls: ['./subscription-status-widget.component.scss'],
+  standalone: true,
+  imports: [NgClass, ExtendedModule, NgIf, AppLoaderComponent, IbmIconComponent, DecimalPipe, DatePipe]
 })
 export class SubscriptionStatusWidgetComponent implements OnInit, OnDestroy {
 

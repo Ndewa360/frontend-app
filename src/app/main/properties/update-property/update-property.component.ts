@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
 import { Subject, combineLatest } from 'rxjs';
@@ -7,6 +7,12 @@ import { takeUntil, filter, take } from 'rxjs/operators';
 import { PropertyAction, PropertyModel, CountryState, CountryModel, CityModel, CityState } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 import { CountryCityValue } from 'src/app/shared/components/geography-selectors';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ContractTemplateSelectorComponent } from '../../../shared/components/contract-template-selector/contract-template-selector.component';
+import { CountryCitySelectorComponent } from '../../../shared/components/country-city-selector/country-city-selector.component';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf } from '@angular/common';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 export interface UpdatePropertyDialogData {
   property: PropertyModel;
@@ -15,9 +21,11 @@ export interface UpdatePropertyDialogData {
 @Component({
   selector: 'app-update-property',
   templateUrl: './update-property.component.html',
-  styleUrls: ['./update-property.component.scss']
+  styleUrls: ['./update-property.component.scss'],
+  standalone: true,
+  imports: [IbmIconComponent, FormsModule, ReactiveFormsModule, NgIf, SelectModule, CountryCitySelectorComponent, ContractTemplateSelectorComponent, TranslatePipe]
 })
-export class UpdatePropertyComponent implements OnInit {
+export class UpdatePropertyComponent implements OnInit, OnDestroy {
   public formGroup: FormGroup;
   waittingResponse = false;
   currentStep = 1;
@@ -203,17 +211,17 @@ export class UpdatePropertyComponent implements OnInit {
   // Validation par étape
   isStepValid(step: number): boolean {
     switch (step) {
-      case 1:
-        return this.formGroup.get('name')?.valid &&
+    case 1:
+      return this.formGroup.get('name')?.valid &&
                this.formGroup.get('propertyType')?.valid &&
                this.formGroup.get('geolocation')?.valid &&
                this.formGroup.get('location')?.valid;
-      case 2:
-        return true; // Étape 2 est optionnelle
-      case 3:
-        return true; // Étape 3 est optionnelle
-      default:
-        return false;
+    case 2:
+      return true; // Étape 2 est optionnelle
+    case 3:
+      return true; // Étape 3 est optionnelle
+    default:
+      return false;
     }
   }
 

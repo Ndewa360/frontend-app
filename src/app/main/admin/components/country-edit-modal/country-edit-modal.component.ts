@@ -1,7 +1,7 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry, UpdateCountryDto } from '../../store/geography/admin-geography.model';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 export interface CountryEditModalData {
   country: AdminCountry;
@@ -17,7 +19,9 @@ export interface CountryEditModalData {
 @Component({
   selector: 'app-country-edit-modal',
   templateUrl: './country-edit-modal.component.html',
-  styleUrls: ['./country-edit-modal.component.scss']
+  styleUrls: ['./country-edit-modal.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, NgIf, SelectModule, NgFor, AsyncPipe]
 })
 export class CountryEditModalComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;

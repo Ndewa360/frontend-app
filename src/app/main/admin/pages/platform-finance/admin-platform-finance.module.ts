@@ -9,11 +9,6 @@ import { PfPieChartComponent } from './components/pie-chart/pie-chart.component'
 import { PfPieTooltipComponent } from './components/pie-tooltip/pie-tooltip.component';
 
 @NgModule({
-  declarations: [
-    PlatformFinanceComponent,
-    PfPieChartComponent,
-    PfPieTooltipComponent,
-  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -21,6 +16,9 @@ import { PfPieTooltipComponent } from './components/pie-tooltip/pie-tooltip.comp
     MatDialogModule,
     RouterModule,
     SharedModule,
-  ],
+    PlatformFinanceComponent,
+    PfPieChartComponent,
+    PfPieTooltipComponent
+  ]
 })
 export class AdminPlatformFinanceModule { }

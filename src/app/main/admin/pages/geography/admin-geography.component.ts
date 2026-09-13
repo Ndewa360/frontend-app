@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -19,12 +19,16 @@ import { CountryEditModalComponent } from '../../components/country-edit-modal/c
 import { CityDeleteModalComponent, CityToDelete } from '../../components/city-delete-modal/city-delete-modal.component';
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { ExportService, ExportColumn } from '../../../properties/services/export.service';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-geography',
   templateUrl: './admin-geography.component.html',
   styleUrls: ['./admin-geography.component.scss', '../../styles/admin-design-system.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [NgIf, FormsModule, SelectModule, NgFor, CityDeleteModalComponent, AsyncPipe, DecimalPipe]
 })
 export class AdminGeographyComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

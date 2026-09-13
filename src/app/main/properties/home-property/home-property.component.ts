@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { AddPropertyComponent } from '../add-property/add-property.component';
 import { PropertyState, PropertyAction } from 'src/app/shared/store';
 import { PropertyModel } from 'src/app/shared/store/properties/property.model';
@@ -12,6 +12,10 @@ import { DataDrivenLoaderService } from 'src/app/shared/services/data-driven-loa
 import { PropertyManagerState, ManagedPropertyItem } from 'src/app/shared/store/property-manager';
 import { Router } from '@angular/router';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { ModernFinancialDashboardComponent } from '../components/modern-financial-dashboard/modern-financial-dashboard.component';
+import { ListPropertyComponent } from '../list-property/list-property.component';
+import { NgIf } from '@angular/common';
+import { LoadingOverlayComponent } from '../../../shared/components/loading-overlay/loading-overlay.component';
 
 type ViewType = 'properties' | 'dashboard';
 
@@ -19,7 +23,9 @@ type ViewType = 'properties' | 'dashboard';
   selector: 'home-property',
   templateUrl: './home-property.component.html',
   styleUrls: ['./home-property.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [LoadingOverlayComponent, NgIf, ListPropertyComponent, ModernFinancialDashboardComponent, TranslatePipe]
 })
 export class HomePropertyComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -33,16 +39,16 @@ export class HomePropertyComponent implements OnInit, OnDestroy {
   isLoading = false;
 
   @Select(PropertyState.selectStateProperties)
-  properties$!: Observable<PropertyModel[]>;
+    properties$!: Observable<PropertyModel[]>;
 
   @Select(PropertyState.selectStateLoading)
-  loading$!: Observable<boolean>;
+    loading$!: Observable<boolean>;
 
   // État de chargement global
   globalLoadingState$: Observable<LoadingState>;
 
   @Select(PropertyManagerState.selectManagedProperties)
-  managedProperties$!: Observable<ManagedPropertyItem[]>;
+    managedProperties$!: Observable<ManagedPropertyItem[]>;
 
   constructor(
     private dialog: MatDialog,

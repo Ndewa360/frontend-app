@@ -16,11 +16,18 @@ import {
 import { TemplateSelectionModalComponent, TemplateSelectionData, TemplateSelectionResult } from '../components/template-selection-modal/template-selection-modal.component';
 import { DuplicateTemplateModalComponent } from '../components/duplicate-template-modal/duplicate-template-modal.component';
 import { DeleteConfirmationModalComponent } from '../components/delete-confirmation-modal/delete-confirmation-modal.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe } from '@angular/common';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { NgScrollbar } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-contract-templates-dashboard',
   templateUrl: './contract-templates-dashboard.component.html',
-  styleUrls: ['./contract-templates-dashboard.component.scss']
+  styleUrls: ['./contract-templates-dashboard.component.scss'],
+  standalone: true,
+  imports: [NgScrollbar, ButtonModule, NgIf, NgFor, NgClass, ExtendedModule, AsyncPipe, DatePipe, TranslatePipe]
 })
 export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -198,14 +205,14 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
    */
   getTypeBadgeClass(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'type-default';
-      case ContractTemplateType.CUSTOM:
-        return 'type-custom';
-      case ContractTemplateType.DUPLICATED:
-        return 'type-duplicated';
-      default:
-        return 'type-default';
+    case ContractTemplateType.DEFAULT:
+      return 'type-default';
+    case ContractTemplateType.CUSTOM:
+      return 'type-custom';
+    case ContractTemplateType.DUPLICATED:
+      return 'type-duplicated';
+    default:
+      return 'type-default';
     }
   }
 
@@ -214,14 +221,14 @@ export class ContractTemplatesDashboardComponent implements OnInit, OnDestroy {
    */
   getStatusBadgeClass(status: ContractTemplateStatus): string {
     switch (status) {
-      case ContractTemplateStatus.ACTIVE:
-        return 'status-active';
-      case ContractTemplateStatus.INACTIVE:
-        return 'status-inactive';
-      case ContractTemplateStatus.ARCHIVED:
-        return 'status-archived';
-      default:
-        return 'status-active';
+    case ContractTemplateStatus.ACTIVE:
+      return 'status-active';
+    case ContractTemplateStatus.INACTIVE:
+      return 'status-inactive';
+    case ContractTemplateStatus.ARCHIVED:
+      return 'status-archived';
+    default:
+      return 'status-active';
     }
   }
 

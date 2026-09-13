@@ -1,9 +1,17 @@
-import {Component, OnInit} from '@angular/core'
+import {Component, OnInit} from '@angular/core';
+import { NgFor, NgClass } from '@angular/common';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
   selector: 'app-manual',
   templateUrl: './manual.component.html',
-  styleUrls: ['./manual.component.scss']
+  styleUrls: ['./manual.component.scss'],
+  standalone: true,
+  imports: [FlexModule, ExtendedModule, NgScrollbar, AppLogoComponent, ButtonModule, NgFor, NgClass]
 })
 export class ManualComponent implements OnInit {
 
@@ -569,7 +577,7 @@ That's the last step. Your pull request is now merged.
     - PRs with tag \`do-not-merge/hold\` or \`needs-rebase\` should make the appropriate changes before the PR can be labelled \`ok-to-test\`.
     - PRs created by mistake without to meaningful change of code should not be labelled \`ok-to-test\` and closed.
 
-  `
+  `;
 
   public sections = [
     {
@@ -577,7 +585,7 @@ That's the last step. Your pull request is now merged.
       children: [
         {
           name: 'Before You Submit a Pull Request',
-          selected: true,
+          selected: true
         },
         {
           name: 'Run Local Verifications'
@@ -655,7 +663,7 @@ That's the last step. Your pull request is now merged.
         },
         {
           name: 'Run Local Verifications'
-        },
+        }
       ]
     },
     {
@@ -677,10 +685,10 @@ That's the last step. Your pull request is now merged.
           name: 'Comment Commands Reference'
         }
       ]
-    },
-  ]
+    }
+  ];
 
-  public opened: boolean = false
+  public opened: boolean = false;
 
   constructor() {
   }
@@ -689,7 +697,7 @@ That's the last step. Your pull request is now merged.
   }
 
   onToggle() {
-    this.opened = !this.opened
+    this.opened = !this.opened;
   }
 
 }

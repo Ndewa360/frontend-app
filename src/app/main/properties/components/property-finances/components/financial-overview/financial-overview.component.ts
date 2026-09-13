@@ -4,11 +4,15 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ExportData } from '../../property-finances.component';
 import { PropertyFinancialManagerService, PropertyFinancialMetrics, MonthlyFinancialData } from 'src/app/main/properties/services/property-financial-manager.service';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-financial-overview',
   templateUrl: './financial-overview.component.html',
-  styleUrls: ['./financial-overview.component.scss']
+  styleUrls: ['./financial-overview.component.scss'],
+  standalone: true,
+  imports: [NgClass, ExtendedModule, NgFor, NgIf]
 })
 export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedYear: number = new Date().getFullYear();
@@ -207,21 +211,21 @@ export class FinancialOverviewComponent implements OnInit, OnChanges, OnDestroy 
 
   getMetricIcon(metric: string): string {
     switch (metric) {
-      case 'revenue': return 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1';
-      case 'collection': return 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z';
-      case 'occupancy': return 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4';
-      case 'average': return 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6';
-      default: return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+    case 'revenue': return 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1';
+    case 'collection': return 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z';
+    case 'occupancy': return 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4';
+    case 'average': return 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6';
+    default: return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
     }
   }
 
   getMetricColor(metric: string): string {
     switch (metric) {
-      case 'revenue': return 'bg-green-100 text-green-800';
-      case 'collection': return 'bg-blue-100 text-blue-800';
-      case 'occupancy': return 'bg-purple-100 text-purple-800';
-      case 'average': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+    case 'revenue': return 'bg-green-100 text-green-800';
+    case 'collection': return 'bg-blue-100 text-blue-800';
+    case 'occupancy': return 'bg-purple-100 text-purple-800';
+    case 'average': return 'bg-orange-100 text-orange-800';
+    default: return 'bg-gray-100 text-gray-800';
     }
   }
 }

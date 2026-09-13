@@ -6,11 +6,23 @@ import { takeUntil } from 'rxjs/operators';
 import { AdminBreachState } from '../../store/breach/admin-breach.state';
 import { AdminBreachAction } from '../../store/breach/admin-breach.actions';
 import { BreachIncident, CreateBreachDto } from '../../services/admin-breach.service';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-breach',
   templateUrl: './admin-breach.component.html',
   styleUrls: ['./admin-breach.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    SelectModule,
+    NgFor,
+    AsyncPipe,
+    DatePipe
+  ]
 })
 export class AdminBreachComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -33,7 +45,7 @@ export class AdminBreachComponent implements OnInit, OnDestroy {
     description: '',
     affectedDataTypes: [],
     affectedUsersCount: 0,
-    detectedAt: new Date().toISOString().slice(0, 16),
+    detectedAt: new Date().toISOString().slice(0, 16)
   };
   dataTypesInput = '';
 
@@ -46,21 +58,21 @@ export class AdminBreachComponent implements OnInit, OnDestroy {
     { value: 'bulk_export',         label: 'Export massif suspect' },
     { value: 'ransomware',          label: 'Ransomware' },
     { value: 'accidental_exposure', label: 'Exposition accidentelle' },
-    { value: 'other',               label: 'Autre' },
+    { value: 'other',               label: 'Autre' }
   ];
 
   readonly severities = [
     { value: 'low',      label: 'Faible',    color: '#22c55e' },
     { value: 'medium',   label: 'Moyen',     color: '#f59e0b' },
     { value: 'high',     label: 'Élevé',     color: '#f97316' },
-    { value: 'critical', label: 'Critique',  color: '#ef4444' },
+    { value: 'critical', label: 'Critique',  color: '#ef4444' }
   ];
 
   readonly statuses = [
     { value: 'detected',      label: 'Détecté' },
     { value: 'investigating', label: 'En investigation' },
     { value: 'notified',      label: 'Autorité notifiée' },
-    { value: 'resolved',      label: 'Résolu' },
+    { value: 'resolved',      label: 'Résolu' }
   ];
 
   constructor(private store: Store) {}
@@ -134,7 +146,7 @@ export class AdminBreachComponent implements OnInit, OnDestroy {
     this.form = {
       type: '', severity: '', description: '',
       affectedDataTypes: [], affectedUsersCount: 0,
-      detectedAt: new Date().toISOString().slice(0, 16),
+      detectedAt: new Date().toISOString().slice(0, 16)
     };
     this.dataTypesInput = '';
   }

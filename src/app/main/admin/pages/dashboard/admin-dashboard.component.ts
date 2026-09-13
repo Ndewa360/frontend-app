@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 
 import { AdminDashboardAction } from '../../store/dashboard/admin-dashboard.actions';
@@ -13,11 +13,14 @@ import {
   AdminDashboardService, 
   GlobalStatsResponse 
 } from '../../services/admin-dashboard.service';
+import { NgIf, NgFor, AsyncPipe, DecimalPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.scss']
+  styleUrls: ['./admin-dashboard.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, RouterLink, AsyncPipe, DecimalPipe, DatePipe]
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -44,7 +47,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private languageUrlService: LanguageUrlService,
     private dashboardService: AdminDashboardService,
-    private currencyService: AdminCurrencyService,
+    private currencyService: AdminCurrencyService
   ) {}
 
   ngOnInit(): void {
@@ -75,13 +78,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   private loadGlobalStats(): void {
     this.dashboardService.getGlobalStats()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        this.globalStats = data;
-      },
-      error: (err) => console.error('Erreur chargement stats globales:', err)
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.globalStats = data;
+        },
+        error: (err) => console.error('Erreur chargement stats globales:', err)
+      });
   }
 
   private buildAlerts(stats: any): void {
@@ -126,7 +129,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       payments:      `/${lang}/admin/payments`,
       subscriptions: `/${lang}/admin/subscriptions`,
       agents:        `/${lang}/admin/agents`,
-      activities:    `/${lang}/admin/monitoring`,
+      activities:    `/${lang}/admin/monitoring`
     };
     if (routes[section]) this.router.navigate([routes[section]]);
   }

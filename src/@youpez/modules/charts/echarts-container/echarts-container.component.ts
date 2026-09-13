@@ -4,20 +4,21 @@ import {
   OnInit,
   QueryList,
   ContentChild
-} from '@angular/core'
-import {SettingsService} from "../../../services/settings.service"
-import {EchartsComponent} from "../echarts/echarts.component"
-import {Subscription} from "rxjs"
+} from '@angular/core';
+import {SettingsService} from '../../../services/settings.service';
+import {EchartsComponent} from '../echarts/echarts.component';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'youpez-echarts-container',
   templateUrl: './echarts-container.component.html',
-  styleUrls: ['./echarts-container.component.scss']
+  styleUrls: ['./echarts-container.component.scss'],
+  standalone: true
 })
 export class EchartsContainerComponent implements OnInit, OnDestroy {
 
-  @ContentChild(EchartsComponent, {static: true}) echarts: EchartsComponent
-  public settingsSub: Subscription
+  @ContentChild(EchartsComponent, {static: true}) echarts: EchartsComponent;
+  public settingsSub: Subscription;
 
   constructor(private settingsService: SettingsService) {
 
@@ -27,16 +28,16 @@ export class EchartsContainerComponent implements OnInit, OnDestroy {
     this.settingsSub = this.settingsService
       .themeChanged
       .subscribe(() => {
-        this.refreshChart()
-      })
+        this.refreshChart();
+      });
   }
 
   ngOnDestroy() {
-    this.settingsSub.unsubscribe()
+    this.settingsSub.unsubscribe();
   }
 
   refreshChart() {
-    this.echarts.refreshChart()
+    this.echarts.refreshChart();
   }
 
 }

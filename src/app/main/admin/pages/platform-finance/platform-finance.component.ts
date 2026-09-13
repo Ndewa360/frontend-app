@@ -1,6 +1,6 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, interval, Observable, fromEvent } from 'rxjs';
 import { takeUntil, debounceTime, skip } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -12,13 +12,16 @@ import {
   PlatformWithdrawal,
   PlatformKpis,
   PlatformRevenuePeriod,
-  PlatformFinanceConfig,
+  PlatformFinanceConfig
 } from '../../services/admin-platform-finance.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
 import { PlatformFinanceState } from '../../store/platform-finance/platform-finance.state';
 import { PlatformFinanceAction } from '../../store/platform-finance/platform-finance.actions';
 import { PfPieSlice } from './components/pie-chart/pie-chart.component';
 import { PfPieTooltipComponent } from './components/pie-tooltip/pie-tooltip.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, NgClass, DecimalPipe, DatePipe } from '@angular/common';
 
 // ── Constantes de validation Mobile Money Cameroun ────────────────────────────
 const FEE_RATE = 0; // 0% pour les admins
@@ -31,7 +34,7 @@ const MTN_REGEX = /^(67|68)\d{7}$|^65[0-4]\d{6}$/;
 const CATEGORY_COLORS = {
   subscriptions:  '#6366f1',
   premiumAccess:  '#f59e0b',
-  withdrawalFees: '#10b981',
+  withdrawalFees: '#10b981'
 };
 
 export interface PlatformWithdrawalMethodDef {
@@ -48,6 +51,19 @@ export interface PlatformWithdrawalMethodDef {
   selector: 'app-platform-finance',
   templateUrl: './platform-finance.component.html',
   styleUrls: ['./platform-finance.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    NgFor,
+    SelectModule,
+    PfPieTooltipComponent,
+    NgClass,
+    ExtendedModule,
+    ReactiveFormsModule,
+    DecimalPipe,
+    DatePipe
+  ]
 })
 export class PlatformFinanceComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -138,7 +154,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       badge: 'OM',
       badgeClass: 'pw-badge--orange',
       placeholder: '6XXXXXXXX',
-      inputType: 'phone',
+      inputType: 'phone'
     },
     {
       value: 'MTN_MONEY',
@@ -147,8 +163,8 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       badge: 'MTN',
       badgeClass: 'pw-badge--mtn',
       placeholder: '6XXXXXXXX',
-      inputType: 'phone',
-    },
+      inputType: 'phone'
+    }
   ];
 
   years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
@@ -159,7 +175,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private currencyService: AdminCurrencyService,
+    private currencyService: AdminCurrencyService
   ) {
     this.withdrawalForm = this.fb.group({
       requestedAmount: [null, [Validators.required, Validators.min(MIN_AMOUNT), Validators.max(MAX_AMOUNT)]],
@@ -169,7 +185,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       bankName:        [''],
       operator:        [''],
       currency:        ['XAF'],
-      notes:           [''],
+      notes:           ['']
     });
 
     this.configForm = this.fb.group({
@@ -178,7 +194,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       maxWithdrawalAmount:      [10000000, [Validators.required, Validators.min(1)]],
       defaultCurrency:          ['XAF', Validators.required],
       requireDualValidation:    [true],
-      notifyOnWithdrawal:       [true],
+      notifyOnWithdrawal:       [true]
     });
   }
 
@@ -291,7 +307,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
           this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_SNAPSHOT_CALCULATED'), 'Ndewa360°');
           this.store.dispatch(new PlatformFinanceAction.LoadRevenue(this.selectedPeriod, this.selectedYear, this.selectedCurrency));
         },
-        error: () => { this.isLoading = false; this.toastr.error(this.translate.instant('NOTIFICATIONS.PLATFORM_SNAPSHOT_CALC_ERROR'), 'Ndewa360°'); },
+        error: () => { this.isLoading = false; this.toastr.error(this.translate.instant('NOTIFICATIONS.PLATFORM_SNAPSHOT_CALC_ERROR'), 'Ndewa360°'); }
       });
   }
 
@@ -372,7 +388,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       recipientName:    formVal.recipientName,
       recipientAccount: formVal.recipientAccount,
       currency:         formVal.currency,
-      notes:            `Retrait super wallet via ${this.selectedMethodDef?.label}`,
+      notes:            `Retrait super wallet via ${this.selectedMethodDef?.label}`
     };
 
     this.financeService.createWithdrawal(payload)
@@ -393,7 +409,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
           this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
           this.store.dispatch(new PlatformFinanceAction.LoadBalance());
         },
-        error: (e) => { this.isLoading = false; this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_REQUEST_ERROR'), 'Ndewa360°'); },
+        error: (e) => { this.isLoading = false; this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_REQUEST_ERROR'), 'Ndewa360°'); }
       });
   }
 
@@ -420,7 +436,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
               this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
               attempts = MAX_ATTEMPTS;
             }
-          },
+          }
         });
     });
   }
@@ -439,7 +455,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => { this.showApproveModal = false; this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_APPROVED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); },
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_APPROVE_ERROR'), 'Ndewa360°'),
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_APPROVE_ERROR'), 'Ndewa360°')
       });
   }
 
@@ -472,7 +488,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
           } else {
             this.toastr.success('Retrait confirmé');
           }
-        },
+        }
       });
   }
 
@@ -490,7 +506,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => { this.showFailModal = false; this.toastr.warning(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_FAILED_MARKED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('COMMON.ERROR'), 'Ndewa360°'),
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('COMMON.ERROR'), 'Ndewa360°')
       });
   }
 
@@ -508,7 +524,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => { this.showCancelModal = false; this.toastr.info(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_CANCELLED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit)); this.store.dispatch(new PlatformFinanceAction.LoadBalance()); },
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_CANCEL_ERROR'), 'Ndewa360°'),
+        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_CANCEL_ERROR'), 'Ndewa360°')
       });
   }
 
@@ -522,7 +538,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: c => { this.config = c; this.showConfigModal = false; this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_CONFIG_UPDATED'), 'Ndewa360°'); this.store.dispatch(new PlatformFinanceAction.LoadConfig()); },
-        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.PLATFORM_CONFIG_UPDATE_ERROR'), 'Ndewa360°'),
+        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.PLATFORM_CONFIG_UPDATE_ERROR'), 'Ndewa360°')
       });
   }
 
@@ -551,7 +567,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       PROCESSING: 'admin-badge-info',
       CONFIRMED:  'admin-badge-success',
       FAILED:     'admin-badge-danger',
-      CANCELLED:  'admin-badge-secondary',
+      CANCELLED:  'admin-badge-secondary'
     };
     return map[status] || 'admin-badge-secondary';
   }
@@ -563,7 +579,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
       PROCESSING: 'En cours',
       CONFIRMED:  'Confirmé',
       FAILED:     'Échoué',
-      CANCELLED:  'Annulé',
+      CANCELLED:  'Annulé'
     };
     return map[status] || status;
   }
@@ -604,7 +620,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     const entries = [
       { label: 'Souscriptions',    value: d.subscriptions.revenue,  color: CATEGORY_COLORS.subscriptions },
       { label: 'Accès premium',    value: d.premiumAccess.revenue,  color: CATEGORY_COLORS.premiumAccess },
-      { label: 'Frais de retrait', value: d.withdrawalFees.revenue, color: CATEGORY_COLORS.withdrawalFees },
+      { label: 'Frais de retrait', value: d.withdrawalFees.revenue, color: CATEGORY_COLORS.withdrawalFees }
     ];
 
     const slices: PfPieSlice[] = [];

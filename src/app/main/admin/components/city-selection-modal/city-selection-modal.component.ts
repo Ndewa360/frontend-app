@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, BehaviorSubject, of } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -12,6 +12,7 @@ import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry } from '../../store/geography/admin-geography.model';
 import { AdminGeographyState } from '../../store/geography/admin-geography.state';
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
+import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
 
 export interface CitySelectionResult {
   success: boolean;
@@ -23,7 +24,9 @@ const PAGE_SIZE = 20;
 @Component({
   selector: 'app-city-selection-modal',
   templateUrl: './city-selection-modal.component.html',
-  styleUrls: ['./city-selection-modal.component.scss']
+  styleUrls: ['./city-selection-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, AsyncPipe, DecimalPipe]
 })
 export class CitySelectionModalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

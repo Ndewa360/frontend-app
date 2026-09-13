@@ -1,20 +1,27 @@
 import { ChangeDetectorRef, Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Select, Store } from '@ngxs/store';
-import { TableModel, TableRowSize, TableHeaderItem, TableItem } from 'carbon-components-angular';
+import { TableModel, TableRowSize, TableHeaderItem, TableItem, TableModule, PaginationModule } from 'carbon-components-angular';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { sort } from 'src/@youpez';
 import { SouscriptionState, SouscriptionModel, SouscriptionPeriodModel, SouscriptionPeriodState, SouscriptionPeriodService, SouscriptionPeriodAction, RoomModel, RoomType, RoomAction, LocataireState, PropertyState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { PaymentSessionService } from 'src/app/shared/services/payment-session.service';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
+import { ToggleModule } from 'carbon-components-angular/toggle';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, AsyncPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
   selector: 'show-facture-current',
   templateUrl: './show-facture-current.component.html',
-  styleUrls: ['./show-facture-current.component.css']
+  styleUrls: ['./show-facture-current.component.css'],
+  standalone: true,
+  imports: [FlexModule, NgIf, NgSwitch, NgSwitchCase, IbmIconComponent, NgSwitchDefault, ButtonModule, TableModule, ToggleModule, PaginationModule, AsyncPipe, CurrencyPipe, DatePipe, TranslatePipe]
 })
 export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
   @Select(SouscriptionPeriodState.selectCurrentPeriodWithDetails) currentPeriodWithDetails$: Observable<SouscriptionPeriodModel>;
@@ -26,30 +33,30 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
   waittingResponse=false;
   isAssignedOpened = false;
   propertyId = null;
-  public leftSidebarVisibility: boolean = true
+  public leftSidebarVisibility: boolean = true;
   
   public property= null;
-  public fullModelData=[]
+  public fullModelData=[];
   public model = new TableModel();
   
-  public searchModel
-  public size:TableRowSize = 'md'
-  public offset = {x: -9, y: 0}
-  public batchText = ''
+  public searchModel;
+  public size:TableRowSize = 'md';
+  public offset = {x: -9, y: 0};
+  public batchText = '';
 
-  showSelectionColumn = true
-  enableSingleSelect = false
-  striped = false
-  sortable = true
-  isDataGrid = false
-  noData = false
-  stickyHeader = false
-  skeleton = false
+  showSelectionColumn = true;
+  enableSingleSelect = false;
+  striped = false;
+  sortable = true;
+  isDataGrid = false;
+  noData = false;
+  stickyHeader = false;
+  skeleton = false;
 
-  @ViewChild("roomTemplate", {static: true}) roomTemplate: TemplateRef<any>
-  @ViewChild("actionTemplate", {static: true}) actionTemplate: TemplateRef<any>
-  @ViewChild("propertyTemplate", {static: true}) propertyTemplate: TemplateRef<any>
-  @ViewChild("paginationTableItemTemplate", {static: true}) paginationTableItemTemplate: TemplateRef<any>
+  @ViewChild('roomTemplate', {static: true}) roomTemplate: TemplateRef<any>;
+  @ViewChild('actionTemplate', {static: true}) actionTemplate: TemplateRef<any>;
+  @ViewChild('propertyTemplate', {static: true}) propertyTemplate: TemplateRef<any>;
+  @ViewChild('paginationTableItemTemplate', {static: true}) paginationTableItemTemplate: TemplateRef<any>;
 
   constructor(
     private _store:Store,
@@ -59,7 +66,7 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private paymentSessionService: PaymentSessionService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ){}
 
   ngOnInit() {
@@ -83,18 +90,18 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
       }
     });
 
-    this._ngxsAction.pipe(ofActionSuccessful(RoomAction.ChangeStatusActivatedForSouscriptionRoom), takeUntil(this.destroy$)).subscribe((value)=>{
-      let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
+    this._ngxsAction.pipe(ofActionSuccessful(RoomAction.ChangeStatusActivatedForSouscriptionRoom), takeUntil(this.destroy$)).subscribe((value) => {
+      const foundRoom = this.roomsValueChangeStatus.find((u) => u.roomId==value.roomId);
       if (foundRoom) foundRoom.value.next(value.isActiveForSouscription);
       this.cdr.detectChanges();
     });
     this._ngxsAction.pipe(ofActionCompleted(RoomAction.ChangeStatusActivatedForSouscriptionRoom), takeUntil(this.destroy$)).subscribe((value) => {
-      let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.action.roomId);
+      const foundRoom = this.roomsValueChangeStatus.find((u) => u.roomId==value.action.roomId);
       if (foundRoom) foundRoom.isLoading.next(false);
       this.cdr.detectChanges();
     });
     this._ngxsAction.pipe(ofActionErrored(RoomAction.ChangeStatusActivatedForSouscriptionRoom), takeUntil(this.destroy$)).subscribe((value) => {
-      let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==value.roomId);
+      const foundRoom = this.roomsValueChangeStatus.find((u) => u.roomId==value.roomId);
       if (foundRoom) foundRoom.value.next(value.isActiveForSouscription);
       this.cdr.detectChanges();
     });
@@ -107,17 +114,17 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
 
   getPage(page: number)
   {
-    let end = page * this.model.pageLength;
-    let start = end - this.model.pageLength;
+    const end = page * this.model.pageLength;
+    const start = end - this.model.pageLength;
 
     return new Promise(resolve => {
-      setTimeout(() => resolve(this.fullModelData.slice(start,end)), 150)
-    })
+      setTimeout(() => resolve(this.fullModelData.slice(start,end)), 150);
+    });
   }
 
   prepareData(unitsList) {
-    return unitsList.map((unit)=> {
-      let dataForLoading = {
+    return unitsList.map((unit) => {
+      const dataForLoading = {
         roomId: unit.unitId,
         room: {
           _id: unit.unitId,
@@ -132,48 +139,48 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
         unit,
         isLoading: new BehaviorSubject(false),
         value: new BehaviorSubject(unit.isActiveForSouscription)
-      }
+      };
       this.roomsValueChangeStatus.push(dataForLoading);
       return ([
         new TableItem({
           data: unit.unitCode,
-          className: "items-center font-bold"
+          className: 'items-center font-bold'
         }),
         new TableItem({
           data: unit.propertyName,
-          className: "items-center"
+          className: 'items-center'
         }),
         new TableItem({
-          data: this.getDefaultCurrency() + ' ' + unit.unitPrice.toLocaleString(),
-          className: "items-center"
+          data: `${this.getDefaultCurrency()  } ${  unit.unitPrice.toLocaleString()}`,
+          className: 'items-center'
         }),
         new TableItem({
-          data: unit.occupiedDays + ' ' + this.translate.instant('BILLING.INVOICE.DAYS_SUFFIX'),
-          className: "items-center"
+          data: `${unit.occupiedDays  } ${  this.translate.instant('BILLING.INVOICE.DAYS_SUFFIX')}`,
+          className: 'items-center'
         }),
         new TableItem({
           data: unit.isEligible ? this.translate.instant('BILLING.INVOICE.ELIGIBILITY.YES') : this.translate.instant('BILLING.INVOICE.ELIGIBILITY.NO'),
-          className: "items-center " + (unit.isEligible ? 'text-green-600' : 'text-red-600')
+          className: `items-center ${  unit.isEligible ? 'text-green-600' : 'text-red-600'}`
         }),
         new TableItem({
-          data: this.getDefaultCurrency() + ' ' + unit.revenue.toLocaleString(),
-          className: "items-center font-bold " + (unit.revenue > 0 ? 'text-green-600' : 'text-gray-500')
+          data: `${this.getDefaultCurrency()  } ${  unit.revenue.toLocaleString()}`,
+          className: `items-center font-bold ${  unit.revenue > 0 ? 'text-green-600' : 'text-gray-500'}`
         }),
         new TableItem({
           data: dataForLoading,
           template: this.actionTemplate,
-          className: "items-center"
+          className: 'items-center'
         })
-      ])
-    })
+      ]);
+    });
   }
 
   selectPage(page) {
     this.getPage(page).then((data: Array<Array<any>>) => {
       // set the data and update page
-      this.model.data = this.prepareData(data)
-      this.model.currentPage = page
-    })
+      this.model.data = this.prepareData(data);
+      this.model.currentPage = page;
+    });
   }
 
 
@@ -182,20 +189,20 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
 
   getLocataireById(locataireid)
   {
-    return this._store.select(LocataireState.selectStateLocataire(locataireid))
+    return this._store.select(LocataireState.selectStateLocataire(locataireid));
   }
 
   getPropertyById(propertyID)
   {
-    return this._store.select(PropertyState.selectStateProperty(propertyID))
+    return this._store.select(PropertyState.selectStateProperty(propertyID));
   }
 
   onClose(event) {
-    this.isAssignedOpened = false
+    this.isAssignedOpened = false;
   }
 
   onToggleLeftSidebar() {
-    this.leftSidebarVisibility = !this.leftSidebarVisibility
+    this.leftSidebarVisibility = !this.leftSidebarVisibility;
   }
 
   shouldOpenAssignedOpened() {
@@ -205,7 +212,7 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
 
   changeStatusRoom(event, roomId)
   {
-    let foundRoom = this.roomsValueChangeStatus.find((u)=>u.roomId==roomId);
+    const foundRoom = this.roomsValueChangeStatus.find((u) => u.roomId==roomId);
     foundRoom.isLoading.next(true);
 
     // Utiliser le nouveau service pour mettre à jour le statut
@@ -228,16 +235,16 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
   changeSouscriptionOfRoom(roomId,status)
   {
     this.waittingResponse=true;
-    this._store.dispatch(new RoomAction.ChangeStatusActivatedForSouscriptionRoom(roomId,status))
+    this._store.dispatch(new RoomAction.ChangeStatusActivatedForSouscriptionRoom(roomId,status));
   }
 
   simpleSort(index: number) {
-    sort(this.model, index)
+    sort(this.model, index);
   }
 
   getDefaultCurrency()
   {
-    return UtilsString.getDefaultCurrency()
+    return UtilsString.getDefaultCurrency();
   }
 
   public loadCurrentPeriodWithDetails(): void {
@@ -261,38 +268,38 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let newModel = new TableModel()
+    const newModel = new TableModel();
 
     newModel.header = [
       new TableHeaderItem({
         data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.CODE'),
-        className: "items-center font-bold"
+        className: 'items-center font-bold'
       }),
       new TableHeaderItem({
         data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.PROPERTY'),
-        className: "items-center"
+        className: 'items-center'
       }),
       new TableHeaderItem({
         data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.PRICE'),
-        className: "items-center"
+        className: 'items-center'
       }),
       new TableHeaderItem({
         data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.OCCUPIED_DAYS'),
-        className: "items-center",
+        className: 'items-center'
       }),
       new TableHeaderItem({
         data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.ELIGIBLE'),
-        className: "items-center",
+        className: 'items-center'
       }),
       new TableHeaderItem({
         data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.AMOUNT'),
-        className: "items-center",
+        className: 'items-center'
       }),
       new TableHeaderItem({
         data: this.translate.instant('BILLING.INVOICE.TABLE_HEADERS.STATUS'),
-        className: "items-center",
-      }),
-    ]
+        className: 'items-center'
+      })
+    ];
 
     // Préparer les données directement
     const preparedData = this.prepareData(unitsData);
@@ -316,10 +323,10 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
     if (!this.currentPeriod) return 'N/A';
 
     switch (this.currentPeriod.state) {
-      case 'payed': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.PAID');
-      case 'waiting': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.WAITING');
-      case 'unpaid': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.UNPAID');
-      default: return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.UNKNOWN');
+    case 'payed': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.PAID');
+    case 'waiting': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.WAITING');
+    case 'unpaid': return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.UNPAID');
+    default: return this.translate.instant('BILLING.INVOICE.PERIOD_STATUS.UNKNOWN');
     }
   }
 
@@ -327,10 +334,10 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
     if (!this.currentPeriod) return 'secondary';
 
     switch (this.currentPeriod.state) {
-      case 'payed': return 'success';
-      case 'waiting': return 'warning';
-      case 'unpaid': return 'danger';
-      default: return 'secondary';
+    case 'payed': return 'success';
+    case 'waiting': return 'warning';
+    case 'unpaid': return 'danger';
+    default: return 'secondary';
     }
   }
 
@@ -376,7 +383,7 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
       userEmail: profile?.email,
       metadata: { periodId: this.currentPeriod._id, lang },
       successRedirectPath: `${currentPath}?payment=success`,
-      cancelRedirectPath: currentPath,
+      cancelRedirectPath: currentPath
     });
   }
 }

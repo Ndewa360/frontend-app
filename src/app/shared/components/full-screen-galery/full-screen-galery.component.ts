@@ -7,13 +7,14 @@ import {
   ViewEncapsulation,
   ElementRef,
   ViewChild,
-  HostListener,
+  HostListener
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { MediaUtil } from '../../utils';
 // import PhotoSphereViewer from 'photo-sphere-viewer';
 import { Viewer as  PhotoSphereViewer} from '@photo-sphere-viewer/core';
+import { NgIf, NgFor } from '@angular/common';
 
 
 @Component({
@@ -21,6 +22,8 @@ import { Viewer as  PhotoSphereViewer} from '@photo-sphere-viewer/core';
   templateUrl: './full-screen-galery.component.html',
   styleUrls: ['./full-screen-galery.component.css'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class FullScreenGaleryComponent implements OnInit, OnDestroy, AfterViewInit {
   images: string[] = [];
@@ -152,7 +155,7 @@ export class FullScreenGaleryComponent implements OnInit, OnDestroy, AfterViewIn
         this.panoramaViewer = new PhotoSphereViewer({
           container: this.panoramaContainer.nativeElement,
           panorama: currentMedia.url,
-          navbar: 'zoom move fullscreen',
+          navbar: 'zoom move fullscreen'
         });
       }, 0);
     }

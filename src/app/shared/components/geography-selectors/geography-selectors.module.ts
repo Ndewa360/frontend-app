@@ -25,14 +25,12 @@ import { CountryCitySelectorComponent } from '../country-city-selector/country-c
  */
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
     CountrySelectorComponent,
     CitySelectorComponent,
     CountryCitySelectorComponent
-  ],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule
   ],
   exports: [
     CountrySelectorComponent,

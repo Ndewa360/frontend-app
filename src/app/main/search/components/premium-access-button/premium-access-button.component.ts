@@ -6,11 +6,19 @@ import { PremiumAccessState, PremiumAccessAction } from 'src/app/shared/store/pr
 import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
+import { PremiumAccessModalComponent } from '../premium-access-modal/premium-access-modal.component';
+import { NgIf, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-premium-access-button',
   templateUrl: './premium-access-button.component.html',
   styleUrls: ['./premium-access-button.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    PremiumAccessModalComponent,
+    DecimalPipe
+  ]
 })
 export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
   @Input() ownerId = '';
@@ -30,7 +38,7 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
     private store: Store,
     private premiumAccessService: PremiumAccessService,
     private anonymousUserService: AnonymousUserService,
-    private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -80,11 +88,11 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
     if (!this.ownerId) return;
 
     const checkState = this.store.selectSnapshot(
-      PremiumAccessState.checkLoadingFor(this.ownerId),
+      PremiumAccessState.checkLoadingFor(this.ownerId)
     );
     if (checkState === 'NO_LOADED') {
       this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
-        this.effectiveUserId, this.ownerId, this.isAnonymous,
+        this.effectiveUserId, this.ownerId, this.isAnonymous
       ));
     }
   }
@@ -102,7 +110,7 @@ export class PremiumAccessButtonComponent implements OnInit, OnDestroy {
     // Forcer un rechargement après fermeture (cas paiement effectué)
     if (this.ownerId) {
       this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
-        this.effectiveUserId, this.ownerId, this.isAnonymous,
+        this.effectiveUserId, this.ownerId, this.isAnonymous
       ));
     }
   }

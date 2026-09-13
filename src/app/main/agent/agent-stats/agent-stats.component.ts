@@ -12,7 +12,8 @@ import { Component, OnInit } from '@angular/core';
     .agent-stats-container {
       padding: 2rem;
     }
-  `]
+  `],
+  standalone: true
 })
 export class AgentStatsComponent implements OnInit {
   constructor() { }

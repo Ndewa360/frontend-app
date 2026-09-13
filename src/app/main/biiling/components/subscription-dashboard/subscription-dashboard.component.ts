@@ -1,7 +1,7 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import {
@@ -12,18 +12,24 @@ import {
   SouscriptionPeriodAction,
   SouscriptionPeriodModel,
   SouscriptionPlan,
-  SouscriptionPayementState,
+  SouscriptionPayementState
 } from 'src/app/shared/store';
 import { SubscriptionPaymentState, SubscriptionPaymentAction } from 'src/app/shared/store/subscription-payment';
 import { SubscriptionLimitAction } from 'src/app/shared/store/subscription-limit';
 import { PaymentSessionService } from 'src/app/shared/services/payment-session.service';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { InvoiceDownloadService } from 'src/app/shared/services/invoice-download.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { AppLoaderComponent } from '../../../../../@youpez/components/app-loader/app-loader.component';
+import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-subscription-dashboard',
   templateUrl: './subscription-dashboard.component.html',
-  styleUrls: ['./subscription-dashboard.component.scss']
+  styleUrls: ['./subscription-dashboard.component.scss'],
+  standalone: true,
+  imports: [NgIf, AppLoaderComponent, NgClass, ExtendedModule, RouterLink, NgFor, AsyncPipe, TranslatePipe]
 })
 export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -55,7 +61,7 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private paymentSessionService: PaymentSessionService,
-    private invoiceDownloadService: InvoiceDownloadService,
+    private invoiceDownloadService: InvoiceDownloadService
   ) {}
 
   ngOnInit(): void {
@@ -171,7 +177,7 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       userEmail: profile?.email,
       metadata: { periodId: this.currentPeriod._id, subscriptionId: this.currentSubscription?._id, lang: this.lang },
       successRedirectPath: `${currentPath}?payment=success`,
-      cancelRedirectPath: currentPath,
+      cancelRedirectPath: currentPath
     });
   }
 
@@ -191,7 +197,7 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       userEmail: profile?.email,
       metadata: { periodId: period._id, lang: this.lang },
       successRedirectPath: `${currentPath}?payment=success`,
-      cancelRedirectPath: currentPath,
+      cancelRedirectPath: currentPath
     });
   }
 
@@ -233,7 +239,7 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       [SouscriptionPayementState.PAYED]:           'Payé',
       [SouscriptionPayementState.UNPAYED]:          'En retard',
       [SouscriptionPayementState.WAITING]:          'En attente',
-      [SouscriptionPayementState.SHOULD_NOT_PAYED]: 'Gratuit',
+      [SouscriptionPayementState.SHOULD_NOT_PAYED]: 'Gratuit'
     };
     return labels[period.state] || 'N/A';
   }
@@ -244,7 +250,7 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       [SouscriptionPayementState.PAYED]:           'success',
       [SouscriptionPayementState.UNPAYED]:          'danger',
       [SouscriptionPayementState.WAITING]:          'warning',
-      [SouscriptionPayementState.SHOULD_NOT_PAYED]: 'info',
+      [SouscriptionPayementState.SHOULD_NOT_PAYED]: 'info'
     };
     return colors[period.state] || 'secondary';
   }

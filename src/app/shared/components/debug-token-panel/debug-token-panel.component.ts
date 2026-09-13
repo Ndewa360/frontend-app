@@ -8,6 +8,8 @@ import { UserActivityService, UserActivityState, UserActivityStatus } from '../.
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgClass, NgFor, AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-debug-token-panel',
@@ -209,7 +211,9 @@ import { TranslateService } from '@ngx-translate/core';
       z-index: 9999;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-  `]
+  `],
+  standalone: true,
+  imports: [NgIf, NgClass, ExtendedModule, NgFor, AsyncPipe, DatePipe]
 })
 export class DebugTokenPanelComponent implements OnInit, OnDestroy {
   showPanel = false;
@@ -330,32 +334,32 @@ export class DebugTokenPanelComponent implements OnInit, OnDestroy {
 
   getActivityStateClass(): string {
     switch (this.activityState) {
-      case UserActivityState.ACTIVE: return 'success';
-      case UserActivityState.INACTIVE: return 'warning';
-      case UserActivityState.CRITICAL_INACTIVE: return 'error';
-      default: return '';
+    case UserActivityState.ACTIVE: return 'success';
+    case UserActivityState.INACTIVE: return 'warning';
+    case UserActivityState.CRITICAL_INACTIVE: return 'error';
+    default: return '';
     }
   }
 
   getActivityStateLabel(): string {
     switch (this.activityState) {
-      case UserActivityState.ACTIVE: return '🟢 Actif';
-      case UserActivityState.INACTIVE: return '🟡 Inactif';
-      case UserActivityState.CRITICAL_INACTIVE: return '🔴 Critique';
-      default: return '❓ Inconnu';
+    case UserActivityState.ACTIVE: return '🟢 Actif';
+    case UserActivityState.INACTIVE: return '🟡 Inactif';
+    case UserActivityState.CRITICAL_INACTIVE: return '🔴 Critique';
+    default: return '❓ Inconnu';
     }
   }
 
   getActivityMessage(): string {
     switch (this.activityState) {
-      case UserActivityState.ACTIVE:
-        return '✅ Votre session est active et sécurisée';
-      case UserActivityState.INACTIVE:
-        return '⏰ Session suspendue - Reconnexion requise pour continuer';
-      case UserActivityState.CRITICAL_INACTIVE:
-        return '🔒 Session fermée pour sécurité - Reconnexion obligatoire';
-      default:
-        return 'État d\'activité en cours de détermination...';
+    case UserActivityState.ACTIVE:
+      return '✅ Votre session est active et sécurisée';
+    case UserActivityState.INACTIVE:
+      return '⏰ Session suspendue - Reconnexion requise pour continuer';
+    case UserActivityState.CRITICAL_INACTIVE:
+      return '🔒 Session fermée pour sécurité - Reconnexion obligatoire';
+    default:
+      return 'État d\'activité en cours de détermination...';
     }
   }
 

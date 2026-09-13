@@ -20,16 +20,6 @@ import { ModernDeleteUnitModalComponent } from '../modern-delete-unit-modal/mode
 import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 
 @NgModule({
-  declarations: [
-    ModernTenantModalComponent,
-    ModernUnitModalComponent,
-    ModernPaymentModalComponent,
-    ModernDeletePaymentModalComponent,
-    ModernContractTerminationModalComponent,
-    ModernDeleteTenantModalComponent,
-    ModernDeleteUnitModalComponent,
-    PaymentReceiptModalComponent
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -40,7 +30,15 @@ import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-r
     MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    TranslateModule
+    TranslateModule,
+    ModernTenantModalComponent,
+    ModernUnitModalComponent,
+    ModernPaymentModalComponent,
+    ModernDeletePaymentModalComponent,
+    ModernContractTerminationModalComponent,
+    ModernDeleteTenantModalComponent,
+    ModernDeleteUnitModalComponent,
+    PaymentReceiptModalComponent
   ],
   exports: [
     ModernTenantModalComponent,

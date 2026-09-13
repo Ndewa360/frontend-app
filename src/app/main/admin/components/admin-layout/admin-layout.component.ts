@@ -1,14 +1,17 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { UserProfileState } from '../../../../shared/store/user-profile/user-profile.state';
 import { UserProfileAction } from '../../../../shared/store/user-profile/user-profile.actions';
 import { LanguagePreservationService } from '../../../../shared/services/language-preservation.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
+import { SelectModule } from 'carbon-components-angular';
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface AdminMenuItem {
   id: string;
@@ -22,7 +25,9 @@ interface AdminMenuItem {
 @Component({
   selector: 'app-admin-layout',
   templateUrl: './admin-layout.component.html',
-  styleUrls: ['./admin-layout.component.scss']
+  styleUrls: ['./admin-layout.component.scss'],
+  standalone: true,
+  imports: [RouterLink, FormsModule, NgFor, SelectModule, NgIf, RouterOutlet, AsyncPipe, TranslatePipe]
 })
 export class AdminLayoutComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -44,7 +49,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     private store: Store,
     private languagePreservation: LanguagePreservationService,
     private translate: TranslateService,
-    private currencyService: AdminCurrencyService,
+    private currencyService: AdminCurrencyService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +88,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
       { id: 'platform-finance',label: 'Super Wallet',                                                     icon: 'wallet',          route: this.getRouteWithLang('/admin/platform-finance'),description: 'Revenus et retraits plateforme' },
       { id: 'breach',          label: 'Violations de données',                                              icon: 'shield-virus',    route: this.getRouteWithLang('/admin/breach'),          description: 'Registre RGPD des incidents' },
       { id: 'settings',        label: this.translate.instant('ADMIN.MENU.SETTINGS'),                     icon: 'cog',             route: this.getRouteWithLang('/admin/settings'),        description: this.translate.instant('ADMIN.DESCRIPTIONS.SETTINGS') },
-      { id: 'monitoring',      label: this.translate.instant('ADMIN.MENU.MONITORING'),                   icon: 'chart-line',      route: this.getRouteWithLang('/admin/monitoring'),      description: this.translate.instant('ADMIN.DESCRIPTIONS.MONITORING') },
+      { id: 'monitoring',      label: this.translate.instant('ADMIN.MENU.MONITORING'),                   icon: 'chart-line',      route: this.getRouteWithLang('/admin/monitoring'),      description: this.translate.instant('ADMIN.DESCRIPTIONS.MONITORING') }
     ];
   }
 

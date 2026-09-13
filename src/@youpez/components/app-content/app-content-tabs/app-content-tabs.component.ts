@@ -1,6 +1,9 @@
-import {Component, OnInit, Input, Output, ViewEncapsulation} from '@angular/core'
-import {AppTab} from "../../../"
-import {Router} from "@angular/router"
+import {Component, OnInit, Input, Output, ViewEncapsulation} from '@angular/core';
+import {AppTab} from '../../../';
+import {Router} from '@angular/router';
+import { NgFor } from '@angular/common';
+import { TabsModule } from 'carbon-components-angular';
+import { NgScrollbar } from 'ngx-scrollbar';
 
 
 export declare type TabType = 'navigation' | 'sm'
@@ -9,13 +12,15 @@ export declare type TabType = 'navigation' | 'sm'
   selector: 'youpez-content-tabs',
   templateUrl: './app-content-tabs.component.html',
   styleUrls: ['./app-content-tabs.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [NgScrollbar, TabsModule, NgFor]
 })
 export class AppContentTabsComponent implements OnInit {
 
-  @Input() navigation: boolean = true
-  @Input() tabs: AppTab[] = []
-  @Input() contentTitle:string = 'F'
+  @Input() navigation: boolean = true;
+  @Input() tabs: AppTab[] = [];
+  @Input() contentTitle:string = 'F';
 
   constructor(private router: Router) {
   }
@@ -26,7 +31,7 @@ export class AppContentTabsComponent implements OnInit {
   onClick(tab: AppTab) {
     if (this.navigation === true) {
       if (!tab.active) {
-        this.router.navigate([tab.url])
+        this.router.navigate([tab.url]);
       }
     }
   }

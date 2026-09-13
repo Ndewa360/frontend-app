@@ -5,20 +5,34 @@ import {
   ViewChild,
   OnInit,
   OnDestroy,
-  HostListener,
+  HostListener
 } from '@angular/core';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { SeoService } from 'src/app/shared/services/seo/seo.service';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgFor, NgIf, NgClass } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { ExtendedModule } from '@angular/flex-layout/extended';
 
 @Component({
   selector: 'home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  standalone: true,
+  imports: [
+    NgFor,
+    NgIf,
+    NgClass,
+    ExtendedModule,
+    RouterLink,
+    FormsModule,
+    SelectModule
+  ]
 })
 export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('modalVideo') modalVideo!: ElementRef<HTMLVideoElement>;
@@ -38,35 +52,35 @@ export class HomeComponent implements OnInit, OnDestroy {
     { key: 'WHO_PAID',          icon: 'fas fa-question-circle', bg: 'bg-red-100',    color: 'text-red-600'    },
     { key: 'UNTIL_WHEN',        icon: 'fas fa-calendar-times',  bg: 'bg-orange-100', color: 'text-orange-600' },
     { key: 'NO_PROOF',          icon: 'fas fa-file-alt',         bg: 'bg-red-100',    color: 'text-red-600'    },
-    { key: 'MENTAL_MANAGEMENT', icon: 'fas fa-brain',            bg: 'bg-gray-100',   color: 'text-gray-600'   },
+    { key: 'MENTAL_MANAGEMENT', icon: 'fas fa-brain',            bg: 'bg-gray-100',   color: 'text-gray-600'   }
   ];
 
   readonly ownerFaqs = [
     { key: 'ACCESS',    icon: 'fas fa-mobile-alt'  },
     { key: 'PAYMENT',   icon: 'fas fa-credit-card' },
     { key: 'SECURITY',  icon: 'fas fa-lock'        },
-    { key: 'IMPORT',    icon: 'fas fa-download'    },
+    { key: 'IMPORT',    icon: 'fas fa-download'    }
   ];
 
   readonly agentPains = [
     { key: 'NO_TOOLS',    icon: 'fas fa-tools'       },
     { key: 'NO_PROFILE',  icon: 'fas fa-id-card-alt' },
     { key: 'NO_TRACKING', icon: 'fas fa-chart-line'  },
-    { key: 'NO_TRUST',    icon: 'fas fa-handshake'   },
+    { key: 'NO_TRUST',    icon: 'fas fa-handshake'   }
   ];
 
   readonly seekerPains = [
     { key: 'FAKE_ADS',    icon: 'fas fa-ban'          },
     { key: 'NO_VISIT',    icon: 'fas fa-eye-slash'    },
     { key: 'UNREACHABLE', icon: 'fas fa-phone-slash'  },
-    { key: 'WASTED_TIME', icon: 'fas fa-clock'        },
+    { key: 'WASTED_TIME', icon: 'fas fa-clock'        }
   ];
 
   readonly agentAdvantages = [
     { titleKey: 'ADV_1_TITLE', descKey: 'ADV_1_DESC', icon: 'fas fa-id-card',   bg: 'bg-green-100',  color: 'text-green-600'  },
     { titleKey: 'ADV_2_TITLE', descKey: 'ADV_2_DESC', icon: 'fas fa-building',  bg: 'bg-blue-100',   color: 'text-blue-600'   },
     { titleKey: 'ADV_3_TITLE', descKey: 'ADV_3_DESC', icon: 'fas fa-chart-bar', bg: 'bg-purple-100', color: 'text-purple-600' },
-    { titleKey: 'ADV_4_TITLE', descKey: 'ADV_4_DESC', icon: 'fas fa-users',     bg: 'bg-yellow-100', color: 'text-yellow-600' },
+    { titleKey: 'ADV_4_TITLE', descKey: 'ADV_4_DESC', icon: 'fas fa-users',     bg: 'bg-yellow-100', color: 'text-yellow-600' }
   ];
 
   readonly agentSteps = [1, 2, 3, 4]; // utilisé pour le parcours validation
@@ -77,14 +91,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     { key: 'AGENT_REGISTER',  icon: 'fas fa-user-plus'   },
     { key: 'AGENT_VALIDATION', icon: 'fas fa-shield-alt' },
     { key: 'AGENT_PAYMENT',    icon: 'fas fa-credit-card'},
-    { key: 'SUPPORT',          icon: 'fas fa-headset'    },
+    { key: 'SUPPORT',          icon: 'fas fa-headset'    }
   ];
 
   readonly seekerFeatures = [
     { titleKey: 'FEAT_1_TITLE', descKey: 'FEAT_1_DESC', icon: 'fas fa-search',       premium: false },
     { titleKey: 'FEAT_2_TITLE', descKey: 'FEAT_2_DESC', icon: 'fas fa-street-view',  premium: false },
     { titleKey: 'FEAT_3_TITLE', descKey: 'FEAT_3_DESC', icon: 'fas fa-filter',       premium: false },
-    { titleKey: 'FEAT_4_TITLE', descKey: 'FEAT_4_DESC', icon: 'fas fa-phone-alt',    premium: true  },
+    { titleKey: 'FEAT_4_TITLE', descKey: 'FEAT_4_DESC', icon: 'fas fa-phone-alt',    premium: true  }
   ];
 
   readonly seekerPricingFeatures = ['FREE_SEARCH', 'TOURS_360', 'VERIFIED_LISTINGS', 'PREMIUM_ACCESS'];
@@ -93,7 +107,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     { key: 'SEEKER_SEARCH',   icon: 'fas fa-search'      },
     { key: 'SEEKER_360',      icon: 'fas fa-street-view' },
     { key: 'SEEKER_PAYMENT',  icon: 'fas fa-credit-card' },
-    { key: 'COUNTRIES',       icon: 'fas fa-globe'       },
+    { key: 'COUNTRIES',       icon: 'fas fa-globe'       }
   ];
 
   // Données illustration Hero
@@ -102,7 +116,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly heroPayments = [
     { initials: 'JD', name: 'Jean Dupont',    unit: 'Studio A2', amount: '85 000 FCFA', paid: true,  color: 'gold'  },
     { initials: 'MT', name: 'Mbamba Junior', unit: 'Appt B1',   amount: '120 000 FCFA', paid: true,  color: 'green' },
-    { initials: 'SN', name: 'Jaures NGUEUTCHEU',    unit: 'Chambre 3', amount: '45 000 FCFA', paid: false, color: 'red'   },
+    { initials: 'SN', name: 'Jaures NGUEUTCHEU',    unit: 'Chambre 3', amount: '45 000 FCFA', paid: false, color: 'red'   }
   ];
 
   // Points clés de la démo propriétaire
@@ -110,7 +124,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     { key: 'DASHBOARD', icon: 'fas fa-chart-line'     },
     { key: 'PAYMENT',   icon: 'fas fa-credit-card'    },
     { key: 'CONTRACT',  icon: 'fas fa-file-contract'  },
-    { key: 'ALERT',     icon: 'fas fa-bell'           },
+    { key: 'ALERT',     icon: 'fas fa-bell'           }
   ];
 
   // Avantages démo agent (section inline)
@@ -118,7 +132,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     { key: 'DURATION',    icon: 'fas fa-clock'       },
     { key: 'PERSONAL',    icon: 'fas fa-user-tie'    },
     { key: 'QUESTIONS',   icon: 'fas fa-comments'    },
-    { key: 'SETUP',       icon: 'fas fa-rocket'      },
+    { key: 'SETUP',       icon: 'fas fa-rocket'      }
   ];
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -131,7 +145,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private languageUrlService: LanguageUrlService,
     private http: HttpClient,
     private seoService: SeoService,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
@@ -210,11 +224,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       name: this.agentDemoForm.name,
       email: this.agentDemoForm.email,
       tel: this.agentDemoForm.phone,
-      object: `Demande de démo agent${this.agentDemoForm.agency ? ' — ' + this.agentDemoForm.agency : ''}`,
-      message: `Portefeuille : ${this.agentDemoForm.portfolio || 'non renseigné'}\nAgence : ${this.agentDemoForm.agency || 'non renseignée'}\nTéléphone : ${this.agentDemoForm.phone}`,
+      object: `Demande de démo agent${this.agentDemoForm.agency ? ` — ${  this.agentDemoForm.agency}` : ''}`,
+      message: `Portefeuille : ${this.agentDemoForm.portfolio || 'non renseigné'}\nAgence : ${this.agentDemoForm.agency || 'non renseignée'}\nTéléphone : ${this.agentDemoForm.phone}`
     }).subscribe({
       next: () => this.onDemoSuccess(),
-      error: () => this.onDemoSuccess(),
+      error: () => this.onDemoSuccess()
     });
   }
 

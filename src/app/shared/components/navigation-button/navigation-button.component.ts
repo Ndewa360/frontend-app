@@ -3,11 +3,15 @@ import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { NavigationLoaderService } from '../../services/navigation-loader.service';
 import { ibmIconSizeType } from 'src/@youpez/components/ibm-icon/ibm-icon.component';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-navigation-button',
   templateUrl: './navigation-button.component.html',
-  styleUrls: ['./navigation-button.component.scss']
+  styleUrls: ['./navigation-button.component.scss'],
+  standalone: true,
+  imports: [NgIf, IbmIconComponent]
 })
 export class NavigationButtonComponent implements OnInit, OnDestroy {
   @Input() route: string = '';

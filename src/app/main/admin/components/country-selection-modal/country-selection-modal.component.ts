@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, startWith, switchMap, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { RestCountriesService, RestCountry, Region } from '../../services/rest-countries.service';
 import { AdminGeographyService } from '../../services/admin-geography.service';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 export interface CountrySelectionModalData {
   title?: string;
@@ -22,7 +23,9 @@ export interface CountrySelectionResult {
 @Component({
   selector: 'app-country-selection-modal',
   templateUrl: './country-selection-modal.component.html',
-  styleUrls: ['./country-selection-modal.component.scss']
+  styleUrls: ['./country-selection-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, AsyncPipe]
 })
 export class CountrySelectionModalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

@@ -5,11 +5,15 @@ import { HistoryItem } from '../../services/property-data.service';
 import { PropertyDetailsTranslationService } from '../../services/property-details-translation.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgIf, NgFor, LowerCasePipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-property-overview',
   templateUrl: './property-overview.component.html',
-  styleUrls: ['./property-overview.component.scss']
+  styleUrls: ['./property-overview.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, LowerCasePipe, DatePipe, TranslatePipe]
 })
 export class PropertyOverviewComponent implements OnInit, OnChanges {
   @Input() property: PropertyModel | null = null;
@@ -189,7 +193,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getOverduePayments(): number {
-    return this.propertyMetricsService.getOverduePayments(this.history)
+    return this.propertyMetricsService.getOverduePayments(this.history);
   }
 
   getRevenuePerUnit(): number {
@@ -198,35 +202,35 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getSecurityDeposits(): number {
-    return this.propertyMetricsService.getSecurityDeposits(this.tenants,this.units)
+    return this.propertyMetricsService.getSecurityDeposits(this.tenants,this.units);
   }
 
   getMonthlyExpenses(): number {
-    return this.propertyMetricsService.getMonthlyExpenses(this.property)
+    return this.propertyMetricsService.getMonthlyExpenses(this.property);
   }
 
   getManagementFees(): number {
-    return this.propertyMetricsService.getManagementFees(this.property)
+    return this.propertyMetricsService.getManagementFees(this.property);
   }
 
   getMaintenanceCosts(): number {
-    return this.propertyMetricsService.getMaintenanceCosts(this.property)
+    return this.propertyMetricsService.getMaintenanceCosts(this.property);
   }
 
   getInsuranceCosts(): number {
-    return this.propertyMetricsService.getInsuranceCosts(this.property)
+    return this.propertyMetricsService.getInsuranceCosts(this.property);
   }
 
   getNetProfit(): number {
-    return this.propertyMetricsService.getNetProfit(this.metrics,this.property)
+    return this.propertyMetricsService.getNetProfit(this.metrics,this.property);
   }
 
   getNetProfitMargin(): number {
-    return this.propertyMetricsService.getNetProfitMargin(this.metrics,this.property)
+    return this.propertyMetricsService.getNetProfitMargin(this.metrics,this.property);
   }
 
   getAnnualYield(): number {
-    return this.propertyMetricsService.getAnnualYield(this.metrics,this.property)
+    return this.propertyMetricsService.getAnnualYield(this.metrics,this.property);
   }
 
   getPropertyStatus(): string {
@@ -238,7 +242,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   }
 
   getPropertyValue(): number {
-    return this.propertyMetricsService.getPropertyValue(this.metrics,this.property)
+    return this.propertyMetricsService.getPropertyValue(this.metrics,this.property);
   }
 
   getPerformanceStatus(): string {
@@ -258,27 +262,27 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   getNextPaymentDate()
   {
-    return this.propertyMetricsService.getNextPaymentDate(this.history)
+    return this.propertyMetricsService.getNextPaymentDate(this.history);
   }
 
   getLastInspectionDate()
   {
-    return this.propertyMetricsService.getLastInspectionDate(this.history)
+    return this.propertyMetricsService.getLastInspectionDate(this.history);
   }
 
   getNextMaintenanceDate()
   {
-    return this.propertyMetricsService.getNextMaintenanceDate(this.history)
+    return this.propertyMetricsService.getNextMaintenanceDate(this.history);
   }
   
 
   // Nouvelles méthodes pour des données réelles et non redondantes
   getActualMonthlyRevenue(): number {
-    return this.propertyMetricsService.getActualMonthlyRevenue(this.units)
+    return this.propertyMetricsService.getActualMonthlyRevenue(this.units);
   }
 
   getRevenueGrowth(): number {
-    return this.propertyMetricsService.getRevenueGrowth(this.history)
+    return this.propertyMetricsService.getRevenueGrowth(this.history);
   }
 
   getActualOccupancyRate(): number {
@@ -349,19 +353,19 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   // Méthodes pour les données financières réelles (non redondantes)
   getActualMonthlyExpenses(): number {
-    return this.propertyMetricsService.getActualMonthlyExpenses(this.property,this.units)
+    return this.propertyMetricsService.getActualMonthlyExpenses(this.property,this.units);
   }
 
   getActualManagementFees(): number {
-    return this.propertyMetricsService.getActualManagementFees(this.units)
+    return this.propertyMetricsService.getActualManagementFees(this.units);
   }
 
   getActualNetProfit(): number {
-    return this.propertyMetricsService.getActualNetProfit(this.property,this.units)
+    return this.propertyMetricsService.getActualNetProfit(this.property,this.units);
   }
 
   getRentRange(){
-    return this.propertyMetricsService.getRentRange(this.units)
+    return this.propertyMetricsService.getRentRange(this.units);
   }
 
 
@@ -556,7 +560,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   onEditProperty()
   {
-    this.quickAction.emit("edit_property")
+    this.quickAction.emit('edit_property');
   }
 
   // Méthodes pour les tendances
@@ -571,18 +575,18 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
   getTrendIcon(): string {
     const trend = this.getRevenueTrend();
     switch (trend) {
-      case 'up': return 'trendUp';
-      case 'down': return 'trendDown';
-      default: return 'trendFlat';
+    case 'up': return 'trendUp';
+    case 'down': return 'trendDown';
+    default: return 'trendFlat';
     }
   }
 
   getTrendColor(): string {
     const trend = this.getRevenueTrend();
     switch (trend) {
-      case 'up': return 'text-green-600';
-      case 'down': return 'text-red-600';
-      default: return 'text-gray-600';
+    case 'up': return 'text-green-600';
+    case 'down': return 'text-red-600';
+    default: return 'text-gray-600';
     }
   }
 

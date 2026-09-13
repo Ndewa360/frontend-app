@@ -1,22 +1,31 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms"
-import {ActivatedRoute, Router} from "@angular/router"
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Actions, ofActionCompleted,ofActionSuccessful, Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 import { UserProfileAction } from 'src/app/shared/store';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { IbmIconComponent } from '../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { LoadingModule } from 'carbon-components-angular/loading';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { NgIf } from '@angular/common';
+import { InputModule } from 'carbon-components-angular';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
 
 @Component({
   selector: 'app-auth-reset-password',
   templateUrl: './auth-reset-password.component.html',
   styleUrls: ['./auth-reset-password.component.scss'],
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [ExtendedModule, AppLogoComponent, FormsModule, ReactiveFormsModule, InputModule, NgIf, ButtonModule, LoadingModule, IbmIconComponent, RouterLink, TranslatePipe]
 })
 export class AuthResetPasswordComponent implements OnInit {
 
   public formGroup: UntypedFormGroup;
-  token = ""
+  token = '';
   waittingResponse: boolean = false;
   showPassword = false;
   showConfirmPassword = false;
@@ -30,36 +39,36 @@ export class AuthResetPasswordComponent implements OnInit {
     private _toastrService:ToastrService,
     private languageUrlService: LanguageUrlService,
     private translate: TranslateService
-   ) {
+  ) {
   }
 
   ngOnInit(): void {
-    if(!this.route.snapshot.queryParamMap.has("resetTokenPwd"))
-      {
-        this._toastrService.error(this.translate.instant('NOTIFICATIONS.TOKEN_NOT_PROVIDED'), 'Ndewa360°');
-        const currentLang = this.languageUrlService.getCurrentLanguage();
-        this.router.navigate([`/${currentLang}/auth/signin`])
-        return;
-      }
-    this.token = this.route.snapshot.queryParamMap.get("resetTokenPwd");
+    if(!this.route.snapshot.queryParamMap.has('resetTokenPwd'))
+    {
+      this._toastrService.error(this.translate.instant('NOTIFICATIONS.TOKEN_NOT_PROVIDED'), 'Ndewa360°');
+      const currentLang = this.languageUrlService.getCurrentLanguage();
+      this.router.navigate([`/${currentLang}/auth/signin`]);
+      return;
+    }
+    this.token = this.route.snapshot.queryParamMap.get('resetTokenPwd');
     
     this.formGroup = this.formBuilder.group({
-      password: ['', [Validators.required,]],
-      passwordConfirm: ['', [Validators.required,]],
-    })
+      password: ['', [Validators.required]],
+      passwordConfirm: ['', [Validators.required]]
+    });
     
     this._ngxsAction.pipe(ofActionCompleted(UserProfileAction.ResetPasswordForUserProfile)).subscribe(
       (value) => {
         this.waittingResponse=false;        
       }
-    )
+    );
 
     this._ngxsAction.pipe(ofActionSuccessful(UserProfileAction.ResetPasswordForUserProfile)).subscribe(
       (value) => {
         const currentLang = this.languageUrlService.getCurrentLanguage();
-        this.router.navigate([`/${currentLang}/auth/signin`])
+        this.router.navigate([`/${currentLang}/auth/signin`]);
       }
-    )
+    );
   }
 
   onSubmit() {
@@ -72,8 +81,8 @@ export class AuthResetPasswordComponent implements OnInit {
   }
 
   isValid(name) {
-    const instance = this.formGroup.get(name)
-    return instance.invalid && (instance.dirty || instance.touched)
+    const instance = this.formGroup.get(name);
+    return instance.invalid && (instance.dirty || instance.touched);
   }
 
   togglePasswordVisibility() {
@@ -85,7 +94,7 @@ export class AuthResetPasswordComponent implements OnInit {
   }
   isValidConfirmPassword()
   {
-    return this.isValid("passwordConfirm") || this.formGroup.value.password != this.formGroup.value.passwordConfirm
+    return this.isValid('passwordConfirm') || this.formGroup.value.password != this.formGroup.value.passwordConfirm;
   }
   getValidText()
   {

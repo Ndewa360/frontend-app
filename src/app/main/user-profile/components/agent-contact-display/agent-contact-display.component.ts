@@ -1,14 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
+import { NgIf } from '@angular/common';
 
 export type ContactDisplayMode = 'AGENCY' | 'OWNER';
 
 @Component({
   selector: 'app-agent-contact-display-settings',
   templateUrl: './agent-contact-display.component.html',
-  styleUrls: ['./agent-contact-display.component.scss']
+  styleUrls: ['./agent-contact-display.component.scss'],
+  standalone: true,
+  imports: [NgIf, TranslatePipe]
 })
 export class AgentContactDisplaySettingsComponent implements OnInit {
   @Input() userId = '';

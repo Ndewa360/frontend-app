@@ -1,12 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
 import { PropertyManagerAction, ManagerPermission, PERMISSION_LABELS } from 'src/app/shared/store/property-manager';
 import { PropertyManagerApiService } from 'src/app/shared/store/property-manager/property-manager.service';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 export interface AssignManagerModalData {
   propertyId: string;
@@ -17,6 +18,15 @@ export interface AssignManagerModalData {
   selector: 'app-assign-manager-modal',
   templateUrl: './assign-manager-modal.component.html',
   styleUrls: ['./assign-manager-modal.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    AsyncPipe,
+    TranslatePipe
+  ]
 })
 export class AssignManagerModalComponent implements OnInit {
   activeTab: 'new' | 'existing' = 'new';
@@ -25,7 +35,7 @@ export class AssignManagerModalComponent implements OnInit {
   existingManagerForm: FormGroup;
 
   allPermissions: { key: ManagerPermission; label: string }[] = Object.entries(PERMISSION_LABELS).map(
-    ([key, label]) => ({ key: key as ManagerPermission, label }),
+    ([key, label]) => ({ key: key as ManagerPermission, label })
   );
 
   selectedPermissions: ManagerPermission[] = ['VIEW_PROPERTY'];
@@ -43,17 +53,17 @@ export class AssignManagerModalComponent implements OnInit {
     private api: PropertyManagerApiService,
     private translate: TranslateService,
     public dialogRef: MatDialogRef<AssignManagerModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AssignManagerModalData,
+    @Inject(MAT_DIALOG_DATA) public data: AssignManagerModalData
   ) {}
 
   ngOnInit(): void {
     this.newManagerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]]
     });
 
     this.existingManagerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]]
     });
 
     // Auto-recherche sur l'email dans l'onglet "existant"
@@ -68,9 +78,9 @@ export class AssignManagerModalComponent implements OnInit {
           catchError(() => {
             this.searchError = this.translate.instant('PROPERTY_MANAGERS.MODAL.NOT_FOUND');
             return of(null);
-          }),
+          })
         );
-      }),
+      })
     ).subscribe(result => {
       this.searching = false;
       this.searchResult = result?.data || null;
@@ -110,10 +120,10 @@ export class AssignManagerModalComponent implements OnInit {
     this.store.dispatch(new PropertyManagerAction.CreateAndAssign({
       name, email,
       propertyId: this.data.propertyId,
-      permissions: this.selectedPermissions,
+      permissions: this.selectedPermissions
     })).subscribe({
       next: () => this.dialogRef.close(true),
-      error: () => {},
+      error: () => {}
     });
   }
 
@@ -123,10 +133,10 @@ export class AssignManagerModalComponent implements OnInit {
     this.store.dispatch(new PropertyManagerAction.AssignExisting({
       email,
       propertyId: this.data.propertyId,
-      permissions: this.selectedPermissions,
+      permissions: this.selectedPermissions
     })).subscribe({
       next: () => this.dialogRef.close(true),
-      error: () => {},
+      error: () => {}
     });
   }
 

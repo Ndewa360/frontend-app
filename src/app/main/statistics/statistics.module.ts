@@ -19,7 +19,11 @@ import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    StatisticsRoutingModule,
+    SharedModule,
+    FormsModule,
     ChartNombreLocataireComponent,
     ChartPieNomnbreComponent,
     ChartNombreRoomComponent,
@@ -33,13 +37,7 @@ import { FormsModule } from '@angular/forms';
     ExportDialogComponent,
     PerformanceAlertsComponent
   ],
-  imports: [
-    CommonModule,
-    StatisticsRoutingModule,
-    SharedModule,
-    FormsModule
-  ],
-  exports:[
+  exports: [
     ChartNombreLocataireComponent,
     ChartNombreRoomComponent,
     ChartFinanceRoomComponent,
@@ -52,6 +50,6 @@ import { FormsModule } from '@angular/forms';
     PerformanceAlertsComponent,
     BasicChartComponent
   ],
-  providers:    [ CurrencyPipe ]
+  providers: [CurrencyPipe]
 })
 export class StatisticsModule { }

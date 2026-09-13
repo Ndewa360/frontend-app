@@ -6,6 +6,11 @@ import {
 import { TranslationUtilsService } from 'src/app/shared/services/translation-utils.service';
 import { ExportData } from '../../property-finances.component';
 import { PropertyFinancialManagerService } from 'src/app/main/properties/services/property-financial-manager.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgClass, NgFor, NgIf, DecimalPipe, CurrencyPipe } from '@angular/common';
 
 export interface ActualRevenueData {
   unitCode: string;
@@ -42,7 +47,9 @@ export interface RevenueSummary {
 @Component({
   selector: 'app-actual-revenue-analysis',
   templateUrl: './actual-revenue-analysis.component.html',
-  styleUrls: ['./actual-revenue-analysis.component.css']
+  styleUrls: ['./actual-revenue-analysis.component.css'],
+  standalone: true,
+  imports: [NgClass, ExtendedModule, FormsModule, SelectModule, NgFor, NgIf, DecimalPipe, CurrencyPipe, TranslatePipe]
 })
 export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
   
@@ -204,15 +211,15 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
       let comparison = 0;
 
       switch (this.sortBy) {
-        case 'unit':
-          comparison = a.unitCode.localeCompare(b.unitCode);
-          break;
-        case 'difference':
-          comparison = a.yearlyDifference - b.yearlyDifference;
-          break;
-        case 'percentage':
-          comparison = a.yearlyDifferencePercentage - b.yearlyDifferencePercentage;
-          break;
+      case 'unit':
+        comparison = a.unitCode.localeCompare(b.unitCode);
+        break;
+      case 'difference':
+        comparison = a.yearlyDifference - b.yearlyDifference;
+        break;
+      case 'percentage':
+        comparison = a.yearlyDifferencePercentage - b.yearlyDifferencePercentage;
+        break;
       }
 
       return this.sortDirection === 'desc' ? -comparison : comparison;
@@ -223,14 +230,14 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
   getFilteredData(): ActualRevenueData[] {
     return this.revenueData.filter(unit => {
       switch (this.selectedFilter) {
-        case 'overpayments':
-          return unit.yearlyDifference > 0;
-        case 'underpayments':
-          return unit.yearlyDifference < 0;
-        case 'exact':
-          return unit.yearlyDifference === 0;
-        default:
-          return true;
+      case 'overpayments':
+        return unit.yearlyDifference > 0;
+      case 'underpayments':
+        return unit.yearlyDifference < 0;
+      case 'exact':
+        return unit.yearlyDifference === 0;
+      default:
+        return true;
       }
     });
   }
@@ -282,7 +289,7 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'excel',
-      data: data,
+      data,
       filename: `analyse-revenus-effectifs-${this.selectedYear}.xlsx`
     });
   }
@@ -291,7 +298,7 @@ export class ActualRevenueAnalysisComponent implements OnInit, OnChanges {
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'csv',
-      data: data,
+      data,
       filename: `analyse-revenus-effectifs-${this.selectedYear}.csv`
     });
   }

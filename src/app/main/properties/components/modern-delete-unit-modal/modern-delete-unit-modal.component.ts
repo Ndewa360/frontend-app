@@ -4,6 +4,7 @@ import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { RoomModel, RoomAction } from 'src/app/shared/store';
+import { NgIf } from '@angular/common';
 
 export interface DeleteUnitModalData {
   unit: RoomModel;
@@ -13,7 +14,9 @@ export interface DeleteUnitModalData {
 @Component({
   selector: 'app-modern-delete-unit-modal',
   templateUrl: './modern-delete-unit-modal.component.html',
-  styleUrls: ['./modern-delete-unit-modal.component.scss']
+  styleUrls: ['./modern-delete-unit-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf]
 })
 export class ModernDeleteUnitModalComponent implements OnInit {
   isDeleting = false;

@@ -3,11 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngxs/store';
 import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
 import { environment } from 'src/environments/environment';
+import { NgIf, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-pending-approval',
   templateUrl: './pending-approval.component.html',
-  styleUrls: ['./pending-approval.component.scss']
+  styleUrls: ['./pending-approval.component.scss'],
+  standalone: true,
+  imports: [NgIf, DatePipe]
 })
 export class PendingApprovalComponent implements OnInit {
   agentProfile: any = null;

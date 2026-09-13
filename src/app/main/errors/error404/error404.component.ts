@@ -6,11 +6,15 @@ import { take } from 'rxjs/operators';
 import { UserProfileState, UserProfileModel } from 'src/app/shared/store';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ButtonModule } from 'carbon-components-angular/button';
 
 @Component({
   selector: 'app-error404',
   templateUrl: './error404.component.html',
-  styleUrls: ['./error404.component.scss']
+  styleUrls: ['./error404.component.scss'],
+  standalone: true,
+  imports: [ButtonModule, TranslatePipe]
 })
 export class Error404Component implements OnInit {
 

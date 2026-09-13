@@ -1,11 +1,13 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { WalletAction, WalletState, WithdrawalMethod } from 'src/app/shared/store/wallet';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgFor, NgClass } from '@angular/common';
 
 const FEE_RATE  = 0.02;  // 2% total (1.5% EasyTransact + 0.5% Ndewa360)
 const MIN_AMOUNT = 500;
@@ -31,6 +33,15 @@ export interface WithdrawalMethodDef {
   selector: 'app-withdrawal-modal',
   templateUrl: './withdrawal-modal.component.html',
   styleUrls: ['./withdrawal-modal.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    NgFor,
+    NgClass,
+    ExtendedModule
+  ]
 })
 export class WithdrawalModalComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -52,7 +63,7 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
       badge:       'OM',
       badgeClass:  'badge--orange',
       placeholder: '6XXXXXXXX',
-      inputType:   'phone',
+      inputType:   'phone'
     },
     {
       value:       'MTN_MONEY',
@@ -61,8 +72,8 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
       badge:       'MTN',
       badgeClass:  'badge--mtn',
       placeholder: '6XXXXXXXX',
-      inputType:   'phone',
-    },
+      inputType:   'phone'
+    }
     // Virement bancaire désactivé — non implémenté côté provider
     // {
     //   value:       'BANK',
@@ -80,12 +91,12 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: { balance: number },
     private fb: FormBuilder,
     private store: Store,
-    private actions: Actions,
+    private actions: Actions
   ) {
     this.form = this.fb.group({
       amount:    [null, [Validators.required, Validators.min(MIN_AMOUNT), Validators.max(Math.min(data.balance, MAX_AMOUNT))]],
       method:    ['', Validators.required],
-      recipient: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]],
+      recipient: ['', [Validators.required, Validators.minLength(9), Validators.maxLength(9)]]
     });
   }
 
@@ -141,14 +152,14 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
         Validators.required,
         Validators.minLength(9),
         Validators.maxLength(9),
-        Validators.pattern(ORANGE_REGEX),
+        Validators.pattern(ORANGE_REGEX)
       ]);
     } else if (method === 'MTN_MONEY') {
       ctrl?.setValidators([
         Validators.required,
         Validators.minLength(9),
         Validators.maxLength(9),
-        Validators.pattern(MTN_REGEX),
+        Validators.pattern(MTN_REGEX)
       ]);
     } else {
       // BANK : IBAN ou numéro de compte (6 à 34 caractères)
@@ -183,7 +194,7 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
 
   formatCurrency(n: number): string {
     return new Intl.NumberFormat('fr-FR', {
-      style: 'currency', currency: 'XAF', minimumFractionDigits: 0,
+      style: 'currency', currency: 'XAF', minimumFractionDigits: 0
     }).format(n || 0);
   }
 }

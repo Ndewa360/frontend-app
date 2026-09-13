@@ -8,7 +8,6 @@ import { AdminSubscriptionsComponent } from './admin-subscriptions.component';
 import { AdminSharedModule } from '../../admin-shared.module';
 
 @NgModule({
-  declarations: [AdminSubscriptionsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -17,6 +16,7 @@ import { AdminSharedModule } from '../../admin-shared.module';
     RouterModule,
     SharedModule,
     AdminSharedModule,
-  ],
+    AdminSubscriptionsComponent
+  ]
 })
 export class AdminSubscriptionsModule { }

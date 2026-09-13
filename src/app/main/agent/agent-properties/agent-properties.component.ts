@@ -12,7 +12,8 @@ import { Component, OnInit } from '@angular/core';
     .agent-properties-container {
       padding: 2rem;
     }
-  `]
+  `],
+  standalone: true
 })
 export class AgentPropertiesComponent implements OnInit {
   constructor() { }

@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 
 import {
@@ -30,11 +30,16 @@ import {
   RoomAction,
   LocationAction
 } from 'src/app/shared/store';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'assignation-assistant',
   templateUrl: './assignation-assistant.component.html',
-  styleUrls: ['./assignation-assistant.component.css']
+  styleUrls: ['./assignation-assistant.component.css'],
+  standalone: true,
+  imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SelectModule, ExtendedModule, NgClass, TranslatePipe, CurrencyPipe, DatePipe]
 })
 export class AssignationAssistantComponent implements OnInit, OnDestroy {
   
@@ -131,7 +136,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     private store: Store,
     private toastr: ToastrService,
     private assistantService: AssignationAssistantService,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {
     this.initializeForms();
   }
@@ -442,85 +447,85 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
   private validateCurrentStep(): void {
     let isValid = false;
-    let errors: string[] = [];
+    const errors: string[] = [];
 
     switch (this.assistantState.etapeActuelle) {
-      case EtapeAssistant.SELECTION_TYPE:
-        isValid = this.typeForm.valid;
-        if (!isValid) {
-          errors.push('Veuillez sélectionner un type d\'assignation');
+    case EtapeAssistant.SELECTION_TYPE:
+      isValid = this.typeForm.valid;
+      if (!isValid) {
+        errors.push('Veuillez sélectionner un type d\'assignation');
+      }
+      break;
+
+    case EtapeAssistant.SELECTION_LOCATAIRE:
+      // Ne pas bloquer sur locatairesList.length : les donnees peuvent encore
+      // se charger. On valide uniquement la selection effective.
+      isValid = this.locataireForm.valid && !!this.assistantState.configuration.locataireId;
+      if (!this.locataireForm.valid) {
+        errors.push('Veuillez selectionner un locataire');
+      }
+      break;
+
+    case EtapeAssistant.SELECTION_CHAMBRE:
+      isValid = this.chambreForm.valid && this.roomsList.length > 0;
+      if (!this.chambreForm.valid) {
+        errors.push('Veuillez sélectionner une chambre');
+      }
+      if (this.roomsList.length === 0) {
+        errors.push('Aucune chambre libre disponible');
+      }
+      break;
+
+    case EtapeAssistant.CONFIGURATION_FINANCIERE:
+      isValid = true;
+
+      const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
+      const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
+      const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+
+      if (typeLocataire === TypeLocataire.NOUVEAU) {
+        // Nouveau locataire : date toujours obligatoire
+        if (!dateEntree) {
+          isValid = false;
+          errors.push('La date d\'entrée est obligatoire pour un nouveau locataire');
         }
-        break;
-
-      case EtapeAssistant.SELECTION_LOCATAIRE:
-        // Ne pas bloquer sur locatairesList.length : les donnees peuvent encore
-        // se charger. On valide uniquement la selection effective.
-        isValid = this.locataireForm.valid && !!this.assistantState.configuration.locataireId;
-        if (!this.locataireForm.valid) {
-          errors.push('Veuillez selectionner un locataire');
+        const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value;
+        if (montantPercu === null || montantPercu === undefined || montantPercu < 0) {
+          isValid = false;
+          errors.push('Veuillez saisir le montant effectivement perçu (0 ou plus)');
         }
-        break;
-
-      case EtapeAssistant.SELECTION_CHAMBRE:
-        isValid = this.chambreForm.valid && this.roomsList.length > 0;
-        if (!this.chambreForm.valid) {
-          errors.push('Veuillez sélectionner une chambre');
+      } else {
+        // Locataire existant : date obligatoire SEULEMENT si la case "date connue" est cochée
+        if (dateEntreeConnue === true && !dateEntree) {
+          isValid = false;
+          errors.push('La date d\'entrée est obligatoire quand "Je connais la date d\'entrée exacte" est coché');
         }
-        if (this.roomsList.length === 0) {
-          errors.push('Aucune chambre libre disponible');
+        // Solde peut être 0, null/undefined seulement invalide
+        const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value;
+        if (soldeActuel === null || soldeActuel === undefined) {
+          isValid = false;
+          errors.push('Veuillez saisir le solde actuel du locataire');
         }
-        break;
+      }
 
-      case EtapeAssistant.CONFIGURATION_FINANCIERE:
-        isValid = true;
+      break;
 
-        const dateEntree = this.configFinanciereForm.get('dateEntree')?.value;
-        const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
-        const typeLocataire = this.typeForm.get('typeLocataire')?.value;
+    case EtapeAssistant.PREVIEW_ECRITURES:
+      // Tenter de calculer les écritures si elles sont vides
+      if (this.ecrituresPrevisionnelles.length === 0) {
+        this.calculerEcrituresComptables();
+      }
+      // IMPORTANT : pour un nouveau locataire sans versement (S1/S2),
+      // genererEcrituresNouveauLocataire retourne [] car montantPaye = 0
+      // et shouldPayCaution peut être false. Ce n'est PAS une erreur —
+      // l'assignation est valide même sans écriture comptable.
+      // On laisse toujours passer cette étape.
+      isValid = true;
+      break;
 
-        if (typeLocataire === TypeLocataire.NOUVEAU) {
-          // Nouveau locataire : date toujours obligatoire
-          if (!dateEntree) {
-            isValid = false;
-            errors.push('La date d\'entrée est obligatoire pour un nouveau locataire');
-          }
-          const montantPercu = this.configFinanciereForm.get('paiementMontant')?.value;
-          if (montantPercu === null || montantPercu === undefined || montantPercu < 0) {
-            isValid = false;
-            errors.push('Veuillez saisir le montant effectivement perçu (0 ou plus)');
-          }
-        } else {
-          // Locataire existant : date obligatoire SEULEMENT si la case "date connue" est cochée
-          if (dateEntreeConnue === true && !dateEntree) {
-            isValid = false;
-            errors.push('La date d\'entrée est obligatoire quand "Je connais la date d\'entrée exacte" est coché');
-          }
-          // Solde peut être 0, null/undefined seulement invalide
-          const soldeActuel = this.configFinanciereForm.get('soldeActuel')?.value;
-          if (soldeActuel === null || soldeActuel === undefined) {
-            isValid = false;
-            errors.push('Veuillez saisir le solde actuel du locataire');
-          }
-        }
-
-        break;
-
-      case EtapeAssistant.PREVIEW_ECRITURES:
-        // Tenter de calculer les écritures si elles sont vides
-        if (this.ecrituresPrevisionnelles.length === 0) {
-          this.calculerEcrituresComptables();
-        }
-        // IMPORTANT : pour un nouveau locataire sans versement (S1/S2),
-        // genererEcrituresNouveauLocataire retourne [] car montantPaye = 0
-        // et shouldPayCaution peut être false. Ce n'est PAS une erreur —
-        // l'assignation est valide même sans écriture comptable.
-        // On laisse toujours passer cette étape.
-        isValid = true;
-        break;
-
-      case EtapeAssistant.CONFIRMATION:
-        isValid = true;
-        break;
+    case EtapeAssistant.CONFIRMATION:
+      isValid = true;
+      break;
     }
 
     this.assistantState.canProceed = isValid;
@@ -607,8 +612,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       locataireId: this.selectedLocataire._id,
       chambreId: this.selectedRoom._id,
       propertyId: this.property._id,
-      typeAssignation: typeAssignation,
-      dateEffet: dateEffet,
+      typeAssignation,
+      dateEffet,
       statut: 'CONFIRME',
       ecrituresPrevisionnelles: this.ecrituresPrevisionnelles || [],
       codeReference: this.generateReferenceCode()
@@ -765,9 +770,9 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
         locataireId: this.assistantState.configuration.locataireId,
         chambreId: this.assistantState.configuration.chambreId,
         propertyId: this.property._id,
-        typeAssignation: typeAssignation, // Utiliser la valeur récupérée du formulaire
+        typeAssignation, // Utiliser la valeur récupérée du formulaire
         dateEffet: this.assistantState.configuration.dateEffet || new Date(),
-        configurationFinanciere: configurationFinanciere,
+        configurationFinanciere,
         ecrituresPrevisionnelles: [], // Sera rempli par le service
         statut: 'BROUILLON'
       };
@@ -893,18 +898,18 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     const dateEntreeConnue = this.configFinanciereForm.get('dateEntreeConnue')?.value;
     
     switch (type) {
-      case TypeLocataire.NOUVEAU:
-        return 'Nouveau locataire';
-      case TypeLocataire.EXISTANT:
-        if (dateEntreeConnue) {
-          return 'Locataire existant (calcul classique)';
-        } else {
-          return 'Locataire existant (calcul intelligent)';
-        }
-      case TypeLocataire.MIGRATION:
-        return 'Migration de locataire';
-      default:
-        return 'Non défini';
+    case TypeLocataire.NOUVEAU:
+      return 'Nouveau locataire';
+    case TypeLocataire.EXISTANT:
+      if (dateEntreeConnue) {
+        return 'Locataire existant (calcul classique)';
+      } else {
+        return 'Locataire existant (calcul intelligent)';
+      }
+    case TypeLocataire.MIGRATION:
+      return 'Migration de locataire';
+    default:
+      return 'Non défini';
     }
   }
 
@@ -974,7 +979,7 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
           statut: 'En attente',
           classe: 'attente',
           icone: 'fa-clock',
-          description: 'Entrée prévue le ' + dateEntreeObj.toLocaleDateString('fr-FR') + ' — aucun versement'
+          description: `Entrée prévue le ${  dateEntreeObj.toLocaleDateString('fr-FR')  } — aucun versement`
         };
       }
     }

@@ -4,7 +4,7 @@ import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { 
   LocationPaymentModel, 
   LocationPaymentAction, 
@@ -14,6 +14,7 @@ import {
   HistoryLocationPaymentModel,
   StatisticAction
 } from 'src/app/shared/store';
+import { NgIf } from '@angular/common';
 
 export interface DeletePaymentModalData {
   transaction: LocationPaymentModel;
@@ -23,7 +24,9 @@ export interface DeletePaymentModalData {
 @Component({
   selector: 'app-modern-delete-payment-modal',
   templateUrl: './modern-delete-payment-modal.component.html',
-  styleUrls: ['./modern-delete-payment-modal.component.scss']
+  styleUrls: ['./modern-delete-payment-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, TranslatePipe]
 })
 export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
   isLoading = false;
@@ -158,12 +161,12 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
 
   getPaymentType(): string {
     switch (this.data.transaction?.paymentLocationType) {
-      case LocationPaymentType.LOCATION:
-        return 'Loyer mensuel';
-      case LocationPaymentType.CAUTION:
-        return 'Caution';
-      default:
-        return 'Autre';
+    case LocationPaymentType.LOCATION:
+      return 'Loyer mensuel';
+    case LocationPaymentType.CAUTION:
+      return 'Caution';
+    default:
+      return 'Autre';
     }
   }
 
@@ -190,23 +193,23 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
 
   getPaymentTypeColor(): string {
     switch (this.data.transaction?.paymentLocationType) {
-      case LocationPaymentType.LOCATION:
-        return 'text-green-600 bg-green-100';
-      case LocationPaymentType.CAUTION:
-        return 'text-blue-600 bg-blue-100';
-      default:
-        return 'text-gray-600 bg-gray-100';
+    case LocationPaymentType.LOCATION:
+      return 'text-green-600 bg-green-100';
+    case LocationPaymentType.CAUTION:
+      return 'text-blue-600 bg-blue-100';
+    default:
+      return 'text-gray-600 bg-gray-100';
     }
   }
 
   getPaymentTypeIcon(): string {
     switch (this.data.transaction?.paymentLocationType) {
-      case LocationPaymentType.LOCATION:
-        return 'home';
-      case LocationPaymentType.CAUTION:
-        return 'shield';
-      default:
-        return 'money';
+    case LocationPaymentType.LOCATION:
+      return 'home';
+    case LocationPaymentType.CAUTION:
+      return 'shield';
+    default:
+      return 'money';
     }
   }
 

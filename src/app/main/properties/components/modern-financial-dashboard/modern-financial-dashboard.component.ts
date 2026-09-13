@@ -5,6 +5,10 @@ import { takeUntil } from 'rxjs/operators';
 import { StatisticState, StatisticAction } from 'src/app/shared/store';
 import { StatisticPaymentOfAllPropertyByYear } from 'src/app/shared/store/statistic-data/statistic.model';
 import { PerformanceAlertsService } from 'src/app/main/statistics/services/performance-alerts.service';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { FormsModule } from '@angular/forms';
+import { SelectModule } from 'carbon-components-angular';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 
 // ─── Interfaces ──────────────────────────────────────────────────────────────
 
@@ -84,7 +88,9 @@ export interface MonthlyParkData {
 @Component({
   selector: 'app-modern-financial-dashboard',
   templateUrl: './modern-financial-dashboard.component.html',
-  styleUrls: ['./modern-financial-dashboard.component.scss']
+  styleUrls: ['./modern-financial-dashboard.component.scss'],
+  standalone: true,
+  imports: [NgFor, SelectModule, FormsModule, NgIf, NgClass, ExtendedModule]
 })
 export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
 
@@ -372,10 +378,10 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   applySortProperties(): void {
     const sorted = [...this.propertiesSummary];
     switch (this.sortBy) {
-      // Tri par totalCoveredInYear (projection) — cohérent avec collectionRate et revenueShare
-      case 'revenue': sorted.sort((a, b) => b.totalCoveredInYear - a.totalCoveredInYear); break;
-      case 'rate':    sorted.sort((a, b) => b.collectionRate - a.collectionRate); break;
-      case 'name':    sorted.sort((a, b) => a.propertyName.localeCompare(b.propertyName)); break;
+    // Tri par totalCoveredInYear (projection) — cohérent avec collectionRate et revenueShare
+    case 'revenue': sorted.sort((a, b) => b.totalCoveredInYear - a.totalCoveredInYear); break;
+    case 'rate':    sorted.sort((a, b) => b.collectionRate - a.collectionRate); break;
+    case 'name':    sorted.sort((a, b) => a.propertyName.localeCompare(b.propertyName)); break;
     }
     this.sortedProperties = sorted;
   }

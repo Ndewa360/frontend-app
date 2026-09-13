@@ -17,11 +17,16 @@ import { ContractTemplateService } from '../../../shared/services/contract-templ
 import { DuplicateTemplateModalComponent } from '../components/duplicate-template-modal/duplicate-template-modal.component';
 import { DeleteConfirmationModalComponent } from '../components/delete-confirmation-modal/delete-confirmation-modal.component';
 import { LanguageUrlService } from '../../../shared/services/language-url.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgClass, AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-contract-template-view',
   templateUrl: './contract-template-view.component.html',
-  styleUrls: ['./contract-template-view.component.scss']
+  styleUrls: ['./contract-template-view.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgClass, ExtendedModule, AsyncPipe, DatePipe, TranslatePipe]
 })
 export class ContractTemplateViewComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -214,14 +219,14 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    */
   getTypeIcon(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'fas fa-file-contract';
-      case ContractTemplateType.CUSTOM:
-        return 'fas fa-file-edit';
-      case ContractTemplateType.DUPLICATED:
-        return 'fas fa-copy';
-      default:
-        return 'fas fa-file';
+    case ContractTemplateType.DEFAULT:
+      return 'fas fa-file-contract';
+    case ContractTemplateType.CUSTOM:
+      return 'fas fa-file-edit';
+    case ContractTemplateType.DUPLICATED:
+      return 'fas fa-copy';
+    default:
+      return 'fas fa-file';
     }
   }
 
@@ -230,14 +235,14 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    */
   getTypeLabel(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'Par défaut';
-      case ContractTemplateType.CUSTOM:
-        return 'Personnalisé';
-      case ContractTemplateType.DUPLICATED:
-        return 'Dupliqué';
-      default:
-        return 'Inconnu';
+    case ContractTemplateType.DEFAULT:
+      return 'Par défaut';
+    case ContractTemplateType.CUSTOM:
+      return 'Personnalisé';
+    case ContractTemplateType.DUPLICATED:
+      return 'Dupliqué';
+    default:
+      return 'Inconnu';
     }
   }
 
@@ -246,14 +251,14 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    */
   getStatusLabel(status: ContractTemplateStatus): string {
     switch (status) {
-      case ContractTemplateStatus.ACTIVE:
-        return 'Actif';
-      case ContractTemplateStatus.INACTIVE:
-        return 'Inactif';
-      case ContractTemplateStatus.ARCHIVED:
-        return 'Archivé';
-      default:
-        return 'Inconnu';
+    case ContractTemplateStatus.ACTIVE:
+      return 'Actif';
+    case ContractTemplateStatus.INACTIVE:
+      return 'Inactif';
+    case ContractTemplateStatus.ARCHIVED:
+      return 'Archivé';
+    default:
+      return 'Inconnu';
     }
   }
 
@@ -273,7 +278,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
   }
 
   /**

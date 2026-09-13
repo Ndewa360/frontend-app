@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import { CityState, CityAction } from '../../store/city';
 import { CityModel } from '../../store/city/city.model';
 import { CountryModel } from '../../store/country/country.model';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 /**
  * 🏙️ COMPOSANT SÉLECTEUR DE VILLE
@@ -33,7 +34,9 @@ import { CountryModel } from '../../store/country/country.model';
       useExisting: forwardRef(() => CitySelectorComponent),
       multi: true
     }
-  ]
+  ],
+  standalone: true,
+  imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, AsyncPipe]
 })
 export class CitySelectorComponent implements OnInit, OnDestroy, OnChanges, ControlValueAccessor, Validator {
   private destroy$ = new Subject<void>();
@@ -122,7 +125,7 @@ export class CitySelectorComponent implements OnInit, OnDestroy, OnChanges, Cont
     ]).pipe(
       takeUntil(this.destroy$),
       map(([searchTerm, cities]) => {
-        let filteredCities = this.filterCitiesByCountry(cities || []);
+        const filteredCities = this.filterCitiesByCountry(cities || []);
         
         if (!searchTerm || searchTerm.trim() === '') {
           return filteredCities;

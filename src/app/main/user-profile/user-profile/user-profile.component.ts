@@ -2,6 +2,11 @@ import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } fro
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { UserProfileModel, UserProfileState, UserProfileAction } from 'src/app/shared/store';
+import { TranslatePipe } from '@ngx-translate/core';
+import { AppLoaderComponent } from '../../../../@youpez/components/app-loader/app-loader.component';
+import { UserProfileInfosComponent } from '../components/user-profile-infos/user-profile-infos.component';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
 
 interface ProfileSection {
   id: string;
@@ -13,7 +18,9 @@ interface ProfileSection {
 @Component({
   selector: 'user-profile',
   templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.css']
+  styleUrls: ['./user-profile.component.css'],
+  standalone: true,
+  imports: [NgFor, NgIf, IbmIconComponent, UserProfileInfosComponent, AppLoaderComponent, AsyncPipe, TranslatePipe]
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
   @ViewChild('profileContent', { static: false }) profileContent: ElementRef;

@@ -8,6 +8,11 @@ import { ApiUploadFileStateFormat, RoomModel, RoomState } from 'src/app/shared/s
 import { RoomAction } from 'src/app/shared/store';
 import { FileUploadContentType, UploadFilesAction, UploadFilesState,ContentUploadRoomType  } from 'src/app/shared/store/files-upload';
 import { MediaUtil } from 'src/app/shared/utils';
+import { FileSizePipe } from '../../../../shared/pipes/file-size.pipe';
+import { FileUploadComponent } from '../../../../shared/components/file-upload/file-upload.component';
+import { GaleryVideo360ItemComponent } from '../../../../shared/components/galery-video360-item/galery-video360-item.component';
+import { NgIf, NgFor } from '@angular/common';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 interface MediaItem {
   url: string;
@@ -31,6 +36,15 @@ interface UploadItem {
   templateUrl: './galery.component.html',
   styleUrls: ['./galery.component.css'],
   encapsulation: ViewEncapsulation.Emulated,
+  standalone: true,
+  imports: [
+    FlexModule,
+    NgIf,
+    NgFor,
+    GaleryVideo360ItemComponent,
+    FileUploadComponent,
+    FileSizePipe
+  ]
 })
 export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -192,11 +206,11 @@ export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private mapStateToStatus(state: string): UploadItem['status'] {
     switch (state) {
-      case 'PENDING': return 'pending';
-      case 'UPLOADING': return 'uploading';
-      case 'DONE': return 'success';
-      case 'ERROR': return 'error';
-      default: return 'pending';
+    case 'PENDING': return 'pending';
+    case 'UPLOADING': return 'uploading';
+    case 'DONE': return 'success';
+    case 'ERROR': return 'error';
+    default: return 'pending';
     }
   }
 
@@ -287,7 +301,7 @@ export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
       
       batch.forEach((file) => {
         this._store.dispatch(new UploadFilesAction.UploadFiles({
-          file: file,
+          file,
           contentID: this.data.room._id,
           contentType: FileUploadContentType.FOR_ROOM_FILE,
           contentRoomType: ContentUploadRoomType.FOR_ROOM
@@ -340,10 +354,10 @@ export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getCurrentMediaList(): string[] {
     switch (this.selectedTab) {
-      case 'images': return this.roomSelectedImages;
-      case 'videos': return this.roomSelectedVideos;
-      case '360': return this.roomSelectedImages360;
-      default: return [];
+    case 'images': return this.roomSelectedImages;
+    case 'videos': return this.roomSelectedVideos;
+    case '360': return this.roomSelectedImages360;
+    default: return [];
     }
   }
 

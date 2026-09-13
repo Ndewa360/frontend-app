@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { NgIf } from '@angular/common';
 
 export interface DeleteConfirmationData {
   title: string;
@@ -13,7 +14,9 @@ export interface DeleteConfirmationData {
 @Component({
   selector: 'app-delete-confirmation-modal',
   templateUrl: './delete-confirmation-modal.component.html',
-  styleUrls: ['./delete-confirmation-modal.component.scss']
+  styleUrls: ['./delete-confirmation-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, TranslatePipe]
 })
 export class DeleteConfirmationModalComponent {
 

@@ -1,27 +1,36 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core'
-import { Observable } from 'rxjs'
-import { takeUntil, filter } from 'rxjs/operators'
-import {Router, NavigationEnd} from "@angular/router"
-import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store'
-import { Actions,Select, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
-import { BaseComponent } from 'src/app/shared/utils/base-component'
-import { NotificationManagerService } from 'src/app/shared/services/notification-manager.service'
-import { AuthStateService } from 'src/app/shared/services/auth-state.service'
-import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
-import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
-import { AgentStatusService } from 'src/app/shared/services/agent-status.service'
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import { Observable } from 'rxjs';
+import { takeUntil, filter } from 'rxjs/operators';
+import {Router, NavigationEnd} from '@angular/router';
+import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store';
+import { Actions,Select, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
+import { BaseComponent } from 'src/app/shared/utils/base-component';
+import { NotificationManagerService } from 'src/app/shared/services/notification-manager.service';
+import { AuthStateService } from 'src/app/shared/services/auth-state.service';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service';
+import { AgentStatusService } from 'src/app/shared/services/agent-status.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SmartNotificationsComponent } from '../../../shared/components/smart-notifications/smart-notifications.component';
+import { NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgClass, AsyncPipe } from '@angular/common';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { AppLogoComponent } from '../../../../@youpez/components/app-logo/app-logo.component';
 
 @Component({
   selector: 'app-main-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
+  standalone: true,
+  imports: [AppLogoComponent, IbmIconComponent, NgIf, NgClass, ExtendedModule, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem, SmartNotificationsComponent, AsyncPipe, TranslatePipe]
 })
 export class HeaderComponent extends BaseComponent implements OnInit {
 
-  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>;
 
-  @Output() menuClick: EventEmitter<boolean> = new EventEmitter()
-  @Output() itemClick: EventEmitter<any> = new EventEmitter()
+  @Output() menuClick: EventEmitter<boolean> = new EventEmitter();
+  @Output() itemClick: EventEmitter<any> = new EventEmitter();
 
   isAdmin = false;
   isAgent = false;

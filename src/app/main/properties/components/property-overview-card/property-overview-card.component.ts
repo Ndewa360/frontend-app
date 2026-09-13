@@ -1,8 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { PropertyModel } from 'src/app/shared/store';
 import { BaseComponent } from 'src/app/shared/utils/base-component';
 import { PropertyImageService } from 'src/app/shared/services/property-image.service';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgClass, NgFor, CurrencyPipe } from '@angular/common';
 
 export interface PropertyAlert {
   type: 'critical' | 'warning' | 'info';
@@ -13,7 +15,9 @@ export interface PropertyAlert {
 @Component({
   selector: 'app-property-overview-card',
   templateUrl: './property-overview-card.component.html',
-  styleUrls: ['./property-overview-card.component.scss']
+  styleUrls: ['./property-overview-card.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgClass, ExtendedModule, NgFor, CurrencyPipe, TranslatePipe]
 })
 export class PropertyOverviewCardComponent extends BaseComponent implements OnInit {
   @Input() property!: PropertyModel;
@@ -95,14 +99,14 @@ export class PropertyOverviewCardComponent extends BaseComponent implements OnIn
 
   getAlertClass(alert: PropertyAlert): string {
     switch (alert.type) {
-      case 'critical':
-        return 'border-red-500 bg-red-50';
-      case 'warning':
-        return 'border-yellow-500 bg-yellow-50';
-      case 'info':
-        return 'border-blue-500 bg-blue-50';
-      default:
-        return 'border-gray-500 bg-gray-50';
+    case 'critical':
+      return 'border-red-500 bg-red-50';
+    case 'warning':
+      return 'border-yellow-500 bg-yellow-50';
+    case 'info':
+      return 'border-blue-500 bg-blue-50';
+    default:
+      return 'border-gray-500 bg-gray-50';
     }
   }
 

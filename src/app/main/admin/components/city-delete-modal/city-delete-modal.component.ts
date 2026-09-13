@@ -3,6 +3,7 @@ import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
 import { AdminGeographyState } from '../../store/geography/admin-geography.state';
+import { NgIf, AsyncPipe, DecimalPipe } from '@angular/common';
 
 export interface CityToDelete {
   _id: string;
@@ -20,7 +21,9 @@ export interface CityToDelete {
 @Component({
   selector: 'app-city-delete-modal',
   templateUrl: './city-delete-modal.component.html',
-  styleUrls: ['./city-delete-modal.component.scss']
+  styleUrls: ['./city-delete-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, AsyncPipe, DecimalPipe]
 })
 export class CityDeleteModalComponent implements OnInit {
   @Input() isOpen: boolean = false;
@@ -46,7 +49,7 @@ export class CityDeleteModalComponent implements OnInit {
       if (!isDeleting) {
         this.closeModal.emit();
       }
-    })
+    });
   }
 
   /**
@@ -113,12 +116,12 @@ export class CityDeleteModalComponent implements OnInit {
     const dangerLevel = this.getDangerLevel();
     
     switch (dangerLevel) {
-      case 'high':
-        return 'Cette ville contient des utilisateurs ou des propriétés. La suppression peut affecter des données importantes.';
-      case 'medium':
-        return 'Cette ville est actuellement active. Sa suppression la rendra indisponible pour les nouveaux utilisateurs.';
-      default:
-        return 'Cette action supprimera définitivement la ville de la base de données.';
+    case 'high':
+      return 'Cette ville contient des utilisateurs ou des propriétés. La suppression peut affecter des données importantes.';
+    case 'medium':
+      return 'Cette ville est actuellement active. Sa suppression la rendra indisponible pour les nouveaux utilisateurs.';
+    default:
+      return 'Cette action supprimera définitivement la ville de la base de données.';
     }
   }
 
@@ -129,12 +132,12 @@ export class CityDeleteModalComponent implements OnInit {
     const dangerLevel = this.getDangerLevel();
     
     switch (dangerLevel) {
-      case 'high':
-        return 'fas fa-exclamation-triangle';
-      case 'medium':
-        return 'fas fa-exclamation-circle';
-      default:
-        return 'fas fa-info-circle';
+    case 'high':
+      return 'fas fa-exclamation-triangle';
+    case 'medium':
+      return 'fas fa-exclamation-circle';
+    default:
+      return 'fas fa-info-circle';
     }
   }
 
@@ -145,12 +148,12 @@ export class CityDeleteModalComponent implements OnInit {
     const dangerLevel = this.getDangerLevel();
     
     switch (dangerLevel) {
-      case 'high':
-        return 'warning-high';
-      case 'medium':
-        return 'warning-medium';
-      default:
-        return 'warning-low';
+    case 'high':
+      return 'warning-high';
+    case 'medium':
+      return 'warning-medium';
+    default:
+      return 'warning-low';
     }
   }
 }

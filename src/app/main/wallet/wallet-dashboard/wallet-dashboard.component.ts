@@ -8,11 +8,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { WalletState, WalletAction, WalletSummary, WalletTransaction, WithdrawalRequest, RecentMovement } from 'src/app/shared/store/wallet';
 import { WithdrawalModalComponent } from '../components/withdrawal-modal/withdrawal-modal.component';
 import { DepositModalComponent } from '../components/deposit-modal/deposit-modal.component';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-wallet-dashboard',
   templateUrl: './wallet-dashboard.component.html',
   styleUrls: ['./wallet-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    AsyncPipe
+  ]
 })
 export class WalletDashboardComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -49,7 +56,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +74,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
     this.summary$.pipe(
       takeUntil(this.destroy$),
       filter(s => !!s),
-      take(1),
+      take(1)
     ).subscribe(summary => {
       const currentPollingId = this.store.selectSnapshot(WalletState.pollingWithdrawalId);
       if (
@@ -103,7 +110,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
       const ref = this.dialog.open(WithdrawalModalComponent, {
         width: '480px',
         disableClose: false,
-        data: { balance: freshSummary?.balance || 0 },
+        data: { balance: freshSummary?.balance || 0 }
       });
       ref.afterClosed().subscribe(result => {
         if (result?.success) this.loadAll();
@@ -114,7 +121,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   openDepositModal(): void {
     const ref = this.dialog.open(DepositModalComponent, {
       width: '480px',
-      disableClose: false,
+      disableClose: false
     });
     ref.afterClosed().subscribe(result => {
       if (result?.success) this.loadAll();
@@ -154,7 +161,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
 
   getPaymentMethodLabel(method: string | null): string {
     const labels: Record<string, string> = {
-      MOBILE_MONEY: 'Mobile Money', CARD: 'Carte bancaire', CASH: 'Espèces', WALLET: 'Wallet',
+      MOBILE_MONEY: 'Mobile Money', CARD: 'Carte bancaire', CASH: 'Espèces', WALLET: 'Wallet'
     };
     return labels[method] || method || '—';
   }
@@ -191,7 +198,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   getTxLabel(type: string): string {
     const labels: Record<string, string> = {
       CREDIT_RENT: 'Loyer reçu', CREDIT_DEPOSIT: 'Dépôt', DEBIT_WITHDRAWAL: 'Retrait',
-      DEBIT_FEE: 'Frais', DEBIT_SUBSCRIPTION: 'Souscription', REFUND: 'Remboursement',
+      DEBIT_FEE: 'Frais', DEBIT_SUBSCRIPTION: 'Souscription', REFUND: 'Remboursement'
     };
     return labels[type] || type;
   }
@@ -202,14 +209,14 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      PENDING: 'En attente', PROCESSING: 'En cours', COMPLETED: 'Effectué', FAILED: 'Échoué', CANCELLED: 'Annulé',
+      PENDING: 'En attente', PROCESSING: 'En cours', COMPLETED: 'Effectué', FAILED: 'Échoué', CANCELLED: 'Annulé'
     };
     return labels[status] || status;
   }
 
   getStatusClass(status: string): string {
     const classes: Record<string, string> = {
-      PENDING: 'warning', PROCESSING: 'info', COMPLETED: 'success', FAILED: 'danger', CANCELLED: 'secondary',
+      PENDING: 'warning', PROCESSING: 'info', COMPLETED: 'success', FAILED: 'danger', CANCELLED: 'secondary'
     };
     return classes[status] || 'secondary';
   }
@@ -217,7 +224,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   getMethodLabel(method: string): string {
     const labels: Record<string, string> = {
       MTN_MONEY: 'MTN Mobile Money', ORANGE_MONEY: 'Orange Money',
-      EASY_TRANSACT: 'Easy Transact', BANK: 'Virement bancaire', WALLET: 'Wallet',
+      EASY_TRANSACT: 'Easy Transact', BANK: 'Virement bancaire', WALLET: 'Wallet'
     };
     return labels[method] || method;
   }

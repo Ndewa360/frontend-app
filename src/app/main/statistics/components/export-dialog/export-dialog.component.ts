@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { ExportService, ExportOptions } from '../../services/export.service';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface ExportDialogData {
   title: string;
@@ -12,7 +13,9 @@ export interface ExportDialogData {
 @Component({
   selector: 'app-export-dialog',
   templateUrl: './export-dialog.component.html',
-  styleUrls: ['./export-dialog.component.css']
+  styleUrls: ['./export-dialog.component.css'],
+  standalone: true,
+  imports: [MatDialogTitle, MatDialogContent, FormsModule, ReactiveFormsModule, NgIf, NgFor, MatDialogActions]
 })
 export class ExportDialogComponent implements OnInit {
   exportForm: FormGroup;
@@ -60,14 +63,14 @@ export class ExportDialogComponent implements OnInit {
 
   private getFilenamePrefix(): string {
     switch (this.data.dataType) {
-      case 'room':
-        return 'statistiques_chambres';
-      case 'tenant':
-        return 'statistiques_locataires';
-      case 'recapitulation':
-        return 'recapitulation_paiements';
-      default:
-        return 'export_statistiques';
+    case 'room':
+      return 'statistiques_chambres';
+    case 'tenant':
+      return 'statistiques_locataires';
+    case 'recapitulation':
+      return 'recapitulation_paiements';
+    default:
+      return 'export_statistiques';
     }
   }
 
@@ -114,17 +117,17 @@ export class ExportDialogComponent implements OnInit {
 
       // Perform export based on data type
       switch (this.data.dataType) {
-        case 'room':
-          await this.exportService.exportRoomStatistics(this.data.data, exportOptions);
-          break;
-        case 'tenant':
-          await this.exportService.exportTenantStatistics(this.data.data, exportOptions);
-          break;
-        case 'recapitulation':
-          await this.exportService.exportPaymentRecapitulation(this.data.data, exportOptions);
-          break;
-        default:
-          throw new Error('Type de données non supporté');
+      case 'room':
+        await this.exportService.exportRoomStatistics(this.data.data, exportOptions);
+        break;
+      case 'tenant':
+        await this.exportService.exportTenantStatistics(this.data.data, exportOptions);
+        break;
+      case 'recapitulation':
+        await this.exportService.exportPaymentRecapitulation(this.data.data, exportOptions);
+        break;
+      default:
+        throw new Error('Type de données non supporté');
       }
 
       // Close dialog on success

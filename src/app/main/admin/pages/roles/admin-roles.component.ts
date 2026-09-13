@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -10,11 +10,15 @@ import { AdminRolesService } from '../../services/admin-roles.service';
 import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
 import { AdminRolesState } from '../../store/roles/admin-roles.state';
 import { AdminRole, AdminPermission, MatrixPermission, PermissionsMatrix } from '../../store/roles/admin-roles.model';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, AsyncPipe, DecimalPipe, TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-roles',
   templateUrl: './admin-roles.component.html',
-  styleUrls: ['./admin-roles.component.scss']
+  styleUrls: ['./admin-roles.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, TitleCasePipe]
 })
 export class AdminRolesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

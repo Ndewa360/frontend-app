@@ -3,11 +3,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { RoomModel, LocataireModel, LocationModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { ModernPaymentModalComponent } from '../../../modern-payment-modal/modern-payment-modal.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-add-payment-modal',
   templateUrl: './add-payment-modal.component.html',
-  styleUrls: ['./add-payment-modal.component.scss']
+  styleUrls: ['./add-payment-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, TranslatePipe]
 })
 export class AddPaymentModalComponent implements OnInit {
   @Input() isOpen: boolean = false;
@@ -108,7 +112,7 @@ export class AddPaymentModalComponent implements OnInit {
         mode: 'create',
         room: this.room,
         tenant: this.tenant,
-        location: location
+        location
       }
     });
 

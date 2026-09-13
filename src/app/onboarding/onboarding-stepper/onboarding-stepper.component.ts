@@ -2,31 +2,29 @@ import {
   Component,
   OnInit,
   OnDestroy,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
-  Validators,
-  FormArray,
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   Actions,
   ofActionCompleted,
   ofActionErrored,
   ofActionSuccessful,
-  Store,
+  Store
 } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { UserProfileAction } from 'src/app/shared/store';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { KundaiService } from '@kundai/angular';
+import { SelectModule } from 'carbon-components-angular';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgFor, NgClass, NgIf } from '@angular/common';
 
 export interface OnboardingData {
   // Étape 1 — Bien
@@ -55,6 +53,18 @@ const STORAGE_KEY = 'ndewa360_onboarding_data';
   templateUrl: './onboarding-stepper.component.html',
   styleUrls: ['./onboarding-stepper.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    RouterLink,
+    NgFor,
+    NgClass,
+    ExtendedModule,
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    SelectModule,
+    TranslatePipe
+  ]
 })
 export class OnboardingStepperComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -89,14 +99,14 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
     { value: 'APARTMENT', label: '', icon: '🏢' },
     { value: 'HOUSE',     label: '', icon: '🏠' },
     { value: 'COMMERCIAL',label: '', icon: '🏪' },
-    { value: 'MIXED',     label: '', icon: '🏗️' },
+    { value: 'MIXED',     label: '', icon: '🏗️' }
   ];
 
   roomTypes = [
     { value: 'room',               label: '' },
     { value: 'studio',             label: '' },
     { value: 'simple_apartment',   label: '' },
-    { value: 'furnished_apartment',label: '' },
+    { value: 'furnished_apartment',label: '' }
   ];
 
   constructor(
@@ -109,7 +119,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private translate: TranslateService,
     private languageUrlService: LanguageUrlService,
-    private kundai: KundaiService,
+    private kundai: KundaiService
   ) {}
 
   ngOnInit(): void {
@@ -141,14 +151,14 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       { value: 'APARTMENT',  label: this.translate.instant('ONBOARDING.STEP1.TYPES.APARTMENT'),  icon: '🏢' },
       { value: 'HOUSE',      label: this.translate.instant('ONBOARDING.STEP1.TYPES.HOUSE'),      icon: '🏠' },
       { value: 'COMMERCIAL', label: this.translate.instant('ONBOARDING.STEP1.TYPES.COMMERCIAL'), icon: '🏪' },
-      { value: 'MIXED',      label: this.translate.instant('ONBOARDING.STEP1.TYPES.MIXED'),      icon: '🏗️' },
+      { value: 'MIXED',      label: this.translate.instant('ONBOARDING.STEP1.TYPES.MIXED'),      icon: '🏗️' }
     ];
 
     this.roomTypes = [
       { value: 'room',                label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.ROOM') },
       { value: 'studio',              label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.STUDIO') },
       { value: 'simple_apartment',    label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.SIMPLE_APARTMENT') },
-      { value: 'furnished_apartment', label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.FURNISHED_APARTMENT') },
+      { value: 'furnished_apartment', label: this.translate.instant('ONBOARDING.STEP2.ROOM_TYPES.FURNISHED_APARTMENT') }
     ];
   }
 
@@ -165,16 +175,16 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       propertyCountryId: ['', Validators.required],
       propertyCityId: ['', Validators.required],
       propertyLocation: ['', [Validators.required, Validators.minLength(2)]],
-      propertyType: ['APARTMENT'],
+      propertyType: ['APARTMENT']
     });
 
     this.step2Form = this.fb.group({
-      units: this.fb.array([this.createUnitGroup()]),
+      units: this.fb.array([this.createUnitGroup()])
     });
 
     this.step3Form = this.fb.group({
       hasTenants: [false],
-      tenants: this.fb.array([]),
+      tenants: this.fb.array([])
     });
 
     this.step4Form = this.fb.group({
@@ -183,13 +193,13 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+\d{1,3}\s)?(\d{2,3}[\s.-]?){2,5}$/)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       userType: [this.userType === 'agent' ? 'AGENT' : 'PROPERTY_OWNER'],
-      acceptTerms: [false, Validators.requiredTrue],
+      acceptTerms: [false, Validators.requiredTrue]
     });
 
     this.agentProfileForm = this.fb.group({
       businessName: ['', [Validators.required, Validators.minLength(2)]],
       businessAddress: [''],
-      businessDescription: [''],
+      businessDescription: ['']
     });
 
     // Quand hasTenants change, ajouter/retirer le premier locataire
@@ -210,7 +220,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       type: ['room', Validators.required],
       price: [null, [Validators.required, Validators.min(1)]],
       shouldPayCaution: [false],
-      cautionPrice: [null],
+      cautionPrice: [null]
     });
   }
 
@@ -218,7 +228,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
     return this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+\d{1,3}\s)?(\d{2,3}[\s.-]?){2,5}$/)]],
-      email: ['', Validators.email],
+      email: ['', Validators.email]
     });
   }
 
@@ -272,7 +282,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.toastr.error(this.translate.instant('ONBOARDING.ERRORS.LOAD_COUNTRIES'), 'Ndewa360°');
-        },
+        }
       });
   }
 
@@ -293,7 +303,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
         error: () => {
           this.loadingCities = false;
           this.toastr.error(this.translate.instant('ONBOARDING.ERRORS.LOAD_CITIES'), 'Ndewa360°');
-        },
+        }
       });
   }
 
@@ -351,7 +361,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
         step: this.currentStep,
         step1: this.step1Form.value,
         step2: this.step2Form.value,
-        step3: this.step3Form.value,
+        step3: this.step3Form.value
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch {}
@@ -415,7 +425,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       name: s4.name.trim(),
       phoneNumber: s4.phoneNumber.trim(),
       userType: this.userType === 'agent' ? 'AGENT' : 'PROPERTY_OWNER',
-      plan: this.plan,
+      plan: this.plan
     };
 
     if (this.userType === 'agent') {
@@ -441,7 +451,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
           geolocationCountry: s1.propertyCountryId,
           geolocationCity: s1.propertyCityId,
           location: s1.propertyLocation.trim(),
-          propertyType: s1.propertyType || 'APARTMENT',
+          propertyType: s1.propertyType || 'APARTMENT'
         };
       }
       if (hasUnits) {
@@ -451,7 +461,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
             type: u.type,
             price: Number(u.price),
             shouldPayCaution: u.shouldPayCaution || false,
-            cautionPrice: u.shouldPayCaution ? Number(u.cautionPrice || 0) : 0,
+            cautionPrice: u.shouldPayCaution ? Number(u.cautionPrice || 0) : 0
           }));
       }
       if (hasTenants) {
@@ -460,7 +470,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
           .map((t: any) => ({
             fullName: t.fullName.trim(),
             phoneNumber: t.phoneNumber.trim(),
-            email: t.email?.trim() || undefined,
+            email: t.email?.trim() || undefined
           }));
       }
     }
@@ -479,7 +489,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
           method: 'onboarding',
           userType: this.userType,
           plan: this.plan,
-          sessionId: this.kundai.getSessionId(),
+          sessionId: this.kundai.getSessionId()
         });
         this.clearStorage();
         const lang = this.languageUrlService.getCurrentLanguage();
@@ -503,11 +513,11 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
 
   isStepValid(step: number): boolean {
     switch (step) {
-      case 1: return this.step1Form.valid;
-      case 2: return this.step2Form.valid;
-      case 3: return this.step3Form.valid;
-      case 4: return this.step4Form.valid;
-      default: return false;
+    case 1: return this.step1Form.valid;
+    case 2: return this.step2Form.valid;
+    case 3: return this.step3Form.valid;
+    case 4: return this.step4Form.valid;
+    default: return false;
     }
   }
 
@@ -525,7 +535,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       const agentKeys: Record<number, string> = {
         1: 'ONBOARDING.AGENT.STEPS.STEP1_LABEL',
         2: 'ONBOARDING.AGENT.STEPS.STEP2_LABEL',
-        3: 'ONBOARDING.AGENT.STEPS.STEP3_LABEL',
+        3: 'ONBOARDING.AGENT.STEPS.STEP3_LABEL'
       };
       return this.translate.instant(agentKeys[step] || '');
     }
@@ -533,7 +543,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       1: 'ONBOARDING.STEPS.STEP1_LABEL',
       2: 'ONBOARDING.STEPS.STEP2_LABEL',
       3: 'ONBOARDING.STEPS.STEP3_LABEL',
-      4: 'ONBOARDING.STEPS.STEP4_LABEL',
+      4: 'ONBOARDING.STEPS.STEP4_LABEL'
     };
     return this.translate.instant(keys[step] || '');
   }

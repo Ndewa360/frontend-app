@@ -3,7 +3,8 @@ import { TranslationUtilsService } from '../services/translation-utils.service';
 
 @Pipe({
   name: 'monthTranslate',
-  pure: false
+  pure: false,
+  standalone: true
 })
 export class MonthTranslatePipe implements PipeTransform {
 

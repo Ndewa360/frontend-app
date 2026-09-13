@@ -1,17 +1,21 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { EchartsComponent } from '../../../../../@youpez/modules/charts/echarts/echarts.component';
+import { EchartsContainerComponent } from '../../../../../@youpez/modules/charts/echarts-container/echarts-container.component';
 
 @Component({
   selector: 'chart-pie-nomnbre',
   templateUrl: './chart-pie-nomnbre.component.html',
-  styleUrls: ['./chart-pie-nomnbre.component.css']
+  styleUrls: ['./chart-pie-nomnbre.component.css'],
+  standalone: true,
+  imports: [EchartsContainerComponent, EchartsComponent]
 })
 export class ChartPieNomnbreComponent implements OnInit, OnChanges {
   @Input() nbreTotal: number = 0;
   @Input() nbreActif: number = 0;
-  @Input() label: string = ''
-  @Input() title: string = ''
-  @Input() chartColorBegin: string = 'rgba(76,107,167,1)'
-  @Input() chartColorEnd: string = 'rgba(76,107,167,.8)'
+  @Input() label: string = '';
+  @Input() title: string = '';
+  @Input() chartColorBegin: string = 'rgba(76,107,167,1)';
+  @Input() chartColorEnd: string = 'rgba(76,107,167,.8)';
 
   locataireOpts: any={};
 
@@ -29,13 +33,13 @@ export class ChartPieNomnbreComponent implements OnInit, OnChanges {
     
   getGauge() {
     //console.log("getGauge",((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal ,this.nbreTotal - (((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal))
-    let colorStops = [{
+    const colorStops = [{
       offset: 0,
       color: this.chartColorBegin // 0%
     }, {
       offset: 1,
       color: this.chartColorEnd // 100%
-    }]
+    }];
 
 
     return {
@@ -51,12 +55,12 @@ export class ChartPieNomnbreComponent implements OnInit, OnChanges {
             num: {
               fontWeight: 'bold',
               fontFamily: '微软雅黑',
-              fontSize: 25,
+              fontSize: 25
             },
             key: {
               fontWeight: 'bold',
               fontFamily: '微软雅黑',
-              fontSize: 15,
+              fontSize: 15
             }
           }
 
@@ -67,14 +71,14 @@ export class ChartPieNomnbreComponent implements OnInit, OnChanges {
         }
       },
       data: [{
-        name: this.label,
+        name: this.label
       }],
       tooltip: {
         trigger: 'item',  // Déclenchement des tooltips pour chaque élément
-        formatter: '{a} <br/>{b}: {c} ({d}%)', // Format personnalisé des tooltips
+        formatter: '{a} <br/>{b}: {c} ({d}%)' // Format personnalisé des tooltips
       },
       series: [{ // 主圆环
-        id:"iconDocument",
+        id:'iconDocument',
         name: this.label,
         type: 'pie',
         radius: ['70%', '90%'],
@@ -85,7 +89,7 @@ export class ChartPieNomnbreComponent implements OnInit, OnChanges {
           y: 0,
           x2: 0,
           y2: 0,
-          colorStops: colorStops,
+          colorStops
         }, 'transparent'],
         hoverAnimation: true,
         legendHoverLink: false,
@@ -96,7 +100,7 @@ export class ChartPieNomnbreComponent implements OnInit, OnChanges {
           }
         },
         data: [{
-          value: ((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal ,
+          value: ((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal 
         }, {
           value: this.nbreTotal - (((3*this.nbreTotal/4) * this.nbreActif) / this.nbreTotal)
         }]
@@ -150,7 +154,7 @@ export class ChartPieNomnbreComponent implements OnInit, OnChanges {
           }
         }]
       }]
-    }
+    };
   }
 
 }

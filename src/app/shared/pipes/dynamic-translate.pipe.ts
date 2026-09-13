@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 @Pipe({
   name: 'dynamicTranslate',
   pure: false // Important pour que le pipe se mette à jour lors du changement de langue
+  ,
+  standalone: true
 })
 export class DynamicTranslatePipe implements PipeTransform, OnDestroy {
   

@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { LocationPaymentType } from 'src/app/shared/store';
 import { LocationPaymentService } from 'src/app/shared/store/payment-location/location-payment.service';
+import { NgIf } from '@angular/common';
 
 export interface PaymentReceiptData {
   payment: {
@@ -46,7 +47,9 @@ export interface PaymentReceiptData {
 @Component({
   selector: 'app-payment-receipt-modal',
   templateUrl: './payment-receipt-modal.component.html',
-  styleUrls: ['./payment-receipt-modal.component.scss']
+  styleUrls: ['./payment-receipt-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf]
 })
 export class PaymentReceiptModalComponent implements OnInit {
 
@@ -59,7 +62,7 @@ export class PaymentReceiptModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: PaymentReceiptData,
     private translate: TranslateService,
     private toastr: ToastrService,
-    private locationPaymentService: LocationPaymentService,
+    private locationPaymentService: LocationPaymentService
   ) {}
 
   ngOnInit(): void {}
@@ -70,21 +73,21 @@ export class PaymentReceiptModalComponent implements OnInit {
 
   getPaymentTypeLabel(): string {
     switch (this.data.payment.paymentLocationType) {
-      case 'LOCATION': return 'Loyer mensuel';
-      case 'CAUTION': return 'Caution / Dépôt de garantie';
-      default: return 'Paiement';
+    case 'LOCATION': return 'Loyer mensuel';
+    case 'CAUTION': return 'Caution / Dépôt de garantie';
+    default: return 'Paiement';
     }
   }
 
   getPaymentMethodLabel(): string {
     switch (this.data.payment.paymentMethod) {
-      case 'CASH':          return 'Espèces';
-      case 'BANK_TRANSFER': return 'Virement bancaire';
-      case 'MOBILE_MONEY':  return 'Mobile Money';
-      case 'CHECK':         return 'Chèque';
-      case 'CARD':          return 'Carte bancaire';
-      case 'OTHER':         return 'Autre';
-      default: return this.data.payment.paymentMethod || 'Non spécifié';
+    case 'CASH':          return 'Espèces';
+    case 'BANK_TRANSFER': return 'Virement bancaire';
+    case 'MOBILE_MONEY':  return 'Mobile Money';
+    case 'CHECK':         return 'Chèque';
+    case 'CARD':          return 'Carte bancaire';
+    case 'OTHER':         return 'Autre';
+    default: return this.data.payment.paymentMethod || 'Non spécifié';
     }
   }
 

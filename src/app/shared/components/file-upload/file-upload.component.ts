@@ -1,23 +1,25 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgIf, NgFor } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.scss']
+  styleUrls: ['./file-upload.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class FileUploadComponent implements OnInit,AfterViewInit, OnChanges {
  
-  @ViewChild("dropzone") dropzoneHtml:ElementRef;
-  @ViewChild("inputDropzone") inputDropzone:ElementRef;
+  @ViewChild('dropzone') dropzoneHtml:ElementRef;
+  @ViewChild('inputDropzone') inputDropzone:ElementRef;
   @Input() isMultiple:boolean=false;
-  @Input() acceptedFile = "IMAGE, VIDEO, PANORAMA IMAGE"
-  @Input() acceptedFileType ="image/*,video/*,audio/*,.pdf,.doc,.docx,.pptx,.xls,.xlsx"
-  @Input() shouldResetFiles:boolean=false
+  @Input() acceptedFile = 'IMAGE, VIDEO, PANORAMA IMAGE';
+  @Input() acceptedFileType ='image/*,video/*,audio/*,.pdf,.doc,.docx,.pptx,.xls,.xlsx';
+  @Input() shouldResetFiles:boolean=false;
   
   @Output() uploadFileEvent:EventEmitter<File[]>=new EventEmitter<File[]>();
-  files:File[]=[]
+  files:File[]=[];
   fileDragging: null;
   fileDropping: null;
   constructor(@Inject(DOCUMENT) private document: Document, private sanitizer: DomSanitizer) {}
@@ -30,26 +32,26 @@ export class FileUploadComponent implements OnInit,AfterViewInit, OnChanges {
   ngOnChanges(changes): void {
     if(changes.shouldResetFiles.currentValue)
     {
-      this.files=[]
-      this.uploadFileEvent.emit(this.files)
+      this.files=[];
+      this.uploadFileEvent.emit(this.files);
     }
   }
 
   uploadFile(event: any)
   {
-    this.addFiles(this.isMultiple?event.target.files:[event.target.files[0]])
+    this.addFiles(this.isMultiple?event.target.files:[event.target.files[0]]);
   }
 
         
   humanFileSize(size) {
-      const i = Math.floor(Math.log(size) / Math.log(1024));
-      return `${(size / Math.pow(1024, i)).toFixed(2)} ${["B", "kB", "MB", "GB", "TB"][i]}`;
+    const i = Math.floor(Math.log(size) / Math.log(1024));
+    return `${(size / Math.pow(1024, i)).toFixed(2)} ${['B', 'kB', 'MB', 'GB', 'TB'][i]}`;
   }
   remove(event,index) {
     event.preventDefault();
     event.stopPropagation();
     this.files.splice(index, 1);
-    this.uploadFileEvent.emit(this.files)
+    this.uploadFileEvent.emit(this.files);
   }
 
   startDrag($event){}
@@ -65,9 +67,9 @@ export class FileUploadComponent implements OnInit,AfterViewInit, OnChanges {
 
   addFiles(files) {
     if(this.isMultiple) this.files = [...this.files,...files];
-    else this.files = [...files]
+    else this.files = [...files];
 
-    this.uploadFileEvent.emit(this.files)
+    this.uploadFileEvent.emit(this.files);
   }
   
 
@@ -91,15 +93,15 @@ export class FileUploadComponent implements OnInit,AfterViewInit, OnChanges {
   }
 
   loadFile(file) {    
-      const preview:any = document.querySelectorAll(".preview");
-      const blobUrl = this.sanitizer.bypassSecurityTrustUrl(this.document.defaultView.URL.createObjectURL(file));
+    const preview:any = document.querySelectorAll('.preview');
+    const blobUrl = this.sanitizer.bypassSecurityTrustUrl(this.document.defaultView.URL.createObjectURL(file));
 
-      preview.forEach(elem => {
-          elem.onload = () => {
-            this.document.defaultView.URL.revokeObjectURL(elem.src);
-          };
-      });
-      return blobUrl;
+    preview.forEach(elem => {
+      elem.onload = () => {
+        this.document.defaultView.URL.revokeObjectURL(elem.src);
+      };
+    });
+    return blobUrl;
   }
 
   

@@ -6,7 +6,8 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[appScrollReveal]'
+  selector: '[appScrollReveal]',
+  standalone: true
 })
 export class ScrollRevealDirective implements OnInit {
 

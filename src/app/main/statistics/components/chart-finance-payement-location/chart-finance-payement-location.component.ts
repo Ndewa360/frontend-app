@@ -4,11 +4,15 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { StatisticLocataireYearModel, StatisticState, StatisticAction } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { EchartsComponent } from '../../../../../@youpez/modules/charts/echarts/echarts.component';
+import { EchartsContainerComponent } from '../../../../../@youpez/modules/charts/echarts-container/echarts-container.component';
 
 @Component({
   selector: 'chart-finance-payement-location',
   templateUrl: './chart-finance-payement-location.component.html',
-  styleUrls: ['./chart-finance-payement-location.component.css']
+  styleUrls: ['./chart-finance-payement-location.component.css'],
+  standalone: true,
+  imports: [EchartsContainerComponent, EchartsComponent]
 })
 export class ChartFinancePayementLocationComponent implements OnChanges, OnDestroy {
 
@@ -45,8 +49,8 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
         takeUntil(this.subscriptionReset$),
         takeUntil(this.destroy$)
       ).subscribe(value => {
-          this.charsOpts = this.getChart(value);
-        });
+        this.charsOpts = this.getChart(value);
+      });
     }
   }
 
@@ -88,7 +92,7 @@ export class ChartFinancePayementLocationComponent implements OnChanges, OnDestr
           let content = `<strong>${monthName} ${this.selectedYear}</strong><br/>`;
           params.forEach(p => {
             const icon = p.value > 0 ? '✅' : '❌';
-            content += `${icon} ${p.seriesName} : <strong>${p.value > 0 ? p.value.toLocaleString('fr-FR') + ' FCFA encaissés' : 'Aucun encaissement'}</strong><br/>`;
+            content += `${icon} ${p.seriesName} : <strong>${p.value > 0 ? `${p.value.toLocaleString('fr-FR')  } FCFA encaissés` : 'Aucun encaissement'}</strong><br/>`;
           });
           return content;
         }

@@ -28,7 +28,11 @@ import { RemboursementComponent } from './components/remboursement/remboursement
 
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    FormsModule,
+    SharedModule,
+    LandingPageRoutingModule,
     HomeComponent,
     TeamComponent,
     LandingAltComponent,
@@ -50,12 +54,6 @@ import { RemboursementComponent } from './components/remboursement/remboursement
     CookiesComponent,
     MentionsLegalesComponent,
     RemboursementComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    SharedModule,
-    LandingPageRoutingModule
   ]
 })
 export class LandingPageModule { }

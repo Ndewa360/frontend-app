@@ -1,19 +1,27 @@
-import { Component } from '@angular/core';
-import { Router } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { UserProfileState, UserProfileModel } from 'src/app/shared/store';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { ListModule } from 'carbon-components-angular';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { NgScrollbar } from 'ngx-scrollbar';
 
 @Component({
   selector: 'home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  standalone: true,
+  imports: [NgScrollbar, FlexModule, AppLogoComponent, ListModule, NgIf, AsyncPipe, TranslatePipe]
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   
-  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>;
   
   constructor(
     private _router:Router,

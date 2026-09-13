@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, ViewChild, ElementRef, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted, ofActionErrored, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -19,7 +19,12 @@ import {
 import { FormUtils } from 'src/app/shared/utils';
 import { ToastrService } from 'ngx-toastr';
 import { UserBreachReportService } from 'src/app/shared/services/user-breach-report.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { AgentContactDisplaySettingsComponent } from '../agent-contact-display/agent-contact-display.component';
+import { LocalizationSettingsComponent } from './localization-settings.component';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf } from '@angular/common';
+import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
 const GA_ID = 'G-MKEB3L7EXL';
@@ -28,7 +33,9 @@ const GA_ID = 'G-MKEB3L7EXL';
   selector: 'user-profile-infos',
   templateUrl: './user-profile-infos.component.html',
   styleUrls: ['./user-profile-infos.component.css', './phone-input.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, IbmIconComponent, NgIf, SelectModule, LocalizationSettingsComponent, AgentContactDisplaySettingsComponent, TranslatePipe]
 })
 export class UserProfileInfosComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -67,15 +74,15 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
   
-    constructor(
+  constructor(
       protected formBuilder: FormBuilder,
       private _store: Store,
       private _ngxsAction: Actions,
       private _activatedRoute: ActivatedRoute,
       private toastr: ToastrService,
       private breachReportService: UserBreachReportService,
-      private translate: TranslateService,
-    ) { }
+      private translate: TranslateService
+  ) { }
   
   ngOnInit(): void {
     // Initialiser le formulaire d'abord
@@ -260,7 +267,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
 
     // Dispatch l'action d'upload avec le bon modèle
     this._store.dispatch(new UploadFilesAction.UploadFiles({
-      file: file,
+      file,
       contentID: this.userProfile._id,
       contentType: FileUploadContentType.FOR_USER_FILE,
       contentRoomType: ContentUploadRoomType.FOR_ROOM // Requis par le modèle même si pas utilisé pour les users
@@ -313,7 +320,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   getFieldError(fieldName: string): string {
     const field = this.formGroup.get(fieldName);
     if (field?.errors && (field.dirty || field.touched)) {
-      if (field.errors['required']) return `${this.translate.instant('PROFILE.FIELDS.' + this.labelKeyFor(fieldName))} ${this.translate.instant('PROFILE.ERRORS.REQUIRED')}`;
+      if (field.errors['required']) return `${this.translate.instant(`PROFILE.FIELDS.${  this.labelKeyFor(fieldName)}`)} ${this.translate.instant('PROFILE.ERRORS.REQUIRED')}`;
       if (field.errors['minlength']) return this.translate.instant('PROFILE.ERRORS.MIN_LENGTH', { count: field.errors['minlength'].requiredLength });
       if (field.errors['maxlength']) return this.translate.instant('PROFILE.ERRORS.MAX_LENGTH', { count: field.errors['maxlength'].requiredLength });
       if (field.errors['validatePhoneNumber']) {
@@ -491,7 +498,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       error: () => {
         this.toastr.error(this.translate.instant('USER_PROFILE.REPORT_ERROR'), this.translate.instant('COMMON.ERROR'));
         this.isSendingReport = false;
-      },
+      }
     });
   }
 

@@ -13,21 +13,19 @@ import { CityDeleteModalComponent } from './components/city-delete-modal/city-de
 import { SubscriptionDetailsModalComponent } from './components/subscription-details-modal/subscription-details-modal.component';
 
 @NgModule({
-  declarations: [
-    CountrySelectionModalComponent,
-    CountryDeleteModalComponent,
-    CountryViewModalComponent,
-    CountryEditModalComponent,
-    CitySelectionModalComponent,
-    CityDeleteModalComponent,
-    SubscriptionDetailsModalComponent,
-  ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
     SharedModule,
+    CountrySelectionModalComponent,
+    CountryDeleteModalComponent,
+    CountryViewModalComponent,
+    CountryEditModalComponent,
+    CitySelectionModalComponent,
+    CityDeleteModalComponent,
+    SubscriptionDetailsModalComponent
   ],
   exports: [
     CountrySelectionModalComponent,
@@ -36,7 +34,7 @@ import { SubscriptionDetailsModalComponent } from './components/subscription-det
     CountryEditModalComponent,
     CitySelectionModalComponent,
     CityDeleteModalComponent,
-    SubscriptionDetailsModalComponent,
-  ],
+    SubscriptionDetailsModalComponent
+  ]
 })
 export class AdminSharedModule { }

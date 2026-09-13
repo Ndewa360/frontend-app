@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgStyle } from '@angular/common';
 import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
@@ -11,11 +11,16 @@ import {
   StatisticAction
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { EchartsComponent } from '../../../../../@youpez/modules/charts/echarts/echarts.component';
+import { EchartsContainerComponent } from '../../../../../@youpez/modules/charts/echarts-container/echarts-container.component';
 
 @Component({
   selector: 'chart-finance-payement-annee',
   templateUrl: './chart-finance-payement-annee.component.html',
-  styleUrls: ['./chart-finance-payement-annee.component.css']
+  styleUrls: ['./chart-finance-payement-annee.component.css'],
+  standalone: true,
+  imports: [EchartsContainerComponent, EchartsComponent, NgStyle, ExtendedModule]
 })
 export class ChartFinancePayementAnneeComponent implements OnChanges, OnDestroy {
   currentDate = new Date();
@@ -59,8 +64,8 @@ export class ChartFinancePayementAnneeComponent implements OnChanges, OnDestroy 
         takeUntil(this.subscriptionReset$),
         takeUntil(this.destroy$)
       ).subscribe(data => {
-          this.charsOpts = this.buildChart(data);
-        });
+        this.charsOpts = this.buildChart(data);
+      });
     }
   }
 
@@ -97,9 +102,9 @@ export class ChartFinancePayementAnneeComponent implements OnChanges, OnDestroy 
               <strong>${params.seriesName}</strong><br/>
               <strong>Locataire :</strong> ${params.data[1]}<br/>
               <strong>Mois :</strong> ${UtilsString.capitalizedFirstLetter(
-                new Date(this.selectedYear, params.data[0])
-                  .toLocaleDateString('fr-FR', { month: 'long' })
-              )}<br/>
+    new Date(this.selectedYear, params.data[0])
+      .toLocaleDateString('fr-FR', { month: 'long' })
+  )}<br/>
               <strong>Montant :</strong> ${roomInfo?.price || '—'}<br/>
               <strong>${roomInfo?.roomStringType || 'Unité'} :</strong> ${roomInfo?.roomCode || '—'}<br/>
               <strong>Statut :</strong> ${statusText}
@@ -172,23 +177,23 @@ export class ChartFinancePayementAnneeComponent implements OnChanges, OnDestroy 
   // 0: Non payé, 1: Payé, 2: En attente, 3: Contrat terminé, 4: Paiement partiel, 5: Aucun contrat
   getNumberFromStatus(status: StatisticPaymentStateType): number {
     switch (status) {
-      case StatisticPaymentStateType.UNPAYED: return 0;
-      case StatisticPaymentStateType.PAYED: return 1;
-      case StatisticPaymentStateType.WAITING: return 2;
-      case StatisticPaymentStateType.ENDED_CONTRACT: return 3;
-      case StatisticPaymentStateType.PARTIAL_PAYMENT: return 4;
-      default: return 5;
+    case StatisticPaymentStateType.UNPAYED: return 0;
+    case StatisticPaymentStateType.PAYED: return 1;
+    case StatisticPaymentStateType.WAITING: return 2;
+    case StatisticPaymentStateType.ENDED_CONTRACT: return 3;
+    case StatisticPaymentStateType.PARTIAL_PAYMENT: return 4;
+    default: return 5;
     }
   }
 
   getTextFromPaymentStatus(status: number): string {
     switch (status) {
-      case 0: return 'Non payé';
-      case 1: return 'Payé';
-      case 2: return 'En attente';
-      case 3: return 'Fin de contrat';
-      case 4: return 'Partiel';
-      default: return 'Aucun contrat';
+    case 0: return 'Non payé';
+    case 1: return 'Payé';
+    case 2: return 'En attente';
+    case 3: return 'Fin de contrat';
+    case 4: return 'Partiel';
+    default: return 'Aucun contrat';
     }
   }
 }

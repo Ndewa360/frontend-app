@@ -1,28 +1,38 @@
-import {Component, EventEmitter, OnInit, OnDestroy, Output} from '@angular/core'
-import { Router, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router'
-import { Select, Store } from '@ngxs/store'
-import { Observable } from 'rxjs'
-import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store'
-import { AgentStatusService } from 'src/app/shared/services/agent-status.service'
-import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
-import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
-import { TranslateService } from '@ngx-translate/core'
-import { filter, takeUntil } from 'rxjs/operators'
-import { Subject } from 'rxjs'
+import {Component, EventEmitter, OnInit, OnDestroy, Output} from '@angular/core';
+import { Router, NavigationEnd, NavigationCancel, NavigationError, RouterLink } from '@angular/router';
+import { Select, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { UserProfileState, UserProfileModel, UserProfileAction } from 'src/app/shared/store';
+import { AgentStatusService } from 'src/app/shared/services/agent-status.service';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { SkeletonModule, TagModule } from 'carbon-components-angular';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { NgbTooltip, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
+import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { AppLogoComponent } from '../../../../@youpez/components/app-logo/app-logo.component';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
   selector: 'app-layout-mini-sidebar',
   templateUrl: './layout-mini-sidebar.component.html',
-  styleUrls: ['./layout-mini-sidebar.component.scss']
+  styleUrls: ['./layout-mini-sidebar.component.scss'],
+  standalone: true,
+  imports: [FlexModule, NgScrollbar, RouterLink, AppLogoComponent, NgIf, NgbTooltip, IbmIconComponent, NgClass, ExtendedModule, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem, SkeletonModule, NgFor, TagModule, AsyncPipe, TranslatePipe]
 })
 export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
 
-  @Output() itemClick: EventEmitter<any> = new EventEmitter()
-  @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>
+  @Output() itemClick: EventEmitter<any> = new EventEmitter();
+  @Select(UserProfileState.selectStateUserProfile) userProfile$:Observable<UserProfileModel>;
   isAdmin=false;
   isAgent=false;
   canAccessProperties=true;
-  routerLinkRoute="/support/home"
+  routerLinkRoute='/support/home';
   currentRoute = '';
   private destroy$ = new Subject<void>();
 
@@ -33,7 +43,7 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     //   date: '20m',
     // },
    
-  ]
+  ];
   public messages = [
     // {
     //   avatar: 'assets/img/avatar/avatarinit.png',
@@ -42,10 +52,10 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     //   date: '5 mins ago',
     //   read: false,
     // },
-  ]
+  ];
 
-  public loading: boolean = false
-  public loadingAdmin: boolean = false
+  public loading: boolean = false;
+  public loadingAdmin: boolean = false;
 
   constructor(
     private _store:Store,
@@ -58,7 +68,7 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userProfile$.subscribe((user)=>{
+    this.userProfile$.subscribe((user) => {
 
       if(user) {
         // ✅ CORRECTION: Vérifier le rôle super-admin au lieu de l'email spécifique
@@ -67,9 +77,9 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
         this.canAccessProperties = this.agentStatusService.canAccessProperties();
 
         const currentLang = this.languageUrlService.getCurrentLanguage();
-        this.routerLinkRoute=`/${currentLang}/app/welcome`
+        this.routerLinkRoute=`/${currentLang}/app/welcome`;
       }
-    })
+    });
 
     // Écouter les changements de statut d'agent
     this.agentStatusService.agentStatus$.subscribe(() => {
@@ -102,7 +112,7 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     const hasAdminRole = user.roles.some((role: any) => {
       // Vérifier différentes variantes du nom de rôle
       const roleName = typeof role === 'string' ? role : role.name;
-      return roleName === 'super-admin' || roleName === 'admin'
+      return roleName === 'super-admin' || roleName === 'admin';
     });
 
     if (hasAdminRole) {
@@ -113,14 +123,14 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
   }
 
   onItemClick(event) {
-    this.itemClick.next(event)
+    this.itemClick.next(event);
   }
 
   onFakeLoading() {
-    this.loading = true
+    this.loading = true;
     setTimeout(() => {
-      this.loading = false
-    }, 500)
+      this.loading = false;
+    }, 500);
   }
 
   logout()
@@ -134,7 +144,7 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     const currentLang = this.languageUrlService.getCurrentLanguage();
     this._router.navigate(
       [`/${currentLang}/search/index`],
-      { queryParams: { minPrice: 0,maxPrix:100000,  ville:"Bangangté"} }
+      { queryParams: { minPrice: 0,maxPrix:100000,  ville:'Bangangté'} }
     );
   }
 

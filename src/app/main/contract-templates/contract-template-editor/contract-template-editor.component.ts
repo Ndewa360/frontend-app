@@ -1,8 +1,8 @@
 import { trackByFn } from '../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Location } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
+import { Location, NgIf, NgClass, NgFor } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ContractTemplateService } from '../../../shared/services/contract-template.service';
 import { ContractTemplateType, ContractTemplateStatus } from '../../../shared/models/contract-template.model';
@@ -10,11 +10,19 @@ import { htmlContentValidator, templateNameValidator, templateVariablesValidator
 import { MultilingualNotificationService } from '../../../shared/services/notification/multilingual-notification.service';
 import { LanguageUrlService } from '../../../shared/services/language-url.service';
 import { environment } from '../../../../environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
+import { EditorComponent } from '@tinymce/tinymce-angular';
+import { DropdownModule } from 'carbon-components-angular/dropdown';
+import { ComboBoxModule } from 'carbon-components-angular';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { ButtonModule } from 'carbon-components-angular/button';
 
 @Component({
   selector: 'app-contract-template-editor',
   templateUrl: './contract-template-editor.component.html',
-  styleUrls: ['./contract-template-editor.component.scss']
+  styleUrls: ['./contract-template-editor.component.scss'],
+  standalone: true,
+  imports: [ButtonModule, NgIf, NgClass, ExtendedModule, FormsModule, ComboBoxModule, DropdownModule, NgFor, EditorComponent, TranslatePipe]
 })
 export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -84,188 +92,188 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
 
   private getTinyMCEConfig() {
     return {
-    height: '100%', // Utilise toute la hauteur disponible
-    width:'100%',
-    min_height: 500, // Hauteur minimum
-    menubar: 'file edit view insert format tools table help',
+      height: '100%', // Utilise toute la hauteur disponible
+      width:'100%',
+      min_height: 500, // Hauteur minimum
+      menubar: 'file edit view insert format tools table help',
 
-    // Plugins essentiels qui fonctionnent (sans ceux qui causent des 404)
-    plugins: [
-      'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-      'searchreplace', 'visualblocks', 'code', 'fullscreen',
-      'insertdatetime', 'media', 'table', 'help', 'wordcount'
-    ],
-    toolbar1: 'undo redo | cut copy paste | bold italic underline strikethrough | ' +
+      // Plugins essentiels qui fonctionnent (sans ceux qui causent des 404)
+      plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+        'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+      ],
+      toolbar1: 'undo redo | cut copy paste | bold italic underline strikethrough | ' +
       'fontselect fontsizeselect | forecolor backcolor | removeformat',
-    toolbar2: 'alignleft aligncenter alignright alignjustify | ' +
+      toolbar2: 'alignleft aligncenter alignright alignjustify | ' +
       'bullist numlist outdent indent | blockquote | ' +
       'link unlink | image media table | code',
-    toolbar3: 'searchreplace | visualblocks | ' +
+      toolbar3: 'searchreplace | visualblocks | ' +
       'insertdatetime | preview fullscreen help',
 
-    // Configuration des couleurs
-    color_map: [
-      "000000", "Noir",
-      "993300", "Marron foncé",
-      "333300", "Vert olive foncé",
-      "003300", "Vert foncé",
-      "003366", "Bleu marine foncé",
-      "000080", "Bleu marine",
-      "333399", "Indigo",
-      "333333", "Gris très foncé",
-      "800000", "Marron",
-      "FF6600", "Orange",
-      "808000", "Olive",
-      "008000", "Vert",
-      "008080", "Sarcelle",
-      "0000FF", "Bleu",
-      "666699", "Gris bleu",
-      "808080", "Gris",
-      "FF0000", "Rouge",
-      "FF9900", "Ambre",
-      "99CC00", "Vert jaune",
-      "339966", "Vert de mer",
-      "33CCCC", "Turquoise",
-      "3366FF", "Bleu royal",
-      "800080", "Violet",
-      "999999", "Gris moyen",
-      "FF00FF", "Magenta",
-      "FFCC00", "Or",
-      "FFFF00", "Jaune",
-      "00FF00", "Lime",
-      "00FFFF", "Aqua",
-      "00CCFF", "Bleu ciel",
-      "993366", "Rouge brun",
-      "C0C0C0", "Argent",
-      "FF99CC", "Rose",
-      "FFCC99", "Pêche",
-      "FFFF99", "Jaune clair",
-      "CCFFCC", "Vert clair",
-      "CCFFFF", "Cyan clair",
-      "99CCFF", "Bleu clair",
-      "CC99FF", "Lavande",
-      "FFFFFF", "Blanc"
-    ],
+      // Configuration des couleurs
+      color_map: [
+        '000000', 'Noir',
+        '993300', 'Marron foncé',
+        '333300', 'Vert olive foncé',
+        '003300', 'Vert foncé',
+        '003366', 'Bleu marine foncé',
+        '000080', 'Bleu marine',
+        '333399', 'Indigo',
+        '333333', 'Gris très foncé',
+        '800000', 'Marron',
+        'FF6600', 'Orange',
+        '808000', 'Olive',
+        '008000', 'Vert',
+        '008080', 'Sarcelle',
+        '0000FF', 'Bleu',
+        '666699', 'Gris bleu',
+        '808080', 'Gris',
+        'FF0000', 'Rouge',
+        'FF9900', 'Ambre',
+        '99CC00', 'Vert jaune',
+        '339966', 'Vert de mer',
+        '33CCCC', 'Turquoise',
+        '3366FF', 'Bleu royal',
+        '800080', 'Violet',
+        '999999', 'Gris moyen',
+        'FF00FF', 'Magenta',
+        'FFCC00', 'Or',
+        'FFFF00', 'Jaune',
+        '00FF00', 'Lime',
+        '00FFFF', 'Aqua',
+        '00CCFF', 'Bleu ciel',
+        '993366', 'Rouge brun',
+        'C0C0C0', 'Argent',
+        'FF99CC', 'Rose',
+        'FFCC99', 'Pêche',
+        'FFFF99', 'Jaune clair',
+        'CCFFCC', 'Vert clair',
+        'CCFFFF', 'Cyan clair',
+        '99CCFF', 'Bleu clair',
+        'CC99FF', 'Lavande',
+        'FFFFFF', 'Blanc'
+      ],
 
-    // Configuration avancée - permettre l'interprétation des styles
-    content_style: this.getContentStyle(),
+      // Configuration avancée - permettre l'interprétation des styles
+      content_style: this.getContentStyle(),
 
-    // Permettre l'interprétation complète du CSS
-    content_css: true, // Ne pas charger le CSS par défaut
-    body_class: 'template-editor-content',
+      // Permettre l'interprétation complète du CSS
+      content_css: true, // Ne pas charger le CSS par défaut
+      body_class: 'template-editor-content',
 
-    // Configuration des styles
-    style_formats: [
-      { title: 'En-têtes', items: [
-        { title: 'Titre principal', format: 'h1' },
-        { title: 'Titre secondaire', format: 'h2' },
-        { title: 'Sous-titre', format: 'h3' }
-      ]},
-      { title: 'Styles de contrat', items: [
-        { title: 'En-tête de contrat', block: 'div', classes: 'contract-header' },
-        { title: 'Section de contrat', block: 'div', classes: 'contract-section' },
-        { title: 'Bloc de signature', block: 'div', classes: 'signature-block' },
-        { title: 'Texte surligné', inline: 'span', classes: 'highlight' }
-      ]},
-      { title: 'Formatage', items: [
-        { title: 'Gras', inline: 'strong' },
-        { title: 'Italique', inline: 'em' },
-        { title: 'Code', inline: 'code' },
-        { title: 'Citation', block: 'blockquote' }
-      ]}
-    ],
+      // Configuration des styles
+      style_formats: [
+        { title: 'En-têtes', items: [
+          { title: 'Titre principal', format: 'h1' },
+          { title: 'Titre secondaire', format: 'h2' },
+          { title: 'Sous-titre', format: 'h3' }
+        ]},
+        { title: 'Styles de contrat', items: [
+          { title: 'En-tête de contrat', block: 'div', classes: 'contract-header' },
+          { title: 'Section de contrat', block: 'div', classes: 'contract-section' },
+          { title: 'Bloc de signature', block: 'div', classes: 'signature-block' },
+          { title: 'Texte surligné', inline: 'span', classes: 'highlight' }
+        ]},
+        { title: 'Formatage', items: [
+          { title: 'Gras', inline: 'strong' },
+          { title: 'Italique', inline: 'em' },
+          { title: 'Code', inline: 'code' },
+          { title: 'Citation', block: 'blockquote' }
+        ]}
+      ],
 
-    directionality: 'ltr' as 'ltr',
-    language: 'fr_FR',
-    branding: false,
-    resize: true,
-    statusbar: true,
-    elementpath: true,
-    valid_elements: '*[*]',
-    extended_valid_elements: 'style[type],link[href|rel],*[*]',
+      directionality: 'ltr' as const,
+      language: 'fr_FR',
+      branding: false,
+      resize: true,
+      statusbar: true,
+      elementpath: true,
+      valid_elements: '*[*]',
+      extended_valid_elements: 'style[type],link[href|rel],*[*]',
 
-    // Configuration du code HTML
-    code_dialog_height: 400,
-    code_dialog_width: 800,
+      // Configuration du code HTML
+      code_dialog_height: 400,
+      code_dialog_width: 800,
 
-    // Configuration setup pour le drag and drop et autres fonctionnalités
-    setup: (editor: any) => {
+      // Configuration setup pour le drag and drop et autres fonctionnalités
+      setup: (editor: any) => {
       // Gérer le drop des variables
-      editor.on('drop', (e: any) => {
-        const data = e.dataTransfer?.getData('text/html');
-        if (data && data.includes('class="variable"')) {
+        editor.on('drop', (e: any) => {
+          const data = e.dataTransfer?.getData('text/html');
+          if (data && data.includes('class="variable"')) {
+            e.preventDefault();
+
+            // Insérer le HTML de la variable à la position du drop
+            editor.insertContent(data);
+
+            // Déclencher l'événement de changement
+            editor.fire('change');
+          }
+        });
+
+        // Permettre le drop
+        editor.on('dragover', (e: any) => {
           e.preventDefault();
+        });
 
-          // Insérer le HTML de la variable à la position du drop
-          editor.insertContent(data);
-
-          // Déclencher l'événement de changement
-          editor.fire('change');
-        }
-      });
-
-      // Permettre le drop
-      editor.on('dragover', (e: any) => {
-        e.preventDefault();
-      });
-
-      // Désactiver subtilement la télémétrie sans casser l'éditeur
-      editor.on('init', () => {
+        // Désactiver subtilement la télémétrie sans casser l'éditeur
+        editor.on('init', () => {
         // Désactiver les requêtes de télémétrie si possible
-        if (editor.settings) {
-          editor.settings.telemetry = false;
-          editor.settings.usage_tracking = false;
-        }
-      });
-    },
+          if (editor.settings) {
+            editor.settings.telemetry = false;
+            editor.settings.usage_tracking = false;
+          }
+        });
+      },
 
-    // Configuration des images
-    image_advtab: true,
-    image_caption: true,
-    image_title: true,
-    image_class_list: [
-      { title: 'Logo', value: 'logo' },
-      { title: 'Image responsive', value: 'img-responsive' },
-      { title: 'Image centrée', value: 'img-center' }
-    ],
+      // Configuration des images
+      image_advtab: true,
+      image_caption: true,
+      image_title: true,
+      image_class_list: [
+        { title: 'Logo', value: 'logo' },
+        { title: 'Image responsive', value: 'img-responsive' },
+        { title: 'Image centrée', value: 'img-center' }
+      ],
 
-    // Configuration des tableaux
-    table_default_attributes: {
-      border: '1'
-    },
-    table_default_styles: {
-      'border-collapse': 'collapse'
-    },
+      // Configuration des tableaux
+      table_default_attributes: {
+        border: '1'
+      },
+      table_default_styles: {
+        'border-collapse': 'collapse'
+      },
 
-    // Configuration de la paste - préserver les styles
-    paste_as_text: false,
-    paste_auto_cleanup_on_paste: false,
-    paste_remove_styles_if_webkit: false,
-    paste_retain_style_properties: "all",
+      // Configuration de la paste - préserver les styles
+      paste_as_text: false,
+      paste_auto_cleanup_on_paste: false,
+      paste_remove_styles_if_webkit: false,
+      paste_retain_style_properties: 'all',
 
-    // Préserver les styles existants
-    verify_html: false,
-    cleanup: false,
-    cleanup_on_startup: false,
-    trim_span_elements: false,
-    remove_redundant_brs: false,
+      // Préserver les styles existants
+      verify_html: false,
+      cleanup: false,
+      cleanup_on_startup: false,
+      trim_span_elements: false,
+      remove_redundant_brs: false,
 
-    // Permettre tous les éléments et attributs pour préserver les styles (déjà défini plus haut)
-    valid_children: "+body[style],+div[style]",
+      // Permettre tous les éléments et attributs pour préserver les styles (déjà défini plus haut)
+      valid_children: '+body[style],+div[style]',
 
-    // Configuration des images - permettre les images externes
-    image_domains: ["storage.googleapis.com", "localhost","https://ndewa-360.com","https://www.ndewa-360.com"],
-    relative_urls: false,
-    remove_script_host: false,
-    convert_urls: false,
+      // Configuration des images - permettre les images externes
+      image_domains: ['storage.googleapis.com', 'localhost','https://ndewa-360.com','https://www.ndewa-360.com'],
+      relative_urls: false,
+      remove_script_host: false,
+      convert_urls: false,
 
-    // Pas de templates prédéfinis - utiliser le template par défaut du système
+      // Pas de templates prédéfinis - utiliser le template par défaut du système
 
-    // Configuration du drag and drop - sera configuré dans ngAfterViewInit
+      // Configuration du drag and drop - sera configuré dans ngAfterViewInit
 
-    // Désactiver les services cloud et requêtes externes
-    images_upload_handler: () => Promise.reject('Upload disabled'),
-    automatic_uploads: false
+      // Désactiver les services cloud et requêtes externes
+      images_upload_handler: () => Promise.reject('Upload disabled'),
+      automatic_uploads: false
     };
   }
 
@@ -311,7 +319,7 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     `;
 
     // Combiner les styles de base avec les styles extraits du template
-    return baseStyles + (this.extractedStyles ? '\n\n/* Styles du template */\n' + this.extractedStyles : '');
+    return baseStyles + (this.extractedStyles ? `\n\n/* Styles du template */\n${  this.extractedStyles}` : '');
   }
 
   // Options for dropdowns — valeurs alignées sur les enums backend
@@ -973,7 +981,7 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       const styleContent = style.textContent || style.innerHTML;
       if (styleContent) {
 
-        extractedStyles += styleContent + '\n';
+        extractedStyles += `${styleContent  }\n`;
       }
     });
 
@@ -1030,7 +1038,7 @@ ${cleanBodyContent}
   private finalHtmlValidation(html: string, originalBodyContent?: string): string {
     // ÉTAPE 1: Protéger les balises <style> en les remplaçant temporairement
     const styleBlocks: string[] = [];
-    let htmlWithProtectedStyles = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, (match) => {
+    const htmlWithProtectedStyles = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, (match) => {
       const index = styleBlocks.length;
       styleBlocks.push(match);
       return `<!--PROTECTED_STYLE_${index}-->`;
@@ -1148,7 +1156,7 @@ ${this.sanitizeHtml(bodyContent)}
     if (!html) return '';
 
     // Utiliser exactement les mêmes patterns que le backend
-    let cleanHtml = html
+    const cleanHtml = html
       // Pattern 1: /<script[^>]*>/gi - Supprimer les balises script (ouverture)
       .replace(/<script[^>]*>/gi, '')
       // Supprimer aussi les balises script complètes
@@ -1220,8 +1228,8 @@ ${this.sanitizeHtml(bodyContent)}
       .replace(/binding\s*:[^;]*;/gi, '') // XML binding
       .replace(/-moz-binding\s*:[^;]*;/gi, ''); // Mozilla binding
 
-      // NE PAS supprimer les commentaires CSS normaux car ils peuvent contenir des infos utiles
-      // NE PAS supprimer @charset car c'est utile pour l'encodage
+    // NE PAS supprimer les commentaires CSS normaux car ils peuvent contenir des infos utiles
+    // NE PAS supprimer @charset car c'est utile pour l'encodage
 
     // Vérifier que nous n'avons pas supprimé tout le CSS
     if (css.length > 100 && cleanCss.length < 10) {
@@ -1370,15 +1378,15 @@ ${this.sanitizeHtml(bodyContent)}
     const content = this.getPreviewContent();
 
     switch (this.selectedExportFormat) {
-      case 'html':
-        this.exportAsHTML(content);
-        break;
-      case 'pdf':
-        this.exportAsPDF(content);
-        break;
-      case 'docx':
-        this.exportAsWord(content);
-        break;
+    case 'html':
+      this.exportAsHTML(content);
+      break;
+    case 'pdf':
+      this.exportAsPDF(content);
+      break;
+    case 'docx':
+      this.exportAsWord(content);
+      break;
     }
   }
 

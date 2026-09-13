@@ -1,9 +1,12 @@
 import { Component, Input } from '@angular/core';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'chart-skeleton',
   templateUrl: './chart-skeleton.component.html',
-  styleUrls: ['./chart-skeleton.component.css']
+  styleUrls: ['./chart-skeleton.component.css'],
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class ChartSkeletonComponent {
   @Input() height: string = '240px';

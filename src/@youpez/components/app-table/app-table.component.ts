@@ -4,13 +4,14 @@ import {
   Input,
   OnChanges,
   SimpleChanges, ViewChild, TemplateRef
-} from "@angular/core"
+} from '@angular/core';
 
 
 @Component({
   selector: 'app-table',
   templateUrl: './app-table.component.html',
-  styleUrls: ['./app-table.component.scss']
+  styleUrls: ['./app-table.component.scss'],
+  standalone: true
 })
 export class AppTableComponent implements OnInit, OnChanges {
   constructor() {

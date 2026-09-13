@@ -7,6 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
 
 interface AgentApplication {
   _id: string;
@@ -26,7 +28,9 @@ interface AgentApplication {
 @Component({
   selector: 'app-agent-management',
   templateUrl: './agent-management.component.html',
-  styleUrls: ['./agent-management.component.scss']
+  styleUrls: ['./agent-management.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, FormsModule, DatePipe]
 })
 export class AgentManagementComponent implements OnInit {
   trackByFn = trackByFn;

@@ -1,6 +1,6 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -18,11 +18,15 @@ import { AdminSettings } from '../../store/settings/admin-settings.model';
 
 // Services
 import { AdminSettingsService } from '../../services/admin-settings.service';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-settings',
   templateUrl: './admin-settings.component.html',
-  styleUrls: ['./admin-settings.component.scss']
+  styleUrls: ['./admin-settings.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, SelectModule, AsyncPipe, DecimalPipe]
 })
 export class AdminSettingsComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;

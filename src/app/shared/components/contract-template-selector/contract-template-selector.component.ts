@@ -1,6 +1,6 @@
 import { trackByFn } from '../../utils/track-by.util';
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
 import { Subject, takeUntil, filter, take } from 'rxjs';
 import { ContractTemplateService } from '../../services/contract-template.service';
 import {
@@ -9,6 +9,7 @@ import {
   ContractTemplateStatus,
   ContractTemplateType
 } from '../../models/contract-template.model';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-contract-template-selector',
@@ -20,7 +21,9 @@ import {
       useExisting: forwardRef(() => ContractTemplateSelectorComponent),
       multi: true
     }
-  ]
+  ],
+  standalone: true,
+  imports: [NgIf, FormsModule, NgFor, DatePipe]
 })
 export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, ControlValueAccessor {
   trackByFn = trackByFn;
@@ -147,14 +150,14 @@ export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, Con
 
     // Icônes selon le type de contrat
     switch (template.type) {
-      case ContractTemplateType.DEFAULT:
-        return 'file-alt';
-      case ContractTemplateType.CUSTOM:
-        return 'file-edit';
-      case ContractTemplateType.DUPLICATED:
-        return 'copy';
-      default:
-        return 'file';
+    case ContractTemplateType.DEFAULT:
+      return 'file-alt';
+    case ContractTemplateType.CUSTOM:
+      return 'file-edit';
+    case ContractTemplateType.DUPLICATED:
+      return 'copy';
+    default:
+      return 'file';
     }
   }
 

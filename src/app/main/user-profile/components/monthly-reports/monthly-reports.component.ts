@@ -2,6 +2,8 @@ import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit } from '@angular/core';
 import { MonthlyReportService, MonthlyReportSummary } from './monthly-reports.service';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgFor, NgClass, DatePipe } from '@angular/common';
 
 const MONTHS_FR = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
   'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
@@ -9,7 +11,9 @@ const MONTHS_FR = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
 @Component({
   selector: 'app-monthly-reports',
   templateUrl: './monthly-reports.component.html',
-  styleUrls: ['./monthly-reports.component.scss']
+  styleUrls: ['./monthly-reports.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, NgClass, ExtendedModule, DatePipe]
 })
 export class MonthlyReportsComponent implements OnInit {
   trackByFn = trackByFn;
@@ -20,7 +24,7 @@ export class MonthlyReportsComponent implements OnInit {
 
   constructor(
     private reportService: MonthlyReportService,
-    private languageUrlService: LanguageUrlService,
+    private languageUrlService: LanguageUrlService
   ) {}
 
   ngOnInit(): void {

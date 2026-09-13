@@ -5,7 +5,7 @@ import { HistoryLocationPaymentAction } from 'src/app/shared/store/history-payme
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 // Nouveaux modals modernes
 import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
@@ -21,11 +21,17 @@ import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-
 import { TenantAvatarService } from 'src/app/shared/services/tenant-avatar.service';
 import { ExportService, ExportColumn } from '../../services/export.service';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
+import { TenantDetailsPanelComponent } from '../tenant-details-panel/tenant-details-panel.component';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-property-tenants',
   templateUrl: './property-tenants.component.html',
-  styleUrls: ['./property-tenants.component.scss']
+  styleUrls: ['./property-tenants.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, SelectModule, NgFor, TenantDetailsPanelComponent, TranslatePipe]
 })
 export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() propertyId: string = '';
@@ -130,25 +136,25 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       let bValue: any;
 
       switch (this.sortBy) {
-        case 'name':
-          aValue = a.fullName || '';
-          bValue = b.fullName || '';
-          break;
-        case 'unit':
-          aValue = this.getTenantUnit(a) || '';
-          bValue = this.getTenantUnit(b) || '';
-          break;
-        case 'rent':
-          aValue = this.getTenantRent(a) || 0;
-          bValue = this.getTenantRent(b) || 0;
-          break;
-        case 'lease_end':
-          aValue = new Date(a.createdAt || 0);
-          bValue = new Date(b.createdAt || 0);
-          break;
-        default:
-          aValue = a.fullName || '';
-          bValue = b.fullName || '';
+      case 'name':
+        aValue = a.fullName || '';
+        bValue = b.fullName || '';
+        break;
+      case 'unit':
+        aValue = this.getTenantUnit(a) || '';
+        bValue = this.getTenantUnit(b) || '';
+        break;
+      case 'rent':
+        aValue = this.getTenantRent(a) || 0;
+        bValue = this.getTenantRent(b) || 0;
+        break;
+      case 'lease_end':
+        aValue = new Date(a.createdAt || 0);
+        bValue = new Date(b.createdAt || 0);
+        break;
+      default:
+        aValue = a.fullName || '';
+        bValue = b.fullName || '';
       }
 
       if (typeof aValue === 'string') {
@@ -215,10 +221,10 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
   getTenantStatusLabel(tenant: LocataireModel): string {
     const status = this.getTenantStatus(tenant);
     switch (status) {
-      case 'active':   return 'Actif';
-      case 'planned':  return 'Planifié';
-      case 'inactive': return 'Inactif';
-      default:         return 'Inconnu';
+    case 'active':   return 'Actif';
+    case 'planned':  return 'Planifié';
+    case 'inactive': return 'Inactif';
+    default:         return 'Inconnu';
     }
   }
 
@@ -312,7 +318,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         disableClose: true,
         data: {
           mode: 'create',
-          property: property
+          property
         }
       });
 
@@ -353,8 +359,8 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         disableClose: true,
         data: {
           mode: 'edit',
-          property: property,
-          tenant: tenant
+          property,
+          tenant
         }
       });
 
@@ -386,9 +392,9 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
           disableClose: true,
           data: {
             mode: 'create',
-            room: room,
-            tenant: tenant,
-            location: location
+            room,
+            tenant,
+            location
           }
         });
 
@@ -452,8 +458,8 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         disableClose: true,
         data: {
           mode: 'edit',
-          property: property,
-          tenant: tenant
+          property,
+          tenant
         }
       });
 
@@ -494,9 +500,9 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         disableClose: false,
         panelClass: 'contract-viewer-dialog',
         data: {
-          room: room,
-          location: location,
-          tenant: tenant
+          room,
+          location,
+          tenant
         }
       });
 
@@ -524,9 +530,9 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
         maxWidth: '900px',
         disableClose: true,
         data: {
-          location: location,
-          tenant: tenant,
-          room: room
+          location,
+          tenant,
+          room
         }
       });
 
@@ -574,9 +580,9 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
           disableClose: true,
           data: {
             mode: 'create',
-            room: room,
-            tenant: tenant,
-            location: location
+            room,
+            tenant,
+            location
           }
         });
 
@@ -614,10 +620,10 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
 
     const location = payment.history?.location
       || this.locations.find(loc =>
-          loc.locataire === tenant?._id &&
+        loc.locataire === tenant?._id &&
           loc.room === room?._id &&
           !loc.endedAt
-        ) || null;
+      ) || null;
 
     try {
       const dialogRef = this.dialog.open(ModernPaymentModalComponent, {
@@ -743,7 +749,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
       maxWidth: '600px',
       disableClose: true,
       data: {
-        tenant: tenant,
+        tenant,
         propertyName: this.property?.name
       }
     });

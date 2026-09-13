@@ -8,20 +8,18 @@ import { WithdrawalModalComponent } from './components/withdrawal-modal/withdraw
 import { DepositModalComponent } from './components/deposit-modal/deposit-modal.component';
 
 const routes: Routes = [
-  { path: '', component: WalletDashboardComponent },
+  { path: '', component: WalletDashboardComponent }
 ];
 
 @NgModule({
-  declarations: [
-    WalletDashboardComponent,
-    WithdrawalModalComponent,
-    DepositModalComponent,
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     SharedModule,
     RouterModule.forChild(routes),
-  ],
+    WalletDashboardComponent,
+    WithdrawalModalComponent,
+    DepositModalComponent
+  ]
 })
 export class WalletModule {}

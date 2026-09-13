@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -9,6 +9,10 @@ import { UserProfileModel } from '../../../../shared/store/user-profile/user-pro
 import { LocalizationConfigService, SupportedLanguage, SupportedCurrency } from '../../../../shared/services/localization/localization-config.service';
 import { TranslationService } from '../../../../shared/services/localization/translation.service';
 import { LocalizationService } from '../../../../shared/services/localization/localization.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgFor, NgIf } from '@angular/common';
+import { SelectModule } from 'carbon-components-angular';
+import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 @Component({
   selector: 'app-localization-settings',
@@ -196,7 +200,9 @@ import { LocalizationService } from '../../../../shared/services/localization/lo
       </div>
     </section>
   `,
-  styleUrls: ['./localization-settings.component.scss']
+  styleUrls: ['./localization-settings.component.scss'],
+  standalone: true,
+  imports: [IbmIconComponent, SelectModule, FormsModule, NgFor, NgIf, TranslatePipe]
 })
 export class LocalizationSettingsComponent implements OnInit, OnDestroy {
 

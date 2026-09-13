@@ -4,10 +4,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionErrored, ofActionSuccessful, Select } from '@ngxs/store';
 import { Observable, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ApiUploadFileStateFormat, PropertyModel, PropertyState, PropertyAction } from 'src/app/shared/store';
 import { FileUploadContentType, UploadFilesAction, UploadFilesState, ContentUploadRoomType } from 'src/app/shared/store/files-upload';
 import { MediaUtil } from 'src/app/shared/utils';
+import { FileSizePipe } from '../../../../shared/pipes/file-size.pipe';
+import { FileUploadComponent } from '../../../../shared/components/file-upload/file-upload.component';
+import { NgIf, NgFor } from '@angular/common';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 interface MediaItem {
   url: string;
@@ -31,6 +35,15 @@ interface UploadItem {
   templateUrl: './property-gallery.component.html',
   styleUrls: ['./property-gallery.component.scss'],
   encapsulation: ViewEncapsulation.Emulated,
+  standalone: true,
+  imports: [
+    FlexModule,
+    NgIf,
+    NgFor,
+    FileUploadComponent,
+    TranslatePipe,
+    FileSizePipe
+  ]
 })
 export class PropertyGalleryComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -192,11 +205,11 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
 
   private mapStateToStatus(state: string): UploadItem['status'] {
     switch (state) {
-      case 'PENDING': return 'pending';
-      case 'UPLOADING': return 'uploading';
-      case 'DONE': return 'success';
-      case 'ERROR': return 'error';
-      default: return 'pending';
+    case 'PENDING': return 'pending';
+    case 'UPLOADING': return 'uploading';
+    case 'DONE': return 'success';
+    case 'ERROR': return 'error';
+    default: return 'pending';
     }
   }
 
@@ -301,7 +314,7 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
     this.isUploading = true;
     this.files.forEach((file) => {
       this._store.dispatch(new UploadFilesAction.UploadFiles({
-        file: file,
+        file,
         contentID: this.data.property._id,
         contentType: FileUploadContentType.FOR_ROOM_FILE,
         contentRoomType: ContentUploadRoomType.FOR_PROPERTY
@@ -323,10 +336,10 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
 
   getCurrentMediaList(): string[] {
     switch (this.selectedTab) {
-      case 'images': return this.propertyImages;
-      case 'videos': return this.propertyVideos;
-      case '360': return this.propertyImages360;
-      default: return [];
+    case 'images': return this.propertyImages;
+    case 'videos': return this.propertyVideos;
+    case '360': return this.propertyImages360;
+    default: return [];
     }
   }
 
@@ -339,7 +352,7 @@ export class PropertyGalleryComponent implements OnInit, OnDestroy {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
   }
 
   ngOnDestroy(): void {

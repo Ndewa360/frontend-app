@@ -1,10 +1,13 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { TenantAvatarService } from '../../services/tenant-avatar.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-tenant-avatar',
   templateUrl: './tenant-avatar.component.html',
-  styleUrls: ['./tenant-avatar.component.scss']
+  styleUrls: ['./tenant-avatar.component.scss'],
+  standalone: true,
+  imports: [NgIf]
 })
 export class TenantAvatarComponent implements OnInit, OnChanges {
 

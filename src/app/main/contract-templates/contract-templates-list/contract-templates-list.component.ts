@@ -4,7 +4,7 @@ import { Subject, debounceTime, Observable } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import {
   ContractTemplateModel,
@@ -16,11 +16,17 @@ import {
 } from '../../../shared/store/contract-templates';
 import { DuplicateTemplateModalComponent } from '../components/duplicate-template-modal/duplicate-template-modal.component';
 import { DeleteConfirmationModalComponent } from '../components/delete-confirmation-modal/delete-confirmation-modal.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-contract-templates-list',
   templateUrl: './contract-templates-list.component.html',
-  styleUrls: ['./contract-templates-list.component.scss']
+  styleUrls: ['./contract-templates-list.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, SelectModule, NgFor, NgClass, ExtendedModule, AsyncPipe, DatePipe, TranslatePipe]
 })
 export class ContractTemplatesListComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -192,7 +198,7 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
       status: this.selectedStatus || undefined,
       sortBy: this.sortBy,
       sortOrder: this.sortOrder,
-      page: page,
+      page,
       limit: 12
     };
 
@@ -317,14 +323,14 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    */
   getTypeIconClass(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'icon-default';
-      case ContractTemplateType.CUSTOM:
-        return 'icon-custom';
-      case ContractTemplateType.DUPLICATED:
-        return 'icon-duplicated';
-      default:
-        return 'icon-default';
+    case ContractTemplateType.DEFAULT:
+      return 'icon-default';
+    case ContractTemplateType.CUSTOM:
+      return 'icon-custom';
+    case ContractTemplateType.DUPLICATED:
+      return 'icon-duplicated';
+    default:
+      return 'icon-default';
     }
   }
 
@@ -333,14 +339,14 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    */
   getTypeBadgeClass(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'type-default';
-      case ContractTemplateType.CUSTOM:
-        return 'type-custom';
-      case ContractTemplateType.DUPLICATED:
-        return 'type-duplicated';
-      default:
-        return 'type-default';
+    case ContractTemplateType.DEFAULT:
+      return 'type-default';
+    case ContractTemplateType.CUSTOM:
+      return 'type-custom';
+    case ContractTemplateType.DUPLICATED:
+      return 'type-duplicated';
+    default:
+      return 'type-default';
     }
   }
 
@@ -349,14 +355,14 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    */
   getStatusBadgeClass(status: ContractTemplateStatus): string {
     switch (status) {
-      case ContractTemplateStatus.ACTIVE:
-        return 'status-active';
-      case ContractTemplateStatus.INACTIVE:
-        return 'status-inactive';
-      case ContractTemplateStatus.ARCHIVED:
-        return 'status-archived';
-      default:
-        return 'status-active';
+    case ContractTemplateStatus.ACTIVE:
+      return 'status-active';
+    case ContractTemplateStatus.INACTIVE:
+      return 'status-inactive';
+    case ContractTemplateStatus.ARCHIVED:
+      return 'status-archived';
+    default:
+      return 'status-active';
     }
   }
 
@@ -365,14 +371,14 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    */
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
-      case ContractTemplateType.CUSTOM:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
-      case ContractTemplateType.DUPLICATED:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
-      default:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
+    case ContractTemplateType.DEFAULT:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
+    case ContractTemplateType.CUSTOM:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
+    case ContractTemplateType.DUPLICATED:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
+    default:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
     }
   }
 
@@ -381,14 +387,14 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
    */
   getStatusLabel(status: ContractTemplateStatus): string {
     switch (status) {
-      case ContractTemplateStatus.ACTIVE:
-        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.ACTIVE');
-      case ContractTemplateStatus.INACTIVE:
-        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.INACTIVE');
-      case ContractTemplateStatus.ARCHIVED:
-        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.ARCHIVED');
-      default:
-        return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.UNKNOWN');
+    case ContractTemplateStatus.ACTIVE:
+      return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.ACTIVE');
+    case ContractTemplateStatus.INACTIVE:
+      return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.INACTIVE');
+    case ContractTemplateStatus.ARCHIVED:
+      return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.ARCHIVED');
+    default:
+      return this.translateService.instant('CONTRACT_TEMPLATES.STATUS.UNKNOWN');
     }
   }
 
@@ -412,7 +418,7 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
     const currentPage = pagination.page;
 
     let startPage = Math.max(1, currentPage - Math.floor(maxPages / 2));
-    let endPage = Math.min(totalPages, startPage + maxPages - 1);
+    const endPage = Math.min(totalPages, startPage + maxPages - 1);
 
     if (endPage - startPage + 1 < maxPages) {
       startPage = Math.max(1, endPage - maxPages + 1);

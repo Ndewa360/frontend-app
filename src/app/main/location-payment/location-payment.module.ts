@@ -13,10 +13,6 @@ import { PaymentListRecapTotalComponent } from './components/payment-list-recap-
 
 
 @NgModule({
-  declarations: [
-    PaymentListTypePropertyComponent,
-    PaymentListRecapTotalComponent
-  ],
   imports: [
     CommonModule,
     SharedModule,
@@ -24,7 +20,9 @@ import { PaymentListRecapTotalComponent } from './components/payment-list-recap-
     YoupezModule,
     AgGridModule,
     MatDialogModule,
-    LocationPaymentRoutingModule
+    LocationPaymentRoutingModule,
+    PaymentListTypePropertyComponent,
+    PaymentListRecapTotalComponent
   ],
   exports: [
     PaymentListTypePropertyComponent,

@@ -6,6 +6,11 @@ import {
 import { Store } from '@ngxs/store';
 import { ExportData } from '../../property-finances.component';
 import { StoredPropertyStatistic } from '../tenant-payment-tracking/tenant-payment-tracking.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgFor, NgIf, NgClass, DecimalPipe, DatePipe } from '@angular/common';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
 
 export interface TenantFinancialAnalysis {
   tenantId: string;
@@ -47,7 +52,9 @@ export interface TenantFinancialAnalysis {
 @Component({
   selector: 'app-tenant-payment-analysis',
   templateUrl: './tenant-payment-analysis.component.html',
-  styleUrls: ['./tenant-payment-analysis.component.scss']
+  styleUrls: ['./tenant-payment-analysis.component.scss'],
+  standalone: true,
+  imports: [FormsModule, SelectModule, NgFor, NgIf, NgClass, ExtendedModule, DecimalPipe, DatePipe, TranslatePipe]
 })
 export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
   @Input() enrichedData: StoredPropertyStatistic[] = [];
@@ -300,25 +307,25 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
 
   getPaymentStateLabel(state: StatisticPaymentStateType): string {
     switch (state) {
-      case StatisticPaymentStateType.PAYED: return 'Payé';
-      case StatisticPaymentStateType.UNPAYED: return 'Non payé';
-      case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'Partiel';
-      case StatisticPaymentStateType.WAITING: return 'En attente';
-      case StatisticPaymentStateType.ENDED_CONTRACT: return 'Contrat terminé';
-      case StatisticPaymentStateType.NO_CONTRACT: return 'Pas de contrat';
-      default: return 'Inconnu';
+    case StatisticPaymentStateType.PAYED: return 'Payé';
+    case StatisticPaymentStateType.UNPAYED: return 'Non payé';
+    case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'Partiel';
+    case StatisticPaymentStateType.WAITING: return 'En attente';
+    case StatisticPaymentStateType.ENDED_CONTRACT: return 'Contrat terminé';
+    case StatisticPaymentStateType.NO_CONTRACT: return 'Pas de contrat';
+    default: return 'Inconnu';
     }
   }
 
   getPaymentStateColor(state: StatisticPaymentStateType): string {
     switch (state) {
-      case StatisticPaymentStateType.PAYED: return 'bg-green-100 text-green-800';
-      case StatisticPaymentStateType.UNPAYED: return 'bg-red-100 text-red-800';
-      case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'bg-yellow-100 text-yellow-800';
-      case StatisticPaymentStateType.WAITING: return 'bg-blue-100 text-blue-800';
-      case StatisticPaymentStateType.ENDED_CONTRACT: return 'bg-gray-100 text-gray-800';
-      case StatisticPaymentStateType.NO_CONTRACT: return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+    case StatisticPaymentStateType.PAYED: return 'bg-green-100 text-green-800';
+    case StatisticPaymentStateType.UNPAYED: return 'bg-red-100 text-red-800';
+    case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'bg-yellow-100 text-yellow-800';
+    case StatisticPaymentStateType.WAITING: return 'bg-blue-100 text-blue-800';
+    case StatisticPaymentStateType.ENDED_CONTRACT: return 'bg-gray-100 text-gray-800';
+    case StatisticPaymentStateType.NO_CONTRACT: return 'bg-purple-100 text-purple-800';
+    default: return 'bg-gray-100 text-gray-800';
     }
   }
 
@@ -329,33 +336,33 @@ export class TenantPaymentAnalysisComponent implements OnInit, OnChanges {
   // Labels et couleurs pour tous les statuts possibles
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'up_to_date':     return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE';
-      case 'advance':        return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD';
-      case 'behind':         return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
-      case 'late':           return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
-      case 'critical':       return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
-      case 'no_payment':     return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
-      case 'ahead':          return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD';
-      case 'no_contract':    return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.NO_CONTRACT';
-      case 'ended_contract': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.ENDED_CONTRACT';
+    case 'up_to_date':     return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE';
+    case 'advance':        return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD';
+    case 'behind':         return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
+    case 'late':           return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
+    case 'critical':       return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
+    case 'no_payment':     return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.LATE';
+    case 'ahead':          return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.AHEAD';
+    case 'no_contract':    return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.NO_CONTRACT';
+    case 'ended_contract': return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.ENDED_CONTRACT';
       // 'unknown' et tout autre statut → à jour par défaut (locataire en avance)
-      default:               return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE';
+    default:               return 'TENANT_PAYMENT_TRACKING.STATUS_LABELS.UP_TO_DATE';
     }
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case 'up_to_date':     return 'bg-green-100 text-green-800';
-      case 'advance':        return 'bg-blue-100 text-blue-800';
-      case 'behind':         return 'bg-red-100 text-red-800';
-      case 'late':           return 'bg-red-100 text-red-800';
-      case 'critical':       return 'bg-red-100 text-red-800';
-      case 'no_payment':     return 'bg-red-100 text-red-800';
-      case 'ahead':          return 'bg-blue-100 text-blue-800';
-      case 'no_contract':    return 'bg-gray-100 text-gray-800';
-      case 'ended_contract': return 'bg-purple-100 text-purple-800';
+    case 'up_to_date':     return 'bg-green-100 text-green-800';
+    case 'advance':        return 'bg-blue-100 text-blue-800';
+    case 'behind':         return 'bg-red-100 text-red-800';
+    case 'late':           return 'bg-red-100 text-red-800';
+    case 'critical':       return 'bg-red-100 text-red-800';
+    case 'no_payment':     return 'bg-red-100 text-red-800';
+    case 'ahead':          return 'bg-blue-100 text-blue-800';
+    case 'no_contract':    return 'bg-gray-100 text-gray-800';
+    case 'ended_contract': return 'bg-purple-100 text-purple-800';
       // 'unknown' → vert (locataire en avance, couvert au-delà des mois dus)
-      default:               return 'bg-green-100 text-green-800';
+    default:               return 'bg-green-100 text-green-800';
     }
   }
   

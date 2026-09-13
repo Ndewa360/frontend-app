@@ -2,11 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TranslationService } from '../../services/localization/translation.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ClickOutsideDirective } from '../../directives/click-outside.directive';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-language-switcher',
   templateUrl: './language-switcher.component.html',
-  styleUrls: ['./language-switcher.component.scss']
+  styleUrls: ['./language-switcher.component.scss'],
+  standalone: true,
+  imports: [NgIf, ClickOutsideDirective, NgFor, TranslatePipe]
 })
 export class LanguageSwitcherComponent implements OnInit, OnDestroy {
   

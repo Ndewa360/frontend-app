@@ -3,9 +3,13 @@ import {
   EnrichedStatisticResponse
 } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { TranslationUtilsService } from 'src/app/shared/services/translation-utils.service';
 import { ExportData } from '../../property-finances.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, NgClass, DatePipe } from '@angular/common';
 
 export interface DepositSummary {
   roomId: string;
@@ -41,7 +45,9 @@ export interface DepositSummary {
 @Component({
   selector: 'app-deposits-summary',
   templateUrl: './deposits-summary.component.html',
-  styleUrls: ['./deposits-summary.component.scss']
+  styleUrls: ['./deposits-summary.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, FormsModule, SelectModule, NgClass, ExtendedModule, DatePipe, TranslatePipe]
 })
 export class DepositsSummaryComponent implements OnInit, OnChanges {
   @Input() enrichedData: EnrichedStatisticResponse[] = [];
@@ -182,23 +188,23 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
 
   private mapCautionStatusToDepositStatus(cautionStatus: string, depositRate: number): DepositSummary['status'] {
     switch (cautionStatus.toLowerCase()) {
-      case 'paid':
-        return depositRate > 100 ? 'overpaid' : 'complete';
-      case 'partial':
-        return 'partial';
-      case 'unpaid':
-        return 'missing';
-      case 'no_tenant':
-      case 'vacant':
-        return 'no_tenant';
-      case 'overpaid':
-        return 'overpaid';
-      default:
-        // Fallback basé sur le taux
-        if (depositRate > 100) return 'overpaid';
-        if (depositRate >= 100) return 'complete';
-        if (depositRate > 0) return 'partial';
-        return 'missing';
+    case 'paid':
+      return depositRate > 100 ? 'overpaid' : 'complete';
+    case 'partial':
+      return 'partial';
+    case 'unpaid':
+      return 'missing';
+    case 'no_tenant':
+    case 'vacant':
+      return 'no_tenant';
+    case 'overpaid':
+      return 'overpaid';
+    default:
+      // Fallback basé sur le taux
+      if (depositRate > 100) return 'overpaid';
+      if (depositRate >= 100) return 'complete';
+      if (depositRate > 0) return 'partial';
+      return 'missing';
     }
   }
 
@@ -270,12 +276,12 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
 
   getStatusColor(status: DepositSummary['status']): string {
     switch (status) {
-      case 'complete': return 'bg-green-100 text-green-800';
-      case 'partial': return 'bg-yellow-100 text-yellow-800';
-      case 'missing': return 'bg-red-100 text-red-800';
-      case 'no_tenant': return 'bg-gray-100 text-gray-800';
-      case 'overpaid': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+    case 'complete': return 'bg-green-100 text-green-800';
+    case 'partial': return 'bg-yellow-100 text-yellow-800';
+    case 'missing': return 'bg-red-100 text-red-800';
+    case 'no_tenant': return 'bg-gray-100 text-gray-800';
+    case 'overpaid': return 'bg-blue-100 text-blue-800';
+    default: return 'bg-gray-100 text-gray-800';
     }
   }
   
@@ -306,12 +312,12 @@ export class DepositsSummaryComponent implements OnInit, OnChanges {
   
   getStatusIcon(status: DepositSummary['status']): string {
     switch (status) {
-      case 'complete': return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
-      case 'partial': return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z';
-      case 'missing': return 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z';
-      case 'no_tenant': return 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z';
-      case 'overpaid': return 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6';
-      default: return 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+    case 'complete': return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
+    case 'partial': return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z';
+    case 'missing': return 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z';
+    case 'no_tenant': return 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z';
+    case 'overpaid': return 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6';
+    default: return 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
     }
   }
 

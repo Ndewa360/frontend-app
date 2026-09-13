@@ -12,13 +12,6 @@ import { PremiumAccessButtonComponent } from './components/premium-access-button
 import { PremiumSuccessComponent } from './components/premium-success/premium-success.component';
 
 @NgModule({
-  declarations: [
-    SearchPageComponent,
-    UnitDetailDialogComponent,
-    PremiumAccessModalComponent,
-    PremiumAccessButtonComponent,
-    PremiumSuccessComponent
-  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -26,6 +19,11 @@ import { PremiumSuccessComponent } from './components/premium-success/premium-su
     SharedModule,
     SearchRoutingModule,
     OverlayModule,
+    SearchPageComponent,
+    UnitDetailDialogComponent,
+    PremiumAccessModalComponent,
+    PremiumAccessButtonComponent,
+    PremiumSuccessComponent
   ]
 })
 export class SearchModule { }

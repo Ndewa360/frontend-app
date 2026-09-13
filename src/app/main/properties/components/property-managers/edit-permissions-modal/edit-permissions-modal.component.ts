@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { PropertyManagerAction, ManagerPermission, PERMISSION_LABELS, PropertyManagerAssignment } from 'src/app/shared/store/property-manager';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgFor, NgIf, AsyncPipe } from '@angular/common';
 
 export interface EditPermissionsModalData {
   assignment: PropertyManagerAssignment;
@@ -12,6 +14,13 @@ export interface EditPermissionsModalData {
   selector: 'app-edit-permissions-modal',
   templateUrl: './edit-permissions-modal.component.html',
   styleUrls: ['./edit-permissions-modal.component.scss'],
+  standalone: true,
+  imports: [
+    NgFor,
+    NgIf,
+    AsyncPipe,
+    TranslatePipe
+  ]
 })
 export class EditPermissionsModalComponent implements OnInit {
 
@@ -23,7 +32,7 @@ export class EditPermissionsModalComponent implements OnInit {
     { key: 'MANAGE_PAYMENTS',  label: PERMISSION_LABELS['MANAGE_PAYMENTS'],  description: 'Enregistrer et modifier les paiements' },
     { key: 'VIEW_FINANCES',    label: PERMISSION_LABELS['VIEW_FINANCES'],    description: 'Consulter les données financières' },
     { key: 'MANAGE_FINANCES',  label: PERMISSION_LABELS['MANAGE_FINANCES'],  description: 'Modifier les paramètres financiers' },
-    { key: 'FULL_ACCESS',      label: PERMISSION_LABELS['FULL_ACCESS'],      description: 'Accès complet à toutes les fonctionnalités' },
+    { key: 'FULL_ACCESS',      label: PERMISSION_LABELS['FULL_ACCESS'],      description: 'Accès complet à toutes les fonctionnalités' }
   ];
 
   selectedPermissions: ManagerPermission[] = [];
@@ -33,7 +42,7 @@ export class EditPermissionsModalComponent implements OnInit {
   constructor(
     private store: Store,
     public dialogRef: MatDialogRef<EditPermissionsModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: EditPermissionsModalData,
+    @Inject(MAT_DIALOG_DATA) public data: EditPermissionsModalData
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +62,7 @@ export class EditPermissionsModalComponent implements OnInit {
       } else {
         this.selectedPermissions = [
           ...this.selectedPermissions.filter(p => p !== 'FULL_ACCESS'),
-          perm,
+          perm
         ];
       }
       if (this.selectedPermissions.length === 0) {
@@ -104,11 +113,11 @@ export class EditPermissionsModalComponent implements OnInit {
     this.store.dispatch(
       new PropertyManagerAction.UpdatePermissions(
         this.data.assignment._id,
-        this.selectedPermissions,
-      ),
+        this.selectedPermissions
+      )
     ).subscribe({
       next: () => this.dialogRef.close(true),
-      error: () => {},
+      error: () => {}
     });
   }
 

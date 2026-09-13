@@ -4,7 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-payment-error',
   templateUrl: './payment-error.component.html',
-  styleUrls: ['./payment-error.component.scss']
+  styleUrls: ['./payment-error.component.scss'],
+  standalone: true
 })
 export class PaymentErrorComponent implements OnInit {
   token: string = '';

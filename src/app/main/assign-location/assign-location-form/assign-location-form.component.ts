@@ -1,18 +1,37 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { isFormItemValid } from 'src/@youpez';
 import { LocataireModel, LocataireState, RoomModel, RoomState } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
+import { TranslatePipe } from '@ngx-translate/core';
+import { YoupezAlertComponent } from '../../../../@youpez/components/alert/alert.component';
+import { ToggleModule } from 'carbon-components-angular/toggle';
+import { DropdownModule } from 'carbon-components-angular/dropdown';
+import { InputModule, ComboBoxModule, DatePickerModule, NumberModule } from 'carbon-components-angular';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
   selector: 'assign-location-form',
   templateUrl: './assign-location-form.component.html',
   styleUrls: ['./assign-location-form.component.css'],
   encapsulation: ViewEncapsulation.None,
-
+  standalone: true,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    FlexModule,
+    InputModule,
+    ComboBoxModule,
+    DropdownModule,
+    ToggleModule,
+    DatePickerModule,
+    NumberModule,
+    YoupezAlertComponent,
+    TranslatePipe
+  ]
 })
 export class AssignLocationFormComponent implements OnInit, OnChanges, OnDestroy {
   public formGroup = null;
@@ -20,27 +39,27 @@ export class AssignLocationFormComponent implements OnInit, OnChanges, OnDestroy
 
   @Input() propertyID:string=null;
   @Input() roomSelected:RoomModel = null;
-  @Input() locataireSelected:LocataireModel=null  
+  @Input() locataireSelected:LocataireModel=null;  
 
   roomList = [];
   locataireList = [];
   fiancialStateList = [
     {
-      content:"Initial",
-      valueType:"initial",
+      content:'Initial',
+      valueType:'initial',
       selected:true
     },
     {
-      content:"En avance",
-      valueType:"en_avance",
+      content:'En avance',
+      valueType:'en_avance',
       selected:false
     },
     {
-      content:"Avec Arriéré",
-      valueType:"avec_arriere",
+      content:'Avec Arriéré',
+      valueType:'avec_arriere',
       selected:false
-    },
-  ]
+    }
+  ];
   @Output() onSendLocationData:EventEmitter<
     {
       locataire?: any,
@@ -68,45 +87,45 @@ export class AssignLocationFormComponent implements OnInit, OnChanges, OnDestroy
       isKnowExactDateEntry:[false],
       initialFinancialState:[this.fiancialStateList[0], [Validators.required]],
       initialSolde:[0]
-    })
+    });
     this.formGroup.valueChanges.subscribe(() => {      
       this.isFormValid();
-    })
-    this.formGroup.controls["initialSolde"].disable()
+    });
+    this.formGroup.controls['initialSolde'].disable();
 
-    this.formGroup.controls["isKnowExactDateEntry"].valueChanges.subscribe((value)=>{
+    this.formGroup.controls['isKnowExactDateEntry'].valueChanges.subscribe((value) => {
       if(value) {
-        this.formGroup.controls["startedDate"].enable()
-        this.formGroup.controls["startedDate"].setValidators([Validators.required])
+        this.formGroup.controls['startedDate'].enable();
+        this.formGroup.controls['startedDate'].setValidators([Validators.required]);
       }
       else {
-        this.formGroup.controls["startedDate"].disable()
-        this.formGroup.controls["startedDate"].clearValidators()
+        this.formGroup.controls['startedDate'].disable();
+        this.formGroup.controls['startedDate'].clearValidators();
       }
-      this.formGroup.controls["startedDate"].updateValueAndValidity()
-    })
+      this.formGroup.controls['startedDate'].updateValueAndValidity();
+    });
 
-    this.formGroup.controls["initialFinancialState"].valueChanges.subscribe((value)=>{
-      if(value==null) return
-      if(value.valueType == "initial") {
-        this.formGroup.controls["initialSolde"].clearValidators()
-        this.formGroup.controls["initialSolde"].disable()
+    this.formGroup.controls['initialFinancialState'].valueChanges.subscribe((value) => {
+      if(value==null) return;
+      if(value.valueType == 'initial') {
+        this.formGroup.controls['initialSolde'].clearValidators();
+        this.formGroup.controls['initialSolde'].disable();
       }
       else {
-        this.formGroup.controls["initialSolde"].setValidators([Validators.required])
-        this.formGroup.controls["initialSolde"].enable()
+        this.formGroup.controls['initialSolde'].setValidators([Validators.required]);
+        this.formGroup.controls['initialSolde'].enable();
       }
-      this.formGroup.controls["initialSolde"].updateValueAndValidity()
+      this.formGroup.controls['initialSolde'].updateValueAndValidity();
 
-    })
+    });
 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if( (changes["propertyID"] && changes["propertyID"].currentValue != null) ||
-        (changes["roomSelected"] && changes["roomSelected"].currentValue != null) ||
-      (changes["locataireSelected"] && changes["locataireSelected"].currentValue != null) 
-    ) this.askForUpdate()
+    if( (changes['propertyID'] && changes['propertyID'].currentValue != null) ||
+        (changes['roomSelected'] && changes['roomSelected'].currentValue != null) ||
+      (changes['locataireSelected'] && changes['locataireSelected'].currentValue != null) 
+    ) this.askForUpdate();
   }
 
   // Correction #7 : takeUntil(destroy$) sur chaque abonnement pour éviter les fuites mémoire
@@ -151,41 +170,41 @@ export class AssignLocationFormComponent implements OnInit, OnChanges, OnDestroy
   }
 
   submit() {
-    this.formGroup.markAllAsTouched()
+    this.formGroup.markAllAsTouched();
   }
 
   reset() {
-    this.formGroup.reset()
+    this.formGroup.reset();
   }
 
   isValid(name) {
-    return isFormItemValid(this.formGroup, name)
+    return isFormItemValid(this.formGroup, name);
   }
 
   isFormValid() {
     if (!this.formGroup.valid) {
-      return false
+      return false;
     }
-    let dataToEmit = {
+    const dataToEmit = {
       locataire:this.formGroup.value.locataireId.valueType, 
       room:this.formGroup.value.roomId.valueType,
       isKnowExactDateEntry: this.formGroup.value.isKnowExactDateEntry,
       initialFinancialState: this.formGroup.value.initialFinancialState.valueType,
       initialSolde: this.formGroup.value.initialSolde
-    }
+    };
     if(this.formGroup.value.isKnowExactDateEntry) {
       if(this.formGroup.value.startedDate == null) return false;
-      dataToEmit["entryDate"]=this.formGroup.value.startedDate[0];
+      dataToEmit['entryDate']=this.formGroup.value.startedDate[0];
     }
     
 
-    this.onSendLocationData.emit(dataToEmit)
-    return true
+    this.onSendLocationData.emit(dataToEmit);
+    return true;
   }
 
   getMoney()
   {
-    return UtilsString.getDefaultCurrency()
+    return UtilsString.getDefaultCurrency();
   }
 
 }

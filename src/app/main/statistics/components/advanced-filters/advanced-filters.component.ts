@@ -1,7 +1,9 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PropertyModel } from 'src/app/shared/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { SelectModule } from 'carbon-components-angular';
+import { NgFor, NgIf } from '@angular/common';
 
 export interface FilterOptions {
   startYear: number;
@@ -14,7 +16,9 @@ export interface FilterOptions {
 @Component({
   selector: 'advanced-filters',
   templateUrl: './advanced-filters.component.html',
-  styleUrls: ['./advanced-filters.component.css']
+  styleUrls: ['./advanced-filters.component.css'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, NgFor, SelectModule, NgIf, TranslatePipe]
 })
 export class AdvancedFiltersComponent implements OnInit, OnChanges {
   @Input() properties: PropertyModel[] = [];

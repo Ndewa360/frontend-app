@@ -1,11 +1,14 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UnitDetailsData, UnitDetailsService } from '../../../../services/unit-details.service';
 import { UtilsString } from 'src/app/shared/utils';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-unit-header',
   templateUrl: './unit-header.component.html',
-  styleUrls: ['./unit-header.component.scss']
+  styleUrls: ['./unit-header.component.scss'],
+  standalone: true,
+  imports: [TranslatePipe]
 })
 export class UnitHeaderComponent {
   @Input() unitData: UnitDetailsData | null = null;

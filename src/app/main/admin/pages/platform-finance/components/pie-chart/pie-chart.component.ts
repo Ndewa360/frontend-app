@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface PfPieSlice {
   label: string;
@@ -17,6 +18,8 @@ interface PfPiePath {
   templateUrl: './pie-chart.component.html',
   styleUrls: ['./pie-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class PfPieChartComponent implements OnChanges {
   @Input() slices: PfPieSlice[] = [];
@@ -75,7 +78,7 @@ export class PfPieChartComponent implements OnChanges {
 
       this.paths.push({
         d: `M ${this.cx} ${this.cy} L ${x1.toFixed(3)} ${y1.toFixed(3)} A ${this.radius} ${this.radius} 0 ${largeArc} 1 ${x2.toFixed(3)} ${y2.toFixed(3)} Z`,
-        color: seg.color,
+        color: seg.color
       });
 
       angleStart = angleEnd;

@@ -29,24 +29,22 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [
-    PaymentPageComponent,
-    PaymentSuccessComponent,
-    PaymentErrorComponent,
-    PaymentLoadingComponent
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     HttpClientModule,
     TranslateModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    PaymentPageComponent,
+    PaymentSuccessComponent,
+    PaymentErrorComponent,
+    PaymentLoadingComponent
   ],
   providers: [
     DatePipe,
     UnifiedPaymentService,
     AnonymousUserService,
-    LocationPaymentService,
+    LocationPaymentService
   ]
 })
 export class PaymentModule { }

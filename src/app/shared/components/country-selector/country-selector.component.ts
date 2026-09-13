@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Observable, Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Store, Select } from '@ngxs/store';
 import { CountryState, CountryAction } from '../../store/country';
 import { CountryModel } from '../../store/country/country.model';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 /**
  * 🌍 COMPOSANT SÉLECTEUR DE PAYS
@@ -32,7 +33,9 @@ import { CountryModel } from '../../store/country/country.model';
       useExisting: forwardRef(() => CountrySelectorComponent),
       multi: true
     }
-  ]
+  ],
+  standalone: true,
+  imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, AsyncPipe]
 })
 export class CountrySelectorComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
   private destroy$ = new Subject<void>();

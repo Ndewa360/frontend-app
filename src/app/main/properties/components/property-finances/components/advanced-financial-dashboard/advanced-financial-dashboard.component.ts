@@ -4,6 +4,11 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ExportData } from '../../property-finances.component';
 import { PropertyFinancialManagerService, PropertyFinancialMetrics, MonthlyFinancialData } from 'src/app/main/properties/services/property-financial-manager.service';
+import { EchartsComponent } from '../../../../../../../@youpez/modules/charts/echarts/echarts.component';
+import { EchartsContainerComponent } from '../../../../../../../@youpez/modules/charts/echarts-container/echarts-container.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgClass, DecimalPipe } from '@angular/common';
+import { IbmIconComponent } from '../../../../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 interface FinancialMetric {
   label: string;
@@ -26,7 +31,9 @@ interface ChartData {
 @Component({
   selector: 'app-advanced-financial-dashboard',
   templateUrl: './advanced-financial-dashboard.component.html',
-  styleUrls: ['./advanced-financial-dashboard.component.scss']
+  styleUrls: ['./advanced-financial-dashboard.component.scss'],
+  standalone: true,
+  imports: [IbmIconComponent, NgClass, ExtendedModule, EchartsContainerComponent, EchartsComponent, DecimalPipe]
 })
 export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedYear: number = new Date().getFullYear();
@@ -199,16 +206,16 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
 
     this.financialMetrics = [
       {
-        label: 'Couvert en ' + this.selectedYear,
+        label: `Couvert en ${  this.selectedYear}`,
         value: this.totalPaidAllTime,
         change: revenueChange.value,
         changeType: revenueChange.type,
         icon: 'currency--dollar',
         color: this.successColor,
-        description: 'Mois de ' + this.selectedYear + ' couverts par le cumul des paiements'
+        description: `Mois de ${  this.selectedYear  } couverts par le cumul des paiements`
       },
       {
-        label: 'Taux de couverture ' + this.selectedYear,
+        label: `Taux de couverture ${  this.selectedYear}`,
         value: this.realCollectionRate,
         change: collectionRateChange.value,
         changeType: collectionRateChange.type,
@@ -691,7 +698,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'excel',
-      data: data,
+      data,
       filename: `analyse-financiere-avancee-${this.selectedYear}.xlsx`
     });
   }
@@ -700,7 +707,7 @@ export class AdvancedFinancialDashboardComponent implements OnInit, OnChanges, O
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'csv',
-      data: data,
+      data,
       filename: `analyse-financiere-avancee-${this.selectedYear}.csv`
     });
   }

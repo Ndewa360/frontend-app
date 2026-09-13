@@ -1,9 +1,13 @@
 import { Component, HostListener } from '@angular/core';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-scroll-to-top',
   templateUrl: './scroll-to-top.component.html',
-  styleUrls: ['./scroll-to-top.component.css']
+  styleUrls: ['./scroll-to-top.component.css'],
+  standalone: true,
+  imports: [NgIf, IbmIconComponent]
 })
 export class ScrollToTopComponent {
   isVisible = true;

@@ -3,16 +3,25 @@ import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { PropertyManagerState, PropertyManagerAction, PropertyManagerAssignment, PERMISSION_LABELS, ManagerPermission } from 'src/app/shared/store/property-manager';
 import { AssignManagerModalComponent } from '../assign-manager-modal/assign-manager-modal.component';
 import { RevokeConfirmModalComponent } from '../revoke-confirm-modal/revoke-confirm-modal.component';
 import { EditPermissionsModalComponent } from '../edit-permissions-modal/edit-permissions-modal.component';
+import { NgIf, NgFor, AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-managers-list',
   templateUrl: './managers-list.component.html',
   styleUrls: ['./managers-list.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    NgFor,
+    AsyncPipe,
+    DatePipe,
+    TranslatePipe
+  ]
 })
 export class ManagersListComponent implements OnInit, OnDestroy {
   @Input() propertyId: string;
@@ -27,7 +36,7 @@ export class ManagersListComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private dialog: MatDialog,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +62,7 @@ export class ManagersListComponent implements OnInit, OnDestroy {
       maxWidth: '95vw',
       disableClose: true,
       panelClass: 'manager-modal-panel',
-      data: { propertyId: this.propertyId, propertyName: this.propertyName },
+      data: { propertyId: this.propertyId, propertyName: this.propertyName }
     });
 
     ref.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(result => {
@@ -69,8 +78,8 @@ export class ManagersListComponent implements OnInit, OnDestroy {
       panelClass: 'manager-modal-panel',
       data: {
         assignment: manager,
-        propertyName: this.propertyName,
-      },
+        propertyName: this.propertyName
+      }
     });
 
     ref.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(result => {
@@ -88,8 +97,8 @@ export class ManagersListComponent implements OnInit, OnDestroy {
         managerName: manager.manager?.name || '',
         managerEmail: manager.manager?.email || '',
         propertyName: this.propertyName,
-        permissions: manager.permissions.map(p => this.getPermissionLabel(p)),
-      },
+        permissions: manager.permissions.map(p => this.getPermissionLabel(p))
+      }
     });
 
     ref.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(confirmed => {

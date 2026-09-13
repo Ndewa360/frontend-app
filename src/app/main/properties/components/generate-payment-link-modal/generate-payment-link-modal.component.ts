@@ -1,16 +1,19 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PaymentLinkService } from 'src/app/shared/services/payment-link.service';
 import { RoomModel } from 'src/app/shared/store';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { NgIf, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-generate-payment-link-modal',
   templateUrl: './generate-payment-link-modal.component.html',
-  styleUrls: ['./generate-payment-link-modal.component.scss']
+  styleUrls: ['./generate-payment-link-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, ReactiveFormsModule, DatePipe, TranslatePipe]
 })
 export class GeneratePaymentLinkModalComponent implements OnInit {
   formGroup: FormGroup;
@@ -78,7 +81,7 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
     const request = {
       locationId: this.data.location._id,
       description: this.formGroup.value.description,
-      lang,
+      lang
     };
 
     this.paymentLinkService.generatePaymentLink(request).subscribe({

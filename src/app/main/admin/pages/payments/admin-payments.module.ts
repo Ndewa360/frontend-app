@@ -7,7 +7,6 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { AdminPaymentsComponent } from './admin-payments.component';
 
 @NgModule({
-  declarations: [AdminPaymentsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +14,7 @@ import { AdminPaymentsComponent } from './admin-payments.component';
     MatDialogModule,
     RouterModule,
     SharedModule,
-  ],
+    AdminPaymentsComponent
+  ]
 })
 export class AdminPaymentsModule { }

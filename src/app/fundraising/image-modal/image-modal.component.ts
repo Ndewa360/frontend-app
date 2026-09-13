@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface GalleryImage {
   src: string;
@@ -188,7 +189,9 @@ export interface ImageModalData {
     .close-btn i {
       font-size: 18px;
     }
-  `]
+  `],
+  standalone: true,
+  imports: [NgIf, NgFor, TranslatePipe]
 })
 export class ImageModalComponent {
   currentIndex: number;

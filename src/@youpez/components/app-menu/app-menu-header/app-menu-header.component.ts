@@ -1,16 +1,19 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core'
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'youpez-menu-header',
   templateUrl: './app-menu-header.component.html',
-  styleUrls: ['./app-menu-header.component.css']
+  styleUrls: ['./app-menu-header.component.css'],
+  standalone: true,
+  imports: [NgIf]
 })
 export class AppMenuHeaderComponent implements OnInit {
 
-  @Input('groupName') groupName: string = ''
-  @Input('opened') opened: boolean = true
+  @Input() groupName: string = '';
+  @Input() opened: boolean = true;
 
-  @Output('toggle') toggle: EventEmitter<any> = new EventEmitter()
+  @Output() toggle: EventEmitter<any> = new EventEmitter();
 
   constructor() {
   }
@@ -19,7 +22,7 @@ export class AppMenuHeaderComponent implements OnInit {
   }
 
   onToggle() {
-    this.toggle.next(true)
+    this.toggle.next(true);
   }
 
 }

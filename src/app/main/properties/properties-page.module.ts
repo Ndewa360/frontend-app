@@ -51,7 +51,20 @@ import { Error404Component } from '../errors/error404/error404.component';
 import { Error500Component } from '../errors/error500/error500.component';
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    PropertiesRoutingModule,
+    SharedModule,
+    ChartsModule,
+    MatDialogModule,
+    NgxExtendedPdfViewerModule,
+    LocationPaymentModule,
+    AgGridModule,
+    StatisticsModule,
+    AssignLocationModule,
+    PropertiesSharedModule,
+    ModernModalsModule,
+    TranslateModule,
     AddPropertyComponent,
     ListPropertyComponent,
     UpdatePropertyComponent,
@@ -86,22 +99,7 @@ import { Error500Component } from '../errors/error500/error500.component';
     RevokeConfirmModalComponent,
     EditPermissionsModalComponent,
     Error404Component,
-    Error500Component,
-  ],
-  imports: [
-    CommonModule,
-    PropertiesRoutingModule,
-    SharedModule,
-    ChartsModule,
-    MatDialogModule,
-    NgxExtendedPdfViewerModule,
-    LocationPaymentModule,
-    AgGridModule,
-    StatisticsModule,
-    AssignLocationModule,
-    PropertiesSharedModule,
-    ModernModalsModule,
-    TranslateModule,
+    Error500Component
   ]
 })
 export class PropertiesPageModule {}

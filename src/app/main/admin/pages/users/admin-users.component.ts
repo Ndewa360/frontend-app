@@ -1,6 +1,6 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -13,12 +13,16 @@ import { AdminUsersState } from '../../store/users/admin-users.state';
 import { AdminUser, AdminUserFilters } from '../../store/users/admin-users.model';
 import { AdminRolesState } from '../../store/roles/admin-roles.state';
 import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, AsyncPipe, DecimalPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-users',
   templateUrl: './admin-users.component.html',
   styleUrls: ['./admin-users.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, DatePipe]
 })
 export class AdminUsersComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -64,7 +68,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     { key: 'status',    label: 'Statut',              sortable: true  },
     { key: 'lastLogin', label: 'Dernière connexion',  sortable: true  },
     { key: 'createdAt', label: 'Créé le',             sortable: true  },
-    { key: 'actions',   label: 'Actions',             sortable: false },
+    { key: 'actions',   label: 'Actions',             sortable: false }
   ];
 
   userForm: FormGroup;
@@ -124,8 +128,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       role:          this.selectedRole     || undefined,
       // CORRECTION : inclure le filtre vérification
       emailVerified: this.selectedVerification === 'verified'   ? true
-                   : this.selectedVerification === 'unverified' ? false
-                   : undefined,
+        : this.selectedVerification === 'unverified' ? false
+          : undefined
     };
     this.store.dispatch(new AdminUsersAction.SetFilters(filters));
     this.store.dispatch(new AdminUsersAction.LoadUsers());

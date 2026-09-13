@@ -2,6 +2,10 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angu
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslationService } from '../../services/localization/translation.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgClass, NgIf, NgFor } from '@angular/common';
+import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 
 export interface LanguageOption {
   code: string;
@@ -13,7 +17,15 @@ export interface LanguageOption {
 @Component({
   selector: 'app-advanced-language-switcher',
   templateUrl: './advanced-language-switcher.component.html',
-  // styleUrls: ['./advanced-language-switcher.component.scss']
+  standalone: true,
+  imports: [
+    ClickOutsideDirective,
+    NgClass,
+    ExtendedModule,
+    NgIf,
+    NgFor,
+    TranslatePipe
+  ]
 })
 export class AdvancedLanguageSwitcherComponent implements OnInit, OnDestroy {
   
@@ -105,26 +117,26 @@ export class AdvancedLanguageSwitcherComponent implements OnInit, OnDestroy {
    */
   onKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
-      case 'Escape':
-        this.closeDropdown();
-        break;
-      case 'Enter':
-      case ' ':
-        event.preventDefault();
+    case 'Escape':
+      this.closeDropdown();
+      break;
+    case 'Enter':
+    case ' ':
+      event.preventDefault();
+      this.toggleDropdown();
+      break;
+    case 'ArrowDown':
+      event.preventDefault();
+      if (!this.isDropdownOpen) {
         this.toggleDropdown();
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        if (!this.isDropdownOpen) {
-          this.toggleDropdown();
-        }
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        if (this.isDropdownOpen) {
-          this.closeDropdown();
-        }
-        break;
+      }
+      break;
+    case 'ArrowUp':
+      event.preventDefault();
+      if (this.isDropdownOpen) {
+        this.closeDropdown();
+      }
+      break;
     }
   }
 

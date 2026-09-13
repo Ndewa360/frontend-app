@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   LocationPaymentModel,
   LocationPaymentState,
@@ -22,6 +22,9 @@ import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-paym
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 import { ExportService, ExportColumn } from '../../services/export.service';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor } from '@angular/common';
 
 interface PaymentHistoryItem {
   id: string;
@@ -66,7 +69,9 @@ interface PaymentStats {
 @Component({
   selector: 'app-property-history',
   templateUrl: './property-history.component.html',
-  styleUrls: ['./property-history.component.scss']
+  styleUrls: ['./property-history.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, SelectModule, NgFor, TranslatePipe]
 })
 export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
   @Input() propertyId: string = '';
@@ -273,24 +278,24 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     let startDate: Date;
 
     switch (this.filters.period) {
-      case 'today':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        break;
-      case 'week':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case 'month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'quarter':
-        const quarterStart = Math.floor(now.getMonth() / 3) * 3;
-        startDate = new Date(now.getFullYear(), quarterStart, 1);
-        break;
-      case 'year':
-        startDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      default:
-        return items;
+    case 'today':
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case 'week':
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case 'month':
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      break;
+    case 'quarter':
+      const quarterStart = Math.floor(now.getMonth() / 3) * 3;
+      startDate = new Date(now.getFullYear(), quarterStart, 1);
+      break;
+    case 'year':
+      startDate = new Date(now.getFullYear(), 0, 1);
+      break;
+    default:
+      return items;
     }
 
     return items.filter(item => item.date >= startDate);
@@ -301,22 +306,22 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
       let comparison = 0;
 
       switch (this.sortBy) {
-        case 'date':
-          comparison = a.date.getTime() - b.date.getTime();
-          break;
-        case 'amount':
-          comparison = a.amount - b.amount;
-          break;
-        case 'tenant':
-          const tenantA = a.tenant?.fullName || '';
-          const tenantB = b.tenant?.fullName || '';
-          comparison = tenantA.localeCompare(tenantB);
-          break;
-        case 'room':
-          const roomA = a.room?.code || '';
-          const roomB = b.room?.code || '';
-          comparison = roomA.localeCompare(roomB);
-          break;
+      case 'date':
+        comparison = a.date.getTime() - b.date.getTime();
+        break;
+      case 'amount':
+        comparison = a.amount - b.amount;
+        break;
+      case 'tenant':
+        const tenantA = a.tenant?.fullName || '';
+        const tenantB = b.tenant?.fullName || '';
+        comparison = tenantA.localeCompare(tenantB);
+        break;
+      case 'room':
+        const roomA = a.room?.code || '';
+        const roomB = b.room?.code || '';
+        comparison = roomA.localeCompare(roomB);
+        break;
       }
 
       return this.sortOrder === 'desc' ? -comparison : comparison;
@@ -479,25 +484,25 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
   getTypeLabel(type: LocationPaymentType): string {
     switch (type) {
-      case 'LOCATION': return 'Loyer';
-      case 'CAUTION': return 'Caution';
-      default: return type;
+    case 'LOCATION': return 'Loyer';
+    case 'CAUTION': return 'Caution';
+    default: return type;
     }
   }
 
   getTypeColor(type: LocationPaymentType): string {
     switch (type) {
-      case 'LOCATION': return 'bg-green-100 text-green-800';
-      case 'CAUTION': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+    case 'LOCATION': return 'bg-green-100 text-green-800';
+    case 'CAUTION': return 'bg-blue-100 text-blue-800';
+    default: return 'bg-gray-100 text-gray-800';
     }
   }
 
   getTypeIcon(type: LocationPaymentType): string {
     switch (type) {
-      case 'LOCATION': return 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4';
-      case 'CAUTION': return 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z';
-      default: return 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1';
+    case 'LOCATION': return 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4';
+    case 'CAUTION': return 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z';
+    default: return 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1';
     }
   }
 
@@ -513,7 +518,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     const halfVisible = Math.floor(maxVisiblePages / 2);
 
     let startPage = Math.max(1, this.currentPage - halfVisible);
-    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+    const endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
 
     if (endPage - startPage < maxVisiblePages - 1) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -569,18 +574,18 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
     // Ajouter le type d'unité pour plus de clarté
     let prefix = 'Unité';
     switch (room.type) {
-      case 'room':
-        prefix = 'Chambre';
-        break;
-      case 'studio':
-        prefix = 'Studio';
-        break;
-      case 'simple_apartment':
-        prefix = 'Appartement';
-        break;
-      case 'furnished_apartment':
-        prefix = 'App. Meublé';
-        break;
+    case 'room':
+      prefix = 'Chambre';
+      break;
+    case 'studio':
+      prefix = 'Studio';
+      break;
+    case 'simple_apartment':
+      prefix = 'Appartement';
+      break;
+    case 'furnished_apartment':
+      prefix = 'App. Meublé';
+      break;
     }
 
     return `${prefix} ${code}`;
@@ -670,10 +675,10 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
     return {
       transaction: payment.rawPayment,
-      history: history,
+      history,
       room: payment.room,
       tenant: payment.tenant,
-      location: location
+      location
     };
   }
 
@@ -704,7 +709,7 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
         owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null,
         propertyName: this.property?.name,
         location,
-        allPayments,
+        allPayments
       }
     });
   }
@@ -824,23 +829,23 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
   getPaymentTypeLabel(type: LocationPaymentType): string {
     switch (type) {
-      case LocationPaymentType.LOCATION:
-        return 'Loyer';
-      case LocationPaymentType.CAUTION:
-        return 'Caution';
-      default:
-        return 'Autre';
+    case LocationPaymentType.LOCATION:
+      return 'Loyer';
+    case LocationPaymentType.CAUTION:
+      return 'Caution';
+    default:
+      return 'Autre';
     }
   }
 
   getPaymentTypeColor(type: LocationPaymentType): string {
     switch (type) {
-      case LocationPaymentType.LOCATION:
-        return 'text-green-600 bg-green-100';
-      case LocationPaymentType.CAUTION:
-        return 'text-blue-600 bg-blue-100';
-      default:
-        return 'text-gray-600 bg-gray-100';
+    case LocationPaymentType.LOCATION:
+      return 'text-green-600 bg-green-100';
+    case LocationPaymentType.CAUTION:
+      return 'text-blue-600 bg-blue-100';
+    default:
+      return 'text-gray-600 bg-gray-100';
     }
   }
 }

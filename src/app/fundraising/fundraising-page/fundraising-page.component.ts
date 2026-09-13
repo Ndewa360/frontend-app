@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ElementRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { FundraisingService, CampaignStats } from '../services/fundraising.service';
 import { ImageModalComponent } from '../image-modal/image-modal.component';
+import { NgIf, NgFor } from '@angular/common';
 
 interface DonationTier {
   amount: number;
@@ -34,7 +35,9 @@ interface TeamMember {
 @Component({
   selector: 'app-fundraising-page',
   templateUrl: './fundraising-page.component.html',
-  styleUrls: ['./fundraising-page.component.scss']
+  styleUrls: ['./fundraising-page.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, TranslatePipe]
 })
 export class FundraisingPageComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();

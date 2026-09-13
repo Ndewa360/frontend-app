@@ -1,12 +1,15 @@
 import { trackByFn } from '../../../../../../shared/utils/track-by.util';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { PfPieSlice } from '../pie-chart/pie-chart.component';
+import { PfPieSlice, PfPieChartComponent } from '../pie-chart/pie-chart.component';
+import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'pf-pie-tooltip',
   templateUrl: './pie-tooltip.component.html',
   styleUrls: ['./pie-tooltip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [PfPieChartComponent, NgFor]
 })
 export class PfPieTooltipComponent {
   trackByFn = trackByFn;

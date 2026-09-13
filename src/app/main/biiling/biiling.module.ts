@@ -14,7 +14,12 @@ import { SubscriptionDashboardComponent } from './components/subscription-dashbo
 
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    BiilingRoutingModule,
+    SharedModule,
+    NgxPrintModule,
+    TranslateModule,
     ShowBiilingComponent,
     ChoisePlanComponent,
     ShowBillingContractComponent,
@@ -22,13 +27,6 @@ import { SubscriptionDashboardComponent } from './components/subscription-dashbo
     ShowFactureCurrentComponent,
     PlanListComponent,
     SubscriptionDashboardComponent
-  ],
-  imports: [
-    CommonModule,
-    BiilingRoutingModule,
-    SharedModule,
-    NgxPrintModule,
-    TranslateModule
   ]
 })
 export class BiilingModule { }

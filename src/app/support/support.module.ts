@@ -21,26 +21,18 @@ import { LayoutModule } from '../layout/layout.module';
 
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    SharedModule,
+    LayoutModule,
+    SupportRoutingModule,
     FaqComponent,
     RequestComponent,
     ChangelogComponent,
     GettingStartedComponent,
     SupportComponent,
     HomeComponent,
-    ManualComponent,
-    // WelcomeComponent
-    // LayoutComponent,
-    // AppLayoutHorizontalComponent,
-    // LayoutMiniSidebarComponent,
-    // LayoutSidebarComponent,
-    // HeaderComponent,
-  ],
-  imports: [
-    CommonModule,
-    SharedModule,
-    LayoutModule,
-    SupportRoutingModule
+    ManualComponent
   ]
 })
 export class SupportModule { }

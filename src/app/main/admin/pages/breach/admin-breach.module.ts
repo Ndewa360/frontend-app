@@ -7,7 +7,6 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { AdminBreachComponent } from './admin-breach.component';
 
 @NgModule({
-  declarations: [AdminBreachComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +14,7 @@ import { AdminBreachComponent } from './admin-breach.component';
     MatDialogModule,
     RouterModule,
     SharedModule,
-  ],
+    AdminBreachComponent
+  ]
 })
 export class AdminBreachModule { }

@@ -35,9 +35,6 @@ import { RestCountriesService } from './services/rest-countries.service';
 import { AdminRoutingModule } from './admin-routing.module';
 
 @NgModule({
-  declarations: [
-    AdminLayoutComponent,
-  ],
   imports: [
     CommonModule,
     RouterModule,
@@ -52,8 +49,9 @@ import { AdminRoutingModule } from './admin-routing.module';
       AdminDashboardState,
       AdminSubscriptionsState,
       PlatformFinanceState,
-      AdminBreachState,
+      AdminBreachState
     ]),
+    AdminLayoutComponent
   ],
   providers: [
     AdminUsersService,
@@ -65,7 +63,7 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminSubscriptionsService,
     AdminPlatformFinanceService,
     RestCountriesService,
-    AdminBreachService,
-  ],
+    AdminBreachService
+  ]
 })
 export class AdminModule {}

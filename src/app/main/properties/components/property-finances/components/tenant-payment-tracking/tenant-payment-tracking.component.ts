@@ -1,10 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
 import { EnrichedStatisticData } from 'src/app/shared/store';
 import { Store } from '@ngxs/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { TranslationUtilsService } from 'src/app/shared/services/translation-utils.service';
 import { ExportData } from '../../property-finances.component';
 import { PropertyFinancialManagerService } from 'src/app/main/properties/services/property-financial-manager.service';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgFor, NgClass, DecimalPipe, CurrencyPipe, DatePipe } from '@angular/common';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
 
 // Type exact du store : {key: string, data: EnrichedStatisticData}
 export type StoredPropertyStatistic = { key: string; data: EnrichedStatisticData };
@@ -56,7 +60,9 @@ export interface TenantTrackingData {
 @Component({
   selector: 'app-tenant-payment-tracking',
   templateUrl: './tenant-payment-tracking.component.html',
-  styleUrls: ['./tenant-payment-tracking.component.scss']
+  styleUrls: ['./tenant-payment-tracking.component.scss'],
+  standalone: true,
+  imports: [FormsModule, SelectModule, NgIf, NgFor, NgClass, ExtendedModule, DecimalPipe, CurrencyPipe, DatePipe, TranslatePipe]
 })
 export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
   @Input() enrichedData: StoredPropertyStatistic[] = [];
@@ -287,7 +293,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
       'no_payment':     'status-pill--behind',
       'partial':        'status-pill--partial',
       'no_contract':    'status-pill--neutral',
-      'ended_contract': 'status-pill--neutral',
+      'ended_contract': 'status-pill--neutral'
     };
     return map[status] ?? 'status-pill--success';
   }
@@ -328,7 +334,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'excel',
-      data: data,
+      data,
       filename: `suivi-paiements-locataires-${this.selectedYear}`
     });
   }
@@ -360,7 +366,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'csv',
-      data: data,
+      data,
       filename: `suivi-paiements-locataires-${this.selectedYear}.csv`
     });
   }
@@ -401,7 +407,7 @@ export class TenantPaymentTrackingComponent implements OnInit, OnChanges {
         'Mois d\'avance':     advanceMonths > 0 ? advanceMonths : 0,
         'Statut':              this.getStatusLabelText(tenant.status),
         'Dernier paiement':    lastPayment,
-        'Année':               this.selectedYear,
+        'Année':               this.selectedYear
       };
     });
   }

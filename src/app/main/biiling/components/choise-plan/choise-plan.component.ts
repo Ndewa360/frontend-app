@@ -7,11 +7,18 @@ import { SouscriptionState, SouscriptionAction } from 'src/app/shared/store';
 import { SubscriptionLimitAction, SubscriptionLimitState } from 'src/app/shared/store/subscription-limit';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { AppLogoComponent } from '../../../../../@youpez/components/app-logo/app-logo.component';
+import { NgScrollbar } from 'ngx-scrollbar';
 
 @Component({
   selector: 'choise-plan',
   templateUrl: './choise-plan.component.html',
-  styleUrls: ['./choise-plan.component.css']
+  styleUrls: ['./choise-plan.component.css'],
+  standalone: true,
+  imports: [NgScrollbar, AppLogoComponent, NgIf, ButtonModule, AsyncPipe, TranslatePipe]
 })
 export class ChoisePlanComponent implements OnInit, OnDestroy {
   currentSubscription$: Observable<any>;
@@ -25,7 +32,7 @@ export class ChoisePlanComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private store: Store,
     private actions: Actions,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -50,7 +57,7 @@ export class ChoisePlanComponent implements OnInit, OnDestroy {
         this.store.dispatch(new SouscriptionAction.SetCurrentSubscription({
           ...current,
           plan: 'premium' as any,
-          accountStatus: 'active' as any,
+          accountStatus: 'active' as any
         }));
       }
       // Recharger les donnees fraiches depuis le backend
@@ -72,7 +79,7 @@ export class ChoisePlanComponent implements OnInit, OnDestroy {
       disableClose: true,
       role: 'alertdialog',
       width: '70%',
-      height: '98%',
+      height: '98%'
     });
   }
 

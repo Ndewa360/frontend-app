@@ -4,11 +4,14 @@ import { AgentService } from '../../../shared/services/agent.service';
 import { AgentProfile, AgentStats, AgentStatus } from '../../../shared/models/agent.model';
 import { NotificationService } from 'carbon-components-angular';
 import { LanguageUrlService } from '../../../shared/services/language-url.service';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-agent-dashboard',
   templateUrl: './agent-dashboard.component.html',
-  styleUrls: ['./agent-dashboard.component.scss']
+  styleUrls: ['./agent-dashboard.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class AgentDashboardComponent implements OnInit {
   agentProfile: AgentProfile | null = null;

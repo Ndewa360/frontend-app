@@ -1,15 +1,23 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { IbmIconComponent } from '../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { NgIf } from '@angular/common';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
 
 @Component({
   selector: 'auth-askto-valid-email',
   templateUrl: './auth-askto-valid-email.component.html',
-  styleUrls: ['./auth-askto-valid-email.component.css']
+  styleUrls: ['./auth-askto-valid-email.component.css'],
+  standalone: true,
+  imports: [ExtendedModule, AppLogoComponent, NgIf, FlexModule, ButtonModule, RouterLink, IbmIconComponent, TranslatePipe]
 })
 export class AuthAsktoValidEmailComponent implements OnInit, OnDestroy {
 
@@ -24,7 +32,7 @@ export class AuthAsktoValidEmailComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private languageUrlService: LanguageUrlService,
+    private languageUrlService: LanguageUrlService
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +66,7 @@ export class AuthAsktoValidEmailComponent implements OnInit, OnDestroy {
             this.translate.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
             'Ndewa360°'
           );
-        },
+        }
       });
   }
 }

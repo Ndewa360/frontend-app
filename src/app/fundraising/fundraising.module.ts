@@ -20,10 +20,6 @@ import { ImageModalComponent } from './image-modal/image-modal.component';
 import { FundraisingService } from './services/fundraising.service';
 
 @NgModule({
-  declarations: [
-    FundraisingPageComponent,
-    ImageModalComponent
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -50,7 +46,9 @@ import { FundraisingService } from './services/fundraising.service';
     IconModule,
     ProgressIndicatorModule,
     TagModule,
-    TilesModule
+    TilesModule,
+    FundraisingPageComponent,
+    ImageModalComponent
   ],
   providers: [
     FundraisingService

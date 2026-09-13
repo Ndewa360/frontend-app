@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { NgScrollbar } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-changelog',
   templateUrl: './changelog.component.html',
-  styleUrls: ['./changelog.component.scss']
+  styleUrls: ['./changelog.component.scss'],
+  standalone: true,
+  imports: [NgScrollbar, FlexModule]
 })
 export class ChangelogComponent implements OnInit {
 
@@ -253,7 +257,7 @@ discover but could be affecting production environments.
 * **ngcc:** handle aliases in UMD export declarations ([#38959](https://github.com/angular/angular/issues/38959)) ([#39272](https://github.com/angular/angular/issues/39272)) ([9963c5d](https://github.com/angular/angular/commit/9963c5d)), closes [#38947](https://github.com/angular/angular/issues/38947)
 * **ngcc:** map \`exports\` to the current module in UMD files ([#38959](https://github.com/angular/angular/issues/38959)) ([#39272](https://github.com/angular/angular/issues/39272)) ([13c4a7b](https://github.com/angular/angular/commit/13c4a7b))
 * **ngcc:** support inline export declarations in UMD files ([#38959](https://github.com/angular/angular/issues/38959)) ([#39272](https://github.com/angular/angular/issues/39272)) ([9c875b3](https://github.com/angular/angular/commit/9c875b3)), closes [#38947](https://github.com/angular/angular/issues/38947)
-  `
+  `;
 
   constructor() { }
 

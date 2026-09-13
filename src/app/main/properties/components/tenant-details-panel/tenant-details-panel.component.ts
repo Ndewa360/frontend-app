@@ -6,13 +6,14 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState, HistoryLocationPaymentAction, LocataireAction, RoomAction } from 'src/app/shared/store';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
+import { NgIf, NgFor } from '@angular/common';
 
 interface Tab {
   label: string;
@@ -59,7 +60,9 @@ interface TenantPaymentGroup {
         animate('200ms 100ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
       ])
     ])
-  ]
+  ],
+  standalone: true,
+  imports: [NgIf, NgFor, TranslatePipe]
 })
 export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isOpen: boolean = false;
@@ -94,7 +97,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     private dialog: MatDialog,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private assignLocationModalService: AssignLocationModalService,
+    private assignLocationModalService: AssignLocationModalService
     
   ) {}
 
@@ -248,10 +251,10 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   getTenantStatusLabel(): string {
     const status = this.getTenantStatus();
     switch (status) {
-      case 'active': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.ACTIVE');
-      case 'inactive': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.INACTIVE');
-      case 'pending': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.PENDING');
-      default: return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.UNKNOWN');
+    case 'active': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.ACTIVE');
+    case 'inactive': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.INACTIVE');
+    case 'pending': return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.PENDING');
+    default: return this.translate.instant('TENANT_DETAILS.STATUS_LABELS.UNKNOWN');
     }
   }
 
@@ -265,11 +268,11 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     if (!this.currentRoom) return '';
 
     switch (this.currentRoom.type) {
-      case 'room': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.ROOM');
-      case 'studio': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.STUDIO');
-      case 'simple_apartment': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.SIMPLE_APARTMENT');
-      case 'furnished_apartment': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.FURNISHED_APARTMENT');
-      default: return this.currentRoom.type || '';
+    case 'room': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.ROOM');
+    case 'studio': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.STUDIO');
+    case 'simple_apartment': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.SIMPLE_APARTMENT');
+    case 'furnished_apartment': return this.translate.instant('TENANT_DETAILS.ROOM_TYPES.FURNISHED_APARTMENT');
+    default: return this.currentRoom.type || '';
     }
   }
 
@@ -446,23 +449,23 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
   /**
      * Recharger les données après une assignation réussie
      */
-    private reloadData(): void {
-      if (this.propertyId) {
-        // Recharger les chambres
-        this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+  private reloadData(): void {
+    if (this.propertyId) {
+      // Recharger les chambres
+      this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
   
-        // Recharger les locataires
-        this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.propertyId));
+      // Recharger les locataires
+      this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.propertyId));
   
-        // Recharger les paiements
-        this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
+      // Recharger les paiements
+      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
   
-        // Mettre à jour les données après un délai
-        setTimeout(() => {
-          this.loadTenantPayments();
-        }, 1000);
-      }
+      // Mettre à jour les données après un délai
+      setTimeout(() => {
+        this.loadTenantPayments();
+      }, 1000);
     }
+  }
     
   getUniquePaymentIdentifier(payment: LocationPaymentModel): string {
     // Créer un identifiant unique basé sur plusieurs propriétés
@@ -503,14 +506,14 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     const history = {
       _id: `history_${this.tenant?._id || 'unknown'}`,
       locataire: this.tenant,
-      room: room,
+      room,
       property: { _id: this.propertyId },
       transactions: [payment]
     };
 
     return {
       transaction: payment,
-      history: history
+      history
     };
   }
 
@@ -535,7 +538,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
         room: room ? { code: room.code, price: room.price, type: room.type } : null,
         owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null,
         location: this.currentLocation,
-        allPayments,
+        allPayments
       }
     });
   }

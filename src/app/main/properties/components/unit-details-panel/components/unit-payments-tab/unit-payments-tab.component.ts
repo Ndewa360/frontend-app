@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UnitDetailsData, UnitDetailsService } from '../../../../services/unit-details.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface PaymentAction {
   type: 'add' | 'view' | 'edit' | 'delete' | 'export' | 'receipt';
@@ -9,7 +11,9 @@ export interface PaymentAction {
 @Component({
   selector: 'app-unit-payments-tab',
   templateUrl: './unit-payments-tab.component.html',
-  styleUrls: ['./unit-payments-tab.component.scss']
+  styleUrls: ['./unit-payments-tab.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, TranslatePipe]
 })
 export class UnitPaymentsTabComponent {
   @Input() unitData: UnitDetailsData | null = null;
@@ -58,11 +62,11 @@ export class UnitPaymentsTabComponent {
 
   getPaymentTypeLabel(type: string): string {
     switch (type) {
-      case 'LOCATION': return 'Loyer';
-      case 'CAUTION': return 'Caution';
-      case 'CHARGES': return 'Charges';
-      case 'REPARATION': return 'Réparation';
-      default: return type || 'Autre';
+    case 'LOCATION': return 'Loyer';
+    case 'CAUTION': return 'Caution';
+    case 'CHARGES': return 'Charges';
+    case 'REPARATION': return 'Réparation';
+    default: return type || 'Autre';
     }
   }
 

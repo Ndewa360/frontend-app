@@ -1,7 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet, RouterLink } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { filter, tap } from 'rxjs';
+import { NgIf } from '@angular/common';
+import { LandingFooterComponent } from '../landing-footer/landing-footer.component';
+import { LandingHeaderComponent } from '../landing-header/landing-header.component';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
 const GA_ID = 'G-MKEB3L7EXL';
@@ -9,7 +12,9 @@ const GA_ID = 'G-MKEB3L7EXL';
 @Component({
   selector: 'app-landing-layout',
   templateUrl: './landing-layout.component.html',
-  styleUrls: ['./landing-layout.component.scss']
+  styleUrls: ['./landing-layout.component.scss'],
+  standalone: true,
+  imports: [LandingHeaderComponent, NgScrollbar, RouterOutlet, LandingFooterComponent, NgIf, RouterLink]
 })
 export class LandingLayoutComponent implements OnInit, AfterViewInit{
   

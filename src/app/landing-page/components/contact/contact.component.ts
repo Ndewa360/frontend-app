@@ -1,16 +1,21 @@
 import { Component, ViewEncapsulation, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 import { Store, Actions, Select, ofActionCompleted, ofActionSuccessful } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { ProspectionAction, ProspectionState } from 'src/app/shared/store';
+import { RouterLink } from '@angular/router';
+import { NgIf } from '@angular/common';
+import { SelectModule } from 'carbon-components-angular';
 
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, SelectModule, NgIf, RouterLink]
 })
 export class ContactComponent implements OnInit {
   
@@ -57,7 +62,7 @@ export class ContactComponent implements OnInit {
         email: formData.email,
         tel: formData.phone || '',
         object: formData.subject,
-        message: `${formData.company ? 'Entreprise: ' + formData.company + '\n\n' : ''}${formData.message}`
+        message: `${formData.company ? `Entreprise: ${  formData.company  }\n\n` : ''}${formData.message}`
       };
       
       this.store.dispatch(new ProspectionAction.CreateNewProspection(prospectionData));

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -7,11 +7,15 @@ import { Store } from '@ngxs/store';
 import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
 import { UserProfileModel } from 'src/app/shared/store/user-profile/user-profile.model';
 import { UserProfileAction } from 'src/app/shared/store/user-profile/user-profile.actions';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-agent-profile-completion',
   templateUrl: './agent-profile-completion.component.html',
-  styleUrls: ['./agent-profile-completion.component.scss']
+  styleUrls: ['./agent-profile-completion.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, NgIf, SelectModule]
 })
 export class AgentProfileCompletionComponent implements OnInit {
   profileForm: FormGroup;

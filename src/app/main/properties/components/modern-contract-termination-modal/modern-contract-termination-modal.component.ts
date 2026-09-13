@@ -1,12 +1,12 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ModalTranslationService } from '../../../../shared/services/modal-translation.service';
 import { 
   LocationModel, 
@@ -14,6 +14,7 @@ import {
   LocataireModel,
   RoomModel
 } from 'src/app/shared/store';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface ContractTerminationModalData {
   location: LocationModel;
@@ -24,7 +25,9 @@ export interface ContractTerminationModalData {
 @Component({
   selector: 'app-modern-contract-termination-modal',
   templateUrl: './modern-contract-termination-modal.component.html',
-  styleUrls: ['./modern-contract-termination-modal.component.scss']
+  styleUrls: ['./modern-contract-termination-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, TranslatePipe]
 })
 export class ModernContractTerminationModalComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;

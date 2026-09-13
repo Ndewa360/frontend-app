@@ -14,9 +14,11 @@ import {
   LocationState
 } from 'src/app/shared/store';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ContractTemplateService } from 'src/app/shared/services/contract-template.service';
 import { ContractTemplateModel, ContractTemplateType } from 'src/app/shared/models/contract-template.model';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
 
 export interface ContractViewerData {
   room: RoomModel;
@@ -27,7 +29,9 @@ export interface ContractViewerData {
 @Component({
   selector: 'app-contract-viewer-modal',
   templateUrl: './contract-viewer-modal.component.html',
-  styleUrls: ['./contract-viewer-modal.component.scss']
+  styleUrls: ['./contract-viewer-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, NgxExtendedPdfViewerModule, DatePipe, TranslatePipe]
 })
 export class ContractViewerModalComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -418,14 +422,14 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_DEFAULT';
-      case ContractTemplateType.CUSTOM:
-        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_CUSTOM';
-      case ContractTemplateType.DUPLICATED:
-        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_DUPLICATED';
-      default:
-        return 'CONTRACT_VIEWER.TEMPLATE_TYPE_UNKNOWN';
+    case ContractTemplateType.DEFAULT:
+      return 'CONTRACT_VIEWER.TEMPLATE_TYPE_DEFAULT';
+    case ContractTemplateType.CUSTOM:
+      return 'CONTRACT_VIEWER.TEMPLATE_TYPE_CUSTOM';
+    case ContractTemplateType.DUPLICATED:
+      return 'CONTRACT_VIEWER.TEMPLATE_TYPE_DUPLICATED';
+    default:
+      return 'CONTRACT_VIEWER.TEMPLATE_TYPE_UNKNOWN';
     }
   }
 }

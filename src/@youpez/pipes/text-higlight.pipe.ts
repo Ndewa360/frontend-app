@@ -1,9 +1,10 @@
-import {Pipe, PipeTransform} from '@angular/core'
-import {DomSanitizer} from '@angular/platform-browser'
-import { escape } from 'lodash-es'
+import {Pipe, PipeTransform} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
+import { escape } from 'lodash-es';
 
 @Pipe({
   name: 'textHighlight',
+  standalone: true
 })
 export class TextHiglightPipe implements PipeTransform {
 
@@ -12,19 +13,19 @@ export class TextHiglightPipe implements PipeTransform {
 
   transform(value: any, args: any): any {
     if (!args) {
-      return escape(value)
+      return escape(value);
     }
     // Match in a case insensitive maneer
-    const re = new RegExp(args, 'gi')
-    const match = value.match(re)
+    const re = new RegExp(args, 'gi');
+    const match = value.match(re);
 
     // If there's no match, just return the original value.
     if (!match) {
-      return escape(value)
+      return escape(value);
     }
 
-    const replacedValue = escape(value).replace(re, '<mark class="app-text-mark">' + match[0] + '</mark>')
-    return this.sanitizer.bypassSecurityTrustHtml(replacedValue)
+    const replacedValue = escape(value).replace(re, `<mark class="app-text-mark">${  match[0]  }</mark>`);
+    return this.sanitizer.bypassSecurityTrustHtml(replacedValue);
   }
 
 }

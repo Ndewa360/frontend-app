@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Actions, ofActionCompleted, ofActionSuccessful, Select } from '@ngxs/store';
@@ -12,12 +12,30 @@ import { SubscriptionLimitModalComponent, SubscriptionLimitModalData } from 'src
 import { CountryCityValue } from 'src/app/shared/components/geography-selectors';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ContractTemplateSelectorComponent } from '../../../shared/components/contract-template-selector/contract-template-selector.component';
+import { CountryCitySelectorComponent } from '../../../shared/components/country-city-selector/country-city-selector.component';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, DatePipe } from '@angular/common';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 @Component({
   selector: 'app-add-property',
   templateUrl: './add-property.component.html',
   styleUrls: ['./add-property.component.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [
+    IbmIconComponent,
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    SelectModule,
+    CountryCitySelectorComponent,
+    ContractTemplateSelectorComponent,
+    DatePipe,
+    TranslatePipe
+  ]
 })
 export class AddPropertyComponent implements OnInit, OnDestroy {
   public formGroup: FormGroup;
@@ -115,17 +133,17 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
       ofActionCompleted(PropertyAction.CreateProperty),
       takeUntil(this.destroy$)
     ).subscribe((completion) => {
-        this.waittingResponse = false;
-        if (!completion.result.successful) {
-          const errorCode = (completion.result.error as any)?.error?.error;
-          if (errorCode === 'Account/Suspended') {
-            this.showAccountSuspendedModal();
-          } else if (errorCode === 'PropertyLimit/Exceeded') {
-            const status = this._store.selectSnapshot(state => state.subscriptionLimit.subscriptionStatus);
-            this.showSubscriptionLimitModal(true, status?.propertyLimit ?? 1);
-          }
+      this.waittingResponse = false;
+      if (!completion.result.successful) {
+        const errorCode = (completion.result.error as any)?.error?.error;
+        if (errorCode === 'Account/Suspended') {
+          this.showAccountSuspendedModal();
+        } else if (errorCode === 'PropertyLimit/Exceeded') {
+          const status = this._store.selectSnapshot(state => state.subscriptionLimit.subscriptionStatus);
+          this.showSubscriptionLimitModal(true, status?.propertyLimit ?? 1);
         }
-      });
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -135,7 +153,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
   onClose() {
     this.formGroup.reset();
-    this.dialogRef.close(false)
+    this.dialogRef.close(false);
   }
 
   /**
@@ -146,8 +164,8 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   }
 
   isValid(name) {
-    const instance = this.formGroup.get(name)
-    return instance.invalid && (instance.dirty || instance.touched)
+    const instance = this.formGroup.get(name);
+    return instance.invalid && (instance.dirty || instance.touched);
   }
 
   async onSubmit() {
@@ -184,26 +202,26 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   // Validation par étape
   isStepValid(step: number): boolean {
     switch (step) {
-      case 1:
-        const step1Valid = this.formGroup.get('name')?.valid &&
+    case 1:
+      const step1Valid = this.formGroup.get('name')?.valid &&
                this.formGroup.get('propertyType')?.valid &&
                this.formGroup.get('geolocation')?.valid &&
                this.formGroup.get('location')?.valid;
         
-        // Pour les agents, vérifier aussi les infos du propriétaire
-        if (this.isAgent) {
-          return step1Valid &&
+      // Pour les agents, vérifier aussi les infos du propriétaire
+      if (this.isAgent) {
+        return step1Valid &&
                  this.formGroup.get('ownerFullName')?.valid &&
                  this.formGroup.get('ownerPhoneNumber')?.valid &&
                  (!this.formGroup.get('ownerEmail')?.value || this.formGroup.get('ownerEmail')?.valid);
-        }
-        return step1Valid;
-      case 2:
-        return true; // Étape 2 est optionnelle
-      case 3:
-        return true; // Étape 3 est optionnelle (et invisible pour les agents)
-      default:
-        return false;
+      }
+      return step1Valid;
+    case 2:
+      return true; // Étape 2 est optionnelle
+    case 3:
+      return true; // Étape 3 est optionnelle (et invisible pour les agents)
+    default:
+      return false;
     }
   }
 
@@ -248,7 +266,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     // Exclure le champ geolocation du payload et ajouter les IDs séparément
     const { geolocation, ownerFullName, ownerPhoneNumber, ownerEmail, ownerAddress, ownerNotes, ownerConsentMethod, ownerPreferredContactMethod, ownerPreferredContactTime, ...cleanFormValue } = formValue;
 
-    let rentMin = formValue.rentMin || 0, rentMax = formValue.rentMax || 0;
+    const rentMin = formValue.rentMin || 0, rentMax = formValue.rentMax || 0;
     delete cleanFormValue.rentMin;
     delete cleanFormValue.rentMax;
     

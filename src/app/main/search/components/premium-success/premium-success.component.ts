@@ -6,11 +6,14 @@ import { Store } from '@ngxs/store';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
+import { NgIf, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-premium-success',
   templateUrl: './premium-success.component.html',
-  styleUrls: ['./premium-success.component.scss']
+  styleUrls: ['./premium-success.component.scss'],
+  standalone: true,
+  imports: [NgIf, DatePipe]
 })
 export class PremiumSuccessComponent implements OnInit, OnDestroy {
   loading = true;
@@ -26,7 +29,7 @@ export class PremiumSuccessComponent implements OnInit, OnDestroy {
     private router: Router,
     private store: Store,
     private premiumAccessService: PremiumAccessService,
-    private anonymousUserService: AnonymousUserService,
+    private anonymousUserService: AnonymousUserService
   ) {}
 
   ngOnInit(): void {

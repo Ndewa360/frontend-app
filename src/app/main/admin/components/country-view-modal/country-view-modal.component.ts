@@ -5,6 +5,7 @@ import { takeUntil, catchError } from 'rxjs/operators';
 
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry, AdminCity } from '../../store/geography/admin-geography.model';
+import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 
 export interface CountryViewModalData {
   country: AdminCountry;
@@ -13,7 +14,9 @@ export interface CountryViewModalData {
 @Component({
   selector: 'app-country-view-modal',
   templateUrl: './country-view-modal.component.html',
-  styleUrls: ['./country-view-modal.component.scss']
+  styleUrls: ['./country-view-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgFor, AsyncPipe]
 })
 export class CountryViewModalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -108,7 +111,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    */
   getFormattedArea(): string {
     if (!this.data.country.area) return 'Non disponible';
-    return new Intl.NumberFormat('fr-FR').format(this.data.country.area) + ' km²';
+    return `${new Intl.NumberFormat('fr-FR').format(this.data.country.area)  } km²`;
   }
 
   /**

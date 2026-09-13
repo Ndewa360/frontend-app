@@ -9,17 +9,15 @@ import { AssignLocationModalService } from './services/assign-location-modal.ser
 
 
 @NgModule({
-  declarations: [
+  imports: [
+    SharedModule,
+    CommonModule,
+    AssignLocationRoutingModule,
     AssignLocationComponent,
     AssignLocationFormComponent,
     AssignationAssistantComponent
   ],
-  imports: [
-    SharedModule,
-    CommonModule,
-    AssignLocationRoutingModule
-  ],
-  exports:[
+  exports: [
     AssignLocationComponent,
     AssignLocationFormComponent,
     AssignationAssistantComponent

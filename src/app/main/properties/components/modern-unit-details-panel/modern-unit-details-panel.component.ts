@@ -12,6 +12,7 @@ import {
 } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface ModernUnitAction {
   type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' | 'manage_media';
@@ -30,7 +31,9 @@ export interface ModernUnitAction {
       transition('false => true', animate('400ms cubic-bezier(0.25, 0.8, 0.25, 1)')),
       transition('true => false', animate('300ms cubic-bezier(0.25, 0.8, 0.25, 1)'))
     ])
-  ]
+  ],
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class ModernUnitDetailsPanelComponent implements OnInit, OnDestroy {
   @Input() room: RoomModel | null = null;
@@ -106,10 +109,10 @@ export class ModernUnitDetailsPanelComponent implements OnInit, OnDestroy {
   getRoomStatusLabel(): string {
     const status = this.getRoomStatus();
     switch (status) {
-      case 'available': return 'Disponible';
-      case 'occupied': return 'Occupée';
-      case 'maintenance': return 'En maintenance';
-      default: return 'Statut inconnu';
+    case 'available': return 'Disponible';
+    case 'occupied': return 'Occupée';
+    case 'maintenance': return 'En maintenance';
+    default: return 'Statut inconnu';
     }
   }
 

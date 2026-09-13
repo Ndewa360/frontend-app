@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { NgFor, NgIf } from '@angular/common';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 interface TeamMember {
   id: string;
@@ -17,7 +21,9 @@ interface TeamMember {
 @Component({
   selector: 'app-team',
   templateUrl: './team.component.html',
-  styleUrls: ['./team.component.css']
+  styleUrls: ['./team.component.css'],
+  standalone: true,
+  imports: [FlexModule, NgFor, NgIf, IbmIconComponent, TranslatePipe]
 })
 export class TeamComponent implements OnInit {
 
@@ -31,7 +37,7 @@ export class TeamComponent implements OnInit {
         linkedin: 'https://www.linkedin.com/in/cedric-nguendap-bedjama-143544175/',
         facebook: 'https://www.facebook.com/cedric.nguendap.77',
         twitter: 'https://x.com/c_nguendap'
-      },
+      }
       // experience: '8+ ans'
     },
     {
@@ -41,10 +47,10 @@ export class TeamComponent implements OnInit {
       image: 'assets/team/kell-momo.jpg',
       socialLinks: {
         linkedin: 'https://www.linkedin.com/in/kell-momo',
-        facebook: 'https://www.facebook.com/profile.php?id=100077568106642',
+        facebook: 'https://www.facebook.com/profile.php?id=100077568106642'
         // twitter: 'https://twitter.com/kell_momo',
         // instagram: 'https://instagram.com/kell.momo'
-      },
+      }
       // experience: '10+ ans'
     },
     {
@@ -54,9 +60,9 @@ export class TeamComponent implements OnInit {
       image: 'assets/team/konguep-elvira.jpg',
       socialLinks: {
         linkedin: 'https://www.linkedin.com/in/elvira-konguep-43951422a/',
-        facebook: 'https://www.facebook.com/elvira.konguep',
+        facebook: 'https://www.facebook.com/elvira.konguep'
         // twitter: 'https://twitter.com/konguep_elvira'
-      },
+      }
       // experience: '7+ ans'
     }
   ];

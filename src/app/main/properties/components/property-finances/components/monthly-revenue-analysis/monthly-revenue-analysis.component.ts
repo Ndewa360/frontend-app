@@ -4,6 +4,9 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ExportData } from '../../property-finances.component';
 import { PropertyFinancialManagerService, MonthlyFinancialData } from 'src/app/main/properties/services/property-financial-manager.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgClass, NgFor, DecimalPipe, CurrencyPipe } from '@angular/common';
 
 export interface MonthlyRevenueData {
   month: number;
@@ -28,7 +31,9 @@ export interface MonthlyRevenueData {
 @Component({
   selector: 'app-monthly-revenue-analysis',
   templateUrl: './monthly-revenue-analysis.component.html',
-  styleUrls: ['./monthly-revenue-analysis.component.scss']
+  styleUrls: ['./monthly-revenue-analysis.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgClass, ExtendedModule, NgFor, DecimalPipe, CurrencyPipe, TranslatePipe]
 })
 export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedYear: number = new Date().getFullYear();
@@ -261,7 +266,7 @@ export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDes
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'excel',
-      data: data,
+      data,
       filename: `analyse-revenus-mensuels-${this.selectedYear}.xlsx`
     });
   }
@@ -270,7 +275,7 @@ export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDes
     const data = this.prepareExportData();
     this.exportData.emit({
       type: 'csv',
-      data: data,
+      data,
       filename: `analyse-revenus-mensuels-${this.selectedYear}.csv`
     });
   }

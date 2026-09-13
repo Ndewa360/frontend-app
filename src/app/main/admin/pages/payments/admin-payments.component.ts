@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
@@ -11,11 +11,16 @@ import { AdminPaymentsState } from '../../store/payments/admin-payments.state';
 import { AdminPaymentsService } from '../../services/admin-payments.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
 import { AdminPayment, AdminSubscription, AdminCoupon } from '../../store/payments/admin-payments.model';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-payments',
   templateUrl: './admin-payments.component.html',
-  styleUrls: ['./admin-payments.component.scss']
+  styleUrls: ['./admin-payments.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, SelectModule, NgFor, NgClass, ExtendedModule, ReactiveFormsModule, AsyncPipe, DatePipe]
 })
 export class AdminPaymentsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -56,7 +61,7 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     private paymentsService: AdminPaymentsService,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private currencyService: AdminCurrencyService,
+    private currencyService: AdminCurrencyService
   ) {
     this.couponForm = this.fb.group({
       name:        ['', Validators.required],

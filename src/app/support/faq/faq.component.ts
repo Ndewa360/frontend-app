@@ -1,20 +1,28 @@
-import {Component, OnInit} from '@angular/core'
-import { Select } from '@ngxs/store'
-import { Observable } from 'rxjs'
-import { UserProfileState, UserProfileModel } from 'src/app/shared/store'
-import { Location } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
+import {Component, OnInit} from '@angular/core';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { UserProfileState, UserProfileModel } from 'src/app/shared/store';
+import { Location, NgFor } from '@angular/common';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { Router } from '@angular/router';
+import { AccordionModule } from 'carbon-components-angular';
+import { IbmIconComponent } from '../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { NgScrollbar } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-faq',
   templateUrl: './faq.component.html',
-  styleUrls: ['./faq.component.scss']
+  styleUrls: ['./faq.component.scss'],
+  standalone: true,
+  imports: [NgScrollbar, FlexModule, AppLogoComponent, ButtonModule, IbmIconComponent, NgFor, AccordionModule, TranslatePipe]
 })
 export class FaqComponent implements OnInit {
 
-  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>;
   
   public faq: any[] = [];
 

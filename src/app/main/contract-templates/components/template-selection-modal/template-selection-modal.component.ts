@@ -1,11 +1,22 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { ContractTemplateModel, ContractTemplateType } from '../../../../shared/models/contract-template.model';
 import { ContractTemplateAction, ContractTemplateState } from '../../../../shared/store/contract-templates';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatOption } from '@angular/material/core';
+import { NgFor, NgIf, NgClass, AsyncPipe, DatePipe } from '@angular/common';
+import { MatSelect } from '@angular/material/select';
+import { MatIcon } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatIconButton, MatButton } from '@angular/material/button';
 
 export interface TemplateSelectionData {
   title: string;
@@ -22,7 +33,9 @@ export interface TemplateSelectionResult {
 @Component({
   selector: 'app-template-selection-modal',
   templateUrl: './template-selection-modal.component.html',
-  styleUrls: ['./template-selection-modal.component.scss']
+  styleUrls: ['./template-selection-modal.component.scss'],
+  standalone: true,
+  imports: [MatDialogTitle, MatIconButton, MatDialogClose, MatDialogContent, MatFormField, MatLabel, MatInput, FormsModule, MatIcon, MatSuffix, MatSelect, NgFor, MatOption, MatCheckbox, NgIf, NgClass, ExtendedModule, MatProgressSpinner, MatDialogActions, MatButton, AsyncPipe, DatePipe, TranslatePipe]
 })
 export class TemplateSelectionModalComponent implements OnInit {
   trackByFn = trackByFn;
@@ -130,14 +143,14 @@ export class TemplateSelectionModalComponent implements OnInit {
    */
   getTemplateTypeIcon(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return 'fa-star';
-      case ContractTemplateType.CUSTOM:
-        return 'fa-edit';
-      case ContractTemplateType.DUPLICATED:
-        return 'fa-copy';
-      default:
-        return 'fa-file';
+    case ContractTemplateType.DEFAULT:
+      return 'fa-star';
+    case ContractTemplateType.CUSTOM:
+      return 'fa-edit';
+    case ContractTemplateType.DUPLICATED:
+      return 'fa-copy';
+    default:
+      return 'fa-file';
     }
   }
 
@@ -146,14 +159,14 @@ export class TemplateSelectionModalComponent implements OnInit {
    */
   getTemplateTypeLabel(type: ContractTemplateType): string {
     switch (type) {
-      case ContractTemplateType.DEFAULT:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
-      case ContractTemplateType.CUSTOM:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
-      case ContractTemplateType.DUPLICATED:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
-      default:
-        return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
+    case ContractTemplateType.DEFAULT:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DEFAULT');
+    case ContractTemplateType.CUSTOM:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.CUSTOM');
+    case ContractTemplateType.DUPLICATED:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.DUPLICATED');
+    default:
+      return this.translateService.instant('CONTRACT_TEMPLATES.TYPES.UNKNOWN');
     }
   }
 }

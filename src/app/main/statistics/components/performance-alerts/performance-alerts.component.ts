@@ -2,11 +2,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PerformanceAlertsService, PerformanceAlert, AlertThresholds } from '../../services/performance-alerts.service';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'performance-alerts',
   templateUrl: './performance-alerts.component.html',
-  styleUrls: ['./performance-alerts.component.css']
+  styleUrls: ['./performance-alerts.component.css'],
+  standalone: true,
+  imports: [NgIf, FormsModule, NgFor, DecimalPipe]
 })
 export class PerformanceAlertsComponent implements OnInit, OnDestroy {
   alerts: PerformanceAlert[] = [];
@@ -82,31 +86,31 @@ export class PerformanceAlertsComponent implements OnInit, OnDestroy {
 
   getAlertIcon(type: string): string {
     switch (type) {
-      case 'danger':
-        return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z';
-      case 'warning':
-        return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z';
-      case 'info':
-        return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
-      case 'success':
-        return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
-      default:
-        return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+    case 'danger':
+      return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z';
+    case 'warning':
+      return 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z';
+    case 'info':
+      return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+    case 'success':
+      return 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z';
+    default:
+      return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
     }
   }
 
   getAlertColor(type: string): string {
     switch (type) {
-      case 'danger':
-        return '#dc2626';
-      case 'warning':
-        return '#d97706';
-      case 'info':
-        return '#2563eb';
-      case 'success':
-        return '#059669';
-      default:
-        return '#6b7280';
+    case 'danger':
+      return '#dc2626';
+    case 'warning':
+      return '#d97706';
+    case 'info':
+      return '#2563eb';
+    case 'success':
+      return '#059669';
+    default:
+      return '#6b7280';
     }
   }
 

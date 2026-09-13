@@ -9,7 +9,10 @@ import { Store } from '@ngxs/store';
 import { PremiumAccessState, PremiumAccessAction, OwnerInfoModel } from 'src/app/shared/store/premium-access';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { PremiumAccessModalComponent } from '../premium-access-modal/premium-access-modal.component';
+import { GaleryVideo360ItemComponent } from '../../../../shared/components/galery-video360-item/galery-video360-item.component';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface UnitDetailDialogData {
   unit: SearchPropertyModel;
@@ -22,7 +25,9 @@ export interface UnitDetailDialogData {
   selector: 'app-unit-detail-dialog',
   templateUrl: './unit-detail-dialog.component.html',
   styleUrls: ['./unit-detail-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, NgFor, GaleryVideo360ItemComponent, PremiumAccessModalComponent, TranslatePipe]
 })
 export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -159,7 +164,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     // Pas d'accès en cache → vérifier si pas déjà en cours
     if (checkState === 'NO_LOADED') {
       this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
-        this.currentUserId, ownerId, this.isAnonymous,
+        this.currentUserId, ownerId, this.isAnonymous
       ));
     }
   }
@@ -202,7 +207,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     this.store.select(PremiumAccessState.ownerInfoFor(ownerId))
       .pipe(
         takeUntil(this.destroy$),
-        filter(info => !!info),
+        filter(info => !!info)
       )
       .subscribe(ownerInfo => {
         this.ownerInfo = ownerInfo;
@@ -223,7 +228,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       relativeTo: this.route,
       queryParams: { premium: null, ownerId: null, visitorId: null },
       queryParamsHandling: 'merge',
-      replaceUrl: true,
+      replaceUrl: true
     });
 
     // Vider le cache pour forcer un rechargement frais
@@ -232,14 +237,14 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     // Dispatcher CheckAccessForOwner via le store — le store met à jour activeOwnerIds
     // puis subscribeToPremiumStore() détecte hasAccess=true et appelle GetOwnerInfo
     this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
-      this.currentUserId, returnedOwnerId, this.isAnonymous,
+      this.currentUserId, returnedOwnerId, this.isAnonymous
     ));
   }
 
   private dispatchGetOwnerInfo(ownerId: string): void {
     const propertyId = this.unit?.property?._id || (this.unit?.property as any)?._id?.toString() || '';
     this.store.dispatch(new PremiumAccessAction.GetOwnerInfo(
-      this.currentUserId, ownerId, this.isAnonymous, propertyId,
+      this.currentUserId, ownerId, this.isAnonymous, propertyId
     ));
   }
 
@@ -252,9 +257,9 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
 
   private handleKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
-      case 'Escape': this.closeDialog(); break;
-      case 'ArrowLeft': if (this.canNavigatePrevious) this.navigateToPrevious(); break;
-      case 'ArrowRight': if (this.canNavigateNext) this.navigateToNext(); break;
+    case 'Escape': this.closeDialog(); break;
+    case 'ArrowLeft': if (this.canNavigatePrevious) this.navigateToPrevious(); break;
+    case 'ArrowRight': if (this.canNavigateNext) this.navigateToNext(); break;
     }
   }
 
@@ -438,11 +443,11 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   hasAmenity(amenity: string): boolean {
     if (!this.unit) return false;
     switch (amenity) {
-      case 'kitchen': return this.unit.specifity?.hasKitchen || false;
-      case 'privateShower': return this.unit.specifity?.isInternalShower || false;
-      case 'parking': return this.unit.property?.hasParking || false;
-      case 'security': return this.unit.property?.hasClosure || false;
-      default: return false;
+    case 'kitchen': return this.unit.specifity?.hasKitchen || false;
+    case 'privateShower': return this.unit.specifity?.isInternalShower || false;
+    case 'parking': return this.unit.property?.hasParking || false;
+    case 'security': return this.unit.property?.hasClosure || false;
+    default: return false;
     }
   }
 

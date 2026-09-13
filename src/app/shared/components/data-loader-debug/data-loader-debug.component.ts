@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataDrivenLoaderService, PageLoadingState } from '../../services/data-driven-loader.service';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-data-loader-debug',
@@ -170,7 +171,9 @@ import { DataDrivenLoaderService, PageLoadingState } from '../../services/data-d
       background: linear-gradient(90deg, #ffa500, #00ff00);
       transition: width 0.3s ease;
     }
-  `]
+  `],
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class DataLoaderDebugComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

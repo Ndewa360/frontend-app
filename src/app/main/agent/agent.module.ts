@@ -20,13 +20,6 @@ import { AgentProfileCompletionComponent } from './agent-profile-completion/agen
 import { PendingApprovalComponent } from './pending-approval/pending-approval.component';
 
 @NgModule({
-  declarations: [
-    AgentDashboardComponent,
-    AgentPropertiesComponent,
-    AgentStatsComponent,
-    AgentProfileCompletionComponent,
-    PendingApprovalComponent
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -34,8 +27,11 @@ import { PendingApprovalComponent } from './pending-approval/pending-approval.co
     FlexLayoutModule,
     AgentRoutingModule,
     SharedModule,
-    
-    // Pas de modules Carbon nécessaires
+    AgentDashboardComponent,
+    AgentPropertiesComponent,
+    AgentStatsComponent,
+    AgentProfileCompletionComponent,
+    PendingApprovalComponent
   ],
   exports: []
 })

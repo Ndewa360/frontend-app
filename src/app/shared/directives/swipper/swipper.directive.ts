@@ -2,7 +2,8 @@ import { AfterViewInit, Directive, ElementRef, Input } from '@angular/core';
 import { SwiperContainer } from 'swiper/element';
 
 @Directive({
-  selector: '[appSwiper]'
+  selector: '[appSwiper]',
+  standalone: true
 })
 export class SwiperDirective implements AfterViewInit {
   @Input() config?: any;

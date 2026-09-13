@@ -19,7 +19,7 @@ import {
   StatisticAction
 } from 'src/app/shared/store';
 import { PropertyDataService, HistoryItem } from '../services/property-data.service';
-import { UnitAction } from '../components/property-units-list/property-units-list.component';
+import { UnitAction, PropertyUnitsListComponent } from '../components/property-units-list/property-units-list.component';
 import { UpdatePropertyComponent, UpdatePropertyDialogData } from '../update-property/update-property.component';
 import { GaleryComponent } from '../../room/components/galery/galery.component';
 import { PropertyGalleryComponent } from '../components/property-gallery/property-gallery.component';
@@ -29,6 +29,16 @@ import { AssignLocationModalService } from '../../assign-location/services/assig
 import { ModernContractTerminationModalComponent } from '../components/modern-contract-termination-modal/modern-contract-termination-modal.component';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ManagersListComponent } from '../components/property-managers/managers-list/managers-list.component';
+import { PropertyFinancesComponent } from '../components/property-finances/property-finances.component';
+import { PropertyHistoryComponent } from '../components/property-history/property-history.component';
+import { PropertyTenantsComponent } from '../components/property-tenants/property-tenants.component';
+import { PropertyOverviewComponent } from '../components/property-overview/property-overview.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 interface Tab {
   id: string;
@@ -50,7 +60,9 @@ interface PropertyMetrics {
 @Component({
   selector: 'app-property-details-complete',
   templateUrl: './property-details-complete.component.html',
-  styleUrls: ['./property-details-complete.component.scss']
+  styleUrls: ['./property-details-complete.component.scss'],
+  standalone: true,
+  imports: [IbmIconComponent, NgIf, ButtonModule, NgFor, NgClass, ExtendedModule, PropertyOverviewComponent, PropertyUnitsListComponent, PropertyTenantsComponent, PropertyHistoryComponent, PropertyFinancesComponent, ManagersListComponent, AsyncPipe, TranslatePipe]
 })
 export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -174,7 +186,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
         { id: 'tenants',  label: 'PROPERTY_DETAILS.TABS.TENANTS',  icon: 'user' },
         { id: 'history',  label: 'PROPERTY_DETAILS.TABS.HISTORY',  icon: 'time' },
         { id: 'finances', label: 'PROPERTY_DETAILS.TABS.FINANCES', icon: 'money' },
-        { id: 'managers', label: 'PROPERTY_MANAGERS.TAB_LABEL',    icon: 'user-multiple' },
+        { id: 'managers', label: 'PROPERTY_MANAGERS.TAB_LABEL',    icon: 'user-multiple' }
       ];
     } else if (isManager) {
       const tabs = [...baseTabs];
@@ -192,11 +204,11 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     if (!this.propertyId) return true;
     if (this.propertyAccessService.isOwner(this.propertyId)) return true;
     switch (tabId) {
-      case 'tenants':  return this.propertyAccessService.canManageTenants(this.propertyId);
-      case 'finances': return this.propertyAccessService.canViewFinances(this.propertyId);
-      case 'history':
-      case 'managers': return this.propertyAccessService.isOwner(this.propertyId);
-      default: return true;
+    case 'tenants':  return this.propertyAccessService.canManageTenants(this.propertyId);
+    case 'finances': return this.propertyAccessService.canViewFinances(this.propertyId);
+    case 'history':
+    case 'managers': return this.propertyAccessService.isOwner(this.propertyId);
+    default: return true;
     }
   }
 
@@ -204,24 +216,24 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     if (!this.propertyId) return true;
     if (this.propertyAccessService.isOwner(this.propertyId)) return true;
     switch (action) {
-      case 'assign_tenant':    return this.propertyAccessService.canManageTenants(this.propertyId);
-      case 'terminate_lease':  return this.propertyAccessService.canManageContracts(this.propertyId);
-      case 'add_tenant':       return this.propertyAccessService.canManageTenants(this.propertyId);
-      case 'financial_report': return this.propertyAccessService.canViewFinances(this.propertyId);
-      case 'add_unit':         return this.propertyAccessService.canManageUnits(this.propertyId);
-      default: return true;
+    case 'assign_tenant':    return this.propertyAccessService.canManageTenants(this.propertyId);
+    case 'terminate_lease':  return this.propertyAccessService.canManageContracts(this.propertyId);
+    case 'add_tenant':       return this.propertyAccessService.canManageTenants(this.propertyId);
+    case 'financial_report': return this.propertyAccessService.canViewFinances(this.propertyId);
+    case 'add_unit':         return this.propertyAccessService.canManageUnits(this.propertyId);
+    default: return true;
     }
   }
 
   onUnitAction(action: UnitAction): void {
     switch (action.type) {
-      case 'view':            this.onViewUnit(action.room); break;
-      case 'edit':            this.onEditUnit(action.room); break;
-      case 'assign_tenant':   if (this.canPerformAction('assign_tenant'))  this.onAssignTenant(action.room); break;
-      case 'terminate_lease': if (this.canPerformAction('terminate_lease')) this.onTerminateLease(action.room); break;
-      case 'manage_media':    this.onManageMedia(action.room); break;
-      case 'toggle_status':   this.onToggleStatus(action.room); break;
-      case 'edit_galery':     this.onEditGaleryUnit(action.room); break;
+    case 'view':            this.onViewUnit(action.room); break;
+    case 'edit':            this.onEditUnit(action.room); break;
+    case 'assign_tenant':   if (this.canPerformAction('assign_tenant'))  this.onAssignTenant(action.room); break;
+    case 'terminate_lease': if (this.canPerformAction('terminate_lease')) this.onTerminateLease(action.room); break;
+    case 'manage_media':    this.onManageMedia(action.room); break;
+    case 'toggle_status':   this.onToggleStatus(action.room); break;
+    case 'edit_galery':     this.onEditGaleryUnit(action.room); break;
     }
   }
 
@@ -234,7 +246,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: { 
         property: { _id: this.propertyId },
-        mode: 'create',
+        mode: 'create'
       }
     });
 
@@ -353,7 +365,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   getTabIcon(iconName: string): string {
     const iconMap: { [key: string]: string } = {
       'home': 'home', 'building': 'building', 'user': 'user',
-      'time': 'time', 'money': 'currency-dollar', 'user-multiple': 'user-multiple',
+      'time': 'time', 'money': 'currency-dollar', 'user-multiple': 'user-multiple'
     };
     return iconMap[iconName] || iconName;
   }
@@ -369,39 +381,39 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
 
   onQuickAction(actionType: string): void {
     switch (actionType) {
-      case 'add_unit':
-        this.onAddUnit();
-        break;
-      case 'add_tenant':
-        if (this.canPerformAction('add_tenant')) this.onAddTenant();
-        break;
-      case 'financial_report':
-        if (this.canPerformAction('financial_report')) this.generateFinancialReport();
-        break;
-      case 'schedule_maintenance':
-        this.scheduleMaintenance();
-        break;
-      case 'edit_property':
-        this.onEditProperty();
-        break;
+    case 'add_unit':
+      this.onAddUnit();
+      break;
+    case 'add_tenant':
+      if (this.canPerformAction('add_tenant')) this.onAddTenant();
+      break;
+    case 'financial_report':
+      if (this.canPerformAction('financial_report')) this.generateFinancialReport();
+      break;
+    case 'schedule_maintenance':
+      this.scheduleMaintenance();
+      break;
+    case 'edit_property':
+      this.onEditProperty();
+      break;
 
       // ── Actions depuis les blocs empty-state de l'overview ──────────────
-      case 'go_add_unit':
-        // Naviguer vers le tab unités ET ouvrir le modal de création
-        this.setActiveTab('units');
-        setTimeout(() => this.onAddUnit(), 150);
-        break;
+    case 'go_add_unit':
+      // Naviguer vers le tab unités ET ouvrir le modal de création
+      this.setActiveTab('units');
+      setTimeout(() => this.onAddUnit(), 150);
+      break;
 
-      case 'go_add_tenant':
-        // Naviguer vers le tab locataires ET ouvrir le modal de création
-        this.setActiveTab('tenants');
-        setTimeout(() => this.onAddTenant(), 150);
-        break;
+    case 'go_add_tenant':
+      // Naviguer vers le tab locataires ET ouvrir le modal de création
+      this.setActiveTab('tenants');
+      setTimeout(() => this.onAddTenant(), 150);
+      break;
 
-      case 'go_assign_tenant':
-        // Naviguer vers le tab unités pour que l'utilisateur assigne depuis les cartes
-        this.setActiveTab('units');
-        break;
+    case 'go_assign_tenant':
+      // Naviguer vers le tab unités pour que l'utilisateur assigne depuis les cartes
+      this.setActiveTab('units');
+      break;
     }
   }
 

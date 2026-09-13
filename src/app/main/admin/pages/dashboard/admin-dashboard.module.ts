@@ -7,7 +7,6 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { AdminDashboardComponent } from './admin-dashboard.component';
 
 @NgModule({
-  declarations: [AdminDashboardComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +14,7 @@ import { AdminDashboardComponent } from './admin-dashboard.component';
     MatDialogModule,
     RouterModule,
     SharedModule,
-  ],
+    AdminDashboardComponent
+  ]
 })
 export class AdminDashboardModule { }

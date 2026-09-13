@@ -1,55 +1,60 @@
-import {Component, OnDestroy, OnInit} from '@angular/core'
-import {Subscription, Observable} from 'rxjs'
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription, Observable} from 'rxjs';
 
-import {SettingsService} from "../../services/settings.service"
-import {appThemes, sideBarThemes, headerThemes} from "src/@youpez/helpers"
+import {SettingsService} from '../../services/settings.service';
+import {appThemes, sideBarThemes, headerThemes} from 'src/@youpez/helpers';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgFor, NgClass } from '@angular/common';
+import { FlexModule } from '@angular/flex-layout/flex';
 import set = Reflect.set
 
 @Component({
   selector: 'youpez-theme-settings',
   templateUrl: './app-theme-settings.component.html',
-  styleUrls: ['./app-theme-settings.component.scss']
+  styleUrls: ['./app-theme-settings.component.scss'],
+  standalone: true,
+  imports: [FlexModule, NgFor, NgClass, ExtendedModule]
 })
 export class AppThemeSettingsComponent implements OnInit, OnDestroy {
 
-  public appThemes = appThemes
-  public sideBarThemes = sideBarThemes
-  public headerThemes = headerThemes
+  public appThemes = appThemes;
+  public sideBarThemes = sideBarThemes;
+  public headerThemes = headerThemes;
 
-  public selectedTheme: string = ''
-  public selectedSidebar: string = ''
-  public selectedHeader: string = ''
+  public selectedTheme: string = '';
+  public selectedSidebar: string = '';
+  public selectedHeader: string = '';
 
-  private settingsSub: Subscription
+  private settingsSub: Subscription;
 
-  constructor(private settingsService: SettingsService,) {
+  constructor(private settingsService: SettingsService) {
   }
 
   ngOnInit(): void {
     this.settingsSub = this.settingsService.$theme.subscribe((settings) => {
-      this.selectedTheme = settings.theme
-      this.selectedSidebar = settings.sidebar
-      this.selectedHeader = settings.header
-    })
+      this.selectedTheme = settings.theme;
+      this.selectedSidebar = settings.sidebar;
+      this.selectedHeader = settings.header;
+    });
   }
 
   ngOnDestroy() {
-    this.settingsSub.unsubscribe()
+    this.settingsSub.unsubscribe();
   }
 
   onSetSideBarTheme(name) {
-    this.settingsService.setSideBar(name)
-    this.settingsService.themeChanged.emit(true)
+    this.settingsService.setSideBar(name);
+    this.settingsService.themeChanged.emit(true);
   }
 
   onSetHeaderTheme(name) {
-    this.settingsService.setHeader(name)
-    this.settingsService.themeChanged.emit(true)
+    this.settingsService.setHeader(name);
+    this.settingsService.themeChanged.emit(true);
   }
 
   onChangeTheme(name) {
-    this.settingsService.setTheme(name)
-    this.settingsService.themeChanged.emit(true)
+    this.settingsService.setTheme(name);
+    this.settingsService.themeChanged.emit(true);
   }
 
 }

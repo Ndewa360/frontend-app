@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
@@ -19,6 +19,10 @@ import { TranslationService } from 'src/app/shared/services/localization/transla
 import { CityResolverService } from 'src/app/shared/services/city-resolver.service';
 import { SmartFiltersService } from 'src/app/shared/services/smart-filters.service';
 import { UnitDetailDialogComponent } from '../components/unit-detail-dialog/unit-detail-dialog.component';
+import { TranslatePipe } from '@ngx-translate/core';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, AsyncPipe, LowerCasePipe, CurrencyPipe } from '@angular/common';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 // Interfaces locales
 export interface QuickFilter {
@@ -51,7 +55,9 @@ export interface SearchSuggestion {
   selector: 'search-page',
   templateUrl: './search-page.component.html',
   styleUrls: ['./search-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IbmIconComponent, FormsModule, ReactiveFormsModule, NgIf, NgFor, SelectModule, AsyncPipe, LowerCasePipe, CurrencyPipe, TranslatePipe]
 })
 export class SearchPageComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -443,8 +449,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       const roomTypeUpper = search.roomType.toUpperCase();
       const roomTypeLabel =
         roomTypeUpper === 'STUDIO' ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.STUDIOS') :
-        roomTypeUpper === 'ROOM'   ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS') :
-                                     this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
+          roomTypeUpper === 'ROOM'   ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS') :
+            this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
       label += roomTypeLabel;
     } else {
       label += this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
@@ -652,7 +658,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       scrollStrategy: this.overlay.scrollStrategies.block(), // Bloque le scroll de la page
       positionStrategy: this.overlay.position().global(),    // Positionné par rapport au viewport
       width: '100vw',
-      height: '100vh',
+      height: '100vh'
     });
 
     const portal = new TemplatePortal(this.filtersPanelTpl, this.viewContainerRef);
@@ -765,25 +771,25 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     if (!owner) return;
 
     switch (method) {
-      case 'phone':
-        if (owner.phoneNumber) {
-          window.open(`tel:${owner.phoneNumber}`, '_self');
-        }
-        break;
+    case 'phone':
+      if (owner.phoneNumber) {
+        window.open(`tel:${owner.phoneNumber}`, '_self');
+      }
+      break;
 
-      case 'email':
-        if (owner.email) {
-          const subject = this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.EMAIL_SUBJECT');
-          window.open(`mailto:${owner.email}?subject=${encodeURIComponent(subject)}`, '_self');
-        }
-        break;
+    case 'email':
+      if (owner.email) {
+        const subject = this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.EMAIL_SUBJECT');
+        window.open(`mailto:${owner.email}?subject=${encodeURIComponent(subject)}`, '_self');
+      }
+      break;
 
-      case 'whatsapp':
-        if (owner.phoneNumber) {
-          const message = encodeURIComponent(this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.WHATSAPP_MESSAGE'));
-          window.open(`https://wa.me/${owner.phoneNumber.replace(/\D/g, '')}?text=${message}`, '_blank');
-        }
-        break;
+    case 'whatsapp':
+      if (owner.phoneNumber) {
+        const message = encodeURIComponent(this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.WHATSAPP_MESSAGE'));
+        window.open(`https://wa.me/${owner.phoneNumber.replace(/\D/g, '')}?text=${message}`, '_blank');
+      }
+      break;
     }
   }
 
@@ -950,21 +956,21 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     // Appliquer le filtre selon son type (pour compatibilité)
     switch (filter.key) {
-      case 'hasKitchen':
-        this.currentFilters.hasKitchen = filter.active;
-        break;
-      case 'hasParking':
-        this.currentFilters.hasParking = filter.active;
-        break;
-      case 'hasPrivateShower':
-        this.currentFilters.hasPrivateShower = filter.active;
-        break;
-      case 'furnished':
-        // Envoyer furnished (boolean) — le backend accepte les deux formats
-        this.currentFilters.furnished = filter.active;
-        break;
-      default:
-        break;
+    case 'hasKitchen':
+      this.currentFilters.hasKitchen = filter.active;
+      break;
+    case 'hasParking':
+      this.currentFilters.hasParking = filter.active;
+      break;
+    case 'hasPrivateShower':
+      this.currentFilters.hasPrivateShower = filter.active;
+      break;
+    case 'furnished':
+      // Envoyer furnished (boolean) — le backend accepte les deux formats
+      this.currentFilters.furnished = filter.active;
+      break;
+    default:
+      break;
     }
 
     this.performSearch();
@@ -1541,10 +1547,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     const dialogRef = this.dialog.open(UnitDetailDialogComponent, {
       data: {
-        unit: unit,
+        unit,
         allUnits: this.allResults,
-        currentIndex: currentIndex,
-        premiumReturn,
+        currentIndex,
+        premiumReturn
       },
       width: '100vw',
       height: '100vh',

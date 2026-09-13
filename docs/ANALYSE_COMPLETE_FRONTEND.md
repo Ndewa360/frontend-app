@@ -2,7 +2,7 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.3 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild — exécutées)
+> Version : 1.4 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone — exécutées)
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
 
 ---
@@ -28,6 +28,7 @@ Statut : **migration exécutée et vérifiée (build production ✅, design dor�
 | 11 | **Builder esbuild `application`** (choix utilisateur : vitesse vs Module Federation, incompatible en 17) | ✅ | Build prod 201,9 s (**−85 %**, webpack ~18 min) ; bundle initial **4,88 Mo** (5,13) — budgets inchangés |
 | 12 | **Adaptations sass esbuild** : 11 imports `node_modules/...` → relatifs, 2 imports `src/...` → relatifs, `~@ibm/plex` → `$font-path` CDN IBM (`s81c.com`, identique aux bundles thème v10) | ✅ | 0 erreur de résolution ; fonts IBM Plex préservées |
 | 13 | **SSR re-vérifié en esbuild** : `server.ts` migré de `ngExpressEngine` → `CommonEngine` (sortie imbriquée `dist/app/browser/browser`) | ✅ | auth/onboarding/support SSR <30 ms ; home/search → fallback SPA 15 s (limite A7 inchangée) |
+| 14 | **Standalone migration** : `@angular/core:standalone-migration --mode=convert-to-standalone --path=src` (277 fichiers) — composants/directives/pipes `standalone:true` ; NgModules conservés ; fix cycle TDZ `YoupezModule ⇄ app-menu-item` (import retiré) ; lint indent normalisé (eslint --fix sur fichiers migrés) | ✅ | Bundle prod inchangé **5,01 Mo / 911,77 kB** ; SSR vérifié ; 0 erreur nouvelle |
 
 Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `window.env`), `moment → dayjs`, budgets réalistes, `vendorChunk:true`, préchargement stratégique, suppression 32 `.md` de debug + `core/`, fix `CountryState.countrys`, nettoyage `index.html`.
 
@@ -247,12 +248,13 @@ tailwind.scss  admin-design-system.scss  photo-sphere-viewer.css  swiper-bundle.
 
 ## A7. SSR · PWA · SEO
 
-### État actuel (vague 3, vérifié)
+### État actuel (vague 3 + standalone, vérifié)
 
 | Sujet | État | Impact |
 |---|---|---|
 | SSR | **Actif** (`server.ts` = routeur Express `CommonEngine` — `@angular/ssr@17` ; sortie imbriquée `dist/app/browser/browser`, serveur `dist/app/server/main.js`) | Boot serveur OK ; toutes les routes répondent |
-| Build | **esbuild `application`** (`angular.json`, `polyfills` en array, `serviceWorker:"./ngsw-config.json"`, `allowedCommonJsDependencies`) | 201,9 s prod (+lint/eslint inchangés) ; npm `--legacy-peer-deps` requis (peers flex-layout/NGXS ≤16) |
+| Standalone | **277 composants/directives/pipes** convertis en `standalone:true` (schéma Angular core, mode `convert-to-standalone`) — NgModules conservés comme barils ; `CUSTOM_ELEMENTS_SCHEMA` ajouté aux composants `<swiper-slide>` (migration ne transfère pas les schemas de SharedModule) ; fix cycle TDZ `YoupezModule ⇄ AppMenuItemComponent` | Bundle prod **5,01 Mo** (inchangé) ; SSR vérifié post-migration ; lint normalisé (eslint --fix sur fichiers migrés) |
+| Build | **esbuild `application`** (`angular.json`, `polyfills` en array, `serviceWorker:"./ngsw-config.json"`, `allowedCommonJsDependencies`) | Prod 198 s ; npm `--legacy-peer-deps` requis (peers flex-layout/NGXS ≤16) |
 | Headers SEO | Corrects sur toutes les routes | `/`, `/fr/home`, `/fr/search`, … → `index, follow` + cache 600 s/300 s ; routes privées `/fr/app/*`, `/fr/admin/*` → `noindex, nofollow` + `no-store` |
 | Rendu serveur (universal) | Auth `190 + onboarding + support` **rendus en <100 ms** | HTML complet côté serveur |
 | Universal home/search | **Ne converge pas** (renderModule ≥15 s → jamais stable) | Watchdog 15 s → fallback SPA gracieux (200, index.html correct) — SEO public conservé via headers + structured data de `index.html` |

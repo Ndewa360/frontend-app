@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
 import { Subject, firstValueFrom } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { FormUtils } from 'src/app/shared/utils';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 
@@ -23,6 +23,7 @@ import {
   ContentUploadRoomType,
   UploadFilesService
 } from 'src/app/shared/store/files-upload';
+import { NgIf } from '@angular/common';
 // import { phoneValidator } from 'src/app/shared/validators/phone.validator'; // Validator non trouvé
 
 export interface TenantModalData {
@@ -34,7 +35,9 @@ export interface TenantModalData {
 @Component({
   selector: 'app-modern-tenant-modal',
   templateUrl: './modern-tenant-modal.component.html',
-  styleUrls: ['./modern-tenant-modal.component.scss']
+  styleUrls: ['./modern-tenant-modal.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, NgIf, TranslatePipe]
 })
 export class ModernTenantModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
@@ -324,7 +327,7 @@ export class ModernTenantModalComponent implements OnInit, OnDestroy {
       const uploadObservable = this.uploadService.uploadFiles({
         file: this.selectedPhoto,
         contentType: FileUploadContentType.FOR_USER_FILE,
-        contentID: contentID,
+        contentID,
         contentRoomType: ContentUploadRoomType.FOR_ROOM
       }).pipe(
         filter(event => event.type === HttpEventType.Response),

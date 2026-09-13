@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { FormUtils } from 'src/app/shared/utils';
 
 import { 
@@ -27,6 +27,7 @@ import {
   SubscriptionLimitModalComponent,
   SubscriptionLimitModalData
 } from 'src/app/shared/components/subscription-limit-modal/subscription-limit-modal.component';
+import { NgFor, NgIf } from '@angular/common';
 
 export interface UnitModalData {
   mode: 'create' | 'edit';
@@ -37,7 +38,9 @@ export interface UnitModalData {
 @Component({
   selector: 'app-modern-unit-modal',
   templateUrl: './modern-unit-modal.component.html',
-  styleUrls: ['./modern-unit-modal.component.scss']
+  styleUrls: ['./modern-unit-modal.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, NgFor, NgIf, TranslatePipe]
 })
 export class ModernUnitModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
@@ -341,7 +344,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
     try {
       for (const file of this.selectedImages) {
         const uploadAction = new UploadFilesAction.UploadFiles({
-          file: file,
+          file,
           contentID: this.data.unit?._id || 'new-unit',
           contentType: FileUploadContentType.FOR_ROOM_FILE,
           contentRoomType: ContentUploadRoomType.FOR_ROOM

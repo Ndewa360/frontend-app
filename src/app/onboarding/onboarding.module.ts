@@ -8,9 +8,6 @@ import { OnboardingStepperComponent } from './onboarding-stepper/onboarding-step
 import { OnboardingRoutingModule } from './onboarding-routing.module';
 
 @NgModule({
-  declarations: [
-    OnboardingStepperComponent,
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -19,6 +16,7 @@ import { OnboardingRoutingModule } from './onboarding-routing.module';
     TranslateModule,
     SharedModule,
     OnboardingRoutingModule,
-  ],
+    OnboardingStepperComponent
+  ]
 })
 export class OnboardingModule {}

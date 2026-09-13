@@ -1,7 +1,8 @@
 import { Directive, ElementRef, Input, OnInit } from '@angular/core';
 
 @Directive({
-  selector: '[appCountUp]'
+  selector: '[appCountUp]',
+  standalone: true
 })
 export class CountUpDirective implements OnInit {
 
@@ -33,7 +34,7 @@ export class CountUpDirective implements OnInit {
 
     const timer = setInterval(() => {
       current += increment;
-      this.el.nativeElement.innerText = current + '+';
+      this.el.nativeElement.innerText = `${current  }+`;
 
       if (current === end) {
         clearInterval(timer);

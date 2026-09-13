@@ -50,15 +50,6 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    ContractTemplatesListComponent,
-    ContractTemplateEditorComponent,
-    ContractTemplateViewComponent,
-    ContractTemplatesDashboardComponent,
-    DuplicateTemplateModalComponent,
-    DeleteConfirmationModalComponent,
-    TemplateSelectionModalComponent
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -74,7 +65,14 @@ const routes: Routes = [
     MatCheckboxModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    ContractTemplatesListComponent,
+    ContractTemplateEditorComponent,
+    ContractTemplateViewComponent,
+    ContractTemplatesDashboardComponent,
+    DuplicateTemplateModalComponent,
+    DeleteConfirmationModalComponent,
+    TemplateSelectionModalComponent
   ],
   exports: [
     ContractTemplatesListComponent,

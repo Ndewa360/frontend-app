@@ -1,11 +1,14 @@
 import { Component, OnInit, Input, Output, EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgIf, NgFor } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { BaseComponent } from '../../utils/base-component';
 import { NotificationManagerService, SmartNotification } from '../../services/notification-manager.service';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 interface QuickFilter {
   type: string;
@@ -17,7 +20,9 @@ interface QuickFilter {
 @Component({
   selector: 'app-smart-notifications',
   templateUrl: './smart-notifications.component.html',
-  styleUrls: ['./smart-notifications.component.scss']
+  styleUrls: ['./smart-notifications.component.scss'],
+  standalone: true,
+  imports: [IbmIconComponent, NgIf, ButtonModule, NgbTooltip, NgFor]
 })
 export class SmartNotificationsComponent extends BaseComponent implements OnInit {
   @Input() isOpen: boolean = false;

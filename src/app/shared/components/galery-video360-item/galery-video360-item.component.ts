@@ -1,32 +1,37 @@
-import { AfterViewInit, Component,ElementRef,EventEmitter,Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component,ElementRef,EventEmitter,Input, OnInit, Output, ViewChild, OnDestroy } from '@angular/core';
 import { Viewer } from '@photo-sphere-viewer/core';
 import { getHttpOfProxyUrl } from '../../utils';
 import { Observable } from 'rxjs';
 import { UploadFilesState } from '../../store/files-upload';
 import { Select } from '@ngxs/store';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { LoadingModule } from 'carbon-components-angular/loading';
+import { NgIf, NgStyle } from '@angular/common';
 // import { getHttpOfProxyUrl } from "src/app/shared"
 
 @Component({
   selector: 'galery-video360-item',
   templateUrl: './galery-video360-item.component.html',
-  styleUrls: ['./galery-video360-item.component.css']
+  styleUrls: ['./galery-video360-item.component.css'],
+  standalone: true,
+  imports: [NgIf, LoadingModule, NgStyle, ExtendedModule]
 })
-export class GaleryVideo360ItemComponent implements AfterViewInit, OnInit {
+export class GaleryVideo360ItemComponent implements AfterViewInit, OnInit, OnDestroy {
  
   
-  @Input() urlFile:string=""
+  @Input() urlFile:string='';
   @Input() isFullScreen=false;
   @Input() isDeleting=false;
   @ViewChild('viewerContainer', { static: true }) viewerContainer!: ElementRef;
-  @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>()
+  @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>();
   private viewer: any;
-  @Select(UploadFilesState.selectStateLoading) waittingResponse$:Observable<boolean>
+  @Select(UploadFilesState.selectStateLoading) waittingResponse$:Observable<boolean>;
   waittingResponse=false;
 
   ngOnInit(): void {
-    this.waittingResponse$.subscribe((value)=>{
+    this.waittingResponse$.subscribe((value) => {
       this.waittingResponse=value;
-    })
+    });
   }
 
   ngAfterViewInit(): void {
@@ -41,8 +46,8 @@ export class GaleryVideo360ItemComponent implements AfterViewInit, OnInit {
           'autorotate',
           'zoom',
           'fullscreen',
-          'caption',
-        ],
+          'caption'
+        ]
       });
     }
   }
@@ -52,7 +57,7 @@ export class GaleryVideo360ItemComponent implements AfterViewInit, OnInit {
     if (this.isDeleting) {
       return; // Empêcher les doubles clics
     }
-    this.onDeleteFileEvent.emit(this.urlFile)
+    this.onDeleteFileEvent.emit(this.urlFile);
   }
 
   ngOnDestroy(): void {

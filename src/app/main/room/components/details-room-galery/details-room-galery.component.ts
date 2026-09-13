@@ -6,49 +6,56 @@ import { RoomModel } from 'src/app/shared/store';
 import { UploadFilesState } from 'src/app/shared/store/files-upload';
 import { MediaUtil } from 'src/app/shared/utils';
 import { GaleryComponent } from '../galery/galery.component';
+import { NoDataComponent } from '../../../../shared/components/no-data/no-data.component';
+import { GaleryVideo360ItemComponent } from '../../../../shared/components/galery-video360-item/galery-video360-item.component';
+import { NgIf, NgFor } from '@angular/common';
+import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { ButtonModule } from 'carbon-components-angular/button';
 
 @Component({
   selector: 'details-room-galery',
   templateUrl: './details-room-galery.component.html',
-  styleUrls: ['./details-room-galery.component.css']
+  styleUrls: ['./details-room-galery.component.css'],
+  standalone: true,
+  imports: [ButtonModule, IbmIconComponent, NgIf, NgFor, GaleryVideo360ItemComponent, NoDataComponent]
 })
 export class DetailsRoomGaleryComponent implements OnChanges {
-  @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>()
-  @Select(UploadFilesState.selectStateLoading) waittingResponse$:Observable<boolean>
+  @Output() onDeleteFileEvent:EventEmitter<string> = new EventEmitter<string>();
+  @Select(UploadFilesState.selectStateLoading) waittingResponse$:Observable<boolean>;
   urlsQuadricUrlList:{url:string,type:string}[]=[];
   waittingResponse:boolean = false;
 
   @Input() room:RoomModel=null;
   roomSelectedImages =[];
   roomSelectedImages360=[];
-  roomSelectedVideos=[]
+  roomSelectedVideos=[];
 
   constructor(
-    private dialog: MatDialog,)
-    {}
+    private dialog: MatDialog)
+  {}
 
   async ngOnChanges(changes: SimpleChanges) {
     if(changes['room'] && changes['room'].currentValue) {
-      this.processImageUrl(changes['room'].currentValue.medias)}
+      this.processImageUrl(changes['room'].currentValue.medias);}
   }
 
   async processImageUrl(medias) {
-    let mediaData = await MediaUtil.getStructMedia(medias)
+    const mediaData = await MediaUtil.getStructMedia(medias);
     this.roomSelectedImages360=mediaData.images360;
     this.roomSelectedVideos=mediaData.videos;
     this.roomSelectedImages=mediaData.images;
 
     this.urlsQuadricUrlList = [
-      ...mediaData.images360.map((img)=>({url:img,type:"360"})),
-      ...mediaData.videos.map((img)=>({url:img,type:"video"})),
-      ...mediaData.images.map((img)=>({url:img,type:"image"})),
-    ]
+      ...mediaData.images360.map((img) => ({url:img,type:'360'})),
+      ...mediaData.videos.map((img) => ({url:img,type:'video'})),
+      ...mediaData.images.map((img) => ({url:img,type:'image'}))
+    ];
 
   }
 
   deleteFile(urlItem)
   {
-    this.onDeleteFileEvent.emit(urlItem)
+    this.onDeleteFileEvent.emit(urlItem);
   }
 
   openEditGalery()
@@ -64,6 +71,6 @@ export class DetailsRoomGaleryComponent implements OnChanges {
       data:{
         room:this.room
       }
-    })
+    });
   }
 }

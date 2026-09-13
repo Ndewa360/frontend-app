@@ -7,7 +7,6 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { AgentManagementComponent } from './agent-management.component';
 
 @NgModule({
-  declarations: [AgentManagementComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +14,7 @@ import { AgentManagementComponent } from './agent-management.component';
     MatDialogModule,
     RouterModule,
     SharedModule,
-  ],
+    AgentManagementComponent
+  ]
 })
 export class AdminAgentManagementModule { }

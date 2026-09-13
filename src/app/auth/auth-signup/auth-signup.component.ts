@@ -1,18 +1,29 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
-import { UserProfileAction } from "src/app/shared/store";
-import { TranslateService } from '@ngx-translate/core';
+import { UserProfileAction } from 'src/app/shared/store';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { IbmIconComponent } from '../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { LoadingModule } from 'carbon-components-angular/loading';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { InputModule, CheckboxModule } from 'carbon-components-angular';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
+import { NgFor, NgIf } from '@angular/common';
+import { LinkModule } from 'carbon-components-angular/link';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
 
 @Component({
   selector: 'app-auth-signup',
   templateUrl: './auth-signup.component.html',
   styleUrls: ['./auth-signup.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [ExtendedModule, AppLogoComponent, LinkModule, RouterLink, FormsModule, ReactiveFormsModule, NgFor, NgbTooltip, NgIf, InputModule, CheckboxModule, ButtonModule, LoadingModule, IbmIconComponent, TranslatePipe]
 })
 export class AuthSignupComponent implements OnInit, OnDestroy {
 
@@ -63,7 +74,7 @@ export class AuthSignupComponent implements OnInit, OnDestroy {
       password: ['', [Validators.required, Validators.minLength(8)]],
       phoneNumber: [null, [Validators.required, Validators.pattern('^(\\+\\d{1,3}\\s)?(\\d{2,3}[\\s.-]?){4}$')]],
       businessName: [''],
-      condition: [true, [Validators.requiredTrue]],
+      condition: [true, [Validators.requiredTrue]]
     });
 
     this.formGroup.get('profileType')?.valueChanges.subscribe(type => {

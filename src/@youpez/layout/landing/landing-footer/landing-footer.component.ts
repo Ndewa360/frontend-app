@@ -1,13 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { AppLogoComponent } from '../../../components/app-logo/app-logo.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-landing-footer',
   templateUrl: './landing-footer.component.html',
-  styleUrls: ['./landing-footer.component.scss']
+  styleUrls: ['./landing-footer.component.scss'],
+  standalone: true,
+  imports: [RouterLink, AppLogoComponent, NgIf, NgFor, DatePipe, TranslatePipe]
 })
 export class LandingFooterComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

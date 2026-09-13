@@ -4,14 +4,17 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { UserProfileState } from '../../store/user-profile/user-profile.state';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-email-confirmation-banner',
   templateUrl: './email-confirmation-banner.component.html',
   styleUrls: ['./email-confirmation-banner.component.scss'],
+  standalone: true,
+  imports: [NgIf, TranslatePipe]
 })
 export class EmailConfirmationBannerComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -30,7 +33,7 @@ export class EmailConfirmationBannerComponent implements OnInit, OnDestroy {
     private store: Store,
     private http: HttpClient,
     private toastr: ToastrService,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -105,7 +108,7 @@ export class EmailConfirmationBannerComponent implements OnInit, OnDestroy {
             this.translate.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
             'Ndewa360°'
           );
-        },
+        }
       });
   }
 

@@ -1,9 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormBuilder, FormGroup, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormBuilder, FormGroup, Validator, NG_VALIDATORS, AbstractControl, ValidationErrors, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CountryModel } from '../../store/country/country.model';
 import { CityModel } from '../../store/city/city.model';
+import { CitySelectorComponent } from '../city-selector/city-selector.component';
+import { CountrySelectorComponent } from '../country-selector/country-selector.component';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface CountryCityValue {
   country: CountryModel | null;
@@ -36,7 +39,9 @@ export interface CountryCityValue {
       useExisting: forwardRef(() => CountryCitySelectorComponent),
       multi: true
     }
-  ]
+  ],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, NgIf, CountrySelectorComponent, CitySelectorComponent, NgFor]
 })
 export class CountryCitySelectorComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
   private destroy$ = new Subject<void>();

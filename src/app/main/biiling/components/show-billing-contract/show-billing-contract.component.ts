@@ -4,12 +4,20 @@ import { Actions, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SubscriptionLimitAction } from 'src/app/shared/store/subscription-limit';
+import { LoadingModule } from 'carbon-components-angular/loading';
+import { NgIf } from '@angular/common';
+import { YoupezAlertComponent } from '../../../../../@youpez/components/alert/alert.component';
+import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
   selector: 'show-billing-contract',
   templateUrl: './show-billing-contract.component.html',
   styleUrls: ['./show-billing-contract.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [FlexModule, ButtonModule, IbmIconComponent, YoupezAlertComponent, NgIf, LoadingModule]
 })
 export class ShowBillingContractComponent implements OnInit, OnDestroy {
 
@@ -24,7 +32,7 @@ export class ShowBillingContractComponent implements OnInit, OnDestroy {
   constructor(
     private dialogRef: MatDialogRef<ShowBillingContractComponent>,
     private _store: Store,
-    private _ngxsAction: Actions,
+    private _ngxsAction: Actions
   ) {}
 
   ngOnInit(): void {

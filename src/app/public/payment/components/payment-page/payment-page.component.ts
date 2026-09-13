@@ -1,29 +1,32 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import {
   UnifiedPaymentService,
   PaymentMethod,
   PaymentStatus,
   PaymentContext,
-  InitiatePaymentDto,
+  InitiatePaymentDto
 } from '../../services/unified-payment.service';
 import { PaymentLinkService, PaymentLinkDetails } from '../../services/payment-link.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { LocationPaymentService } from 'src/app/shared/store/payment-location/location-payment.service';
 import { environment } from 'src/environments/environment';
+import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, UpperCasePipe, SlicePipe, DatePipe } from '@angular/common';
 
-declare var Stripe: any;
+declare let Stripe: any;
 
 @Component({
   selector: 'app-payment-page',
   templateUrl: './payment-page.component.html',
-  styleUrls: ['./payment-page.component.scss']
+  styleUrls: ['./payment-page.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgClass, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule, NgFor, UpperCasePipe, SlicePipe, DatePipe, TranslatePipe]
 })
 export class PaymentPageComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -79,7 +82,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     private paymentLinkService: PaymentLinkService,
     private anonymousUserService: AnonymousUserService,
     private locationPaymentService: LocationPaymentService,
-    private translate: TranslateService,
+    private translate: TranslateService
   ) {
     this.amountForm = this.fb.group({
       amount: [null, [Validators.required, Validators.min(100), Validators.max(10000000)]]
@@ -210,24 +213,24 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       RENT:           'fa-home',
       SUBSCRIPTION:   'fa-star',
       PREMIUM_ACCESS: 'fa-crown',
-      WALLET_DEPOSIT: 'fa-wallet',
+      WALLET_DEPOSIT: 'fa-wallet'
     };
     const colors: Record<string, string> = {
       RENT:           '#2563eb',
       SUBSCRIPTION:   '#059669',
       PREMIUM_ACCESS: '#d97706',
-      WALLET_DEPOSIT: '#7c3aed',
+      WALLET_DEPOSIT: '#7c3aed'
     };
     const titleKeys: Record<string, string> = {
       RENT:           'PAYMENT_PAGE.CONTEXT.RENT_TITLE',
       SUBSCRIPTION:   'PAYMENT_PAGE.CONTEXT.SUBSCRIPTION_TITLE',
       PREMIUM_ACCESS: 'PAYMENT_PAGE.CONTEXT.PREMIUM_TITLE',
-      WALLET_DEPOSIT: 'PAYMENT_PAGE.CONTEXT.WALLET_TITLE',
+      WALLET_DEPOSIT: 'PAYMENT_PAGE.CONTEXT.WALLET_TITLE'
     };
     return {
       title: this.translate.instant(titleKeys[this.context] || 'PAYMENT_PAGE.CONTEXT.RENT_TITLE'),
       icon:  icons[this.context]  || 'fa-home',
-      color: colors[this.context] || '#2563eb',
+      color: colors[this.context] || '#2563eb'
     };
   }
 
@@ -291,7 +294,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       // successUrl avec placeholder CHECKOUT_SESSION_ID — externalRef ajouté après réponse backend
       successUrl: `${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}&ext=EXTERNAL_REF_PLACEHOLDER`,
       cancelUrl: `${base}/${this.token}?payment=cancelled`,
-      ...this.buildContextIds(),
+      ...this.buildContextIds()
     };
 
     this.paymentService.initiatePayment(dto, this.isPublicPayment)
@@ -303,7 +306,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
             // Remplacer le placeholder par l'externalRef réel retourné par le backend
             const finalUrl = res.data.redirectUrl.replace(
               'EXTERNAL_REF_PLACEHOLDER',
-              encodeURIComponent(res.data.externalRef),
+              encodeURIComponent(res.data.externalRef)
             );
             window.location.href = finalUrl;
           } else {
@@ -340,7 +343,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       phoneNumber: phone,
       description: this.paymentDetails?.description || 'Paiement Ndewa360°',
       userEmail: this.paymentDetails?.userEmail,
-      ...this.buildContextIds(),
+      ...this.buildContextIds()
     };
 
     this.paymentService.initiatePayment(dto, this.isPublicPayment)
@@ -575,13 +578,13 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       return {
         visitorId: meta['visitorId'] || this.paymentDetails.userId,
         // ownerId DOIT être transmis pour que PremiumAccessPaymentHandler puisse créer l'accès
-        ownerId: meta['ownerId'] || '',
+        ownerId: meta['ownerId'] || ''
       };
     }
     if (this.context === 'SUBSCRIPTION') {
       return {
         periodId:       meta['periodId']       || this.paymentDetails.reference,
-        subscriptionId: meta['subscriptionId'],
+        subscriptionId: meta['subscriptionId']
       };
     }
     if (this.context === 'WALLET_DEPOSIT') {
@@ -593,7 +596,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       locataireId:   meta['locataireId']  || this.paymentDetails.locataire?._id,
       roomId:        meta['roomId']       || this.paymentDetails.room?._id,
       propertyId:    meta['propertyId']   || this.paymentDetails.property?._id,
-      paymentLinkId: this.paymentDetails.token,
+      paymentLinkId: this.paymentDetails.token
     };
   }
 
@@ -630,7 +633,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       orange_money:  'PAYMENT_PAGE.METHODS.ORANGE_MONEY',
       mtn_money:     'PAYMENT_PAGE.METHODS.MTN_MONEY',
       card:          'PAYMENT_PAGE.METHODS.CARD',
-      easy_transact: 'PAYMENT_PAGE.METHODS.EASY_TRANSACT',
+      easy_transact: 'PAYMENT_PAGE.METHODS.EASY_TRANSACT'
     };
     return this.translate.instant(keys[method] || 'PAYMENT_PAGE.METHODS.CARD');
   }

@@ -7,6 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscriptions.actions';
 import { AdminUserSubscription } from '../../store/subscriptions/admin-subscriptions.model';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
+import { FormsModule } from '@angular/forms';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgClass, NgIf, NgFor } from '@angular/common';
 
 export interface SubscriptionDetailsModalData {
   subscription: AdminUserSubscription;
@@ -15,7 +18,9 @@ export interface SubscriptionDetailsModalData {
 @Component({
   selector: 'app-subscription-details-modal',
   templateUrl: './subscription-details-modal.component.html',
-  styleUrls: ['./subscription-details-modal.component.scss']
+  styleUrls: ['./subscription-details-modal.component.scss'],
+  standalone: true,
+  imports: [NgClass, ExtendedModule, NgIf, NgFor, FormsModule]
 })
 export class SubscriptionDetailsModalComponent implements OnInit {
   trackByFn = trackByFn;
@@ -32,7 +37,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
     private store: Store,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private currencyService: AdminCurrencyService,
+    private currencyService: AdminCurrencyService
   ) {}
 
   ngOnInit(): void {}
@@ -76,22 +81,22 @@ export class SubscriptionDetailsModalComponent implements OnInit {
     if (!this.pendingAction) return;
 
     switch (this.pendingAction) {
-      case 'upgrade':
-        this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(
-          this.subscription._id, this.actionReason
-        ));
-        this.dialogRef.close({ action: 'upgrade' });
-        break;
-      case 'suspend':
-        if (!this.actionReason.trim()) {
-          this.toastr.warning(this.translate.instant('ADMIN.SUBSCRIPTION.SUSPENSION_REASON_REQUIRED'));
-          return;
-        }
-        this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(
-          this.subscription._id, this.actionReason
-        ));
-        this.dialogRef.close({ action: 'suspend' });
-        break;
+    case 'upgrade':
+      this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(
+        this.subscription._id, this.actionReason
+      ));
+      this.dialogRef.close({ action: 'upgrade' });
+      break;
+    case 'suspend':
+      if (!this.actionReason.trim()) {
+        this.toastr.warning(this.translate.instant('ADMIN.SUBSCRIPTION.SUSPENSION_REASON_REQUIRED'));
+        return;
+      }
+      this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(
+        this.subscription._id, this.actionReason
+      ));
+      this.dialogRef.close({ action: 'suspend' });
+      break;
     }
 
     this.cancelAction();

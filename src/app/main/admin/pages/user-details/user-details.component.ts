@@ -9,6 +9,9 @@ import { AdminUsersService } from '../../services/admin-users.service';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { FormsModule } from '@angular/forms';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { NgIf, NgClass, NgFor, NgStyle, JsonPipe } from '@angular/common';
 
 interface SubscriptionPeriodSummary {
   _id: string;
@@ -115,7 +118,9 @@ interface UserDetails {
 @Component({
   selector: 'app-user-details',
   templateUrl: './user-details.component.html',
-  styleUrls: ['./user-details.component.scss']
+  styleUrls: ['./user-details.component.scss'],
+  standalone: true,
+  imports: [NgIf, NgClass, ExtendedModule, NgFor, FormsModule, NgStyle, JsonPipe]
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -167,7 +172,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     private languageUrlService: LanguageUrlService,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private currencyService: AdminCurrencyService,
+    private currencyService: AdminCurrencyService
   ) {}
 
   ngOnInit(): void {
@@ -399,8 +404,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
 
   getPlanBadgeClass(plan?: string): string {
     return plan === 'premium' ? 'admin-badge admin-badge-success'
-         : plan === 'trial'   ? 'admin-badge admin-badge-info'
-         : 'admin-badge admin-badge-secondary';
+      : plan === 'trial'   ? 'admin-badge admin-badge-info'
+        : 'admin-badge admin-badge-secondary';
   }
 
   getPlanLabel(plan?: string): string {
@@ -412,7 +417,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     const map: Record<string, string> = {
       active:    'admin-badge admin-badge-success',
       suspended: 'admin-badge admin-badge-warning',
-      disabled:  'admin-badge admin-badge-danger',
+      disabled:  'admin-badge admin-badge-danger'
     };
     return map[status || ''] || 'admin-badge admin-badge-secondary';
   }
@@ -428,7 +433,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       inactive:  'Inactif',
       suspended: 'Suspendu',
       banned:    'Banni',
-      disabled:  'Désactivé',
+      disabled:  'Désactivé'
     };
     return map[status || ''] || status || 'Inconnu';
   }
@@ -439,7 +444,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       inactive:  'admin-badge admin-badge-secondary',
       suspended: 'admin-badge admin-badge-warning',
       banned:    'admin-badge admin-badge-danger',
-      disabled:  'admin-badge admin-badge-danger',
+      disabled:  'admin-badge admin-badge-danger'
     };
     return map[status || ''] || 'admin-badge admin-badge-secondary';
   }
@@ -449,7 +454,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       payed:            '✅ Payé',
       unpaid:           '🔴 Impayé',
       waiting:          '⏳ En attente',
-      should_not_payed: '⚪ Non applicable',
+      should_not_payed: '⚪ Non applicable'
     };
     return map[state] || state;
   }
@@ -459,7 +464,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       payed:            'admin-badge admin-badge-success',
       unpaid:           'admin-badge admin-badge-danger',
       waiting:          'admin-badge admin-badge-warning',
-      should_not_payed: 'admin-badge admin-badge-secondary',
+      should_not_payed: 'admin-badge admin-badge-secondary'
     };
     return map[state] || 'admin-badge admin-badge-secondary';
   }
@@ -497,7 +502,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       FAILED:    '❌ Échoué',
       SUCCESS:   '✅ Réussi',
       CANCELLED: '⏹ Annulé',
-      EXPIRED:   '⏰ Expiré',
+      EXPIRED:   '⏰ Expiré'
     };
     return map[status] || status;
   }
@@ -508,7 +513,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
       FAILED:    'admin-badge admin-badge-danger',
       SUCCESS:   'admin-badge admin-badge-success',
       CANCELLED: 'admin-badge admin-badge-secondary',
-      EXPIRED:   'admin-badge admin-badge-secondary',
+      EXPIRED:   'admin-badge admin-badge-secondary'
     };
     return map[status] || 'admin-badge admin-badge-secondary';
   }
@@ -524,7 +529,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   getProviderLabel(provider: string): string {
     const map: Record<string, string> = {
       MTN: 'MTN Money', ORANGE: 'Orange Money',
-      EASY_TRANSACT: 'EasyTransact', STRIPE: 'Stripe',
+      EASY_TRANSACT: 'EasyTransact', STRIPE: 'Stripe'
     };
     return map[provider] || provider;
   }

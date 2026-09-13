@@ -7,7 +7,6 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { AdminSettingsComponent } from './admin-settings.component';
 
 @NgModule({
-  declarations: [AdminSettingsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -15,6 +14,7 @@ import { AdminSettingsComponent } from './admin-settings.component';
     MatDialogModule,
     RouterModule,
     SharedModule,
-  ],
+    AdminSettingsComponent
+  ]
 })
 export class AdminSettingsModule { }

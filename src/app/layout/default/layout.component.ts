@@ -1,27 +1,53 @@
-import {Component, OnDestroy, OnInit} from '@angular/core'
-import {takeUntil} from 'rxjs/operators'
-import {Subject} from "rxjs"
-import {defaultRouterTransition, MenuType} from "../../../@youpez"
-import {SettingsService} from "../../../@youpez"
-import {AppMenuService} from "../../../@youpez"
-import { ModeType, SizeType } from 'src/@youpez/components/app-sidenav/app-sidenav/app-sidenav.component'
-import { Store } from '@ngxs/store'
-import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state'
-import { Router, NavigationEnd } from '@angular/router'
-import { filter } from 'rxjs/operators'
-import { TranslateService } from '@ngx-translate/core'
-import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {defaultRouterTransition, MenuType} from '../../../@youpez';
+import {SettingsService} from '../../../@youpez';
+import {AppMenuService} from '../../../@youpez';
+import { ModeType, SizeType } from 'src/@youpez/components/app-sidenav/app-sidenav/app-sidenav.component';
+import { Store } from '@ngxs/store';
+import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { AppLockScreenComponent } from '../../../@youpez/components/app-lock-screen/app-lock-screen.component';
+import { AppSearchComponent } from '../../../@youpez/components/app-search/app-search.component';
+import { NgIf } from '@angular/common';
+import { LayoutMiniSidebarComponent } from '../menu/layout-mini-sidebar/layout-mini-sidebar.component';
+import { HeaderComponent } from '../header/header/header.component';
+import { AppThemeSettingsComponent } from '../../../@youpez/layout/app-theme-settings/app-theme-settings.component';
+import { AppSidenavComponent } from '../../../@youpez/components/app-sidenav/app-sidenav/app-sidenav.component';
+import { AppSidenavContainerComponent } from '../../../@youpez/components/app-sidenav/app-sidenav-container/app-sidenav-container.component';
+import { NavProgressBarComponent } from '../../shared/components/nav-progress-bar/nav-progress-bar.component';
+import { EmailConfirmationBannerComponent } from '../../shared/components/email-confirmation-banner/email-confirmation-banner.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
 
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
   animations: [
-    defaultRouterTransition,
+    defaultRouterTransition
   ],
+  standalone: true,
+  imports: [
+    ExtendedModule,
+    EmailConfirmationBannerComponent,
+    NavProgressBarComponent,
+    AppSidenavContainerComponent,
+    AppSidenavComponent,
+    AppThemeSettingsComponent,
+    HeaderComponent,
+    LayoutMiniSidebarComponent,
+    RouterOutlet,
+    NgIf,
+    AppSearchComponent,
+    AppLockScreenComponent
+  ]
 })
 export class LayoutComponent implements OnInit, OnDestroy {
-  private readonly onDestroy = new Subject<void>()
+  private readonly onDestroy = new Subject<void>();
 
   public mainSidebarOpts:{
     breakpoint: SizeType,
@@ -31,19 +57,19 @@ export class LayoutComponent implements OnInit, OnDestroy {
     toggleableBtn: boolean,
     size: SizeType,
   } = {
-    breakpoint: 'md',
-    opened: true,
-    hoverAble: true,
-    mode: 'side',
-    toggleableBtn: false,
-    size: 'sideBar1',
-  }
-  public miniSidebarOpts = {}
-  public settingsVisible: boolean = false
-  public searchVisible: boolean = false
-  public lockScreenVisible: boolean = false
+      breakpoint: 'md',
+      opened: true,
+      hoverAble: true,
+      mode: 'side',
+      toggleableBtn: false,
+      size: 'sideBar1'
+    };
+  public miniSidebarOpts = {};
+  public settingsVisible: boolean = false;
+  public searchVisible: boolean = false;
+  public lockScreenVisible: boolean = false;
 
-  public menu: Array<MenuType> = []
+  public menu: Array<MenuType> = [];
 
   constructor(private settingsService: SettingsService,
               private appMenuService: AppMenuService,
@@ -59,9 +85,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy))
       .subscribe((params) => {
         if (params === 'lock') {
-          this.lockScreenVisible = true
+          this.lockScreenVisible = true;
         }
-      })
+      });
     
     // Initialize menu with translations
     this.initializeMenu();
@@ -97,7 +123,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     const currentUrl = this.router.url;
     
     // Default menu for property owners
-    let defaultMenu = [
+    const defaultMenu = [
       {
         groupName: this.translate.instant('NAVIGATION.DASHBOARD'),
         opened: true,
@@ -107,10 +133,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
             url: `/${currentLang}/app/welcome`,
             prefix: {
               type: 'ibm-icon',
-              name: 'home',
-            },
-          },
-        ],
+              name: 'home'
+            }
+          }
+        ]
       },
       {
         groupName: this.translate.instant('NAVIGATION.PROPERTIES'),
@@ -119,13 +145,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
           {
             name: this.translate.instant('NAVIGATION.PROPERTIES'),
             prefix: { type: 'ibm-icon', name: 'home' },
-            url: `/${currentLang}/app/properties/home`,
+            url: `/${currentLang}/app/properties/home`
           },
           {
             name: 'Liste des biens',
             prefix: { type: 'ibm-icon', name: 'list' },
-            url: `/${currentLang}/app/properties/list`,
-          },
+            url: `/${currentLang}/app/properties/list`
+          }
         ]
       },
       {
@@ -135,13 +161,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
           {
             name: 'Facturation',
             prefix: { type: 'ibm-icon', name: 'receipt' },
-            url: `/${currentLang}/app/facturation/plan/dashboard`,
+            url: `/${currentLang}/app/facturation/plan/dashboard`
           },
           {
             name: 'Mon Portefeuille',
             prefix: { type: 'ibm-icon', name: 'money' },
-            url: `/${currentLang}/app/portefeuille`,
-          },
+            url: `/${currentLang}/app/portefeuille`
+          }
         ]
       },
       {
@@ -151,15 +177,15 @@ export class LayoutComponent implements OnInit, OnDestroy {
           {
             name: 'Modèles de contrats',
             prefix: { type: 'ibm-icon', name: 'document' },
-            url: `/${currentLang}/app/contract-templates`,
+            url: `/${currentLang}/app/contract-templates`
           },
           {
             name: this.translate.instant('NAVIGATION.PROFILE'),
             prefix: { type: 'ibm-icon', name: 'userAvatar' },
-            url: `/${currentLang}/app/profile`,
-          },
+            url: `/${currentLang}/app/profile`
+          }
         ]
-      },
+      }
     ];
     
     // If user is an agent, customize menu
@@ -176,8 +202,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
                 url: `/${currentLang}/app/agent/complete-profile`,
                 prefix: {
                   type: 'ibm-icon',
-                  name: 'userAvatar',
-                },
+                  name: 'userAvatar'
+                }
               }
             ]
           }
@@ -194,10 +220,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
                 url: `/${currentLang}/app/welcome`,
                 prefix: {
                   type: 'ibm-icon',
-                  name: 'home',
-                },
-              },
-            ],
+                  name: 'home'
+                }
+              }
+            ]
           },
           {
             groupName: this.translate.instant('NAVIGATION.PROPERTIES'),
@@ -206,7 +232,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
               {
                 name: 'Mes Biens Gérés',
                 prefix: { type: 'ibm-icon', name: 'home' },
-                url: `/${currentLang}/app/properties/home`,
+                url: `/${currentLang}/app/properties/home`
               }
             ]
           },
@@ -217,8 +243,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
               {
                 name: 'Mon Portefeuille',
                 prefix: { type: 'ibm-icon', name: 'money' },
-                url: `/${currentLang}/app/portefeuille`,
-              },
+                url: `/${currentLang}/app/portefeuille`
+              }
             ]
           },
           {
@@ -228,10 +254,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
               {
                 name: this.translate.instant('NAVIGATION.PROFILE'),
                 prefix: { type: 'ibm-icon', name: 'userAvatar' },
-                url: `/${currentLang}/app/profile`,
-              },
+                url: `/${currentLang}/app/profile`
+              }
             ]
-          },
+          }
         ];
       }
     } else {
@@ -240,47 +266,47 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.onDestroy.next()
+    this.onDestroy.next();
   }
 
   onMiniSidebarItemClick(event) {
     if (event.key === 'theme') {
-      this.settingsVisible = !this.settingsVisible
+      this.settingsVisible = !this.settingsVisible;
     }
     if (event.key === 'search') {
-      this.searchVisible = true
+      this.searchVisible = true;
     }
   }
 
   onToggleThemeSettings() {
-    this.settingsVisible = true
+    this.settingsVisible = true;
   }
 
   onSideBarOpen(event) {
-    this.mainSidebarOpts.opened = true
+    this.mainSidebarOpts.opened = true;
   }
 
   onSideBarToggle(event) {
-    this.mainSidebarOpts.opened = !this.mainSidebarOpts.opened
+    this.mainSidebarOpts.opened = !this.mainSidebarOpts.opened;
   }
 
   onCloseSettings(event) {
-    this.settingsVisible = false
+    this.settingsVisible = false;
   }
 
   onSearchClose(event) {
-    this.searchVisible = false
+    this.searchVisible = false;
   }
 
   onLockClose(event) {
-    this.lockScreenVisible = false
+    this.lockScreenVisible = false;
   }
 
   onCloseSidebar() {
-    this.mainSidebarOpts.opened = false
+    this.mainSidebarOpts.opened = false;
   }
 
   onVisibilityChange(event){
-    this.mainSidebarOpts.opened=event
+    this.mainSidebarOpts.opened=event;
   }
 }

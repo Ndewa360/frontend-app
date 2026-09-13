@@ -8,11 +8,14 @@ import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } f
 import { PaymentSessionService } from 'src/app/shared/services/payment-session.service';
 import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { InvoiceDownloadService } from 'src/app/shared/services/invoice-download.service';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'plan-list',
   templateUrl: './plan-list.component.html',
-  styleUrls: ['./plan-list.component.css']
+  styleUrls: ['./plan-list.component.css'],
+  standalone: true,
+  imports: [NgIf, NgFor]
 })
 export class PlanListComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -34,7 +37,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store,
     private paymentSessionService: PaymentSessionService,
-    private invoiceDownloadService: InvoiceDownloadService,
+    private invoiceDownloadService: InvoiceDownloadService
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +80,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
       userEmail: profile?.email,
       metadata: { periodId: period.id, lang: this.lang },
       successRedirectPath: `${currentPath}?payment=success`,
-      cancelRedirectPath: currentPath,
+      cancelRedirectPath: currentPath
     });
   }
 
@@ -86,7 +89,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
       payed:            'Payé',
       waiting:          'En attente',
       unpaid:           'En retard',
-      should_not_payed: 'Gratuit',
+      should_not_payed: 'Gratuit'
     };
     return labels[status] || status;
   }
@@ -96,7 +99,7 @@ export class PlanListComponent implements OnInit, OnDestroy {
       payed:            'success',
       waiting:          'warning',
       unpaid:           'danger',
-      should_not_payed: 'info',
+      should_not_payed: 'info'
     };
     return classes[status] || 'secondary';
   }

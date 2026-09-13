@@ -2,11 +2,14 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoadingState, LoadingStateService } from '../../services/loading-state.service';
+import { NgIf, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-loading-overlay',
   templateUrl: './loading-overlay.component.html',
-  styleUrls: ['./loading-overlay.component.scss']
+  styleUrls: ['./loading-overlay.component.scss'],
+  standalone: true,
+  imports: [NgIf, DecimalPipe]
 })
 export class LoadingOverlayComponent implements OnInit, OnDestroy {
   @Input() loadingState$: Observable<LoadingState>;
@@ -50,9 +53,9 @@ export class LoadingOverlayComponent implements OnInit, OnDestroy {
 
   get spinnerSize(): string {
     switch (this.size) {
-      case 'small': return 'w-6 h-6';
-      case 'large': return 'w-12 h-12';
-      default: return 'w-8 h-8';
+    case 'small': return 'w-6 h-6';
+    case 'large': return 'w-12 h-12';
+    default: return 'w-8 h-8';
     }
   }
 

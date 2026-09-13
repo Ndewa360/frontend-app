@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NavigationLoaderService } from '../../services/navigation-loader.service';
 import { DataDrivenLoaderService } from '../../services/data-driven-loader.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-nav-progress-bar',
@@ -47,7 +48,9 @@ import { DataDrivenLoaderService } from '../../services/data-driven-loader.servi
     }
 
     @keyframes npb-spin { to { transform: rotate(360deg); } }
-  `]
+  `],
+  standalone: true,
+  imports: [NgIf]
 })
 export class NavProgressBarComponent implements OnInit, OnDestroy {
   visible = false;
@@ -59,7 +62,7 @@ export class NavProgressBarComponent implements OnInit, OnDestroy {
 
   constructor(
     private navLoader: NavigationLoaderService,
-    private dataLoader: DataDrivenLoaderService,
+    private dataLoader: DataDrivenLoaderService
   ) {}
 
   ngOnInit(): void {

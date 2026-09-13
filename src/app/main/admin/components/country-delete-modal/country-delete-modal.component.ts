@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry } from '../../store/geography/admin-geography.model';
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 export interface CountryDeleteModalData {
   country: AdminCountry;
@@ -17,7 +18,9 @@ export interface CountryDeleteModalData {
 @Component({
   selector: 'app-country-delete-modal',
   templateUrl: './country-delete-modal.component.html',
-  styleUrls: ['./country-delete-modal.component.scss']
+  styleUrls: ['./country-delete-modal.component.scss'],
+  standalone: true,
+  imports: [NgIf, AsyncPipe]
 })
 export class CountryDeleteModalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

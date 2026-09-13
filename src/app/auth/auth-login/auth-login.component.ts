@@ -1,30 +1,37 @@
-import {Component, OnInit, OnDestroy, ViewEncapsulation} from '@angular/core'
-import {
-  UntypedFormGroup,
-  UntypedFormBuilder,
-  Validators
-} from "@angular/forms"
-import {ActivatedRoute, Router} from '@angular/router'
-import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store'
-import { UserProfileAction, UserProfileState } from 'src/app/shared/store'
-import { Subscription } from 'rxjs'
-import { ToastrService } from 'ngx-toastr'
-import { HttpClient } from '@angular/common/http'
-import { environment } from 'src/environments/environment'
-import { LanguageUrlService } from 'src/app/shared/services/language-url.service'
-import { TranslateService } from '@ngx-translate/core'
-import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service'
-import { KundaiService } from '@kundai/angular'
+import {Component, OnInit, OnDestroy, ViewEncapsulation} from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
+import { UserProfileAction, UserProfileState } from 'src/app/shared/store';
+import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { LanguagePreservationService } from 'src/app/shared/services/language-preservation.service';
+import { KundaiService } from '@kundai/angular';
+import { FlexModule } from '@angular/flex-layout/flex';
+import { IbmIconComponent } from '../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { LoadingModule } from 'carbon-components-angular/loading';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { NgIf } from '@angular/common';
+import { InputModule, CheckboxModule } from 'carbon-components-angular';
+import { LinkModule } from 'carbon-components-angular/link';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
 
 @Component({
   selector: 'app-auth-login',
   templateUrl: './auth-login.component.html',
   styleUrls: ['./auth-login.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [ExtendedModule, AppLogoComponent, LinkModule, RouterLink, FormsModule, ReactiveFormsModule, InputModule, NgIf, CheckboxModule, ButtonModule, LoadingModule, IbmIconComponent, FlexModule, TranslatePipe]
 })
 export class AuthLoginComponent implements OnInit, OnDestroy {
 
-  public formGroup: UntypedFormGroup
+  public formGroup: UntypedFormGroup;
   waittingResponse = false;
   showPassword = false;
   private subscriptions: Subscription[] = [];
@@ -46,7 +53,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', Validators.required]
     });
 
     const successSub = this._ngxsAction.pipe(
@@ -137,7 +144,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       this._store.dispatch(new UserProfileAction.LoginUserProfile(email, password));
     } else {
       this.formGroup.markAllAsTouched();
-      this._toastrService.warning(this.translate.instant('VALIDATION.REQUIRED'), "Ndewa360°");
+      this._toastrService.warning(this.translate.instant('VALIDATION.REQUIRED'), 'Ndewa360°');
     }
   }
 
@@ -164,7 +171,7 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
       client_id: clientId,
       callback: (response: any) => this.handleGoogleCredential(response),
       auto_select: false,
-      cancel_on_tap_outside: true,
+      cancel_on_tap_outside: true
     });
     (window as any).google.accounts.id.prompt();
   }

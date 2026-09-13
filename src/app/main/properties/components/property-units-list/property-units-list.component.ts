@@ -4,7 +4,7 @@ import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 // Nouveaux modals modernes
 import { ModernTenantModalComponent } from '../modern-tenant-modal/modern-tenant-modal.component';
 import { ModernUnitModalComponent } from '../modern-unit-modal/modern-unit-modal.component';
@@ -42,6 +42,12 @@ import { GaleryComponent } from '../../../room/components/galery/galery.componen
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
 import { ExportService, ExportColumn } from '../../services/export.service';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
+import { AddPaymentModalComponent } from '../unit-details-panel/components/add-payment-modal/add-payment-modal.component';
+import { UnitPaymentsTabComponent } from '../unit-details-panel/components/unit-payments-tab/unit-payments-tab.component';
+import { UnitDetailsPanelComponent } from '../unit-details-panel/unit-details-panel.component';
+import { FormsModule } from '@angular/forms';
+import { SelectModule } from 'carbon-components-angular';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
 
 export interface UnitAction {
   type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery' | 'edit_tenant';
@@ -53,7 +59,9 @@ export interface UnitAction {
   selector: 'app-property-units-list',
   templateUrl: './property-units-list.component.html',
   styleUrls: ['./property-units-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [NgIf, SelectModule, FormsModule, NgFor, UnitDetailsPanelComponent, UnitPaymentsTabComponent, AddPaymentModalComponent, DatePipe, TranslatePipe]
 })
 export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   @Input() propertyId: string | null = null;
@@ -293,21 +301,21 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       let bValue: any;
 
       switch (this.sortBy) {
-        case 'code':
-          aValue = a.code || '';
-          bValue = b.code || '';
-          break;
-        case 'price':
-          aValue = a.price || 0;
-          bValue = b.price || 0;
-          break;
-        case 'type':
-          aValue = a.type || '';
-          bValue = b.type || '';
-          break;
-        default:
-          aValue = a.code || '';
-          bValue = b.code || '';
+      case 'code':
+        aValue = a.code || '';
+        bValue = b.code || '';
+        break;
+      case 'price':
+        aValue = a.price || 0;
+        bValue = b.price || 0;
+        break;
+      case 'type':
+        aValue = a.type || '';
+        bValue = b.type || '';
+        break;
+      default:
+        aValue = a.code || '';
+        bValue = b.code || '';
       }
 
       if (typeof aValue === 'string') {
@@ -367,14 +375,14 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     const status = this.getRoomStatus(room);
     // Utiliser des valeurs par défaut si les traductions ne sont pas encore chargées
     switch (status) {
-      case 'occupied': 
-        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.OCCUPIED') || 'Occupée';
-      case 'available': 
-        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE') || 'Disponible';
-      case 'maintenance': 
-        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.MAINTENANCE') || 'En maintenance';
-      default: 
-        return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE') || 'Disponible';
+    case 'occupied': 
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.OCCUPIED') || 'Occupée';
+    case 'available': 
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE') || 'Disponible';
+    case 'maintenance': 
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.MAINTENANCE') || 'En maintenance';
+    default: 
+      return this.translateService.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE') || 'Disponible';
     }
   }
 
@@ -539,9 +547,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         mode: 'create',
-        room: room,
-        tenant: tenant,
-        location: location
+        room,
+        tenant,
+        location
       }
     });
 
@@ -587,7 +595,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       panelClass: 'generate-payment-link-modal-dialog',
       disableClose: true,
       data: {
-        room: room,
+        room,
         tenant: data?.tenant,
         location: data?.location
       }
@@ -811,8 +819,8 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         mode: 'edit',
-        property: property,
-        tenant: tenant
+        property,
+        tenant
       }
     }).afterClosed().subscribe(result => {
       if (result) {
@@ -846,9 +854,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         maxWidth: '900px',
         disableClose: true,
         data: {
-          location: location,
-          tenant: tenant,
-          room: room
+          location,
+          tenant,
+          room
         }
       });
 
@@ -893,9 +901,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
         disableClose: false,
         panelClass: 'contract-viewer-dialog',
         data: {
-          room: room,
-          location: location,
-          tenant: tenant
+          room,
+          location,
+          tenant
         }
       });
 
@@ -921,55 +929,55 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   onUnitDetailsAction(action: { type: string; room: RoomModel; data?: any }): void {
     // Gérer les actions depuis le modal de détails
     switch (action.type) {
-      case 'edit':
-        this.onEditUnit(action.room);
-        break;
-      case 'assign_tenant':
-        this.onAssignTenant(action.room);
-        break;
-      case 'terminate_lease':
-        this.onTerminateLease(action.room);
-        break;
-      case 'media_updated':
-        // Rafraîchir les données si nécessaire
-        break;
+    case 'edit':
+      this.onEditUnit(action.room);
+      break;
+    case 'assign_tenant':
+      this.onAssignTenant(action.room);
+      break;
+    case 'terminate_lease':
+      this.onTerminateLease(action.room);
+      break;
+    case 'media_updated':
+      // Rafraîchir les données si nécessaire
+      break;
     }
   }
 
   onUnitPanelAction(action: { type: string; room: RoomModel; data?: any }): void {
     // Gérer les actions depuis le panneau de détails
     switch (action.type) {
-      case 'edit':
-        this.onEditUnit(action.room);
-        break;
-      case 'assign_tenant':
-        this.onAssignTenant(action.room);
-        break;
-      case 'edit_tenant':
-        this.onEditenant(action.data.tenant);
-        break;
-      case 'terminate_lease':
-        this.onTerminateLease(action.room);
-        break;
-      case 'view_contract':
-        this.onViewContract(action.room);
-        break;
-      case 'view_image':
-        // TODO: Implémenter le visualiseur d'image
-        break;
-      case 'edit_gallery':
-        this.onEditGaleryUnit(action.room);
-        // Notifier le panel de détail pour qu'il se mette à jour après fermeture du modal
-        break;
-      case 'add_payment':
-        this.openAddPaymentModal(action.room);
-        break;
-      case 'delete_payment':
-        this.openDeletePaymentModal(action.data);
-        break;
-      case 'generate_payment_link':
-        this.openGeneratePaymentLinkModal(action.room, action.data);
-        break;
+    case 'edit':
+      this.onEditUnit(action.room);
+      break;
+    case 'assign_tenant':
+      this.onAssignTenant(action.room);
+      break;
+    case 'edit_tenant':
+      this.onEditenant(action.data.tenant);
+      break;
+    case 'terminate_lease':
+      this.onTerminateLease(action.room);
+      break;
+    case 'view_contract':
+      this.onViewContract(action.room);
+      break;
+    case 'view_image':
+      // TODO: Implémenter le visualiseur d'image
+      break;
+    case 'edit_gallery':
+      this.onEditGaleryUnit(action.room);
+      // Notifier le panel de détail pour qu'il se mette à jour après fermeture du modal
+      break;
+    case 'add_payment':
+      this.openAddPaymentModal(action.room);
+      break;
+    case 'delete_payment':
+      this.openDeletePaymentModal(action.data);
+      break;
+    case 'generate_payment_link':
+      this.openGeneratePaymentLinkModal(action.room, action.data);
+      break;
     }
   }
 
@@ -1158,7 +1166,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       price: this.formatPrice(transaction.locationPaymentPrice || 0),
       date: new Date(transaction.datePayment),
       history: this.paymentHistory,
-      transaction: transaction
+      transaction
     }));
 
     // Trier par date décroissante comme dans le composant existant
@@ -1166,23 +1174,23 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   }
 
   getRoomString(room: RoomModel): string {
-    let str = "";
+    let str = '';
     switch (room.type) {
-      case 'room':
-        str = `Chambre #${room.code}`;
-        break;
-      case 'studio':
-        str = `Studio #${room.code}`;
-        break;
-      case 'simple_apartment':
-        str = `Appartement #${room.code}`;
-        break;
-      case 'furnished_apartment':
-        str = `Appartement Meublé #${room.code}`;
-        break;
-      default:
-        str = `Unité #${room.code}`;
-        break;
+    case 'room':
+      str = `Chambre #${room.code}`;
+      break;
+    case 'studio':
+      str = `Studio #${room.code}`;
+      break;
+    case 'simple_apartment':
+      str = `Appartement #${room.code}`;
+      break;
+    case 'furnished_apartment':
+      str = `Appartement Meublé #${room.code}`;
+      break;
+    default:
+      str = `Unité #${room.code}`;
+      break;
     }
     return str;
   }
@@ -1226,9 +1234,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       disableClose: true,
       data: {
         mode: 'edit',
-        room: room,
-        tenant: tenant,
-        location: location,
+        room,
+        tenant,
+        location,
         transaction: payment.transaction
       }
     });
@@ -1353,7 +1361,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
     return {
       room: selectedRoom,
-      tenant: tenant,
+      tenant,
       payments: this.roomPayments,
       paymentHistory: this.paymentHistory,
       location: null // TODO: Récupérer la location si elle existe
@@ -1366,25 +1374,25 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   // Gestion des actions de paiement du nouveau composant
   onPaymentAction(action: any): void {
     switch (action.type) {
-      case 'add':
-        // Vérifier si la chambre est libre avant d'autoriser l'ajout
-        const selectedRoom = this.viewService.getSelectedRoom();
-        if (!selectedRoom || selectedRoom.isFree === true) {
-          alert('Impossible d\'ajouter un paiement : cette unité est libre et n\'a pas de locataire assigné.');
-          return;
-        }
-        this.showAddPaymentModal();
-        break;
-      case 'view':
-        break;
-      case 'edit':
-        this.editPayment(action.data);
-        break;
-      case 'delete':
-        this.openDeletePaymentModal(action.data);
-        break;
-      case 'export':
-        break;
+    case 'add':
+      // Vérifier si la chambre est libre avant d'autoriser l'ajout
+      const selectedRoom = this.viewService.getSelectedRoom();
+      if (!selectedRoom || selectedRoom.isFree === true) {
+        alert('Impossible d\'ajouter un paiement : cette unité est libre et n\'a pas de locataire assigné.');
+        return;
+      }
+      this.showAddPaymentModal();
+      break;
+    case 'view':
+      break;
+    case 'edit':
+      this.editPayment(action.data);
+      break;
+    case 'delete':
+      this.openDeletePaymentModal(action.data);
+      break;
+    case 'export':
+      break;
     }
   }
 
@@ -1568,7 +1576,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       maxWidth: '600px',
       disableClose: true,
       data: {
-        unit: unit,
+        unit,
         propertyName: this.property?.name
       }
     });

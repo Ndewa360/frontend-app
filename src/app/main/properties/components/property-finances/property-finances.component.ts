@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, S
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   StatisticAction,
   StatisticPaymentStateType,
@@ -13,6 +13,15 @@ import {
 import { StatisticState } from 'src/app/shared/store/statistic-data/statistic.state';
 import { ExcelExportService } from 'src/app/shared/services/excel-export.service';
 import { PerformanceAlertsService } from 'src/app/main/statistics/services/performance-alerts.service';
+import { MonthlyRevenueAnalysisComponent } from './components/monthly-revenue-analysis/monthly-revenue-analysis.component';
+import { DepositsSummaryComponent } from './components/deposits-summary/deposits-summary.component';
+import { TenantPaymentTrackingComponent } from './components/tenant-payment-tracking/tenant-payment-tracking.component';
+import { FinancialOverviewComponent } from './components/financial-overview/financial-overview.component';
+import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { ExtendedModule } from '@angular/flex-layout/extended';
+import { SelectModule } from 'carbon-components-angular';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, NgClass } from '@angular/common';
 
 export interface ExportData {
   type: 'excel' | 'csv';
@@ -23,7 +32,9 @@ export interface ExportData {
 @Component({
   selector: 'app-property-finances',
   templateUrl: './property-finances.component.html',
-  styleUrls: ['./property-finances.component.scss']
+  styleUrls: ['./property-finances.component.scss'],
+  standalone: true,
+  imports: [NgIf, FormsModule, NgFor, SelectModule, NgClass, ExtendedModule, IbmIconComponent, FinancialOverviewComponent, TenantPaymentTrackingComponent, DepositsSummaryComponent, MonthlyRevenueAnalysisComponent, TranslatePipe]
 })
 export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   @Input() propertyId: string = '';
@@ -371,25 +382,25 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
 
   getPaymentStateLabel(state: StatisticPaymentStateType): string {
     switch (state) {
-      case StatisticPaymentStateType.PAYED: return 'Payé';
-      case StatisticPaymentStateType.UNPAYED: return 'Non payé';
-      case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'Paiement partiel';
-      case StatisticPaymentStateType.WAITING: return 'En attente';
-      case StatisticPaymentStateType.ENDED_CONTRACT: return 'Contrat terminé';
-      case StatisticPaymentStateType.NO_CONTRACT: return 'Pas de contrat';
-      default: return 'Inconnu';
+    case StatisticPaymentStateType.PAYED: return 'Payé';
+    case StatisticPaymentStateType.UNPAYED: return 'Non payé';
+    case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'Paiement partiel';
+    case StatisticPaymentStateType.WAITING: return 'En attente';
+    case StatisticPaymentStateType.ENDED_CONTRACT: return 'Contrat terminé';
+    case StatisticPaymentStateType.NO_CONTRACT: return 'Pas de contrat';
+    default: return 'Inconnu';
     }
   }
 
   getPaymentStateColor(state: StatisticPaymentStateType): string {
     switch (state) {
-      case StatisticPaymentStateType.PAYED: return 'bg-green-100 text-green-800';
-      case StatisticPaymentStateType.UNPAYED: return 'bg-red-100 text-red-800';
-      case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'bg-yellow-100 text-yellow-800';
-      case StatisticPaymentStateType.WAITING: return 'bg-blue-100 text-blue-800';
-      case StatisticPaymentStateType.ENDED_CONTRACT: return 'bg-gray-100 text-gray-800';
-      case StatisticPaymentStateType.NO_CONTRACT: return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
+    case StatisticPaymentStateType.PAYED: return 'bg-green-100 text-green-800';
+    case StatisticPaymentStateType.UNPAYED: return 'bg-red-100 text-red-800';
+    case StatisticPaymentStateType.PARTIAL_PAYMENT: return 'bg-yellow-100 text-yellow-800';
+    case StatisticPaymentStateType.WAITING: return 'bg-blue-100 text-blue-800';
+    case StatisticPaymentStateType.ENDED_CONTRACT: return 'bg-gray-100 text-gray-800';
+    case StatisticPaymentStateType.NO_CONTRACT: return 'bg-purple-100 text-purple-800';
+    default: return 'bg-gray-100 text-gray-800';
     }
   }
 }

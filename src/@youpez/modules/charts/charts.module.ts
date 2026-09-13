@@ -1,23 +1,21 @@
-import {NgModule} from '@angular/core'
-import {CommonModule} from '@angular/common'
-import {EchartsComponent} from "./echarts/echarts.component"
-import {EchartsContainerComponent} from './echarts-container/echarts-container.component'
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {EchartsComponent} from './echarts/echarts.component';
+import {EchartsContainerComponent} from './echarts-container/echarts-container.component';
 
 
 const Components = [
   EchartsComponent,
-  EchartsContainerComponent,
-]
+  EchartsContainerComponent
+];
 
 @NgModule({
-  declarations: [
-    ...Components,
-  ],
   imports: [
     CommonModule,
+    ...Components
   ],
   exports: [
-    ...Components,
+    ...Components
   ]
 })
 export class ChartsModule {

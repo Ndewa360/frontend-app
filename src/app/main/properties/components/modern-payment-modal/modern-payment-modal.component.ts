@@ -1,12 +1,12 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   LocationPaymentModel,
   LocationPaymentAction,
@@ -19,6 +19,7 @@ import {
   StatisticAction
 } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface PaymentModalData {
   mode: 'create' | 'edit';
@@ -32,7 +33,9 @@ export interface PaymentModalData {
 @Component({
   selector: 'app-modern-payment-modal',
   templateUrl: './modern-payment-modal.component.html',
-  styleUrls: ['./modern-payment-modal.component.scss']
+  styleUrls: ['./modern-payment-modal.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, NgIf, NgFor, TranslatePipe]
 })
 export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -44,7 +47,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
     { value: 'BANK_TRANSFER', label: 'Virement bancaire', icon: 'bank'  },
     { value: 'MOBILE_MONEY',  label: 'Mobile Money',      icon: 'phone' },
     { value: 'CHECK',         label: 'Chèque',            icon: 'check' },
-    { value: 'CARD',          label: 'Carte bancaire',    icon: 'card'  },
+    { value: 'CARD',          label: 'Carte bancaire',    icon: 'card'  }
   ];
   
   // Payment types
@@ -110,7 +113,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       { value: 'BANK_TRANSFER', label: this.translate.instant('FINANCES.PAYMENT_METHODS.BANK_TRANSFER') || 'Virement bancaire', icon: 'bank'  },
       { value: 'MOBILE_MONEY',  label: this.translate.instant('FINANCES.PAYMENT_METHODS.MOBILE_MONEY')  || 'Mobile Money',      icon: 'phone' },
       { value: 'CHECK',         label: this.translate.instant('FINANCES.PAYMENT_METHODS.CHECK')         || 'Chèque',            icon: 'check' },
-      { value: 'CARD',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CREDIT_CARD')   || 'Carte bancaire',    icon: 'card'  },
+      { value: 'CARD',          label: this.translate.instant('FINANCES.PAYMENT_METHODS.CREDIT_CARD')   || 'Carte bancaire',    icon: 'card'  }
     ];
   }
 
@@ -164,7 +167,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       this.formGroup.patchValue({
         paymentLocationType: transaction.paymentLocationType || LocationPaymentType.LOCATION,
         locationPaymentPrice: transaction.locationPaymentPrice || 0,
-        datePayment: datePayment,
+        datePayment,
         reason: transaction.reason || '',
         billingRef: transaction.billingRef || '',
         paymentMethod: transaction.paymentMethod || 'CASH',
@@ -305,21 +308,21 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
       if (Array.isArray(datePayment)) {
         datePayment = datePayment[0];
         datePayment.setHours(6);
-        datePayment = datePayment.toISOString().split("T")[0];
+        datePayment = datePayment.toISOString().split('T')[0];
       } else if (typeof datePayment === 'string') {
         const date = new Date(datePayment);
         if (isNaN(date.getTime())) {
           throw new Error('Date de paiement invalide');
         }
         date.setHours(6);
-        datePayment = date.toISOString().split("T")[0];
+        datePayment = date.toISOString().split('T')[0];
       }
 
       // Préparer les données selon le format attendu par le backend DTO
       const paymentData: any = {
         locationPaymentPrice: formData.locationPaymentPrice,
         paymentLocationType: formData.paymentLocationType,
-        datePayment: datePayment,
+        datePayment,
         reason: formData.reason,
         paymentMethod: formData.paymentMethod,
         notes: formData.notes,

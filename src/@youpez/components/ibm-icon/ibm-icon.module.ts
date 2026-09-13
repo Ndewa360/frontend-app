@@ -1,11 +1,11 @@
-import {NgModule} from '@angular/core'
-import {CommonModule} from '@angular/common'
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
 
 import { 
   IconModule,
-  IconService, 
-} from 'carbon-components-angular'
+  IconService 
+} from 'carbon-components-angular';
 
 import Notification32 from '@carbon/icons/es/notification/32';
 import Notification24 from '@carbon/icons/es/notification/24';
@@ -496,7 +496,7 @@ import Hashtag20 from '@carbon/icons/es/text--creation/20';
 import Hashtag16 from '@carbon/icons/es/text--creation/16';
 
 
-import {IbmIconComponent} from './ibm-icon.component'
+import {IbmIconComponent} from './ibm-icon.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 
@@ -504,15 +504,12 @@ import { DomSanitizer } from '@angular/platform-browser';
   imports: [
     CommonModule,
     IconModule,
-  ],
-  declarations: [
     IbmIconComponent
   ],
   exports: [
     IbmIconComponent,
-    IconModule,
-  ],
-  
+    IconModule
+  ]
 })
 export class IbmIconModule {
   constructor(
@@ -521,392 +518,392 @@ export class IbmIconModule {
     private _matIconRegistry: MatIconRegistry
   ) {
     iconService.registerAll([
-		SettingsAdjust32,
-		SettingsAdjust24,
-		SettingsAdjust20,
-		SettingsAdjust16,
+      SettingsAdjust32,
+      SettingsAdjust24,
+      SettingsAdjust20,
+      SettingsAdjust16,
 
-		Hospital32,
-		Hospital24,
-		Hospital20,
-		Hospital16,
+      Hospital32,
+      Hospital24,
+      Hospital20,
+      Hospital16,
 
-		CloudUpload32,
-		CloudUpload24,
-		CloudUpload20,
-		CloudUpload16,
+      CloudUpload32,
+      CloudUpload24,
+      CloudUpload20,
+      CloudUpload16,
 
-		// Nouvelles icônes pour la localisation et l'interface
-		Globe32,
-		Globe24,
-		Globe20,
-		Globe16,
+      // Nouvelles icônes pour la localisation et l'interface
+      Globe32,
+      Globe24,
+      Globe20,
+      Globe16,
 
-		Language32,
-		Language24,
-		Language20,
-		Language16,
+      Language32,
+      Language24,
+      Language20,
+      Language16,
 
-		CurrencyDollar32,
-		CurrencyDollar24,
-		CurrencyDollar20,
-		CurrencyDollar16,
+      CurrencyDollar32,
+      CurrencyDollar24,
+      CurrencyDollar20,
+      CurrencyDollar16,
 
-		Time32,
-		Time24,
-		Time20,
-		Time16,
+      Time32,
+      Time24,
+      Time20,
+      Time16,
 
-		Calendar32,
-		Calendar24,
-		Calendar20,
-		Calendar16,
+      Calendar32,
+      Calendar24,
+      Calendar20,
+      Calendar16,
 
-		Phone32,
-		Phone24,
-		Phone20,
-		Phone16,
+      Phone32,
+      Phone24,
+      Phone20,
+      Phone16,
 
-		Camera32,
-		Camera24,
-		Camera20,
-		Camera16,
+      Camera32,
+      Camera24,
+      Camera20,
+      Camera16,
 
-		Information32,
-		Information24,
-		Information20,
-		Information16,
+      Information32,
+      Information24,
+      Information20,
+      Information16,
 
-		Reset32,
-		Reset24,
-		Reset20,
-		Reset16,
+      Reset32,
+      Reset24,
+      Reset20,
+      Reset16,
 
-		ViewOff32,
-		ViewOff24,
-		ViewOff20,
-		ViewOff16,
-
-		TrashCan32,
-		TrashCan24,
-		TrashCan20,
-		TrashCan16,
-
-		Grid32,
-		Grid24,
-		Grid20,
-		Grid16,
-
-		List32,
-		List24,
-		List20,
-		List16,
-
-		TrendingUp32,
-		TrendingUp24,
-		TrendingUp20,
-		TrendingUp16,
-
-		TrendingDown32,
-		TrendingDown24,
-		TrendingDown20,
-		TrendingDown16,
-
-		TrendingFlat32,
-		TrendingFlat24,
-		TrendingFlat20,
-		TrendingFlat16,
-
-		Subtract32,
-		Subtract24,
-		Subtract20,
-		Subtract16,
-
-		ChartLine32,
-		ChartLine24,
-		ChartLine20,
-		ChartLine16,
-
-		Tools32,
-		Tools24,
-		Tools20,
-		Tools16,
-
-		UserAccessUnlock32,
-		UserAccessUnlock24,
-		UserAccessUnlock20,
-		UserAccessUnlock16,
-
-		UserAdd32,
-		UserAdd24,
-		UserAdd20,
-		UserAdd16,
-
-		DropPhoto32,
-		DropPhoto24,
-		DropPhoto20,
-		DropPhoto16,
-
-		ChevronUpdOutline32,
-		ChevronUpdOutline24,
-		ChevronUpdOutline20,
-		ChevronUpdOutline16,
-
-		CloseOutline32,
-		CloseOutline24,
-		CloseOutline20,
-		CloseOutline16,
-		
-		AddAlt32,
-		AddAlt24,
-		AddAlt20,
-		AddAlt16,
-
-		Hotel32,
-		Hotel24,
-		Hotel20,
-		Hotel16,
-
-		// assetMovement32,
-		// assetMovement24,
-		// assetMovement20,
-		// assetMovement16,
-
-		Catalog32,
-		Catalog24,
-		Catalog20,
-		Catalog16,
-
-		ChevronDownOutline32,
-		ChevronDownOutline24,
-		ChevronDownOutline20,
-		ChevronDownOutline16,
-
-		ChevronUp32,
-		ChevronUp24,
-		ChevronUp20,
-		ChevronUp16,
-
-		ChevronDown32,
-		ChevronDown24,
-		ChevronDown20,
-		ChevronDown16,
-
-		ChevronLeft32,
-		ChevronLeft24,
-		ChevronLeft20,
-		ChevronLeft16,
-
-		ChevronRight32,
-		ChevronRight24,
-		ChevronRight20,
-		ChevronRight16,
-		
-		Map32,
-		Map24,
-		Map20,
-		Map16,
-
-		Minimize32,
-		Minimize24,
-		Minimize20,
-		Minimize16,
-
-		Maximize32,
-		Maximize24,
-		Maximize20,
-		Maximize16,
-
-      Pen32,
-			Pen24,
-			Pen20,
-			Pen16,
-      
-      TriangleDownSolid32,
-			TriangleDownSolid24,
-			TriangleDownSolid20,
-			TriangleDownSolid16,
-
-      TriangleUpSolid32,
-			TriangleUpSolid24,
-			TriangleUpSolid20,
-			TriangleUpSolid16,
-
-      TriangleLeftSolid32,
-			TriangleLeftSolid24,
-			TriangleLeftSolid20,
-			TriangleLeftSolid16,
-
-      TriangleRightSolid32,
-			TriangleRightSolid24,
-			TriangleRightSolid20,
-			TriangleRightSolid16,
-
-      Printer32,
-			Printer24,
-			Printer20,
-			Printer16,
-
-      DocumentAttachment32,
-			DocumentAttachment24,
-			DocumentAttachment20,
-			DocumentAttachment16,
-
-			FaceActived32,
-			FaceActived24,
-			FaceActived20,
-			FaceActived16,
-
-      Save32,
-			Save24,
-			Save20,
-			Save16,
-
-      CloudApp32,
-			CloudApp24,
-			CloudApp20,
-			CloudApp16,
+      ViewOff32,
+      ViewOff24,
+      ViewOff20,
+      ViewOff16,
 
       TrashCan32,
-			TrashCan24,
-			TrashCan20,
-			TrashCan16,
+      TrashCan24,
+      TrashCan20,
+      TrashCan16,
+
+      Grid32,
+      Grid24,
+      Grid20,
+      Grid16,
+
+      List32,
+      List24,
+      List20,
+      List16,
+
+      TrendingUp32,
+      TrendingUp24,
+      TrendingUp20,
+      TrendingUp16,
+
+      TrendingDown32,
+      TrendingDown24,
+      TrendingDown20,
+      TrendingDown16,
+
+      TrendingFlat32,
+      TrendingFlat24,
+      TrendingFlat20,
+      TrendingFlat16,
+
+      Subtract32,
+      Subtract24,
+      Subtract20,
+      Subtract16,
+
+      ChartLine32,
+      ChartLine24,
+      ChartLine20,
+      ChartLine16,
+
+      Tools32,
+      Tools24,
+      Tools20,
+      Tools16,
+
+      UserAccessUnlock32,
+      UserAccessUnlock24,
+      UserAccessUnlock20,
+      UserAccessUnlock16,
+
+      UserAdd32,
+      UserAdd24,
+      UserAdd20,
+      UserAdd16,
+
+      DropPhoto32,
+      DropPhoto24,
+      DropPhoto20,
+      DropPhoto16,
+
+      ChevronUpdOutline32,
+      ChevronUpdOutline24,
+      ChevronUpdOutline20,
+      ChevronUpdOutline16,
+
+      CloseOutline32,
+      CloseOutline24,
+      CloseOutline20,
+      CloseOutline16,
+		
+      AddAlt32,
+      AddAlt24,
+      AddAlt20,
+      AddAlt16,
+
+      Hotel32,
+      Hotel24,
+      Hotel20,
+      Hotel16,
+
+      // assetMovement32,
+      // assetMovement24,
+      // assetMovement20,
+      // assetMovement16,
+
+      Catalog32,
+      Catalog24,
+      Catalog20,
+      Catalog16,
+
+      ChevronDownOutline32,
+      ChevronDownOutline24,
+      ChevronDownOutline20,
+      ChevronDownOutline16,
+
+      ChevronUp32,
+      ChevronUp24,
+      ChevronUp20,
+      ChevronUp16,
+
+      ChevronDown32,
+      ChevronDown24,
+      ChevronDown20,
+      ChevronDown16,
+
+      ChevronLeft32,
+      ChevronLeft24,
+      ChevronLeft20,
+      ChevronLeft16,
+
+      ChevronRight32,
+      ChevronRight24,
+      ChevronRight20,
+      ChevronRight16,
+		
+      Map32,
+      Map24,
+      Map20,
+      Map16,
+
+      Minimize32,
+      Minimize24,
+      Minimize20,
+      Minimize16,
+
+      Maximize32,
+      Maximize24,
+      Maximize20,
+      Maximize16,
+
+      Pen32,
+      Pen24,
+      Pen20,
+      Pen16,
+      
+      TriangleDownSolid32,
+      TriangleDownSolid24,
+      TriangleDownSolid20,
+      TriangleDownSolid16,
+
+      TriangleUpSolid32,
+      TriangleUpSolid24,
+      TriangleUpSolid20,
+      TriangleUpSolid16,
+
+      TriangleLeftSolid32,
+      TriangleLeftSolid24,
+      TriangleLeftSolid20,
+      TriangleLeftSolid16,
+
+      TriangleRightSolid32,
+      TriangleRightSolid24,
+      TriangleRightSolid20,
+      TriangleRightSolid16,
+
+      Printer32,
+      Printer24,
+      Printer20,
+      Printer16,
+
+      DocumentAttachment32,
+      DocumentAttachment24,
+      DocumentAttachment20,
+      DocumentAttachment16,
+
+      FaceActived32,
+      FaceActived24,
+      FaceActived20,
+      FaceActived16,
+
+      Save32,
+      Save24,
+      Save20,
+      Save16,
+
+      CloudApp32,
+      CloudApp24,
+      CloudApp20,
+      CloudApp16,
+
+      TrashCan32,
+      TrashCan24,
+      TrashCan20,
+      TrashCan16,
 
       Share32,
-			Share24,
-			Share20,
-			Share16,
+      Share24,
+      Share20,
+      Share16,
 
       UserIdentification32,
-			UserIdentification24,
-			UserIdentification20,
-			UserIdentification16,
+      UserIdentification24,
+      UserIdentification20,
+      UserIdentification16,
 
       CheckMarkOutline32,
-			CheckMarkOutline24,
-			CheckMarkOutline20,
-			CheckMarkOutline16,
+      CheckMarkOutline24,
+      CheckMarkOutline20,
+      CheckMarkOutline16,
 
-		CheckMark32,
-		CheckMark24,
-		CheckMark20,
-		CheckMark16,
+      CheckMark32,
+      CheckMark24,
+      CheckMark20,
+      CheckMark16,
 
       warningMarkOutline32,
-			warningMarkOutline24,
-			warningMarkOutline20,
-			warningMarkOutline16,
+      warningMarkOutline24,
+      warningMarkOutline20,
+      warningMarkOutline16,
 
       
       Download32,
-			Download24,
-			Download20,
-			Download16,
+      Download24,
+      Download20,
+      Download16,
 
       Document32,
-			Document24,
-			Document20,
-			Document16,
+      Document24,
+      Document20,
+      Document16,
 
       View32,
-			View24,
-			View20,
-			View16,
+      View24,
+      View20,
+      View16,
 
       Edit32,
-			Edit24,
-			Edit20,
-			Edit16,
+      Edit24,
+      Edit20,
+      Edit16,
 
       TableOfContents32,
-			TableOfContents24,
-			TableOfContents20,
-			TableOfContents16,
+      TableOfContents24,
+      TableOfContents20,
+      TableOfContents16,
 
       Location32,
-			Location24,
-			Location20,
-			Location16,
+      Location24,
+      Location20,
+      Location16,
 
       Money32,
-			Money24,
-			Money20,
-			Money16,
+      Money24,
+      Money20,
+      Money16,
 
       Close32,
-			Close24,
-			Close20,
-			Close16,
+      Close24,
+      Close20,
+      Close16,
 
       Error32,
-			Error24,
-			Error20,
-			Error16,
+      Error24,
+      Error20,
+      Error16,
 
       Settings32,
-			Settings24,
-			Settings20,
-			Settings16,
+      Settings24,
+      Settings20,
+      Settings16,
 
       Activity32,
-			Activity24,
-			Activity20,
-			Activity16,
+      Activity24,
+      Activity20,
+      Activity16,
 
       Renew32,
-			Renew24,
-			Renew20,
-			Renew16,
+      Renew24,
+      Renew20,
+      Renew16,
 
       Add32,
-			Add24,
-			Add20,
-			Add16,
+      Add24,
+      Add20,
+      Add16,
 
       Tag32,
-			Tag24,
-			Tag20,
-			Tag16,
+      Tag24,
+      Tag20,
+      Tag16,
 
       BuildingInsights132,
       BuildingInsights124,
-			BuildingInsights120,
-			BuildingInsights116,
+      BuildingInsights120,
+      BuildingInsights116,
 
       Bullhorn32,
-			Bullhorn24,
-			Bullhorn20,
-			Bullhorn16,
+      Bullhorn24,
+      Bullhorn20,
+      Bullhorn16,
 
       Chat32,
-			Chat24,
-			Chat20,
-			Chat16,
+      Chat24,
+      Chat20,
+      Chat16,
 
       Help32,
-			Help24,
-			Help20,
-			Help16,
+      Help24,
+      Help20,
+      Help16,
 
       Notification32,
-			Notification24,
-			Notification20,
-			Notification16,
+      Notification24,
+      Notification20,
+      Notification16,
 
-			UserAvatar32,
-			UserAvatar24,
-			UserAvatar20,
-			UserAvatar16,
+      UserAvatar32,
+      UserAvatar24,
+      UserAvatar20,
+      UserAvatar16,
 
       User32,
-			User24,
-			User20,
-			User16,
+      User24,
+      User20,
+      User16,
 
       Home32,
-			Home24,
-			Home20,
-			Home16,
+      Home24,
+      Home20,
+      Home16,
 
       ArrowRight32,
       ArrowRight24,
@@ -1002,9 +999,9 @@ export class IbmIconModule {
       Hashtag32,
       Hashtag24,
       Hashtag20,
-      Hashtag16,
+      Hashtag16
 
-		]);
+    ]);
 
     // Register icon sets
     this._matIconRegistry.addSvgIconSet(this._domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/material-twotone.svg'));

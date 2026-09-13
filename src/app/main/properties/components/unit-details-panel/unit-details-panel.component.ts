@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { trigger, state, style, transition, animate, keyframes } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import {
   RoomModel,
   LocataireModel,
@@ -21,6 +21,8 @@ import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-paym
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
 import { PropertyAccessService } from 'src/app/shared/services/property-access.service';
+import { AddPaymentModalComponent } from './components/add-payment-modal/add-payment-modal.component';
+import { NgIf, NgFor } from '@angular/common';
 
 export interface UnitPanelAction {
   type: 'edit' | 'assign_tenant' | 'terminate_lease' | 'add_payment' | 'view_contract' | 'view_image' | 'edit_tenant' |
@@ -62,7 +64,9 @@ export interface UnitPanelAction {
         animate('200ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
       ])
     ])
-  ]
+  ],
+  standalone: true,
+  imports: [NgIf, NgFor, AddPaymentModalComponent, TranslatePipe]
 })
 export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   @Input() room: RoomModel | null = null;
@@ -239,10 +243,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   getRoomStatusLabel(): string {
     const status = this.getRoomStatus();
     switch (status) {
-      case 'available': return this.translate.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE');
-      case 'occupied': return this.translate.instant('UNIT_DETAILS_PANEL.OCCUPIED');
-      case 'maintenance': return this.translate.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.MAINTENANCE');
-      default: return this.translate.instant('UNIT_DETAILS_PANEL.UNKNOWN_STATUS');
+    case 'available': return this.translate.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.AVAILABLE');
+    case 'occupied': return this.translate.instant('UNIT_DETAILS_PANEL.OCCUPIED');
+    case 'maintenance': return this.translate.instant('PROPERTY_DETAILS.UNIT_CARD.STATUS.MAINTENANCE');
+    default: return this.translate.instant('UNIT_DETAILS_PANEL.UNKNOWN_STATUS');
     }
   }
 
@@ -420,7 +424,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
     return {
       transaction: payment,
-      history: history
+      history
     };
   }
 
@@ -446,7 +450,7 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         room: this.room ? { code: this.room.code, price: this.room.price, type: this.room.type } : null,
         owner: owner ? { name: owner.name || owner.fullName, email: owner.email, phoneNumber: owner.phoneNumber } : null,
         location: this.unitData?.location || null,
-        allPayments,
+        allPayments
       }
     });
   }
@@ -499,8 +503,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         disableClose: true,
         data: {
           mode: 'edit',
-          transaction: transaction,
-          history: history,
+          transaction,
+          history,
           // ✅ Fournir room, tenant et location pour que le modal fonctionne correctement
           room: this.room,
           tenant: this.unitData?.tenant || history?.locataire || null,
@@ -567,8 +571,8 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
         panelClass: 'delete-payment-modal-dialog',
         disableClose: true,
         data: {
-          transaction: transaction,
-          history: history
+          transaction,
+          history
         }
       });
 
@@ -587,22 +591,22 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   // Nouvelle méthode pour gérer les actions de paiement
   onPaymentAction(paymentAction: PaymentAction): void {
     switch (paymentAction.type) {
-      case 'add':
-        this.showAddPaymentModal = true;
-        break;
-      case 'view':
-        break;
-      case 'receipt':
-        this.onViewReceipt(paymentAction.data);
-        break;
-      case 'edit':
-        this.onEditPayment(paymentAction.data);
-        break;
-      case 'delete':
-        this.onDeletePaymentModal(paymentAction.data);
-        break;
-      case 'export':
-        break;
+    case 'add':
+      this.showAddPaymentModal = true;
+      break;
+    case 'view':
+      break;
+    case 'receipt':
+      this.onViewReceipt(paymentAction.data);
+      break;
+    case 'edit':
+      this.onEditPayment(paymentAction.data);
+      break;
+    case 'delete':
+      this.onDeletePaymentModal(paymentAction.data);
+      break;
+    case 'export':
+      break;
     }
   }
 
@@ -727,9 +731,9 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   getPaymentTypeLabel(type: string): string {
     switch (type) {
-      case 'LOCATION': return this.translate.instant('UNIT_PAYMENTS.PAYMENT_TYPE.LOCATION');
-      case 'CAUTION': return this.translate.instant('UNIT_PAYMENTS.PAYMENT_TYPE.CAUTION');
-      default: return type || this.translate.instant('UNIT_DETAILS_PANEL.OTHER');
+    case 'LOCATION': return this.translate.instant('UNIT_PAYMENTS.PAYMENT_TYPE.LOCATION');
+    case 'CAUTION': return this.translate.instant('UNIT_PAYMENTS.PAYMENT_TYPE.CAUTION');
+    default: return type || this.translate.instant('UNIT_DETAILS_PANEL.OTHER');
     }
   }
 
@@ -769,10 +773,10 @@ export class UnitDetailsPanelComponent implements OnInit, OnDestroy, OnChanges {
   getMediaTypeLabel(mediaUrl: string): string {
     const type = this.getMediaType(mediaUrl);
     switch (type) {
-      case 'image': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.IMAGE');
-      case 'video': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.VIDEO');
-      case '360': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.TOUR_360');
-      default: return this.translate.instant('UNIT_DETAILS_PANEL.MEDIA');
+    case 'image': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.IMAGE');
+    case 'video': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.VIDEO');
+    case '360': return this.translate.instant('PROPERTY_DETAILS.UNIT_DETAILS.TOUR_360');
+    default: return this.translate.instant('UNIT_DETAILS_PANEL.MEDIA');
     }
   }
 

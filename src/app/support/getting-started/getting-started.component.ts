@@ -1,84 +1,92 @@
-import {Component, OnInit} from '@angular/core'
-import {DomSanitizer} from '@angular/platform-browser'
-import { Observable } from 'rxjs'
-import { Select, Store } from '@ngxs/store'
-import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store'
-import { Location } from '@angular/common';
-import { TranslateService } from '@ngx-translate/core';
+import {Component, OnInit} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
+import { Observable } from 'rxjs';
+import { Select, Store } from '@ngxs/store';
+import { UserProfileAction, UserProfileModel, UserProfileState } from 'src/app/shared/store';
+import { Location, NgFor, NgIf } from '@angular/common';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { Router } from '@angular/router';
+import { SafePipe } from '../../../@youpez/pipes/safe';
+import { IbmIconComponent } from '../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { ButtonModule } from 'carbon-components-angular/button';
+import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
+import { NgScrollbar } from 'ngx-scrollbar';
+import { FlexModule } from '@angular/flex-layout/flex';
 
 @Component({
   selector: 'app-getting-started',
   templateUrl: './getting-started.component.html',
-  styleUrls: ['./getting-started.component.css']
+  styleUrls: ['./getting-started.component.css'],
+  standalone: true,
+  imports: [FlexModule, NgScrollbar, AppLogoComponent, ButtonModule, IbmIconComponent, NgFor, NgIf, TranslatePipe, SafePipe]
 })
 export class GettingStartedComponent implements OnInit {
-  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>
+  @Select(UserProfileState.selectStateUserProfile) userProfil$:Observable<UserProfileModel>;
 
   public videos: any[] = [];
 
   private buildVideosData() {
     return [
-    {
-      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.TITLE'),
-      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.TOPIC'),
-      url: 'https://www.youtube.com/embed/F4xu5FXW62k',
-      seen: true,
-      steps: [],
-      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.PAGE'),
-      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.INFO'),
-    },
-    {
-      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.TITLE'),
-      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.TOPIC'),
-      url: 'https://www.youtube.com/embed/gyin31wzg4Q',
-      seen: true,
-      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.STEPS'),
-      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.PAGE'),
-      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.INFO'),
-    },
-    {
-      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.TITLE'),
-      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.TOPIC'),
-      url: 'https://www.youtube.com/embed/WBhNszyc_Ks',
-      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.STEPS'),
-      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.PAGE'),
-      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.INFO'),
-    },
-    {
-      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.TITLE'),
-      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.TOPIC'),
-      url: 'https://www.youtube.com/embed/7rkeORD4jSw',
-      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.STEPS'),
-      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.PAGE'),
-      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.INFO'),
-    },
-    {
-      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.TITLE'),
-      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.TOPIC'),
-      url: 'https://www.youtube.com/embed/Bsq5cKkS33I',
-      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.STEPS'),
-      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.PAGE'),
-      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.INFO'),
-    },
-    {
-      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.TITLE'),
-      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.TOPIC'),
-      url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
-      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.STEPS'),
-      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.PAGE'),
-      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.INFO'),
-    },
-    {
-      title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.TITLE'),
-      topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.TOPIC'),
-      url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
-      steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.STEPS'),
-      page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.PAGE'),
-      info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.INFO'),
-    }
-  ];
+      {
+        title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.TITLE'),
+        topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.TOPIC'),
+        url: 'https://www.youtube.com/embed/F4xu5FXW62k',
+        seen: true,
+        steps: [],
+        page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.PAGE'),
+        info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.INTRODUCTION.INFO')
+      },
+      {
+        title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.TITLE'),
+        topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.TOPIC'),
+        url: 'https://www.youtube.com/embed/gyin31wzg4Q',
+        seen: true,
+        steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.STEPS'),
+        page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.PAGE'),
+        info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.ACCOUNT_CREATION.INFO')
+      },
+      {
+        title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.TITLE'),
+        topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.TOPIC'),
+        url: 'https://www.youtube.com/embed/WBhNszyc_Ks',
+        steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.STEPS'),
+        page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.PAGE'),
+        info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.PROPERTY_ADDITION.INFO')
+      },
+      {
+        title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.TITLE'),
+        topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.TOPIC'),
+        url: 'https://www.youtube.com/embed/7rkeORD4jSw',
+        steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.STEPS'),
+        page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.PAGE'),
+        info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.UNIT_ADDITION.INFO')
+      },
+      {
+        title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.TITLE'),
+        topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.TOPIC'),
+        url: 'https://www.youtube.com/embed/Bsq5cKkS33I',
+        steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.STEPS'),
+        page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.PAGE'),
+        info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ADDITION.INFO')
+      },
+      {
+        title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.TITLE'),
+        topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.TOPIC'),
+        url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
+        steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.STEPS'),
+        page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.PAGE'),
+        info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.TENANT_ASSIGNMENT.INFO')
+      },
+      {
+        title: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.TITLE'),
+        topic: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.TOPIC'),
+        url: 'https://www.youtube.com/embed/PH-2FfFD2PU',
+        steps: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.STEPS'),
+        page: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.PAGE'),
+        info: this.translate.instant('SUPPORT.GETTING_STARTED.VIDEOS.FINANCIAL_ANALYSIS.INFO')
+      }
+    ];
   }
 
   constructor(
@@ -98,17 +106,17 @@ export class GettingStartedComponent implements OnInit {
   }
 
   getUrl(url) {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url)
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   trackByFn(index, row) {
-    return row.title
+    return row.title;
   }
 
   goBack()
-    {
-      // Naviguer vers la page d'accueil du support avec la langue courante
-      const currentLang = this.languageUrlService.getCurrentLanguage();
-      this.router.navigate([`/${currentLang}/support/welcome`]);
-    }
+  {
+    // Naviguer vers la page d'accueil du support avec la langue courante
+    const currentLang = this.languageUrlService.getCurrentLanguage();
+    this.router.navigate([`/${currentLang}/support/welcome`]);
+  }
 }

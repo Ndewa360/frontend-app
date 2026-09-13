@@ -6,10 +6,10 @@ import {
   OnInit,
   OnDestroy,
   ChangeDetectorRef,
-  Optional,
+  Optional
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil, finalize, timeout } from 'rxjs/operators';
@@ -19,11 +19,20 @@ import { UserProfileState } from 'src/app/shared/store/user-profile';
 import { PremiumAccessService } from 'src/app/shared/services/premium-access/premium-access.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { PaymentSessionService } from 'src/app/shared/services/payment-session.service';
+import { NgIf, UpperCasePipe, SlicePipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-premium-access-modal',
   templateUrl: './premium-access-modal.component.html',
   styleUrls: ['./premium-access-modal.component.scss'],
+  standalone: true,
+  imports: [
+    NgIf,
+    UpperCasePipe,
+    SlicePipe,
+    DecimalPipe,
+    TranslatePipe
+  ]
 })
 export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   @Input() isOpen = false;
@@ -57,7 +66,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     private paymentSessionService: PaymentSessionService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    @Optional() private dialogRef: MatDialogRef<any>,
+    @Optional() private dialogRef: MatDialogRef<any>
   ) {}
 
   ngOnInit(): void {
@@ -94,13 +103,13 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
 
     // Vérifier si l'accès pour CET ownerId est déjà en cache
     const checkState = this.store.selectSnapshot(
-      PremiumAccessState.checkLoadingFor(this.ownerId),
+      PremiumAccessState.checkLoadingFor(this.ownerId)
     );
     const hasAccess = this.store.selectSnapshot(
-      PremiumAccessState.hasAccessForOwner(this.ownerId),
+      PremiumAccessState.hasAccessForOwner(this.ownerId)
     );
     const cachedInfo = this.store.selectSnapshot(
-      PremiumAccessState.ownerInfoFor(this.ownerId),
+      PremiumAccessState.ownerInfoFor(this.ownerId)
     );
 
     if (checkState === 'LOADED') {
@@ -128,7 +137,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     this.store.dispatch(new PremiumAccessAction.CheckAccessForOwner(
       this.effectiveUserId,
       this.ownerId,
-      this.isAnonymous,
+      this.isAnonymous
     ));
   }
 
@@ -184,7 +193,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       this.effectiveUserId,
       this.ownerId,
       this.isAnonymous,
-      this.propertyId || undefined,
+      this.propertyId || undefined
     ));
   }
 
@@ -222,7 +231,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
       amount: this.premiumPrice,
       amountEditable: false,
       currency: 'XAF',
-      description: `Accès contacts propriétaire — 24 heures`,
+      description: 'Accès contacts propriétaire — 24 heures',
       userId: this.effectiveUserId,
       userEmail: email,
       metadata: {
@@ -230,10 +239,10 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
         ownerId: this.ownerId,
         isAnonymous: this.isAnonymous,
         visitorId: this.effectiveUserId,
-        lang: this.lang,
+        lang: this.lang
       },
       successRedirectPath,
-      cancelRedirectPath,
+      cancelRedirectPath
     };
 
     const request$ = this.isAnonymous
@@ -247,7 +256,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
         finalize(() => {
           this.loading = false;
           this.cdr.detectChanges();
-        }),
+        })
       )
       .subscribe({
         next: (res) => {
@@ -258,7 +267,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
         error: (err) => {
           this.error = err.error?.message || this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.MISSING_PURCHASE_INFO');
           this.cdr.detectChanges();
-        },
+        }
       });
   }
 
@@ -284,7 +293,7 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     if (!this.ownerInfo?.owner.whatsapp) return '#';
     const phone = this.ownerInfo.owner.whatsapp.replace(/\s+/g, '');
     const message = encodeURIComponent(
-      this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.WHATSAPP_MESSAGE'),
+      this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.WHATSAPP_MESSAGE')
     );
     return `https://wa.me/${phone}?text=${message}`;
   }
@@ -298,10 +307,10 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
   emailOwner(): void {
     if (this.ownerInfo?.owner.email) {
       const subject = encodeURIComponent(
-        this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_SUBJECT'),
+        this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_SUBJECT')
       );
       const body = encodeURIComponent(
-        this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_BODY'),
+        this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.EMAIL_BODY')
       );
       window.location.href = `mailto:${this.ownerInfo.owner.email}?subject=${subject}&body=${body}`;
     }

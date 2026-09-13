@@ -5,11 +5,18 @@ import { takeUntil, map } from 'rxjs/operators';
 import { StatisticState, StatisticAction, StatisticError } from 'src/app/shared/store';
 import { EnrichedStatisticData } from 'src/app/shared/store/statistic-data/statistic.model';
 import { UtilsString } from 'src/app/shared/utils';
+import { EchartsComponent } from '../../../../../@youpez/modules/charts/echarts/echarts.component';
+import { EchartsContainerComponent } from '../../../../../@youpez/modules/charts/echarts-container/echarts-container.component';
+import { ChartErrorComponent } from '../chart-error/chart-error.component';
+import { ChartSkeletonComponent } from '../chart-skeleton/chart-skeleton.component';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'chart-finance-room',
   templateUrl: './chart-finance-room.component.html',
-  styleUrls: ['./chart-finance-room.component.css']
+  styleUrls: ['./chart-finance-room.component.css'],
+  standalone: true,
+  imports: [NgIf, ChartSkeletonComponent, ChartErrorComponent, EchartsContainerComponent, EchartsComponent]
 })
 export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -150,10 +157,10 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
           );
           let content = `<strong>${monthName}</strong><br/>`;
           params.forEach(param => {
-              const series = dataSeries.find(s => s.name === param.seriesName);
-              const info = series?._roomInfo || {};
-              const icon = this.getStatusIcon(info.paymentStatus);
-              content += `
+            const series = dataSeries.find(s => s.name === param.seriesName);
+            const info = series?._roomInfo || {};
+            const icon = this.getStatusIcon(info.paymentStatus);
+            content += `
                 <div style="margin:6px 0;padding:6px;border-left:3px solid ${param.color};background:#f9f9f9;">
                   <strong>${param.seriesName}</strong> ${icon}<br/>
                   · Encaissé ce mois : <strong>${(param.value || 0).toLocaleString('fr-FR')} FCFA</strong><br/>
@@ -161,7 +168,7 @@ export class ChartFinanceRoomComponent implements OnInit, OnChanges, OnDestroy {
                   · Total encaissé ${this.selectedYear} : ${(info.totalReceived || 0).toLocaleString('fr-FR')} FCFA<br/>
                   · Taux encaissement : <strong>${(info.collectionRate || 0).toFixed(1)}%</strong>
                 </div>`;
-            });
+          });
           return content;
         }
       },
