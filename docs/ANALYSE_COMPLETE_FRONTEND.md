@@ -2,7 +2,7 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.5 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone complet — exécutées)
+> Version : 1.6 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone complet — exécutées)
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
 
 ---
@@ -18,7 +18,7 @@ Statut : **migration exécutée et vérifiée (build production ✅, design dor�
 | 3 | Libs mortes retirées : `flowbite` (JS 132 kB + plugin), `tw-elements`, `shepherd.js` (CSS), doublon `swiper-bundle.min.css` ; gardées `driver.js` + `ag-grid` (utilisées) | ✅ | `scripts.js` disparu du bundle |
 | 4 | **PWA + service worker** | ✅ | `ngsw-config.json` créé, `serviceWorker:true` ; sortie PWA complète (ngsw.json, ngsw-worker.js, manifest.webmanifest) |
 | 5 | **SSR réactivé** (`server.ts` câblé, `ng run app:server`) | ✅ (limite documentée A7) | Boot serveur OK + watchdog 15 s + fallback SPA gracieux ; auth/onboarding/support rendus serveur ; home/search → SPA (deadlock universel traqué) |
-| 6 | **Budgets réalistes** | ✅ | `initial` warn 5.5 Mo / err 6.5 Mo (5,13 Mo webpack → **4,88 Mo esbuild**) ; `anyComponentStyle` 50 kB/150 kB |
+| 6 | **Budgets réalistes** | ✅ | `initial` warn 5.5 Mo / err 6.5 Mo (5,13 Mo webpack → **4,88 Mo esbuild**) ; `anyComponentStyle` 100 kB/150 kB (initialement 50/150, relevé row 16) |
 | 7 | **`trackBy` + `loading="lazy"`** | ✅ | 114 `<img loading="lazy">` + `trackBy` câblés (24 fichiers, util `shared/utils/track-by.util.ts`) |
 | 8 | **Config ESLint réparée** | ✅ | Préfixe `plugin:` obligatoire pour les configs scoped (`@typescript-eslint`, `@angular-eslint`), `prefer-const` dérécation ; lint exécutable + zéro erreur nouvelle sur les fichiers touchés |
 | 9 | **CSS Carbon dédupliqué** | ✅ | `@use "@carbon/styles"` retiré de 3 layouts auth (782 kB chacun) — déjà global via `styles.scss` |
@@ -30,6 +30,7 @@ Statut : **migration exécutée et vérifiée (build production ✅, design dor�
 | 13 | **SSR re-vérifié en esbuild** : `server.ts` migré de `ngExpressEngine` → `CommonEngine` (sortie imbriquée `dist/app/browser/browser`) | ✅ | auth/onboarding/support SSR <30 ms ; home/search → fallback SPA 15 s (limite A7 inchangée) |
 | 14 | **Standalone migration** : `@angular/core:standalone-migration --mode=convert-to-standalone --path=src` (277 fichiers) — composants/directives/pipes `standalone:true` ; NgModules conservés ; fix cycle TDZ `YoupezModule ⇄ app-menu-item` (import retiré) ; lint indent normalisé (eslint --fix sur fichiers migrés) | ✅ | Bundle prod inchangé **5,01 Mo / 911,77 kB** ; SSR vérifié ; 0 erreur nouvelle |
 | 15 | **Prune-ng-modules** : `@angular/core:standalone-migration --mode=prune-ng-modules --path=src` — seuls 2 barils purement standalone supprimés (`ModernModalsModule`, `GeographySelectorsModule`) ; NgModules à forRoot/forFeature/schemas (`SharedModule`, `YoupezModule`, ~38 feature modules) préservés par le schéma | ✅ | Bundle **5,00 Mo / 909,14 kB** (−10 kB) ; build browser + serveur + SSR vérifiés ; import mort `TourHelpButtonComponent` retiré ; lint propre |
+| 16 | **Build 100 % warnings** : erreur `TS2307 geography-selectors.module` = état stale (déjà résolue, 0 référence source) ; 2 dépréciations sass `/` → multiplications `math`-safe (`app.helpers.scss` l.76/98/99/101, éligibles Sass 2.0) ; **17 modificateurs `&--` en CSS natif invalide → sélecteurs BEM complets** (`plan-list.component.css`, règles **silencieusement inactives depuis l'esbuild** → restaurées) ; `<link styles.css>` codé en dur retiré (`index.html`) — auto-injecté par Angular (l'émission contenait ensuite `styles-ZLGOXBC3.css`, this warning `Unable to locate F:\styles.css` disparu) ; `dayjs`/`dayjs/locale/fr` ajoutés à `allowedCommonJsDependencies` ; budget `anyComponentStyle` warn 50 kB → 100 kB (3 styles >50 kB pré-existants : dialog 91,34 / home 60,35 / alert 58,63) | ✅ | Build prod EXIT=0 **5,00 Mo / 909,22 kB** ; **1 seul warning résiduel** = CSS carbon `node_modules` (toggletip `:host([object Object])`, 1 règle ignorée, hors périmètre) ; SSR support/onboarding/login 8–108 ms ; home/search fallback SPA 15 s |
 
 Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `window.env`), `moment → dayjs`, budgets réalistes, `vendorChunk:true`, préchargement stratégique, suppression 32 `.md` de debug + `core/`, fix `CountryState.countrys`, nettoyage `index.html`.
 

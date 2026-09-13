@@ -73,7 +73,7 @@
     }
 
     .app-bg-#{$type}-o-#{$i*10} {
-      background-color: rgba(darken($color, 3%), $i/10);
+      background-color: rgba(darken($color, 3%), 0.1 * $i);
     }
 
     svg.app-color-#{$type}-lt-#{$i*10} {
@@ -95,10 +95,10 @@
 }
 
 @mixin text-contrast($n) {
-  $color-brightness: round((red($n) * 299) + (green($n) * 587) + (blue($n) * 114) / 1000);
-  $light-color: round((red(#ffffff) * 299) + (green(#ffffff) * 587) + (blue(#ffffff) * 114) / 1000);
+  $color-brightness: round((red($n) * 299) + (green($n) * 587) + (0.001 * (blue($n) * 114)));
+  $light-color: round((red(#ffffff) * 299) + (green(#ffffff) * 587) + (0.001 * (blue(#ffffff) * 114)));
 
-  @if abs($color-brightness) < ($light-color/2) {
+  @if abs($color-brightness) < (0.5 * $light-color) {
     color: white;
     svg {
       fill: white;

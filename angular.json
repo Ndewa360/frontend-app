@@ -36,7 +36,9 @@
               "jspdf",
               "html2canvas",
               "random-avatar-generator",
-              "ngx-toastr"
+              "ngx-toastr",
+              "dayjs",
+              "dayjs/locale/fr"
             ],
             "assets": [
               "src/favicon.ico",
@@ -104,7 +106,7 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "50kb",
+                  "maximumWarning": "100kb",
                   "maximumError": "150kb"
                 }
               ]

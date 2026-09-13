@@ -112,16 +112,16 @@
   border: 1.5px solid transparent;
   gap: 1rem;
   flex-wrap: wrap;
+}
 
-  &--premium {
-    background: linear-gradient(135deg, rgba(187,137,11,0.08) 0%, rgba(212,160,13,0.05) 100%);
-    border-color: rgba(187,137,11,0.25);
-  }
+.pl__plan-banner--premium {
+  background: linear-gradient(135deg, rgba(187,137,11,0.08) 0%, rgba(212,160,13,0.05) 100%);
+  border-color: rgba(187,137,11,0.25);
+}
 
-  &--free {
-    background: #f9fafb;
-    border-color: var(--border);
-  }
+.pl__plan-banner--free {
+  background: #f9fafb;
+  border-color: var(--border);
 }
 
 .pl__plan-banner-left {
@@ -170,10 +170,10 @@
   height: 7px;
   border-radius: 50%;
   display: inline-block;
-
-  &--active    { background: var(--success); }
-  &--suspended { background: var(--warning); }
 }
+
+.pl__dot--active    { background: var(--success); }
+.pl__dot--suspended { background: var(--warning); }
 
 .pl__plan-amount {
   font-size: 1.25rem;
@@ -266,10 +266,10 @@
   padding: 1rem;
   text-align: center;
   box-shadow: var(--shadow-sm);
-
-  &--warning { border-color: rgba(245,158,11,0.3); background: var(--warning-light); }
-  &--success { border-color: rgba(16,185,129,0.3); background: var(--success-light); }
 }
+
+.pl__summary-card--warning { border-color: rgba(245,158,11,0.3); background: var(--warning-light); }
+.pl__summary-card--success { border-color: rgba(16,185,129,0.3); background: var(--success-light); }
 
 .pl__summary-value {
   font-size: 1.5rem;
@@ -335,10 +335,10 @@
 
   &:hover { background: #fafafa; }
   &:last-child td { border-bottom: none; }
-
-  &--unpaid { background: rgba(239,68,68,0.02); }
-  &--paid   { background: rgba(16,185,129,0.02); }
 }
+
+.pl__row--unpaid { background: rgba(239,68,68,0.02); }
+.pl__row--paid   { background: rgba(16,185,129,0.02); }
 
 /* ─── Cellules spécifiques ───────────────────────────────────────────────────── */
 .pl__ref {
@@ -381,9 +381,9 @@
   font-size: 0.9375rem;
   font-weight: 700;
   color: var(--text-dark);
-
-  &--zero { color: var(--text-light); font-weight: 400; }
 }
+
+.pl__amount--zero { color: var(--text-light); font-weight: 400; }
 
 .pl__paid-date {
   font-size: 0.8125rem;
@@ -404,13 +404,13 @@
   font-weight: 600;
   white-space: nowrap;
 
-  &--success { background: var(--success-light); color: var(--success); }
-  &--warning { background: var(--warning-light); color: #d97706; }
-  &--danger  { background: var(--danger-light);  color: var(--danger); }
-  &--info    { background: var(--info-light);    color: var(--info); }
-
   i { font-size: 0.75rem; }
 }
+
+.pl__status-badge--success { background: var(--success-light); color: var(--success); }
+.pl__status-badge--warning { background: var(--warning-light); color: #d97706; }
+.pl__status-badge--danger  { background: var(--danger-light);  color: var(--danger); }
+.pl__status-badge--info    { background: var(--info-light);    color: var(--info); }
 
 /* ─── Bouton payer ───────────────────────────────────────────────────────────── */
 .pl__pay-btn {
@@ -435,15 +435,15 @@
     box-shadow: 0 4px 14px rgba(187,137,11,0.35);
   }
 
-  &--full {
-    width: 100%;
-    justify-content: center;
-    padding: 0.75rem;
-    margin-top: 0.75rem;
-    border-radius: var(--radius-md);
-  }
-
   i { font-size: 0.8rem; }
+}
+
+.pl__pay-btn--full {
+  width: 100%;
+  justify-content: center;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+  border-radius: var(--radius-md);
 }
 
 .pl__paid-check {
@@ -473,10 +473,10 @@
   border-radius: var(--radius-lg);
   padding: 1rem;
   box-shadow: var(--shadow-sm);
-
-  &--unpaid { border-left: 3px solid var(--danger); }
-  &--paid   { border-left: 3px solid var(--success); }
 }
+
+.pl__card--unpaid { border-left: 3px solid var(--danger); }
+.pl__card--paid   { border-left: 3px solid var(--success); }
 
 .pl__card-top {
   display: flex;
@@ -550,17 +550,17 @@
     background: var(--primary-light);
   }
 
-  &--active {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-    font-weight: 700;
-  }
-
   &:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
+}
+
+.pl__page-btn--active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 700;
 }
 
 /* ─── Note de bas de page ────────────────────────────────────────────────────── */
