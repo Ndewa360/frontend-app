@@ -94,7 +94,7 @@
         <!-- Period selector for overview -->
         <div class="pf-period-controls" *ngIf="selectedTab==='overview'">
           <select class="admin-filter-select" [(ngModel)]="selectedYear" (change)="onYearChange(selectedYear)">
-            <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+            <option *ngFor="let y of years trackBy: trackByFn" [value]="y">{{ y }}</option>
           </select>
           <div class="pf-period-btns">
             <button class="pf-period-btn" [class.active]="selectedPeriod==='monthly'" (click)="onPeriodChange('monthly')">Mensuel</button>
@@ -112,7 +112,7 @@
         <div class="pf-chart-container" *ngIf="revenueData.length" (scroll)="onChartScroll()">
           <div class="pf-bars">
             <div class="pf-bar-group"
-                 *ngFor="let d of revenueData"
+                 *ngFor="let d of revenueData trackBy: trackByFn"
                  (mouseenter)="onBarHover($event, d)"
                  (mouseleave)="onBarLeave()">
               <div class="pf-bar-stack">
@@ -157,7 +157,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let tx of transactions">
+            <tr *ngFor="let tx of transactions trackBy: trackByFn">
               <td>
                 <span class="admin-badge" [class.admin-badge-primary]="tx.type==='subscription'" [class.admin-badge-warning]="tx.type==='premium_access'">
                   {{ tx.type === 'subscription' ? 'Souscription' : 'Accès premium' }}
@@ -185,7 +185,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let w of withdrawals">
+            <tr *ngFor="let w of withdrawals trackBy: trackByFn">
               <td><strong>{{ w.reference }}</strong></td>
               <td>{{ formatCurrency(w.requestedAmount) }}</td>
               <td>{{ formatCurrency(w.feeAmount) }} ({{ w.feePercent }}%)</td>
@@ -274,7 +274,7 @@
       <ng-container *ngIf="wStep === 'method'">
         <p class="pw-step-title">Sélectionnez la méthode de retrait</p>
         <div class="pw-methods">
-          <button *ngFor="let m of methods" type="button"
+          <button *ngFor="let m of methods trackBy: trackByFn" type="button"
                   class="pw-method-btn"
                   [class.pw-method-btn--orange]="m.value === 'ORANGE_MONEY'"
                   [class.pw-method-btn--mtn]="m.value === 'MTN_MONEY'"

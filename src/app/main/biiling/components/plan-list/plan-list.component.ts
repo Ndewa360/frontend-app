@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -14,6 +15,8 @@ import { InvoiceDownloadService } from 'src/app/shared/services/invoice-download
   styleUrls: ['./plan-list.component.css']
 })
 export class PlanListComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
 
   private destroy$ = new Subject<void>();
   private lang = 'fr';

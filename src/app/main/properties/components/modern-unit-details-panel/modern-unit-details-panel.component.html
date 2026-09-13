@@ -315,7 +315,7 @@
             </h3>
             <div class="grid grid-cols-1 gap-4">
               <div *ngFor="let media of room.medias" class="relative group">
-                <img [src]="media" 
+                <img loading="lazy" [src]="media" 
                      [alt]="'Image de ' + getRoomName()" 
                      class="w-full h-48 object-cover rounded-xl border hover:shadow-lg transition-all duration-300 cursor-pointer"
                      (click)="openImageViewer(media)">

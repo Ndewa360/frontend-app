@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../../../shared/utils/track-by.util';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { PfPieSlice } from '../pie-chart/pie-chart.component';
 
@@ -8,6 +9,8 @@ import { PfPieSlice } from '../pie-chart/pie-chart.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PfPieTooltipComponent {
+  trackByFn = trackByFn;
+
   @Input() slices: PfPieSlice[] = [];
   @Input() title = '';
   @Input() left = 0;

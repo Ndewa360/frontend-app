@@ -22,7 +22,7 @@
       <div class="admin-header-currency" title="Devise d'affichage">
         <i class="fas fa-coins"></i>
         <select class="admin-currency-select" [ngModel]="selectedCurrency" (ngModelChange)="onCurrencyChange($event)">
-          <option *ngFor="let c of currencies" [value]="c">{{ currencyLabels[c] }}</option>
+          <option *ngFor="let c of currencies trackBy: trackByFn" [value]="c">{{ currencyLabels[c] }}</option>
         </select>
       </div>
 
@@ -51,7 +51,7 @@
         <div class="admin-page-header">
           <h2 class="admin-page-title">{{ pageTitle }}</h2>
           <nav class="admin-breadcrumb" aria-label="breadcrumb">
-            <span *ngFor="let crumb of breadcrumbs; let last = last" class="admin-breadcrumb-item">
+            <span *ngFor="let crumb of breadcrumbs; let last = last trackBy: trackByFn" class="admin-breadcrumb-item">
               <span>{{ crumb }}</span>
               <span *ngIf="!last" class="admin-breadcrumb-sep">/</span>
             </span>
@@ -62,7 +62,7 @@
         <div class="admin-nav-menu">
           <h3 class="admin-nav-section-title">{{ 'ADMIN.NAVIGATION' | translate }}</h3>
           <ul class="admin-nav-list">
-            <li *ngFor="let item of menuItems" class="admin-nav-item">
+            <li *ngFor="let item of menuItems trackBy: trackByFn" class="admin-nav-item">
               <a [routerLink]="item.route"
                  class="admin-nav-link"
                  [class.active]="isActiveRoute(item.id)"

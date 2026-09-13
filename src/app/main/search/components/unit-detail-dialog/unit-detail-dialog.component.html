@@ -83,7 +83,7 @@
               <div class="slider-slide" *ngFor="let item of unitMediaItems; let i = index">
 
                 <!-- Image classique -->
-                <img
+                <img loading="lazy"
                   *ngIf="item.type === 'image' || item.type === 'unknown'"
                   [src]="item.url"
                   [alt]="('UNIT_DETAIL.IMAGES.PHOTO_ALT' | translate) + ' ' + (i + 1)"
@@ -348,7 +348,7 @@
                 </div>
                 <div *ngIf="isPropertyManagedByAgent()" class="contact-item agency-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 12px; display: flex; align-items: center;">
                   <div class="agency-logo" style="width: 40px; height: 40px; border-radius: 8px; background: #DAA520; display: flex; align-items: center; justify-content: center; margin-right: 12px;">
-                    <img *ngIf="getAgencyLogo(); else defaultAgencyIcon" [src]="getAgencyLogo()" [alt]="getAgencyName() + ' logo'" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover;">
+                    <img loading="lazy" *ngIf="getAgencyLogo(); else defaultAgencyIcon" [src]="getAgencyLogo()" [alt]="getAgencyName() + ' logo'" style="width: 32px; height: 32px; border-radius: 6px; object-fit: cover;">
                     <ng-template #defaultAgencyIcon>
                       <i class="fas fa-building" style="color: white; font-size: 18px;"></i>
                     </ng-template>
@@ -488,7 +488,7 @@
          (touchend)="onTouchEnd($event)">
       <div class="gallery-track" [style.transform]="'translateX(' + (-currentImageIndex * 100) + '%)'">
         <div class="gallery-slide" *ngFor="let item of unitMediaItems; let i = index">
-          <img *ngIf="item.type === 'image' || item.type === 'unknown'"
+          <img loading="lazy" *ngIf="item.type === 'image' || item.type === 'unknown'"
                [src]="item.url"
                [alt]="('UNIT_DETAIL.IMAGES.PHOTO_ALT' | translate) + ' ' + (i + 1)"
                class="gallery-image">
@@ -503,7 +503,7 @@
           <div *ngIf="item.type === 'panorama'"
                class="gallery-panorama-placeholder"
                (click)="openPanoramaFullscreen(item.url); closeImageGallery()">
-            <img [src]="item.url" class="gallery-image" style="opacity:0.5;" alt="360°">
+            <img loading="lazy" [src]="item.url" class="gallery-image" style="opacity:0.5;" alt="360°">
             <div class="gallery-panorama-hint">
               <i class="fas fa-globe"></i>
               <span>Cliquer pour ouvrir la visite 360°</span>

@@ -23,6 +23,7 @@ import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
 import { LanguageUrlService } from './shared/services/language-url.service';
 import { HealthCheckService } from './shared/services/health-check.service';
+import { SwUpdate } from '@angular/service-worker';
 
 const getSessionStorage = (key: string, defaultValue: string = null) => {
   try { return (typeof sessionStorage !== 'undefined' && sessionStorage.getItem(key)) || defaultValue; }
@@ -70,12 +71,22 @@ export class AppComponent implements OnInit, OnDestroy {
     private languageUrlService: LanguageUrlService,
     private translateService: TranslateService,
     private healthCheck: HealthCheckService,
+    private swUpdate: SwUpdate,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit(): void {
+    // Mise à jour automatique du service worker (PWA)
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates.pipe(takeUntil(this.destroy$))
+        .subscribe(evt => {
+          if (evt.type === 'VERSION_READY') {
+            this.swUpdate.activateUpdate().then(() => window.location.reload());
+          }
+        });
+    }
     // Health check backend
-    this.healthCheck.start();
+    if (isPlatformBrowser(this.platformId)) this.healthCheck.start();
     // Traductions — langue extraite depuis l'URL (prioritaire) ou le navigateur
     this.translateService.setDefaultLang('fr');
     const lang = this.getLanguageFromUrl();
@@ -120,6 +131,10 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe((e: NavigationEnd) => {
       this.seoService.updateMetaTagsForRoute(e.urlAfterRedirects);
     });
+
+    // Les timers/activity/profile ne doivent pas s'activer en SSR (rendu serveur)
+    // sinon la zone Angular ne devient jamais stable et le rendu universel pend.
+    if (!isPlatformBrowser(this.platformId)) return;
 
     // Token check toutes les 5 min
     this.tokenCheckInterval = interval(5 * 60 * 1000).pipe(

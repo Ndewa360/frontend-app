@@ -125,7 +125,7 @@
                       class="form-select"
                       [class.error]="terminationReason?.invalid && terminationReason?.touched">
                 <option value="">{{ 'CONTRACT_TERMINATION.SELECT_REASON' | translate }}</option>
-                <option *ngFor="let reason of terminationReasons" [value]="reason.value">
+                <option *ngFor="let reason of terminationReasons trackBy: trackByFn" [value]="reason.value">
                   {{ reason.label }}
                 </option>
               </select>

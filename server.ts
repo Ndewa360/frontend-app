@@ -51,9 +51,36 @@ export function app(): express.Express {
     next();
   });
 
+  // SSR uniquement sur les pages publiques critiques (SEO) : landing et recherche.
+  // Les pages privées restent servies en SPA (201 index.html), ce qui réduit les risques runtime serveur.
+  const isSsrRoute = (url: string) => /^\/[a-z]{2}\/(home|search)(\/.*)?(\?.*)?$/.test(url) || url === '/';
+  const renderTimeoutMs = 15000;
+
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
-    res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
+    if (isSsrRoute(req.url)) {
+      let settled = false;
+      // Watchdog SSR : si le rendu ne converge pas (tâches Angular instables,
+      // API en aval lente...), on retombe en SPA plutôt que de laisser 000/socket.
+      const watchdog = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        console.error(`[SSR] TIMEOUT ${renderTimeoutMs}ms — fallback SPA`, req.url);
+        res.sendFile(join(distFolder, 'index.html'));
+      }, renderTimeoutMs);
+      res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] }, (err, html) => {
+        if (settled) return;
+        clearTimeout(watchdog);
+        settled = true;
+        if (err) {
+          console.error('[SSR] render error', req.url, (err as Error).message || err);
+          return res.sendFile(join(distFolder, 'index.html'));
+        }
+        res.send(html);
+      });
+    } else {
+      res.sendFile(join(distFolder, 'index.html'));
+    }
   });
 
   return server;

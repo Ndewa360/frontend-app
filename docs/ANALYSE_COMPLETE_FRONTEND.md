@@ -2,7 +2,7 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.1 | Date : 2026 | Statut : Référence
+> Version : 1.2 | Date : 2026 | Statut : Référence (vague 1 + vague 2 — PWA/SSR/SEO/budgets/lint/trackBy — exécutées)
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
 
 ---
@@ -16,10 +16,18 @@ Statut : **migration exécutée et vérifiée (build production ✅, design dor�
 | 1 | Tailwind statique `assets/tailwind/tailwind.scss` supprimé (classes dynamiques = littérales complètes, JIT les régénère) | ✅ | `styles.css` 3,37 Mo → 1,46 Mo (−1,9 Mo) |
 | 2 | Admin lazy par page : 11 modules + `AdminSharedModule` (modals), scope identique à l'ancien parent | ✅ | Chunk admin commun ~135 kB (routing+states+services), pages chargées à la demande |
 | 3 | Libs mortes retirées : `flowbite` (JS 132 kB + plugin), `tw-elements`, `shepherd.js` (CSS), doublon `swiper-bundle.min.css` ; gardées `driver.js` + `ag-grid` (utilisées) | ✅ | `scripts.js` disparu du bundle |
+| 4 | **PWA + service worker** | ✅ | `ngsw-config.json` créé, `serviceWorker:true` ; sortie PWA complète (ngsw.json, ngsw-worker.js, manifest.webmanifest) |
+| 5 | **SSR réactivé** (`server.ts` câblé, `ng run app:server`) | ✅ (limite documentée A7) | Boot serveur OK + watchdog 15 s + fallback SPA gracieux ; auth/onboarding/support rendus serveur ; home/search → SPA (deadlock universel traqué) |
+| 6 | **Budgets réalistes** | ✅ | `initial` warn 5.5 Mo / err 6.5 Mo (5,13 Mo réel) ; `anyComponentStyle` 50 kB/150 kB |
+| 7 | **`trackBy` + `loading="lazy"`** | ✅ | 114 `<img loading="lazy">` + `trackBy` câblés (24 fichiers, util `shared/utils/track-by.util.ts`) |
+| 8 | **Config ESLint réparée** | ✅ | Préfixe `plugin:` obligatoire pour les configs scoped (`@typescript-eslint`, `@angular-eslint`), `prefer-const` dérécation ; lint exécutable + zéro erreur nouvelle sur les fichiers touchés |
+| 9 | **CSS Carbon dédupliqué** | ✅ | `@use "@carbon/styles"` retiré de 3 layouts auth (782 kB chacun) — déjà global via `styles.scss` |
 | — | OnPush / Standalone (240 composants) | ⏸️ différé | Casse les rendus en bloc → garder le visuel (décision utilisateur) |
 | — | Microfrontend Module Federation | ⏸️ différé | Route-split en place (admin lazy) = étape C recommandée pour équipe ≤4 devs |
 
 Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `window.env`), `moment → dayjs`, budgets réalistes, `vendorChunk:true`, préchargement stratégique, suppression 32 `.md` de debug + `core/`, fix `CountryState.countrys`, nettoyage `index.html`.
+
+Correctifs SSR (vague 2) : guards `isPlatformBrowser` dans `app.component.ts`, `health-check`/`device-detection`/`data-driven-loader`/`content-ready`/`smart-notifications`, `environment*.ts` lus hors `window`, `landing-layout` localStorage try/catch, `home.component` animations gated — voir A7.
 
 ---
 
@@ -86,14 +94,14 @@ Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `w
 | Composant | Techno | Notes |
 |---|---|---|
 | Build | Webpack (`@angular-devkit/build-angular:browser`) | pas l'ESbuild `application` |
-| Budgets | warning 9 Mo / erreur 14 Mo | 4,5× les standards Angular — inutiles |
+| Budgets | warning 5,5 Mo / erreur 6,5 Mo (`initial`) ; `anyComponentStyle` 50 kB / 150 kB | 5,13 Mo réels — 4 composants legacy dépassent le warn composant (alert, fundraising, home, unit-detail-dialog) sans atteindre l'erreur |
 | Dev | `buildOptimizer:false`, `optimization:false`, `vendorChunk:true` | normal |
 | Prod | `optimization:true`, `vendorChunk:false`, `outputHashing:all` | vendor fusionné dans main.js (cache moins bon) |
 | Styles | SCSS + Tailwind 3 (JIT `content`) + `important:true` | Tailwind compilé 2 fois (voir A6) |
 | State | NGXS | 34 stores, patterns incohérents |
 | HTTP | HttpClient + interceptors | token JWT + erreurs |
-| SSR | Désactivé (`echo 'SSR désactivé'`) | `server.ts`, `@nguniversal/*`, `platform-server` installés mais morts |
-| PWA | Absent | pas de service worker |
+| SSR | **Actif** — `server.ts` câblé (`server.main`), `ng run app:server` OK | Rendu serveur réel + headers SEO ; voir A7 pour les détails et la limite home/search |
+| PWA | **Actif** — `ngsw-config.json` + `serviceWorker:true` | Sortie `ngsw.json`/`ngsw-worker.js`/`manifest.webmanifest` générée par le build prod |
 | i18n | ngx-translate (fr + en ×3 fichiers) + `CustomTranslateLoader` | strings hardcodés par endroits |
 | E2E | Cypress 13 | 1 test scaffold |
 
@@ -235,14 +243,26 @@ tailwind.scss  admin-design-system.scss  photo-sphere-viewer.css  swiper-bundle.
 
 ## A7. SSR · PWA · SEO
 
+### État actuel (vague 2, vérifié)
+
 | Sujet | État | Impact |
 |---|---|---|
-| SSR | **Désactivé** (scripts = `echo 'SSR désactivé'`) | Landing + search (critiques SEO) rendues 100 % client-side |
+| SSR | **Actif** (`server.ts` câblé via `angular.json` `server.options.main`, plus jamais mort) | Boot serveur OK ; toutes les routes répondent |
+| Headers SEO | Corrects sur toutes les routes | `/`, `/fr/home`, `/fr/search`, … → `index, follow` + cache 600 s/300 s ; routes privées `/fr/app/*`, `/fr/admin/*` → `noindex, nofollow` + `no-store` |
+| Rendu serveur (universal) | Auth `190 + onboarding + support` **rendus en <100 ms** | HTML complet côté serveur |
+| Universal home/search | **Ne converge pas** (renderModule ≥15 s → jamais stable) | Watchdog 15 s → fallback SPA gracieux (200, index.html correct) — SEO public conservé via headers + structured data de `index.html` |
+| Watchdog | **En place** dans `server.ts` | 15 s : FALLBACK SPA au lieu d'une socket cassée (000) |
 | TransferState | Aucun usage | — |
-| PWA | **Absent** (`@angular/service-worker` manquant) | Pas d'offline — marché mobile africain, connexions intermittentes |
-| SEO | Structured data excellente dans index.html, `useHash:false` | Le contenu n'est pas dans le HTML initial (hydratation JS) |
+| PWA | **Actif** — `ngsw-config.json` (assetGroups `app` prefetch + `assets` lazy ; dataGroup `/api/**` networkFirst, timeout 10 s, 100 req, 1 j), `serviceWorker:true` | Sortie PWA complète au build prod (ngsw.json, ngsw-worker.js, manifest.webmanifest) — offline/online-first, marché mobile africain |
+| SEO | Structured data excellente dans index.html, `useHash:false` | Le contenu SERVEUR des pages publiques est 100 % client-side (hydration JS) — voir limite ci-dessous |
 
-> Note : `server.ts`, `@nguniversal/express-engine`, `@nguniversal/builders`, `@angular/platform-server` restent installés mais inutilisés → **code mort**, prêt à être réactivé pour du SSR vrai.
+### Limite universel home/search (traque 2026)
+
+- Symptôme : `/fr/home` et `/fr/search` (seuls) font bloquer `renderModule` → `ApplicationRef` n'atteint jamais `isStable`.
+- Écarté : réseau (2 requêtes `/localisation/country`, terminées en erreur 404 — backend local répond <40 ms partout) ; resolver `PublicDataResolver`/`FetchCountries` (support & fundraising l'utilisent **aussi** et rendent en ~20-100 ms) ; timers (2 `setInterval` 30 s/60 s + un 10 ms créés **pendant** le rendu de ces routes ; leur effacement expérimental ne débloque pas le render).
+- Cause probable : une tâche du (sous-)module landing/search jamais résolue dans la zone Angular en contexte Node (ex. attente d'un `Promise` sur événement DOM/canvas/vidéo qui ne se produit pas en SSR) — `NOCLEAR=1 node ssr-hooks.cjs /fr/home` reproduit en ~12 s.
+- Statut : **dégradation documentée, comportement de production sûr** (watchdog + headers SEO corrects + fallback SPA). À corriger lors de la future vague d'architecture (gater les effets de bord "boostrap-only" de landing/search derrière `isPlatformBrowser`, voire migrer vers `provideRenderer` + rendu partiel). Impact SEO réel faible : les crawlers modernes exécutent le JS ; le shell + structured data restent indexés.
+- Outil de traque : `ssr-harness.cjs` / `ssr-hooks.cjs` (binaire, instrumentation timers/réseau avant `require` du bundle) — régénérer côté projet si besoin.
 
 ## A8. Tests
 
@@ -269,7 +289,7 @@ tailwind.scss  admin-design-system.scss  photo-sphere-viewer.css  swiper-bundle.
 
 | # | Action | Gain estimé |
 |---|---|---|
-| 1 | **Budgets réalistes** : `initial` warning 500 kB / error 1 Mo | Celse réel du build |
+| 1 | **Budgets réalistes** ✅ | `initial` warn 5,5 Mo / err 6,5 Mo ; `anyComponentStyle` 50/150 kB (5,13 Mo réels) |
 | 2 | **Supprimer `tailwind.scss` pré-buildé** (garder le JIT dans styles.scss) | styles.css ÷ ~2 |
 | 3 | **Un seul design system** : Carbon (admin) + Tailwind (public) ; retirer Material/Flowbite/tw-elements | centaines de kB |
 | 4 | **`moment` → `dayjs`** + sortir l'import de `AppComponent` | -300 kB du bundle initial |
@@ -287,8 +307,8 @@ tailwind.scss  admin-design-system.scss  photo-sphere-viewer.css  swiper-bundle.
 | 11 | **Preloading stratégique** : `search` + `properties` après load | UX navigation |
 | 12 | **esbuild builder** (`application`) | builds plus rapides, meilleur tree-shaking (⚠️ incompatible Module Federation webpack tant qu'Angular 16) |
 | 13 | **`vendorChunk:true` en prod** | cache navigateur amélioré |
-| 14 | **PWA + service worker** | offline/online-first — **décisif pour le mobile africain** |
-| 15 | **SSR landing + search** (réactiver `platform-server`) | SEO réel |
+| 14 | **PWA + service worker** ✅ | offline/online-first actif (`ngsw-config.json`) — décisif pour le mobile africain |
+| 15 | **SSR landing + search** ✅ (avec limite A7) | `server.ts` câblé + watchdog 15 s fallback SPA ; universal home/search à stabiliser (vague architecture) |
 | 16 | **Unifier resolvers** (tout bloquant ou tout async — pas les deux) ; corriger `countrys` ; dédoublonner store `roles` | cohérence + bug fixes |
 
 ## B3. Hygiène & qualité

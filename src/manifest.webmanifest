@@ -1,0 +1,25 @@
+{
+  "name": "Ndewa360 — Location d'appartements & visites 360°",
+  "short_name": "Ndewa360",
+  "description": "Plateforme camerounaise de recherche et gestion de logements avec visites virtuelles 360°.",
+  "start_url": "/fr/home",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#cc8c0a",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

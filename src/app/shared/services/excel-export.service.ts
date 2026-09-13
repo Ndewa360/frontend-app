@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as XLSX from 'xlsx';
+import type { WorkBook, WorkSheet } from 'xlsx';
 
 export interface ExcelExportOptions {
   sheetName?: string;
@@ -19,8 +19,10 @@ export class ExcelExportService {
   /**
    * Exporter des données vers Excel
    */
-  exportToExcel(data: any[], filename: string, options: ExcelExportOptions = {}): void {
-    try {
+  exportToExcel(data: any[], filename: string, options: ExcelExportOptions = {}): Promise<void> {
+    return this.perform(async () => {
+      const XLSX = await import('xlsx');
+
       // Configuration par défaut
       const config = {
         sheetName: 'Données',
@@ -34,7 +36,7 @@ export class ExcelExportService {
 
       // Ajouter les métadonnées si demandées
       if (config.includeMetadata && config.metadata) {
-        this.addMetadataSheet(workbook, config.metadata);
+        this.addMetadataSheet(workbook, config.metadata, XLSX);
       }
 
       // Créer la feuille principale avec les données
@@ -51,16 +53,15 @@ export class ExcelExportService {
       // Générer et télécharger le fichier
       const fileName = filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`;
       XLSX.writeFile(workbook, fileName);
-    } catch (error) {
-      throw error;
-    }
+    });
   }
 
   /**
    * Exporter plusieurs feuilles vers Excel
    */
-  exportMultipleSheets(sheets: { name: string; data: any[] }[], filename: string): void {
-    try {
+  exportMultipleSheets(sheets: { name: string; data: any[] }[], filename: string): Promise<void> {
+    return this.perform(async () => {
+      const XLSX = await import('xlsx');
       const workbook = XLSX.utils.book_new();
 
       sheets.forEach(sheet => {
@@ -71,15 +72,13 @@ export class ExcelExportService {
 
       const fileName = filename.endsWith('.xlsx') ? filename : `${filename}.xlsx`;
       XLSX.writeFile(workbook, fileName);
-    } catch (error) {
-      throw error;
-    }
+    });
   }
 
   /**
    * Ajouter une feuille de métadonnées
    */
-  private addMetadataSheet(workbook: XLSX.WorkBook, metadata: { [key: string]: any }): void {
+  private addMetadataSheet(workbook: WorkBook, metadata: { [key: string]: any }, XLSX: typeof import('xlsx')): void {
     const metadataArray = Object.entries(metadata).map(([key, value]) => ({
       'Propriété': key,
       'Valeur': value
@@ -92,7 +91,7 @@ export class ExcelExportService {
   /**
    * Ajuster automatiquement la largeur des colonnes
    */
-  private autoSizeColumns(worksheet: XLSX.WorkSheet, data: any[]): void {
+  private autoSizeColumns(worksheet: WorkSheet, data: any[]): void {
     if (!data || data.length === 0) return;
 
     const columnWidths: { [key: string]: number } = {};
@@ -248,5 +247,13 @@ export class ExcelExportService {
     });
     
     return summary;
+  }
+
+  private async perform(action: () => Promise<void>): Promise<void> {
+    try {
+      await action();
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -127,7 +127,7 @@
     <div class="user-profile" [class.user-profile-collapsed]="collapsed">
       <div class="flex items-center space-x-3">
         <div class="user-avatar">
-          <img *ngIf="userAvatar; else defaultAvatar" 
+          <img loading="lazy" *ngIf="userAvatar; else defaultAvatar" 
                [src]="userAvatar" 
                [alt]="userName"
                class="w-8 h-8 rounded-full object-cover">

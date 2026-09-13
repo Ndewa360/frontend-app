@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
@@ -14,6 +15,8 @@ import { DepositModalComponent } from '../components/deposit-modal/deposit-modal
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WalletDashboardComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
 
   @Select(WalletState.summary)         summary$: Observable<WalletSummary | null>;

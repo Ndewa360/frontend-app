@@ -25,6 +25,7 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/favicon.ico",
+              "src/manifest.webmanifest",
               "src/assets",
               {
                 "glob": "**/*",
@@ -58,9 +59,7 @@
               },
               "node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
               "node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
-              
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
-              
               "src/@youpez/styles/scss/theme/app.scss",
               "node_modules/ngx-toastr/toastr.css",
               "src/app/shared/styles/app.themes.scss",
@@ -90,16 +89,17 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
+              "serviceWorker": true,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "8mb",
-                  "maximumError": "9mb"
+                  "maximumWarning": "5.5mb",
+                  "maximumError": "6.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "100kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "50kb",
+                  "maximumError": "150kb"
                 }
               ]
             },
@@ -124,6 +124,41 @@
           "configurations": {
             "production": {
               "browserTarget": "app:build:production"
+            }
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/app/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "sourceMap": false,
+            "optimization": false
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputHashing": "media",
+              "sourceMap": false
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "app:build",
+            "serverTarget": "app:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "app:build:production",
+              "serverTarget": "app:server:production"
             }
           }
         },
@@ -153,47 +188,6 @@
               "src/**/*.ts",
               "src/**/*.html"
             ]
-          }
-        }
-
-      }
-    },
-    "carbon-angular-starter-e2e": {
-      "root": "e2e",
-      "sourceRoot": "e2e",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "carbon-angular-starter-e2e:serve",
-            "watch": true,
-            "headless": false
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "carbon-angular-starter-e2e:serve:production"
-            }
-          }
-        },
-        "cypress-run": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "devServerTarget": "carbon-angular-starter-e2e:serve",
-            "configFile": "e2e/cypress.config.ts"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "carbon-angular-starter-e2e:serve:production"
-            }
-          }
-        },
-        "cypress-open": {
-          "builder": "@cypress/schematic:cypress",
-          "options": {
-            "watch": true,
-            "headless": false,
-            "configFile": "e2e/cypress.config.ts"
           }
         }
       }

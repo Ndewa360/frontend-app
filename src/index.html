@@ -40,13 +40,16 @@
   <meta name="theme-color" content="#cc8c0a">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
 
   <!-- Configuration TinyMCE pour désactiver la télémétrie -->
   <script>
@@ -59,7 +62,6 @@
       const originalFetch = window.fetch;
       window.fetch = function(url, options) {
         if (typeof url === 'string' && url.includes('sp.tinymce.com')) {
-          console.log('🚫 Blocked TinyMCE telemetry request:', url);
           return Promise.reject(new Error('Blocked telemetry request'));
         }
         return originalFetch.apply(this, arguments);
@@ -69,7 +71,6 @@
       const originalOpen = XMLHttpRequest.prototype.open;
       XMLHttpRequest.prototype.open = function(method, url) {
         if (typeof url === 'string' && url.includes('sp.tinymce.com')) {
-          console.log('🚫 Blocked TinyMCE telemetry XHR:', url);
           // Créer une requête factice qui ne fait rien
           this.send = function() {};
           this.setRequestHeader = function() {};
@@ -83,7 +84,6 @@
         const originalSendBeacon = navigator.sendBeacon;
         navigator.sendBeacon = function(url, data) {
           if (typeof url === 'string' && url.includes('sp.tinymce.com')) {
-            console.log('🚫 Blocked TinyMCE telemetry beacon:', url);
             return false;
           }
           return originalSendBeacon.call(this, url, data);
@@ -99,7 +99,6 @@
         Object.defineProperty(img, 'src', {
           set: function(value) {
             if (typeof value === 'string' && value.includes('sp.tinymce.com')) {
-              console.log('🚫 Blocked TinyMCE telemetry image:', value);
               return;
             }
             originalSrc.set.call(this, value);
@@ -122,8 +121,6 @@
   </script>
 
   <!-- Préchargement des ressources critiques -->
-  <link rel="preload" href="theme-light.css" as="style">
-  <link rel="preload" href="styles.css" as="style">
   <link rel="preload" href="assets/img/logo/logo-basic.png" as="image">
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -132,9 +129,6 @@
   <!-- Chargement des styles -->
   <link rel="stylesheet" href="theme-light.css">
   <link rel="stylesheet" href="styles.css">
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- <script src="https://cdn.tailwindcss.com/3.4.11"></script> -->
 
   <script type="application/ld+json">
     {
@@ -315,7 +309,7 @@
     .loading-text {
       margin-top: 1rem;
       color: #64748b;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 14px;
       font-weight: 400;
     }

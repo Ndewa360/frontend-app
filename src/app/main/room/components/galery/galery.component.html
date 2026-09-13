@@ -88,7 +88,7 @@
                     <div *ngIf="roomSelectedImages.length > 0" class="media-items">
                         <div *ngFor="let imageUrl of roomSelectedImages" class="media-item">
                             <div class="media-preview">
-                                <img [src]="imageUrl" alt="Image" class="preview-image">
+                                <img loading="lazy" [src]="imageUrl" alt="Image" class="preview-image">
                                 <div class="media-overlay">
                                     <button class="action-btn view-btn" title="Voir en plein écran">
                                         <i class="fa fa-search-plus"></i>

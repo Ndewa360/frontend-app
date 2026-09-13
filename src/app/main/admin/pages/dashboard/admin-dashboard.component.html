@@ -132,7 +132,7 @@
           </div>
           <div class="admin-health-content" *ngIf="financialData.monthlyRevenue?.length > 0">
             <div class="dash-chart-bars">
-              <div *ngFor="let m of financialData.monthlyRevenue" class="dash-bar-item">
+              <div *ngFor="let m of financialData.monthlyRevenue trackBy: trackByFn" class="dash-bar-item">
                 <div class="dash-bar-wrap">
                   <div class="dash-bar"
                        [style.height.%]="getBarHeight(m.revenue, financialData.monthlyRevenue)"
@@ -195,7 +195,7 @@
           </div>
           <div class="admin-activities-content">
             <ng-container *ngIf="recentActivities$ | async as activities">
-              <div *ngFor="let activity of activities" class="admin-activity-item">
+              <div *ngFor="let activity of activities trackBy: trackByFn" class="admin-activity-item">
                 <div class="admin-activity-icon" [class]="activity.type">
                   <i [class]="'fas ' + getActivityIcon(activity.type)"></i>
                 </div>
@@ -225,7 +225,7 @@
           <h3><i class="fas fa-bell" style="color:#cc8c0a;margin-right:8px"></i>Alertes système</h3>
         </div>
         <div class="admin-health-content">
-          <div *ngFor="let alert of alerts" class="admin-alert-item" [class]="getAlertClass(alert.type)">
+          <div *ngFor="let alert of alerts trackBy: trackByFn" class="admin-alert-item" [class]="getAlertClass(alert.type)">
             <i [class]="'fas ' + getAlertIcon(alert.type)"></i>
             <div class="admin-alert-body">
               <strong>{{ alert.title }}</strong>

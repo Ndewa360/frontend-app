@@ -72,7 +72,7 @@
       <!-- Résultat de recherche -->
       <div class="search-result" *ngIf="searchResult">
         <div class="user-card">
-          <img [src]="searchResult.profilePicture || 'assets/images/default-avatar.png'" alt="avatar" class="avatar" />
+          <img loading="lazy" [src]="searchResult.profilePicture || 'assets/images/default-avatar.png'" alt="avatar" class="avatar" />
           <div class="user-info">
             <strong>{{ searchResult.name }}</strong>
             <span>{{ searchResult.email }}</span>

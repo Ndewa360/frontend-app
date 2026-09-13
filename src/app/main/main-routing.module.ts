@@ -5,8 +5,8 @@ import {Routes, RouterModule} from '@angular/router'
 import {LayoutComponent} from '../layout/default/layout.component'
 
 import {WelcomeComponent} from "./welcome/welcome.component"
-import { AgentValidationGuard } from '../shared/guards/agent-validation-guard.service'
-import { SuspendedGuard } from '../shared/guards/suspended.guard'
+import { AgentValidationGuard } from '../shared/guard/agent-validation-guard.service'
+import { SuspendedGuard } from '../shared/guard/suspended.guard'
 
 
 

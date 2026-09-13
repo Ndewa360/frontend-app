@@ -30,7 +30,7 @@
                 </svg>
             </ng-container>
             <ng-container *ngIf="files[i].type.includes('image/')">
-                <img class="absolute inset-0 z-0 object-cover w-full h-full border-4 border-white preview"
+                <img loading="lazy" class="absolute inset-0 z-0 object-cover w-full h-full border-4 border-white preview"
                     [src]="loadFile(files[i])" />
             </ng-container>
             <ng-container *ngIf="files[i].type.includes('video/')">

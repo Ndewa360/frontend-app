@@ -25,7 +25,7 @@
       <div class="managers-list" *ngIf="getActiveManagers(managers).length > 0">
         <div class="manager-card" *ngFor="let manager of getActiveManagers(managers)">
           <div class="manager-info">
-            <img
+            <img loading="lazy"
               [src]="manager.manager?.profilePicture || 'assets/images/default-avatar.png'"
               alt="avatar"
               class="avatar"

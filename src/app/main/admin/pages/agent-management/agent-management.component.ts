@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngxs/store';
@@ -28,6 +29,8 @@ interface AgentApplication {
   styleUrls: ['./agent-management.component.scss']
 })
 export class AgentManagementComponent implements OnInit {
+  trackByFn = trackByFn;
+
   pendingAgents: AgentApplication[] = [];
   approvedAgents: AgentApplication[] = [];
   selectedAgent: AgentApplication | null = null;

@@ -144,7 +144,7 @@
   <!-- Results grid -->
   <div *ngIf="!isLoading && (paginatedResults?.length || 0) > 0" class="results-grid" [class.list-view]="currentView === 'list'">
 
-    <div *ngFor="let result of paginatedResults || []; let i = index" class="result-card" (click)="openUnitDetail(result)" role="article">
+    <div *ngFor="let result of paginatedResults || []; let i = index; trackBy: trackByResult" class="result-card" (click)="openUnitDetail(result)" role="article">
       <div class="card-image">
         <!-- Image slider with enhanced touch support -->
         <div class="image-slider" 

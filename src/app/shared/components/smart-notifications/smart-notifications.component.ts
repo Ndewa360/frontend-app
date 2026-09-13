@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -40,14 +41,17 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
 
   constructor(
     private notificationManager: NotificationManagerService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.loadNotifications();
-    this.setupRelativeTimeRefresh();
+    if (isPlatformBrowser(this.platformId)) {
+      this.setupRelativeTimeRefresh();
+    }
   }
 
   private loadNotifications(): void {

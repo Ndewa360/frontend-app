@@ -13,7 +13,7 @@
 
   <!-- Image de la propriété -->
   <div class="relative h-48 bg-gray-200 overflow-hidden">
-    <img [src]="getPropertyImage()"
+    <img loading="lazy" [src]="getPropertyImage()"
          [alt]="property.name"
          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
          (error)="onImageError($event)">

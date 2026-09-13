@@ -40,7 +40,7 @@
         <ibm-table-data class="property-info-cell">
           <div class="property-info">
             <div class="property-image">
-              <img [src]="row.property.imageUrl || '/assets/images/property-placeholder.jpg'" 
+              <img loading="lazy" [src]="row.property.imageUrl || '/assets/images/property-placeholder.jpg'" 
                    [alt]="row.property.name"
                    class="property-thumbnail">
               <div class="status-indicator" [ngClass]="getStatusClass(row.property)"></div>

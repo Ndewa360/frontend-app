@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import * as XLSX from 'xlsx';
 
 export interface ExportColumn {
   key: string;
@@ -47,14 +46,14 @@ export class ExportService {
   /**
    * Exporter en Excel (vrai format Excel)
    */
-  exportToExcel(options: ExportOptions): void {
+  async exportToExcel(options: ExportOptions): Promise<void> {
     try {
       if (!options.data || options.data.length === 0) {
         this.toastr.warning(this.translate.instant('NOTIFICATIONS.EXPORT_NO_DATA'), 'Ndewa360°');
         return;
       }
 
-      this.generateExcelFile(options);
+      await this.generateExcelFile(options);
 
       this.toastr.success(this.translate.instant('NOTIFICATIONS.EXPORT_SUCCESS', { count: options.data.length }), 'Ndewa360°');
     } catch (error) {
@@ -65,7 +64,9 @@ export class ExportService {
   /**
    * Générer un fichier Excel réel
    */
-  private generateExcelFile(options: ExportOptions): void {
+  private async generateExcelFile(options: ExportOptions): Promise<void> {
+    const XLSX = await import('xlsx');
+
     // Préparer les données pour Excel
     const worksheetData: any[][] = [];
 

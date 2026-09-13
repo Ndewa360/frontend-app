@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -25,6 +26,8 @@ interface MenuChild {
   styleUrls: ['./billing-page.component.css'],
 })
 export class BillingPageComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   @Select(SouscriptionState.selectStatePeriodDefaultWithRunningState) souscription$:Observable<SouscriptionModel>
   @Select(SouscriptionState.isEndLoadingData) hasLoading$:Observable<boolean>
 

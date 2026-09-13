@@ -36,11 +36,11 @@
                                 </div>
                             </div>
                             <div class="p-4">
-                                <ng-container *ngFor="let section of sections;">
+                                <ng-container *ngFor="let section of sections; trackBy: trackByFn">
                                     <div class="app-nav-list__item ">
                                         <div class="app-nav-list__item__group">{{section.name}}</div>
                                         <div class="app-nav-list__children">
-                                            <ng-container *ngFor="let section of section.children">
+                                            <ng-container *ngFor="let section of section.children trackBy: trackByFn">
                                                 <div class="app-nav-list__item__text"
                                                     [routerLink]="section.path || null"
                                                     [routerLinkActive]="'app-nav-list__item__text--selected'"

@@ -28,9 +28,10 @@ export class DeviceDetectionService {
    * Détecter le type d'appareil (version web uniquement)
    */
   private detectDevice(): DeviceInfo {
-    const userAgent = navigator.userAgent.toLowerCase();
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+    const hasWindow = typeof window !== 'undefined';
+    const userAgent = ((typeof navigator !== 'undefined' ? navigator.userAgent : '') || '').toLowerCase();
+    const screenWidth = hasWindow ? window.innerWidth : 1920;
+    const screenHeight = hasWindow ? window.innerHeight : 1080;
 
     // Détection basée sur l'User Agent
     const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);

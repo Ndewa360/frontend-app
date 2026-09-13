@@ -107,7 +107,7 @@
         <div class="bg-carbon-layer-02 rounded-lg overflow-hidden border border-carbon-subtle">
           <!-- Image de l'unité -->
           <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
-            <img *ngIf="getRoomMainImage(); else defaultImage"
+            <img loading="lazy" *ngIf="getRoomMainImage(); else defaultImage"
                  [src]="getRoomMainImage()"
                  [alt]="'Photo de l\'unité ' + room?.code"
                  class="w-full h-full object-cover">

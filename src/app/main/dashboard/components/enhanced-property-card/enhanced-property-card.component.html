@@ -2,7 +2,7 @@
 <div class="enhanced-property-card" (click)="onCardClick()" [ngClass]="getCardStatusClass()">
   <!-- Image de la propriété -->
   <div class="property-image">
-    <img [src]="property.imageUrl || '/assets/images/property-placeholder.jpg'" 
+    <img loading="lazy" [src]="property.imageUrl || '/assets/images/property-placeholder.jpg'" 
          [alt]="property.name"
          class="property-img">
     

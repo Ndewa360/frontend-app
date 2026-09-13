@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
@@ -29,6 +30,8 @@ export interface ContractViewerData {
   styleUrls: ['./contract-viewer-modal.component.scss']
 })
 export class ContractViewerModalComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
   
   @Select(ContractState.selectStateLoading) loadingContract$: Observable<boolean>;

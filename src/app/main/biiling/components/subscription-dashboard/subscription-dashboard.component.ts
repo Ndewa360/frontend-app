@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -25,6 +26,8 @@ import { InvoiceDownloadService } from 'src/app/shared/services/invoice-download
   styleUrls: ['./subscription-dashboard.component.scss']
 })
 export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
 
   private destroy$ = new Subject<void>();
   private lang = 'fr';

@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -32,6 +33,8 @@ export interface WithdrawalMethodDef {
   styleUrls: ['./withdrawal-modal.component.scss'],
 })
 export class WithdrawalModalComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
 
   step: 'method' | 'details' = 'method';
   selectedMethodDef: WithdrawalMethodDef | null = null;

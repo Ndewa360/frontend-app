@@ -19,7 +19,7 @@
         <div class="profile-photo-card">
           <div class="photo-section">
             <div class="avatar-container" [class.uploading]="isUploadingPhoto">
-              <img 
+              <img loading="lazy" 
                 [src]="getProfilePhotoUrl()" 
                 [alt]="userProfile?.name || ('PROFILE.PHOTO' | translate)"
                 class="profile-avatar"

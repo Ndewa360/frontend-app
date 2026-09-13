@@ -225,7 +225,7 @@
       </div>
 
       <div *ngIf="subscriptionHistory.length > 0" class="history-list">
-        <div *ngFor="let subscription of subscriptionHistory" class="subscription-card history">
+        <div *ngFor="let subscription of subscriptionHistory trackBy: trackByFn" class="subscription-card history">
           <div class="card-header">
             <div class="subscription-info">
               <h3 class="subscription-plan">
@@ -256,7 +256,7 @@
           <div *ngIf="subscription.periods?.length > 0" class="periods-list">
             <h4 class="periods-title">{{ 'SUBSCRIPTION_DASHBOARD.BILLING_PERIODS' | translate }}</h4>
             <div class="periods-grid">
-              <div *ngFor="let period of subscription.periods" class="period-item">
+              <div *ngFor="let period of subscription.periods trackBy: trackByFn" class="period-item">
                 <div class="period-info">
                   <div class="period-dates">{{ formatDateShort(period.startedAt) }} - {{ formatDateShort(period.endedAt) }}</div>
                   <div class="period-amount">{{ formatCurrency(period.calculatedAmount) }}</div>

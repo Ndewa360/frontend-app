@@ -21,7 +21,7 @@
         <mat-form-field appearance="outline" class="type-field">
           <mat-label>{{ 'CONTRACT_TEMPLATES.MODALS.TEMPLATE_SELECTION.TYPE_LABEL' | translate }}</mat-label>
           <mat-select [(ngModel)]="selectedType">
-            <mat-option *ngFor="let type of templateTypes" [value]="type.value">
+            <mat-option *ngFor="let type of templateTypes trackBy: trackByFn" [value]="type.value">
               {{ type.label }}
             </mat-option>
           </mat-select>
@@ -39,7 +39,7 @@
     <div class="templates-list" *ngIf="templates$ | async as templates; else loadingTemplate">
       <div class="templates-grid">
         <div 
-          *ngFor="let template of getFilteredTemplates(templates)" 
+          *ngFor="let template of getFilteredTemplates(templates) trackBy: trackByFn" 
           class="template-card"
           [class.selected]="selectedTemplate?._id === template._id"
           (click)="selectTemplate(template)">

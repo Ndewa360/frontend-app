@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -19,6 +20,8 @@ import {
   styleUrls: ['./admin-dashboard.component.scss']
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
 
   dashboardStats$   = this.store.select(AdminDashboardState.selectDashboardStats);

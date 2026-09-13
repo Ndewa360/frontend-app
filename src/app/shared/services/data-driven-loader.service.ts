@@ -147,9 +147,13 @@ export class DataDrivenLoaderService {
         this.cancelSub();
         // Attendre 1 tick Angular pour que les composants soient rendus
         // avant de masquer l'overlay — évite la page blanche
-        requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (typeof requestAnimationFrame !== 'undefined') {
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            this.hide();
+          }));
+        } else {
           this.hide();
-        }));
+        }
       }
     });
 
@@ -168,6 +172,7 @@ export class DataDrivenLoaderService {
   // ─── Détection connexion réseau ───────────────────────────────────────────
 
   private listenToNetworkStatus(): void {
+    if (typeof window === 'undefined') return;
     window.addEventListener('offline', () => {
       if (this._overlayVisible.value) {
         // Loader actif + connexion perdue

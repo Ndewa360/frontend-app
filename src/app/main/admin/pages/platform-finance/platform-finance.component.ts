@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, interval, Observable, fromEvent } from 'rxjs';
@@ -49,6 +50,8 @@ export interface PlatformWithdrawalMethodDef {
   styleUrls: ['./platform-finance.component.scss'],
 })
 export class PlatformFinanceComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
 
   @Select(PlatformFinanceState.balance)           balance$: Observable<PlatformBalance | null>;

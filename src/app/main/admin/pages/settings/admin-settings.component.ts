@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -24,6 +25,8 @@ import { AdminSettingsService } from '../../services/admin-settings.service';
   styleUrls: ['./admin-settings.component.scss']
 })
 export class AdminSettingsComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
 
   // Observables

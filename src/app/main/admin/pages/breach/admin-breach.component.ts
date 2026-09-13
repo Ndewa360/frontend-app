@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -12,6 +13,8 @@ import { BreachIncident, CreateBreachDto } from '../../services/admin-breach.ser
   styleUrls: ['./admin-breach.component.scss'],
 })
 export class AdminBreachComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
 
   @Select(AdminBreachState.incidents) incidents$: Observable<BreachIncident[]>;

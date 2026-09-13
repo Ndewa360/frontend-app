@@ -103,7 +103,7 @@
                   <!-- Photo de profil si disponible -->
                   <div class="w-24 h-24 bg-white rounded-full mx-auto shadow-lg overflow-hidden"
                        *ngIf="tenant?.profilePicture">
-                    <img [src]="tenant.profilePicture"
+                    <img loading="lazy" [src]="tenant.profilePicture"
                          [alt]="getTenantName()"
                          class="w-full h-full object-cover">
                   </div>

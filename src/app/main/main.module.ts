@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core'
 import {CommonModule} from '@angular/common'
 import { MatDialogModule } from '@angular/material/dialog'
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer'
 import { TranslateModule } from '@ngx-translate/core'
 
 import {SharedModule} from "../shared/shared.module"
@@ -40,7 +39,6 @@ ModuleRegistry.registerModules([
     SharedModule,
     ChartsModule,
     MatDialogModule,
-    NgxExtendedPdfViewerModule,
     LocationPaymentModule,
     AgGridModule,
     StatisticsModule,

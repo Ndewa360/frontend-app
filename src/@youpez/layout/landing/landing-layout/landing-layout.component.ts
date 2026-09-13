@@ -27,7 +27,8 @@ export class LandingLayoutComponent implements OnInit, AfterViewInit{
   }
 
   ngOnInit(): void {
-    const consent = localStorage.getItem(COOKIE_KEY);
+    let consent: string | null = null;
+    try { consent = localStorage.getItem(COOKIE_KEY); } catch {}
     this.cookieBannerVisible = !consent;
     if (consent === 'accepted') {
       this.loadGoogleAnalytics();

@@ -26,7 +26,7 @@
   
   <!-- Image de la carte -->
   <div *ngIf="imageUrl" class="relative overflow-hidden">
-    <img [src]="imageUrl" 
+    <img loading="lazy" [src]="imageUrl" 
          [alt]="imageAlt || title || 'Image'"
          [ngClass]="getImageClasses()"
          (error)="onImageError($event)">

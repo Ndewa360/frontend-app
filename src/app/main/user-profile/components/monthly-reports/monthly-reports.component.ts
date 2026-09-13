@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit } from '@angular/core';
 import { MonthlyReportService, MonthlyReportSummary } from './monthly-reports.service';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
@@ -11,6 +12,8 @@ const MONTHS_FR = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
   styleUrls: ['./monthly-reports.component.scss']
 })
 export class MonthlyReportsComponent implements OnInit {
+  trackByFn = trackByFn;
+
   reports: MonthlyReportSummary[] = [];
   loading = true;
   error = false;

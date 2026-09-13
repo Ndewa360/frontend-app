@@ -24,7 +24,7 @@
       <!-- Member Photo -->
       <div class="member-photo-container text-center mb-4">
         <div class="member-photo-wrapper">
-          <img [src]="member.image" [alt]="member.name" class="member-photo">
+          <img loading="lazy" [src]="member.image" [alt]="member.name" class="member-photo">
           <div class="photo-overlay">
             <div class="social-links">
               <a *ngIf="member.socialLinks.linkedin" 

@@ -77,7 +77,7 @@
               [class.error]="hasError('currency')"
               formControlName="currency">
               <option value="">Sélectionnez une devise</option>
-              <option *ngFor="let currency of currencies" [value]="currency.code">
+              <option *ngFor="let currency of currencies trackBy: trackByFn" [value]="currency.code">
                 {{ currency.code }} - {{ currency.name }} ({{ currency.symbol }})
               </option>
             </select>
@@ -122,7 +122,7 @@
               class="form-select"
               formControlName="timezone">
               <option value="">Sélectionnez un fuseau horaire</option>
-              <option *ngFor="let tz of timezones" [value]="tz">
+              <option *ngFor="let tz of timezones trackBy: trackByFn" [value]="tz">
                 {{ tz }}
               </option>
             </select>

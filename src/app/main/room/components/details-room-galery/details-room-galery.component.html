@@ -17,7 +17,7 @@
       <div class="app-card__content__alt">
 
         <!-- Image -->
-        <img *ngIf="item.type === 'image'" 
+        <img loading="lazy" *ngIf="item.type === 'image'" 
              [src]="item.url" 
              alt="Image"
              class="w-full h-auto object-cover rounded">

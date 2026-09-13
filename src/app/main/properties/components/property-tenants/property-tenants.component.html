@@ -205,7 +205,7 @@
               <div class="relative">
                 <div class="w-16 h-16 rounded-full overflow-hidden shadow-md border-2 border-white">
                   <!-- Photo de profil si elle existe -->
-                  <img *ngIf="tenant.profilePicture"
+                  <img loading="lazy" *ngIf="tenant.profilePicture"
                        [src]="tenant.profilePicture"
                        [alt]="tenant.fullName || 'Locataire'"
                        class="w-full h-full object-cover">

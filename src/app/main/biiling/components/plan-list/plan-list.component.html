@@ -109,7 +109,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let period of paymentHistory.periods; let i = index"
+          <tr *ngFor="let period of paymentHistory.periods; let i = index trackBy: trackByFn"
               class="pl__row"
               [class.pl__row--unpaid]="period.status === 'unpaid'"
               [class.pl__row--paid]="period.status === 'payed'">
@@ -191,7 +191,7 @@
 
     <!-- Cartes mobile (< 768px) -->
     <div class="pl__cards">
-      <div *ngFor="let period of paymentHistory.periods"
+      <div *ngFor="let period of paymentHistory.periods trackBy: trackByFn"
            class="pl__card"
            [class.pl__card--unpaid]="period.status === 'unpaid'"
            [class.pl__card--paid]="period.status === 'payed'">
@@ -256,7 +256,7 @@
         <i class="fas fa-chevron-left"></i>
       </button>
 
-      <ng-container *ngFor="let page of pages">
+      <ng-container *ngFor="let page of pages trackBy: trackByFn">
         <button class="pl__page-btn"
                 [class.pl__page-btn--active]="page === currentPage"
                 (click)="changePage(page)">

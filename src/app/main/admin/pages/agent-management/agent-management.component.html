@@ -33,7 +33,7 @@
         <div class="panel-badge">{{pendingAgents.length}}</div>
       </div>
       <div class="agents-list">
-        <div *ngFor="let agent of pendingAgents" 
+        <div *ngFor="let agent of pendingAgents trackBy: trackByFn" 
              class="agent-card"
              [class.selected]="selectedAgent?._id === agent._id"
              (click)="viewAgent(agent)">

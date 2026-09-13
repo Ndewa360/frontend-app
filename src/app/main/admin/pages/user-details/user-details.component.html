@@ -266,7 +266,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let period of user.subscription.recentPeriods" style="border-bottom:1px solid #F3F4F6">
+              <tr *ngFor="let period of user.subscription.recentPeriods trackBy: trackByFn" style="border-bottom:1px solid #F3F4F6">
                 <td style="padding:6px 8px;color:#374151">
                   {{ formatDateShort(period.startedAt) }} → {{ formatDateShort(period.endedAt) }}
                 </td>
@@ -322,7 +322,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let tx of rentTransactions"
+              <tr *ngFor="let tx of rentTransactions trackBy: trackByFn"
                   style="border-bottom:1px solid #F3F4F6"
                   [style.background]="isTxBusy(tx.externalRef) ? '#FFFBEB' : 'white'">
                 <td style="padding:8px 12px;color:#6B7280">{{ formatDate(tx.createdAt) }}</td>

@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -19,6 +20,8 @@ export interface CountryEditModalData {
   styleUrls: ['./country-edit-modal.component.scss']
 })
 export class CountryEditModalComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
   
   isLoading$ = new BehaviorSubject<boolean>(false);

@@ -75,7 +75,7 @@
             <div class="form-group">
               <label class="form-label">{{ 'PAYMENT_MANAGEMENT.PAYMENT_TYPE' | translate }} *</label>
               <div class="payment-type-selector">
-                <div *ngFor="let type of paymentTypes" 
+                <div *ngFor="let type of paymentTypes trackBy: trackByFn" 
                      class="payment-type-option"
                      [class.selected]="formGroup.get('paymentLocationType')?.value === type.value"
                      (click)="formGroup.patchValue({paymentLocationType: type.value})">
@@ -181,7 +181,7 @@
             <div class="form-group">
               <label class="form-label">{{ 'PAYMENT_MANAGEMENT.PAYMENT_MODE' | translate }}</label>
               <select formControlName="paymentMethod" class="form-select">
-                <option *ngFor="let method of getPaymentMethods()" [value]="method.value">
+                <option *ngFor="let method of getPaymentMethods() trackBy: trackByFn" [value]="method.value">
                   {{ method.label }}
                 </option>
               </select>

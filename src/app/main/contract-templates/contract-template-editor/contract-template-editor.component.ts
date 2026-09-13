@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,6 +17,8 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./contract-template-editor.component.scss']
 })
 export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   templateForm: FormGroup;
   isEditMode = false;
   templateId: string | null = null;

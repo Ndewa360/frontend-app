@@ -10,7 +10,7 @@
         <ng-container *ngFor="let media of imagesFound; let i = index">
           
           <!-- Image -->
-          <img *ngIf="media.type === 'image'"
+          <img loading="lazy" *ngIf="media.type === 'image'"
                [src]="imagesFound[currentIndex].url"
                class="media-img"
                [class.active]="i === currentIndex" />

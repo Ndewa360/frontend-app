@@ -22,14 +22,14 @@
         <label>Type d'incident</label>
         <select [(ngModel)]="form.type">
           <option value="">-- Sélectionner --</option>
-          <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
+          <option *ngFor="let t of types trackBy: trackByFn" [value]="t.value">{{ t.label }}</option>
         </select>
       </div>
       <div class="form-group">
         <label>Sévérité</label>
         <select [(ngModel)]="form.severity">
           <option value="">-- Sélectionner --</option>
-          <option *ngFor="let s of severities" [value]="s.value">{{ s.label }}</option>
+          <option *ngFor="let s of severities trackBy: trackByFn" [value]="s.value">{{ s.label }}</option>
         </select>
       </div>
       <div class="form-group">
@@ -68,7 +68,7 @@
     <label>Filtrer par statut :</label>
     <select [(ngModel)]="filterStatus" (change)="load()">
       <option value="">Tous</option>
-      <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+      <option *ngFor="let s of statuses trackBy: trackByFn" [value]="s.value">{{ s.label }}</option>
     </select>
     <button class="btn-refresh" (click)="load()"><i class="fas fa-sync-alt"></i></button>
   </div>
@@ -88,7 +88,7 @@
           <p>Aucun incident enregistré.</p>
         </div>
 
-        <div *ngFor="let incident of incidents$ | async"
+        <div *ngFor="let incident of incidents$ | async trackBy: trackByFn"
              class="incident-card"
              [class.incident-card--selected]="(selected$ | async)?._id === incident._id"
              [class.incident-card--overdue]="isOverdue(incident.notificationDeadline) && incident.status !== 'resolved'"
@@ -120,7 +120,7 @@
           </div>
 
           <div class="incident-tags" *ngIf="incident.affectedDataTypes?.length">
-            <span *ngFor="let tag of incident.affectedDataTypes" class="data-tag">{{ tag }}</span>
+            <span *ngFor="let tag of incident.affectedDataTypes trackBy: trackByFn" class="data-tag">{{ tag }}</span>
           </div>
         </div>
       </ng-container>
@@ -155,7 +155,7 @@
         <div class="form-group">
           <label>Nouveau statut</label>
           <select [(ngModel)]="updateForm.status">
-            <option *ngFor="let s of statuses" [value]="s.value">{{ s.label }}</option>
+            <option *ngFor="let s of statuses trackBy: trackByFn" [value]="s.value">{{ s.label }}</option>
           </select>
         </div>
         <div class="form-group" *ngIf="updateForm.status === 'notified'">

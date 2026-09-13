@@ -1,8 +1,9 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngxs/store';
 import { interval, Subscription, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
+import { isPlatformBrowser } from '@angular/common';
 import { GlobalAction } from '../store';
 import { environment } from 'src/environments/environment';
 
@@ -16,9 +17,12 @@ export class HealthCheckService implements OnDestroy {
   constructor(
     private http: HttpClient,
     private store: Store,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   start(): void {
+    // En SSR, l'interval garderait la zone Angular instable et pendrait le rendu universel.
+    if (!isPlatformBrowser(this.platformId)) return;
     this.healthSub = interval(this.CHECK_INTERVAL).pipe(
       switchMap(() =>
         this.http.get<{ status: string }>(this.HEALTH_URL).pipe(

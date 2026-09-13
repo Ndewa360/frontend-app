@@ -1017,7 +1017,7 @@
               </h3>
               <div class="grid grid-cols-1 gap-3">
                 <div *ngFor="let media of viewService.getSelectedRoom()?.medias; let i = index" class="relative group">
-                  <img [src]="media"
+                  <img loading="lazy" [src]="media"
                        [alt]="'Image ' + (i + 1) + ' de ' + getSelectedRoomName()"
                        class="w-full h-32 object-cover rounded-lg border-2 border-white shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group-hover:scale-105">
                   <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

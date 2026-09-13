@@ -285,6 +285,10 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
     return property._id;
   }
 
+  trackByManagedItemId(index: number, item: ManagedPropertyItem): string {
+    return item.propertyId;
+  }
+
   // ── Tour guidé ───────────────────────────────────────────────────────────
 
   startTour(): void {

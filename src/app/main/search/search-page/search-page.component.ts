@@ -1119,6 +1119,13 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * TrackBy function pour les résultats de recherche
+   */
+  trackByResult(index: number, result: any): string {
+    return result?._id || result?.code || result?.unit?._id || `${index}`;
+  }
+
+  /**
    * Recharger manuellement les villes
    */
   reloadCities(): void {

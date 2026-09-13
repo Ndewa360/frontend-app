@@ -41,7 +41,7 @@
 
     <!-- Grille -->
     <div class="reports-grid">
-      <div *ngFor="let report of reports" class="report-card">
+      <div *ngFor="let report of reports trackBy: trackByFn" class="report-card">
 
         <!-- En-tête de la carte -->
         <div class="report-card-header">

@@ -193,12 +193,12 @@
             <p class="app-helper-text-01">{{ 'CONTRACT_TEMPLATES.EDITOR.VARIABLES_HELP' | translate }}</p>
 
             <div class="variables-list">
-              <div class="variable-category" *ngFor="let category of variableCategories">
+              <div class="variable-category" *ngFor="let category of variableCategories trackBy: trackByFn">
                 <h4 class="app-productive-heading-05">{{ category.name }}</h4>
                 <div class="variable-items">
                   <div
                     class="variable-item"
-                    *ngFor="let variable of category.variables"
+                    *ngFor="let variable of category.variables trackBy: trackByFn"
                     draggable="true"
                     (dragstart)="onVariableDragStart($event, variable)"
                     [title]="variable.description + ' - Glissez-déposez pour insérer'">
@@ -320,7 +320,7 @@
 
       <div class="export-options">
         <div class="export-option"
-             *ngFor="let format of exportFormats"
+             *ngFor="let format of exportFormats trackBy: trackByFn"
              [class.selected]="selectedExportFormat === format.value"
              (click)="selectExportFormat(format)">
           <div class="format-icon">

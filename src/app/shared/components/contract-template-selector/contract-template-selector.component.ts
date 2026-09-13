@@ -1,3 +1,4 @@
+import { trackByFn } from '../../utils/track-by.util';
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Subject, takeUntil, filter, take } from 'rxjs';
@@ -22,6 +23,8 @@ import {
   ]
 })
 export class ContractTemplateSelectorComponent implements OnInit, OnDestroy, ControlValueAccessor {
+  trackByFn = trackByFn;
+
   private destroy$ = new Subject<void>();
 
   @Input() label = 'Modèle de contrat';

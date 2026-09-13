@@ -20,7 +20,7 @@
     <!-- Informations du pays -->
     <div class="country-info">
       <div class="country-flag">
-        <img [src]="data.country.flag" [alt]="data.country.name + ' flag'" *ngIf="data.country.flag">
+        <img loading="lazy" [src]="data.country.flag" [alt]="data.country.name + ' flag'" *ngIf="data.country.flag">
         <div class="flag-placeholder" *ngIf="!data.country.flag">
           <i class="fas fa-flag"></i>
         </div>

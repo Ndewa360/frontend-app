@@ -12,6 +12,8 @@ import { TranslationService } from 'src/app/shared/services/localization/transla
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { SeoService } from 'src/app/shared/services/seo/seo.service';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
 
 @Component({
   selector: 'home',
@@ -129,15 +131,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     private languageUrlService: LanguageUrlService,
     private http: HttpClient,
     private seoService: SeoService,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit() {
     const lang = this.languageUrlService.getCurrentLanguage() as 'fr' | 'en';
     this.seoService.setLandingPageSeo(lang);
-    this.initScrollAnimations();
+    // IntersectionObserver / window / rAF n'existent pas en SSR — animations browser uniquement
+    if (isPlatformBrowser(this.platformId)) this.initScrollAnimations();
   }
 
   ngOnDestroy() {
+    if (!isPlatformBrowser(this.platformId)) return;
     if (this.observer) this.observer.disconnect();
     if (this.scrollListener) window.removeEventListener('scroll', this.scrollListener);
     if (this.parallaxRaf) cancelAnimationFrame(this.parallaxRaf);

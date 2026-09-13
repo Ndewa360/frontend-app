@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
@@ -24,6 +25,8 @@ export interface TemplateSelectionResult {
   styleUrls: ['./template-selection-modal.component.scss']
 })
 export class TemplateSelectionModalComponent implements OnInit {
+  trackByFn = trackByFn;
+
   templates$: Observable<ContractTemplateModel[]>;
   loading$: Observable<boolean>;
   selectedTemplate: ContractTemplateModel | null = null;

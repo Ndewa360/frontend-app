@@ -121,7 +121,7 @@
 
               <!-- Image -->
               <div class="lp-card__img">
-                <img [src]="property.image || 'assets/images/properties/property-placeholder-1.svg'"
+                <img loading="lazy" [src]="property.image || 'assets/images/properties/property-placeholder-1.svg'"
                      [alt]="property.name"
                      (error)="$any($event.target).src='assets/images/properties/property-placeholder-1.svg'">
                 <div class="lp-card__occupancy-badge"
@@ -196,7 +196,7 @@
 
           <!-- Grille biens gérés -->
           <div class="lp-grid">
-            <div *ngFor="let item of data.managed"
+            <div *ngFor="let item of data.managed; trackBy: trackByManagedItemId"
                  class="lp-card lp-card--manager"
                  (click)="onViewManagedPropertyDetails(item.propertyId)">
 

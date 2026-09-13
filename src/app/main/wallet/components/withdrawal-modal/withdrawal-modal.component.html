@@ -47,7 +47,7 @@
       <p class="wmodal__step-title">Comment souhaitez-vous recevoir votre retrait ?</p>
 
       <div class="wmodal__methods">
-        <button *ngFor="let m of methods" type="button"
+        <button *ngFor="let m of methods trackBy: trackByFn" type="button"
                 class="wmodal__method-btn"
                 [class.wmodal__method-btn--orange]="m.value === 'ORANGE_MONEY'"
                 [class.wmodal__method-btn--mtn]="m.value === 'MTN_MONEY'"

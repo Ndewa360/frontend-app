@@ -26,6 +26,7 @@ export class ContentReadyService {
   }
 
   private check(): void {
+    if (typeof document === 'undefined') return;
     this.currentChecks++;
     const appRoot = document.querySelector('app-root');
     const routerOutlet = document.querySelector('router-outlet');

@@ -4,7 +4,6 @@ import {BehaviorSubject, Subject, Observable} from 'rxjs'
 import {EventManager} from '@angular/platform-browser'
 import {MediaChange} from '@angular/flex-layout'
 import {MediaObserver} from '@angular/flex-layout'
-import * as _ from "lodash"
 import { InjectionToken } from '@angular/core';
 import { WindowRefService } from './window-ref.service'
 

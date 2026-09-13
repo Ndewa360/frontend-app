@@ -50,7 +50,7 @@
 
           <div class="template-list" *ngIf="!isLoadingTemplates">
             <div class="template-item"
-                 *ngFor="let template of availableTemplates"
+                 *ngFor="let template of availableTemplates trackBy: trackByFn"
                  [class.selected]="template._id === selectedTemplateId"
                  (click)="onTemplateChange(template._id)">
               <div class="template-info">

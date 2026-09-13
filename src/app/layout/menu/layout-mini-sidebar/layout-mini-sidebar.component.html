@@ -190,7 +190,7 @@
                       <ng-container *ngFor="let item of messages">
                         <div class="app-list__item app-list__item--align-top" ngbDropdownItem>
                           <div class="app-list__item__prefix mt-3">
-                            <img [src]="item.avatar" class="w-8 h-8 rounded-full" />
+                            <img loading="lazy" [src]="item.avatar" class="w-8 h-8 rounded-full" />
                           </div>
                           <div class="app-list__item__content">
                             <div class="overflow-hidden">
@@ -231,7 +231,7 @@
               <ng-container *ngIf="(userProfile$ | async) else noConnected">
                 <div class="app-list__item app-list__item--no-p mt-2" ngbDropdownItem >
                   <div class="px-2">
-                    <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
+                    <img loading="lazy" class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
                   </div>
                   <div class="app-list__item__content mr-4">
                     <div>
@@ -244,7 +244,7 @@
               <ng-template #noConnected>
                 <div class="app-list__item app-list__item--no-p mt-2" ngbDropdownItem (click)="navigateToLogin()">
                   <div class="px-2">
-                    <img class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
+                    <img loading="lazy" class="w-10 h-10 rounded-full" src="assets/img/avatar/avatarinit.png" />
                   </div>
                   <div class="app-list__item__content mr-4">
                     <div>

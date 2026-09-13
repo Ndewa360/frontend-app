@@ -3,7 +3,7 @@
   <!-- HEADER -->
   <header class="ndewa-payment__header">
     <div class="ndewa-payment__header-inner">
-      <img src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360°" class="ndewa-payment__logo">
+      <img loading="lazy" src="assets/img/logo/logo-basic-nobg.png" alt="Ndewa360°" class="ndewa-payment__logo">
       <div class="ndewa-payment__secure-badge">
         <i class="fas fa-shield-alt"></i>
         <span>{{ 'PAYMENT_PAGE.SECURE_BADGE' | translate }}</span>
@@ -195,7 +195,7 @@
 
           <!-- Montants rapides (uniquement si montant éditable) -->
           <div class="ndewa-payment__quick-amounts" *ngIf="!isAmountFixed && quickAmounts.length > 0">
-            <button *ngFor="let q of quickAmounts"
+            <button *ngFor="let q of quickAmounts trackBy: trackByFn"
                     type="button"
                     class="ndewa-payment__quick-btn"
                     [class.ndewa-payment__quick-btn--active]="amount === q"

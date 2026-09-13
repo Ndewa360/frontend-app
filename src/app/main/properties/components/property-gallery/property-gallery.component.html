@@ -82,7 +82,7 @@
                     <div *ngIf="propertyImages.length > 0" class="media-items">
                         <div *ngFor="let imageUrl of propertyImages" class="media-item">
                             <div class="media-preview">
-                                <img [src]="imageUrl" [alt]="'PROPERTY_GALLERY.IMAGE_ALT' | translate" class="preview-image">
+                                <img loading="lazy" [src]="imageUrl" [alt]="'PROPERTY_GALLERY.IMAGE_ALT' | translate" class="preview-image">
                                 <div class="media-overlay">
                                     <button class="action-btn view-btn" [title]="'PROPERTY_GALLERY.VIEW_FULLSCREEN' | translate">
                                         <i class="fa fa-search-plus"></i>
@@ -140,7 +140,7 @@
                         <div *ngFor="let image360Url of propertyImages360" class="media-item">
                             <div class="media-preview">
                                 <div class="media-preview">
-                                    <img [src]="image360Url" [alt]="'PROPERTY_GALLERY.360_IMAGE_ALT' | translate" class="preview-image">
+                                    <img loading="lazy" [src]="image360Url" [alt]="'PROPERTY_GALLERY.360_IMAGE_ALT' | translate" class="preview-image">
                                     <div class="media-overlay">
                                         <button class="action-btn view-btn" [title]="'PROPERTY_GALLERY.VIEW_FULLSCREEN' | translate">
                                             <i class="fa fa-search-plus"></i>

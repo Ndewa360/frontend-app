@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -24,6 +25,8 @@ interface AdminMenuItem {
   styleUrls: ['./admin-layout.component.scss']
 })
 export class AdminLayoutComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   private destroy$   = new Subject<void>();
   // Subject dédié pour annuler la subscription route.data à chaque navigation
   private routeData$ = new Subject<void>();

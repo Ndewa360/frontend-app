@@ -4,19 +4,19 @@
   <ng-container *ngIf="resultState=='loading'">
     <h1 class="app-expressive-heading-06 mb-8">{{ 'AUTH.VALIDATING.LOADING_TITLE' | translate }}</h1>
     <div class="app-body-long-02 mb-8 validating-image">
-      <img src="./../../../assets/img/utils/loading-gif.gif" width="120" alt="" srcset="">
+      <img loading="lazy" src="./../../../assets/img/utils/loading-gif.gif" width="120" alt="" srcset="">
     </div>
   </ng-container>
   <ng-container *ngIf="resultState=='success'">
     <h1 class="app-expressive-heading-06 mb-8">{{ 'AUTH.VALIDATING.SUCCESS_TITLE' | translate }}</h1>
     <div class="app-body-long-02 mb-8 validating-image">
-      <img src="./../../../assets/img/utils/success-state.jpg" width="120" alt="" srcset="">
+      <img loading="lazy" src="./../../../assets/img/utils/success-state.jpg" width="120" alt="" srcset="">
     </div>
   </ng-container>
   <ng-container *ngIf="resultState=='error'">
     <h1 class="app-expressive-heading-06 mb-8">{{ 'AUTH.VALIDATING.ERROR_TITLE' | translate }}</h1>
     <div class="app-body-long-02 mb-8 validating-image">
-      <img src="./../../../assets/img/utils/error-close.webp" width="120" alt="" srcset="">
+      <img loading="lazy" src="./../../../assets/img/utils/error-close.webp" width="120" alt="" srcset="">
     </div>
     <p class="pb-2 text-center text-red-600">{{ 'AUTH.VALIDATING.ERROR_RETRY' | translate }}</p>
   </ng-container>

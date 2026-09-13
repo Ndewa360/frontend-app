@@ -80,7 +80,7 @@
     <ng-container *ngIf="activeTab === 'periods'">
       <div *ngIf="!subscription.periods || subscription.periods.length === 0" class="sub-modal__empty">Aucune période de facturation</div>
       <div *ngIf="subscription.periods?.length > 0" class="sub-modal__periods-list">
-        <div *ngFor="let period of subscription.periods" class="sub-modal__period-item">
+        <div *ngFor="let period of subscription.periods trackBy: trackByFn" class="sub-modal__period-item">
           <div class="sub-modal__period-dates">
             <span>{{ formatDate(period.startedAt) }}</span>
             <span>→</span>

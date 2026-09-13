@@ -1,9 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, LOCALE_ID, NgModule } from '@angular/core';
+import { ErrorHandler, LOCALE_ID, NgModule } from '@angular/core';
 import localeFr from '@angular/common/locales/fr';
 import localeEn from '@angular/common/locales/en';
 import { HttpClient } from '@angular/common/http';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -68,6 +69,9 @@ export function getDynamicLocale(): string {
 				deps: [HttpClient]
 			}
 		}),
+		ServiceWorkerModule.register('ngsw-worker.js', {
+			enabled: environment.production
+		}),
 	],
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: CorrelationIdInterceptor, multi: true },
@@ -79,9 +83,6 @@ export function getDynamicLocale(): string {
 			apiKey: environment.kundaiApiKey,
 			appId: 'ndewa360-web',
 		}),
-	],
-	schemas: [
-		CUSTOM_ELEMENTS_SCHEMA
 	],
 	bootstrap: [AppComponent]
 })

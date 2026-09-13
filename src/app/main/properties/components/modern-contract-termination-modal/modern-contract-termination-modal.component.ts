@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -26,6 +27,8 @@ export interface ContractTerminationModalData {
   styleUrls: ['./modern-contract-termination-modal.component.scss']
 })
 export class ModernContractTerminationModalComponent implements OnInit, OnDestroy {
+  trackByFn = trackByFn;
+
   formGroup: FormGroup;
   isLoading = false;
   

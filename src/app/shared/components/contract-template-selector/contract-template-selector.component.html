@@ -70,7 +70,7 @@
         <!-- Modèles disponibles -->
         <div 
           class="template-option"
-          *ngFor="let template of filteredTemplates"
+          *ngFor="let template of filteredTemplates trackBy: trackByFn"
           [class.selected]="selectedTemplate?._id === template._id"
           [class]="getTemplateClass(template)"
           (click)="selectTemplate(template)">

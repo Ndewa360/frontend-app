@@ -29,7 +29,7 @@
       <div class="photo-section">
         <div class="photo-container">
           <div class="photo-preview" [class.has-photo]="photoPreview">
-            <img *ngIf="photoPreview" [src]="photoPreview" [alt]="'TENANT_MANAGEMENT.PROFILE_PHOTO' | translate" class="photo-image">
+            <img loading="lazy" *ngIf="photoPreview" [src]="photoPreview" [alt]="'TENANT_MANAGEMENT.PROFILE_PHOTO' | translate" class="photo-image">
             <div *ngIf="!photoPreview" class="photo-placeholder">
               <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

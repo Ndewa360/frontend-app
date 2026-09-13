@@ -7,7 +7,7 @@
     </div>
     <swiper-container appSwiper #swiper [config]="swiperConfig" thumbs-swiper=".mySwiper2" (slidechange)="slideChange($event)">     
       <swiper-slide *ngFor="let item of imagesFound"  class="flex justify-center items-center bg-black">
-        <img [src]="item.url"   class="main-img max-h-[40em] w-auto object-contain" alt="..." *ngIf="item.type=='image'" />
+        <img loading="lazy" [src]="item.url"   class="main-img max-h-[40em] w-auto object-contain" alt="..." *ngIf="item.type=='image'" />
         <video *ngIf="item.type=='video'" class="main-img max-h-[40em] w-auto object-contain bg-black"  loop muted controls>
           <source [src]="item.url"  />
       </video>
@@ -20,7 +20,7 @@
     <swiper-container appSwiper #swiperThumbs [config]="swiperThumbsConfig" class="mySwiper2" *ngIf="images.length > 1">
       <swiper-slide *ngFor="let item of images">
         <!-- <div class="ratio ratio-4x3" role="button" [ngStyle]="{background: 'url(' + item +') center / cover'}"></div> -->
-        <img [src]="item"   class="w-full h-full object-cover" />
+        <img loading="lazy" [src]="item"   class="w-full h-full object-cover" />
   
       </swiper-slide>
     </swiper-container>

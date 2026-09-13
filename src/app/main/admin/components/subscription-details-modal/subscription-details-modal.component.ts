@@ -1,3 +1,4 @@
+import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
@@ -17,6 +18,8 @@ export interface SubscriptionDetailsModalData {
   styleUrls: ['./subscription-details-modal.component.scss']
 })
 export class SubscriptionDetailsModalComponent implements OnInit {
+  trackByFn = trackByFn;
+
 
   activeTab: 'overview' | 'periods' | 'actions' = 'overview';
   actionReason = '';
