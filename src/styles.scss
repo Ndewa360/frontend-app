@@ -4,7 +4,7 @@
 // 	$use-flexbox-grid: true
 // );
 // @use "@carbon/styles";
-@use '@carbon/styles/scss/config';
+@use '@carbon/styles/scss/config' with ($font-path: 'https://1.www.s81c.com/common/carbon/plex/fonts');
 @use '@carbon/styles/scss/spacing';
 @use '@carbon/styles/scss/colors' ;
 @use '@carbon/styles/scss/motion';

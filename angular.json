@@ -16,13 +16,28 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/app/browser",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "tsConfig": "./tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
+            "allowedCommonJsDependencies": [
+              "tinymce",
+              "@tinymce/tinymce-angular",
+              "xlsx",
+              "ag-grid-community",
+              "@ag-grid-community/core",
+              "carbon-components",
+              "carbon-components-angular",
+              "jspdf",
+              "html2canvas",
+              "random-avatar-generator",
+              "ngx-toastr"
+            ],
             "assets": [
               "src/favicon.ico",
               "src/manifest.webmanifest",
@@ -66,30 +81,21 @@
               "src/app/main/admin/styles/admin-design-system.scss",
               "node_modules/@photo-sphere-viewer/core/index.css"
             ],
-            "scripts": [],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
+            "scripts": []
           },
           "configurations": {
             "production": {
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "serviceWorker": true,
+              "serviceWorker": "./ngsw-config.json",
               "budgets": [
                 {
                   "type": "initial",
@@ -104,12 +110,8 @@
               ]
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "development"
@@ -148,19 +150,6 @@
             }
           },
           "defaultConfiguration": "production"
-        },
-        "serve-ssr": {
-          "builder": "@nguniversal/builders:ssr-dev-server",
-          "options": {
-            "browserTarget": "app:build",
-            "serverTarget": "app:server"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "app:build:production",
-              "serverTarget": "app:server:production"
-            }
-          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

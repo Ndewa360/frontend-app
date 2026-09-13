@@ -2,7 +2,7 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.2 | Date : 2026 | Statut : Référence (vague 1 + vague 2 — PWA/SSR/SEO/budgets/lint/trackBy — exécutées)
+> Version : 1.3 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild — exécutées)
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
 
 ---
@@ -18,12 +18,16 @@ Statut : **migration exécutée et vérifiée (build production ✅, design dor�
 | 3 | Libs mortes retirées : `flowbite` (JS 132 kB + plugin), `tw-elements`, `shepherd.js` (CSS), doublon `swiper-bundle.min.css` ; gardées `driver.js` + `ag-grid` (utilisées) | ✅ | `scripts.js` disparu du bundle |
 | 4 | **PWA + service worker** | ✅ | `ngsw-config.json` créé, `serviceWorker:true` ; sortie PWA complète (ngsw.json, ngsw-worker.js, manifest.webmanifest) |
 | 5 | **SSR réactivé** (`server.ts` câblé, `ng run app:server`) | ✅ (limite documentée A7) | Boot serveur OK + watchdog 15 s + fallback SPA gracieux ; auth/onboarding/support rendus serveur ; home/search → SPA (deadlock universel traqué) |
-| 6 | **Budgets réalistes** | ✅ | `initial` warn 5.5 Mo / err 6.5 Mo (5,13 Mo réel) ; `anyComponentStyle` 50 kB/150 kB |
+| 6 | **Budgets réalistes** | ✅ | `initial` warn 5.5 Mo / err 6.5 Mo (5,13 Mo webpack → **4,88 Mo esbuild**) ; `anyComponentStyle` 50 kB/150 kB |
 | 7 | **`trackBy` + `loading="lazy"`** | ✅ | 114 `<img loading="lazy">` + `trackBy` câblés (24 fichiers, util `shared/utils/track-by.util.ts`) |
 | 8 | **Config ESLint réparée** | ✅ | Préfixe `plugin:` obligatoire pour les configs scoped (`@typescript-eslint`, `@angular-eslint`), `prefer-const` dérécation ; lint exécutable + zéro erreur nouvelle sur les fichiers touchés |
 | 9 | **CSS Carbon dédupliqué** | ✅ | `@use "@carbon/styles"` retiré de 3 layouts auth (782 kB chacun) — déjà global via `styles.scss` |
 | — | OnPush / Standalone (240 composants) | ⏸️ différé | Casse les rendus en bloc → garder le visuel (décision utilisateur) |
 | — | Microfrontend Module Federation | ⏸️ différé | Route-split en place (admin lazy) = étape C recommandée pour équipe ≤4 devs |
+| 10 | **Migration Angular 16.2 → 17.3** (`ng update` bloqué par Node 20 → corrections manuelles: `&#64;` dans 7 emails, `@popperjs/core`, suppression `@nguniversal` → `@angular/ssr@17.3.17`) | ✅ | Dev webpack vert en 16; serveur "Dev Server" ne pas utiliser (`serve-ssr` supprimé) |
+| 11 | **Builder esbuild `application`** (choix utilisateur : vitesse vs Module Federation, incompatible en 17) | ✅ | Build prod 201,9 s (**−85 %**, webpack ~18 min) ; bundle initial **4,88 Mo** (5,13) — budgets inchangés |
+| 12 | **Adaptations sass esbuild** : 11 imports `node_modules/...` → relatifs, 2 imports `src/...` → relatifs, `~@ibm/plex` → `$font-path` CDN IBM (`s81c.com`, identique aux bundles thème v10) | ✅ | 0 erreur de résolution ; fonts IBM Plex préservées |
+| 13 | **SSR re-vérifié en esbuild** : `server.ts` migré de `ngExpressEngine` → `CommonEngine` (sortie imbriquée `dist/app/browser/browser`) | ✅ | auth/onboarding/support SSR <30 ms ; home/search → fallback SPA 15 s (limite A7 inchangée) |
 
 Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `window.env`), `moment → dayjs`, budgets réalistes, `vendorChunk:true`, préchargement stratégique, suppression 32 `.md` de debug + `core/`, fix `CountryState.countrys`, nettoyage `index.html`.
 
@@ -243,17 +247,18 @@ tailwind.scss  admin-design-system.scss  photo-sphere-viewer.css  swiper-bundle.
 
 ## A7. SSR · PWA · SEO
 
-### État actuel (vague 2, vérifié)
+### État actuel (vague 3, vérifié)
 
 | Sujet | État | Impact |
 |---|---|---|
-| SSR | **Actif** (`server.ts` câblé via `angular.json` `server.options.main`, plus jamais mort) | Boot serveur OK ; toutes les routes répondent |
+| SSR | **Actif** (`server.ts` = routeur Express `CommonEngine` — `@angular/ssr@17` ; sortie imbriquée `dist/app/browser/browser`, serveur `dist/app/server/main.js`) | Boot serveur OK ; toutes les routes répondent |
+| Build | **esbuild `application`** (`angular.json`, `polyfills` en array, `serviceWorker:"./ngsw-config.json"`, `allowedCommonJsDependencies`) | 201,9 s prod (+lint/eslint inchangés) ; npm `--legacy-peer-deps` requis (peers flex-layout/NGXS ≤16) |
 | Headers SEO | Corrects sur toutes les routes | `/`, `/fr/home`, `/fr/search`, … → `index, follow` + cache 600 s/300 s ; routes privées `/fr/app/*`, `/fr/admin/*` → `noindex, nofollow` + `no-store` |
 | Rendu serveur (universal) | Auth `190 + onboarding + support` **rendus en <100 ms** | HTML complet côté serveur |
 | Universal home/search | **Ne converge pas** (renderModule ≥15 s → jamais stable) | Watchdog 15 s → fallback SPA gracieux (200, index.html correct) — SEO public conservé via headers + structured data de `index.html` |
 | Watchdog | **En place** dans `server.ts` | 15 s : FALLBACK SPA au lieu d'une socket cassée (000) |
 | TransferState | Aucun usage | — |
-| PWA | **Actif** — `ngsw-config.json` (assetGroups `app` prefetch + `assets` lazy ; dataGroup `/api/**` networkFirst, timeout 10 s, 100 req, 1 j), `serviceWorker:true` | Sortie PWA complète au build prod (ngsw.json, ngsw-worker.js, manifest.webmanifest) — offline/online-first, marché mobile africain |
+| PWA | **Actif** — `ngsw-config.json` (~ racine projet, effective au build ; assetGroups `app` prefetch + `assets` lazy ; dataGroup `/api/**` networkFirst, timeout 10 s, 100 req, 1 j), `serviceWorker:"./ngsw-config.json"` (string, esbuild) | Sortie PWA complète au build prod (ngsw.json, ngsw-worker.js, manifest.webmanifest) — offline/online-first, marché mobile africain |
 | SEO | Structured data excellente dans index.html, `useHash:false` | Le contenu SERVEUR des pages publiques est 100 % client-side (hydration JS) — voir limite ci-dessous |
 
 ### Limite universel home/search (traque 2026)

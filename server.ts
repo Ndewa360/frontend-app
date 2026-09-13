@@ -1,7 +1,7 @@
 import 'zone.js/node';
 
 import { APP_BASE_HREF } from '@angular/common';
-import { ngExpressEngine } from '@nguniversal/express-engine';
+import { CommonEngine } from '@angular/ssr';
 import * as express from 'express';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,19 +10,16 @@ import { AppServerModule } from './src/main.server';
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
-  const distFolder = join(process.cwd(), 'dist/app/browser');
-  const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
-
-  // Our Universal express-engine (found @ https://github.com/angular/universal/tree/main/modules/express-engine)
-  server.engine('html', ngExpressEngine({
-    bootstrap: AppServerModule
-  }));
+  // Le builder application esbuild imbrique sa sortie dans {outputPath}/browser
+  const distFolder = join(process.cwd(), 'dist/app/browser/browser');
+  const indexHtml = existsSync(join(distFolder, 'index.original.html'))
+    ? join(distFolder, 'index.original.html')
+    : join(distFolder, 'index.html');
+  const commonEngine = new CommonEngine({ bootstrap: AppServerModule });
 
   server.set('view engine', 'html');
   server.set('views', distFolder);
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
   // Serve static files from /browser
   server.get('*.*', express.static(distFolder, {
     maxAge: '1y'
@@ -66,20 +63,31 @@ export function app(): express.Express {
         if (settled) return;
         settled = true;
         console.error(`[SSR] TIMEOUT ${renderTimeoutMs}ms — fallback SPA`, req.url);
-        res.sendFile(join(distFolder, 'index.html'));
+        res.sendFile(indexHtml);
       }, renderTimeoutMs);
-      res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] }, (err, html) => {
-        if (settled) return;
-        clearTimeout(watchdog);
-        settled = true;
-        if (err) {
+      commonEngine
+        .render({
+          bootstrap: AppServerModule,
+          documentFilePath: indexHtml,
+          url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
+          publicPath: distFolder,
+          providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]
+        })
+        .then((html) => {
+          if (settled) return;
+          clearTimeout(watchdog);
+          settled = true;
+          res.send(html);
+        })
+        .catch((err) => {
+          if (settled) return;
+          clearTimeout(watchdog);
+          settled = true;
           console.error('[SSR] render error', req.url, (err as Error).message || err);
-          return res.sendFile(join(distFolder, 'index.html'));
-        }
-        res.send(html);
-      });
+          res.sendFile(indexHtml);
+        });
     } else {
-      res.sendFile(join(distFolder, 'index.html'));
+      res.sendFile(indexHtml);
     }
   });
 

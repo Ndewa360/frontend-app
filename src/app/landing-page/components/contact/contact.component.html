@@ -31,7 +31,7 @@
         </div>
         <h3 class="text-xl font-bold text-gray-900 mb-3">{{ t('CONTACT.INFO.EMAIL.TITLE') }}</h3>
         <p class="text-gray-600 mb-4">{{ t('CONTACT.INFO.EMAIL.DESCRIPTION') }}</p>
-        <a href="mailto:contact@ndewa-360.com" class="text-primary font-semibold hover:text-primary-light">contact@ndewa-360.com</a>
+        <a href="mailto:contact@ndewa-360.com" class="text-primary font-semibold hover:text-primary-light">contact&#64;ndewa-360.com</a>
       </div>
 
       <div class="bg-white p-8 rounded-2xl shadow-lg text-center card-hover">
@@ -139,9 +139,9 @@
             [disabled]="!contactForm.valid || waittingResponse"
             class="btn-primary text-white px-10 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-3 mx-auto hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <i *ngIf="waittingResponse==false else faSpinner" class="fas fa-paper-plane"></i>
+            <i *ngIf="waittingResponse===false else faSpinner" class="fas fa-paper-plane"></i>
             <ng-template #faSpinner>
-              <i *ngIf="waittingResponse==true" class="fas fa-spinner fa-spin"></i>
+              <i *ngIf="waittingResponse===true" class="fas fa-spinner fa-spin"></i>
             </ng-template>
             {{ waittingResponse ? t('CONTACT.FORM.SENDING') : t('CONTACT.FORM.SUBMIT_BUTTON') }}
           </button>
