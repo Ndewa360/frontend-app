@@ -46,7 +46,7 @@ import { ManagersListComponent } from './components/property-managers/managers-l
 import { RevokeConfirmModalComponent } from './components/property-managers/revoke-confirm-modal/revoke-confirm-modal.component';
 import { EditPermissionsModalComponent } from './components/property-managers/edit-permissions-modal/edit-permissions-modal.component';
 import { PropertiesSharedModule } from './properties-shared.module';
-import { ModernModalsModule } from './components/modern-modals/modern-modals.module';
+
 import { Error404Component } from '../errors/error404/error404.component';
 import { Error500Component } from '../errors/error500/error500.component';
 
@@ -63,7 +63,6 @@ import { Error500Component } from '../errors/error500/error500.component';
     StatisticsModule,
     AssignLocationModule,
     PropertiesSharedModule,
-    ModernModalsModule,
     TranslateModule,
     AddPropertyComponent,
     ListPropertyComponent,

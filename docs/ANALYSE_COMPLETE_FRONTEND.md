@@ -2,7 +2,7 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.4 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone — exécutées)
+> Version : 1.5 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone complet — exécutées)
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
 
 ---
@@ -29,6 +29,7 @@ Statut : **migration exécutée et vérifiée (build production ✅, design dor�
 | 12 | **Adaptations sass esbuild** : 11 imports `node_modules/...` → relatifs, 2 imports `src/...` → relatifs, `~@ibm/plex` → `$font-path` CDN IBM (`s81c.com`, identique aux bundles thème v10) | ✅ | 0 erreur de résolution ; fonts IBM Plex préservées |
 | 13 | **SSR re-vérifié en esbuild** : `server.ts` migré de `ngExpressEngine` → `CommonEngine` (sortie imbriquée `dist/app/browser/browser`) | ✅ | auth/onboarding/support SSR <30 ms ; home/search → fallback SPA 15 s (limite A7 inchangée) |
 | 14 | **Standalone migration** : `@angular/core:standalone-migration --mode=convert-to-standalone --path=src` (277 fichiers) — composants/directives/pipes `standalone:true` ; NgModules conservés ; fix cycle TDZ `YoupezModule ⇄ app-menu-item` (import retiré) ; lint indent normalisé (eslint --fix sur fichiers migrés) | ✅ | Bundle prod inchangé **5,01 Mo / 911,77 kB** ; SSR vérifié ; 0 erreur nouvelle |
+| 15 | **Prune-ng-modules** : `@angular/core:standalone-migration --mode=prune-ng-modules --path=src` — seuls 2 barils purement standalone supprimés (`ModernModalsModule`, `GeographySelectorsModule`) ; NgModules à forRoot/forFeature/schemas (`SharedModule`, `YoupezModule`, ~38 feature modules) préservés par le schéma | ✅ | Bundle **5,00 Mo / 909,14 kB** (−10 kB) ; build browser + serveur + SSR vérifiés ; import mort `TourHelpButtonComponent` retiré ; lint propre |
 
 Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `window.env`), `moment → dayjs`, budgets réalistes, `vendorChunk:true`, préchargement stratégique, suppression 32 `.md` de debug + `core/`, fix `CountryState.countrys`, nettoyage `index.html`.
 

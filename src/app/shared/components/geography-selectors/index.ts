@@ -1,5 +1,5 @@
 // Module principal
-export { GeographySelectorsModule } from './geography-selectors.module';
+
 
 // Composants
 export { CountrySelectorComponent } from '../country-selector/country-selector.component';
