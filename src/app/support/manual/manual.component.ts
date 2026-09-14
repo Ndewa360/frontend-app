@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import { NgFor, NgClass } from '@angular/common';
+import {Component, OnInit, OnDestroy, Inject, PLATFORM_ID} from '@angular/core';
+import { NgFor, NgClass, isPlatformBrowser } from '@angular/common';
 import { ButtonModule } from 'carbon-components-angular/button';
 import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
 import { NgScrollbar } from 'ngx-scrollbar';
@@ -13,7 +13,7 @@ import { FlexModule } from '@angular/flex-layout/flex';
   standalone: true,
   imports: [FlexModule, ExtendedModule, NgScrollbar, AppLogoComponent, ButtonModule, NgFor, NgClass]
 })
-export class ManualComponent implements OnInit {
+export class ManualComponent implements OnInit, OnDestroy {
 
   public mdContent = `
 # Before You Submit a Pull Request
@@ -690,10 +690,24 @@ That's the last step. Your pull request is now merged.
 
   public opened: boolean = false;
 
-  constructor() {
+  public ltLg = false;
+  private mqlLtLg?: MediaQueryList;
+  private onLtLgChange = (e: MediaQueryListEvent) => { this.ltLg = e.matches; };
+
+  constructor(@Inject(PLATFORM_ID) private platformId: string) {
   }
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const mql = window.matchMedia('(max-width: 1279.98px)');
+      this.ltLg = mql.matches;
+      mql.addEventListener('change', this.onLtLgChange);
+      this.mqlLtLg = mql;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.mqlLtLg?.removeEventListener('change', this.onLtLgChange);
   }
 
   onToggle() {

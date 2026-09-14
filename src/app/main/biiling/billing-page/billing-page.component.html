@@ -23,7 +23,9 @@
             <div fxFlex="100%">
                 <div class=" sm:ml-10 ml-2 app-docs-list-holder app-sidenav-v2 app-sidenav-v2--solid-border app-sidenav-v2--rendered app-sidenav-v2--opened app-sidenav-v2--left app-sidenav-v2--hoverAble"
                     style=""
-                    [ngClass.lt-lg]="{'app-bg-container':true,'app-docs-list-holder--opened app-border-r':opened}">
+                    [class.app-bg-container]="ltLg"
+                    [class.app-docs-list-holder--opened]="ltLg && opened"
+                    [class.app-border-r]="ltLg && opened">
                     <div class=" app-bg-container app-border-b app-card bg-white  app-a-box app-scrollbar-fix">
                         <div class=" app-nav-list app-content  w-64 ">
                             <!-- app-content--default mt-24-->

@@ -2,7 +2,9 @@
   <div fxFlex="100%" fxFlex.gt-md="80%" fxFlexOffset.gt-md="20%" fxFlex.gt-lg="70%" fxFlexOffset.gt-lg="30%"
        class="app-bg-container relative h-full">
     <div class="app-docs-list-holder absolute top-0 bottom-0 z-10" style=""
-         [ngClass.lt-lg]="{'app-bg-container':true,'app-docs-list-holder--opened app-border-r':opened}">
+         [class.app-bg-container]="ltLg"
+         [class.app-docs-list-holder--opened]="ltLg && opened"
+         [class.app-border-r]="ltLg && opened">
       <div class="app-a-box app-scrollbar-fix">
         <ng-scrollbar>
           <div class="app-nav-list app-content app-content--default">

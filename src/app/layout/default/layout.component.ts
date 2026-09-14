@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, Inject, PLATFORM_ID} from '@angular/core';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {defaultRouterTransition, MenuType} from '../../../@youpez';
@@ -13,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { AppLockScreenComponent } from '../../../@youpez/components/app-lock-screen/app-lock-screen.component';
 import { AppSearchComponent } from '../../../@youpez/components/app-search/app-search.component';
-import { NgIf } from '@angular/common';
+import { NgIf, isPlatformBrowser } from '@angular/common';
 import { LayoutMiniSidebarComponent } from '../menu/layout-mini-sidebar/layout-mini-sidebar.component';
 import { HeaderComponent } from '../header/header/header.component';
 import { AppThemeSettingsComponent } from '../../../@youpez/layout/app-theme-settings/app-theme-settings.component';
@@ -49,6 +49,10 @@ import { ExtendedModule } from '@angular/flex-layout/extended';
 export class LayoutComponent implements OnInit, OnDestroy {
   private readonly onDestroy = new Subject<void>();
 
+  public ltMd = false;
+  private mqlLtMd?: MediaQueryList;
+  private onLtMdChange = (e: MediaQueryListEvent) => { this.ltMd = e.matches; };
+
   public mainSidebarOpts:{
     breakpoint: SizeType,
     opened: boolean,
@@ -76,10 +80,18 @@ export class LayoutComponent implements OnInit, OnDestroy {
               private store: Store,
               private router: Router,
               private translate: TranslateService,
-              private languageUrlService: LanguageUrlService) {
+              private languageUrlService: LanguageUrlService,
+              @Inject(PLATFORM_ID) private platformId: string) {
   }
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const mql = window.matchMedia('(max-width: 959.98px)');
+      this.ltMd = mql.matches;
+      mql.addEventListener('change', this.onLtMdChange);
+      this.mqlLtMd = mql;
+    }
+
     this.appMenuService
       .$callbackClick
       .pipe(takeUntil(this.onDestroy))
@@ -266,6 +278,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.mqlLtMd?.removeEventListener('change', this.onLtMdChange);
     this.onDestroy.next();
   }
 

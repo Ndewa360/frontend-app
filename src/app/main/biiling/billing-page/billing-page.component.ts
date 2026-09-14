@@ -1,10 +1,9 @@
 import { trackByFn } from '../../../shared/utils/track-by.util';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 import { SouscriptionModel, SouscriptionState, SouscriptionAction, SouscriptionPeriodAction } from 'src/app/shared/store';
 import { SubscriptionLimitState, SubscriptionLimitAction, SubscriptionStatus } from 'src/app/shared/store/subscription-limit';
 import { SubscriptionPaymentState, SubscriptionPaymentAction, PaymentHistory, UnpaidInvoice } from 'src/app/shared/store/subscription-payment';
@@ -17,7 +16,7 @@ import { AppLogoComponent } from '../../../../@youpez/components/app-logo/app-lo
 import { NgScrollbar } from 'ngx-scrollbar';
 import { AppLoaderComponent } from '../../../../@youpez/components/app-loader/app-loader.component';
 import { FlexModule } from '@angular/flex-layout/flex';
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NgIf, NgFor, AsyncPipe, isPlatformBrowser } from '@angular/common';
 
 interface MenuSection {
   name: string;
@@ -69,10 +68,22 @@ export class BillingPageComponent implements OnInit, OnDestroy {
   public opened: boolean = false;
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store, private translate: TranslateService) {
+  public ltLg = false;
+  private mqlLtLg?: MediaQueryList;
+  private onLtLgChange = (e: MediaQueryListEvent) => { this.ltLg = e.matches; };
+
+  constructor(private store: Store,
+              private translate: TranslateService,
+              @Inject(PLATFORM_ID) private platformId: string) {
   }
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const mql = window.matchMedia('(max-width: 1279.98px)');
+      this.ltLg = mql.matches;
+      mql.addEventListener('change', this.onLtLgChange);
+      this.mqlLtLg = mql;
+    }
     // Initialiser le menu dès que les traductions sont prêtes
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
@@ -133,6 +144,7 @@ export class BillingPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.mqlLtLg?.removeEventListener('change', this.onLtLgChange);
     this.destroy$.next();
     this.destroy$.complete();
   }
