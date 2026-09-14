@@ -12,7 +12,6 @@ export {AppSidenavService} from "./services/app-sidenav.service"
 export {AppMenuService} from "./services/app-menu.service"
 
 /** COMPONENTS **/
-export {AppTasksComponent} from './components/app-tasks/app-tasks.component'
 
 /** MODULES **/
 export {ChartsModule} from './modules/charts/charts.module'

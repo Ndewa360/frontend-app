@@ -1,15 +1,6 @@
 import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {YoupezModule} from '../../@youpez/youpez.module';
-import { DummyTableRichComponent } from './components/dummy-table-rich/dummy-table-rich.component';
-import { DummyTablePaginationComponent } from './components/dummy-table-pagination/dummy-table-pagination.component';
-import { DummyTableExpansionComponent } from './components/dummy-table-expansion/dummy-table-expansion.component';
-import { DummyTableAdvancedComponent } from './components/dummy-table-advanced/dummy-table-advanced.component';
-import { DebugTokenPanelComponent } from './components/debug-token-panel/debug-token-panel.component';
-import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component';
-import { AdvancedLanguageSwitcherComponent } from './components/advanced-language-switcher/advanced-language-switcher.component';
-import { TenantAvatarComponent } from './components/tenant-avatar/tenant-avatar.component';
-import { DataLoaderDebugComponent } from './components/data-loader-debug/data-loader-debug.component';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { NgxsModule } from '@ngxs/store';
 import {
@@ -29,11 +20,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { LocationPaymentState } from './store/payment-location';
-import { LocalizedDatePipe } from './pipes/localized-date.pipe';
-import { MaxPipe } from './pipes/max.pipe';
-import { DynamicTranslatePipe } from './pipes/dynamic-translate.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
-import { MonthTranslatePipe } from './pipes/month-translate.pipe';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UploadFilesState } from './store/files-upload';
 import { ContractTemplateSelectorComponent } from './components/contract-template-selector/contract-template-selector.component';
@@ -43,21 +30,17 @@ import { CountUpDirective } from './directives/counter-up/counter-up.directive';
 import { NavProgressBarComponent } from './components/nav-progress-bar/nav-progress-bar.component';
 import { SubscriptionLimitModalComponent } from './components/subscription-limit-modal/subscription-limit-modal.component';
 import { SubscriptionStatusWidgetComponent } from './components/subscription-status-widget/subscription-status-widget.component';
-import { NavigationButtonComponent } from './components/navigation-button/navigation-button.component';
 import { ProspectionState } from './store/prospection/prospection.state';
 import { TranslateModule } from '@ngx-translate/core';
 import { PropertyManagerState } from './store/property-manager/property-manager.state';
 import { EmailConfirmationBannerComponent } from './components/email-confirmation-banner/email-confirmation-banner.component';
 
 const DECLARATIONS = [
-  DummyTableRichComponent, DummyTablePaginationComponent, DummyTableExpansionComponent,
-  DummyTableAdvancedComponent, NoDataComponent, LocalizedDatePipe, MaxPipe,
-  DynamicTranslatePipe, FileSizePipe, MonthTranslatePipe, FileUploadComponent,
+  NoDataComponent, FileSizePipe, FileUploadComponent,
   ScrollRevealDirective, CountUpDirective,
-  SmartNotificationsComponent, LoadingOverlayComponent, DebugTokenPanelComponent,
-  ContractTemplateSelectorComponent, DataLoaderDebugComponent, SubscriptionLimitModalComponent,
-  SubscriptionStatusWidgetComponent, NavigationButtonComponent, LanguageSwitcherComponent,
-  ClickOutsideDirective, AdvancedLanguageSwitcherComponent, TenantAvatarComponent,
+  SmartNotificationsComponent, LoadingOverlayComponent,
+  ContractTemplateSelectorComponent, SubscriptionLimitModalComponent,
+  SubscriptionStatusWidgetComponent, ClickOutsideDirective,
   NavProgressBarComponent, EmailConfirmationBannerComponent
 ];
 

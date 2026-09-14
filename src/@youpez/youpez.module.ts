@@ -57,25 +57,19 @@ import {
 import {AppMenuComponent} from './components/app-menu/app-menu/app-menu.component';
 import {AppMenuHeaderComponent} from './components/app-menu/app-menu-header/app-menu-header.component';
 import {AppMenuItemComponent} from './components/app-menu/app-menu-item/app-menu-item.component';
-import {AppTableComponent} from './components/app-table/app-table.component';
 import {AppHeaderComponent} from './layout/app-header/app-header.component';
 import {AppHeaderTitleComponent} from './layout/app-header/app-header-title/app-header-title.component';
 import {AppHeaderToolsComponent} from './layout/app-header/app-header-tools/app-header-tools.component';
 import {AppThemeSettingsComponent} from './layout/app-theme-settings/app-theme-settings.component';
 import {AppLayoutHeaderComponent} from './layout/app-layout-header/app-layout-header.component';
 import {AppSearchComponent} from './components/app-search/app-search.component';
-import {AppTasksComponent} from './components/app-tasks/app-tasks.component';
 
-import {InputTypeAdvancedPipe} from './pipes/input-type-advanced.pipe';
-import {TextHiglightPipe} from './pipes/text-higlight.pipe';
 import {AppLayoutDividedComponent} from './layout/auth/app-layout-divided/app-layout-divided.component';
 import {AppLayoutDividedAltComponent} from './layout/auth/app-layout-divided-alt/app-layout-divided-alt.component';
 import {AuthWelcomeScreenComponent} from './layout/auth/auth-welcome-screen/auth-welcome-screen.component';
 import {AppLayoutDividedFullComponent} from './layout/auth/app-layout-divided-full/app-layout-divided-full.component';
 import {AppLayoutBasicComponent} from './layout/auth/app-layout-basic/app-layout-basic.component';
 import {AppLockScreenComponent} from './components/app-lock-screen/app-lock-screen.component';
-import {AppContentTabsComponent} from './components/app-content/app-content-tabs/app-content-tabs.component';
-import {AppCreditCardComponent} from './components/app-credit-card/app-credit-card.component';
 import {AppContentSimpleComponent} from './components/app-content/app-content-simple/app-content-simple.component';
 import {SafePipe} from './pipes/safe';
 import {AppLogoComponent} from './components/app-logo/app-logo.component';
@@ -162,22 +156,18 @@ const Components = [
   AppMenuComponent,
   AppMenuHeaderComponent,
   AppMenuItemComponent,
-  AppTableComponent,
   AppHeaderComponent,
   AppHeaderTitleComponent,
   AppHeaderToolsComponent,
   AppThemeSettingsComponent,
   AppLayoutHeaderComponent,
   AppSearchComponent,
-  AppTasksComponent,
   AppLayoutDividedComponent,
   AppLayoutDividedAltComponent,
   AuthWelcomeScreenComponent,
   AppLayoutDividedFullComponent,
   AppLayoutBasicComponent,
   AppLockScreenComponent,
-  AppContentTabsComponent,
-  AppCreditCardComponent,
   AppContentSimpleComponent,
   AppLogoComponent,
   AppBreadcrumbComponent,
@@ -192,8 +182,6 @@ const Components = [
 ];
 
 const Pipes = [
-  InputTypeAdvancedPipe,
-  TextHiglightPipe,
   SafePipe
 ];
 
