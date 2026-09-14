@@ -10,7 +10,7 @@ import { AuthTokenState } from './shared/store/auth-token';
 import { interval, Subscription, Subject, of } from 'rxjs';
 import { LOCAL_LANGUAGE, UserProfileAction } from './shared/store';
 import { Title, Meta } from '@angular/platform-browser';
-import { Router, ActivatedRoute, NavigationCancel, NavigationEnd, NavigationError } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { SettingsService } from 'src/@youpez';
 import { TutorialsService } from './shared/services/tutorials/tutorials.service';
 import * as dayjs from 'dayjs';
@@ -72,7 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private healthCheck: HealthCheckService,
     private swUpdate: SwUpdate,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngOnInit(): void {
@@ -106,7 +106,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.initializeFrontOfficeDetection();
 
     // Day.js — locale française
-    try { dayjs.locale(LOCAL_LANGUAGE.FR.toString()); } catch {}
+    try { dayjs.locale(LOCAL_LANGUAGE.FR.toString()); } catch { console.warn('dayjs locale fr indisponible'); }
 
     // Fragments URL
     this.activatedRoute.fragment.pipe(
@@ -121,7 +121,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.settingsService.setTheme(p['theme'] || getSessionStorage('--app-theme', 'light'));
         this.settingsService.setSideBar(p['sidebar'] || getSessionStorage('--app-theme-sidebar', 'default'));
         this.settingsService.setHeader(p['header'] || getSessionStorage('--app-theme-header', 'default'));
-      } catch {}
+      } catch { console.warn('Paramètres de thème invalides'); }
     });
 
     // SEO

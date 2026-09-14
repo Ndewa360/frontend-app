@@ -2,7 +2,7 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.8 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone complet — + pass 2026 code-morts/perf boot — exécutées)
+> Version : 1.10 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone complet — + pass 2026 code-morts/perf boot — exécutées)
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
 
 ---
@@ -200,7 +200,7 @@ Bibliothèque UI interne vendored (settings de thème, layout/sidenav, icônes I
 | polyfills + divers (6 petits chunks) | ~97 kB | ~28 kB |
 | **Initial total** | **4,11 Mo** | **712 kB** |
 
-Historique : 30,8 Mo (webpack v16, 2025-09) → 5,01/912 kB (standalone) → **4,11/712 kB (row 19, batch 4)**. Chunks lazy dominants : properties-page → 1,49 Mo, theme-dark/light 554 kB chacun (chargés dynamiquement via `#client-theme`), contract-templates 459 kB, xlsx 422 kB, landing-page 418 kB.
+Historique : 30,8 Mo (webpack v16, 2025-09) → 5,01/912 kB (standalone) → **4,11/711,70 kB (row 20, batch 5)**. Chunks lazy dominants : properties-page → 1,49 Mo, theme-dark/light 554 kB chacun (chargés dynamiquement via `#client-theme`), contract-templates 459 kB, xlsx 422 kB, landing-page 418 kB.
 
 ### Démarrage & loader (ce qui masque/perçoit la lenteur)
 Deux couches indépendantes :
@@ -213,14 +213,15 @@ Pass 2026 (commits `f567e39`, `ae7f2c7`, `1382bcb` + batch 4) : 2,21 Mo de vendo
 - **Batch 2** : 17 composants partagés morts (dummy-tables×4, language-switchers×2, data-loader-debug, debug-token-panel, mobile-dashboard-warning, modern button/card/input, modern-sidebar, navigation-button, tenant-avatar component, translation-tester, agent-subscription-info), pipes morts (localized-date, max, dynamic-translate, month-translate, input-type-advanced, text-higlight), `@youpez` morts (AppTasks, AppTable, ContentTabs, CreditCard, dummy.ts), packages npm inutilisés désinstallés (`swiper`, `angular-bem`, `@tailwindcss/line-clamp`) + CSS swiper retiré de styles.scss.
 - **Batch 3** : `main/` morts (statistics → seule `performance-alerts.service` conservée pour `property-finances`/`modern-financial-dashboard`, `dashboard` entier, modals/ménages jamais ouverts : tour-help-button, unit-header, modern-unit-details-panel, actual-revenue-analysis, advanced-financial-dashboard, tenant-payment-analysis, annual-financial-recap, payment-list-recap-total, payment-list-type-property, premium-access-button, error500, details-room-galery) ; **`theme-light.css` devient non-bloquant au 1er paint** (`media="print" onload="this.media='all'"` dans index.html — le chargement réel reste piloté par `SettingsService#loadStyle`→`#client-theme`).
 - **Batch 4** : 9 sections landing orphelines (baniere-slide, contact-us, how-its-work, property-vedette, scroll-to-top, show-number, show-solution-complete, slogan-text, tarifs-list), `payment-loading`, dossier parasite `-p`, dossiers vides.
+- **Batch 5** : vérif `import *` : lodash/xlsx déjà en imports nommés (tree-shaking OK), `dayjs` = `export =` CJS non-tree-shakable → conservé en namespace import (le default-import casserait esbuild TS1259) ; lint app.component.ts nettoyé (6 erreurs préexistantes) ; **assets `ngx-extended-pdf-viewer` trimés via globs ciblés** (copie dist ∽16 Mo → ~6 Mo : uniquement `*.min.mjs` runtime + cmaps + standard_fonts + locale + additional-locale + images, variantes `-es5`/full non min jamais demandées en prod) ; **CSS photo-sphere dédupliqué** (entrée directe angular.json supprimée, reste l'import global unique via `app.themes.scss`) ; vérifié que **TinyMCE & pdf-viewer sont déjà hors bundle initial** (chunks 100 % lazy : contract-templates / properties-page+contract).
 
-Reste identifié (à traiter si souhaité) : `moment` import `*` (main.js +300 kB), 4 systèmes UI, `import *` lodash/xlsx, TinyMCE/Pdf-viewer assets (~7 Mo), `@kundai/angular` (eager, tracking), `scrollTo`/`ngx-scrollbar` réévaluer.
+Reste identifié (à traiter si souhaité) : `moment` import `*` (main.js +300 kB), 4 systèmes UI (Carbon + Material + Tailwind/Flowbite + Youpez — consolidation risquée, à faire par étapes avec vérifs visuelles), `@kundai/angular` (eager, tracking fonctionnel — ne pas retirer sans validation métier), `scrollTo`/`ngx-scrollbar` réévaluer, tinymce (11 Mo assets, lazy contract-templates — glob `**/*` restrictible si besoin).
 
 ### 5 causes principales de l'embonpoint
 1. **`moment` importé `*` dans `app.component.ts` (racine)** — ~300 kB+ locales dans main.js.
 2. **4 systèmes UI** : Carbon + Material + Tailwind/Flowbite + Youpez → CSS/JS redondants.
 3. **`import * as`** : lodash (2 fichiers), xlsx (2 fichiers), moment — interdit le tree-shaking.
-4. **TinyMCE** (~2 Mo assets) + `ngx-extended-pdf-viewer` (~5 Mo assets) chargés dans le pipeline.
+4. **TinyMCE** (~2 Mo assets) + `ngx-extended-pdf-viewer` (~5 Mo assets) **déjà hors pipeline** (chunks lazy) ; copies dist réduites (batch 5) pour alléger build/déploiement.
 5. **`vendorChunk:false`** en prod → vendor dans main.js (re-téléchargement à chaque release).
 
 ### Drapeaux rouges runtime
