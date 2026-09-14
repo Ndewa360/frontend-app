@@ -198,17 +198,23 @@ Bibliothèque UI interne vendored (settings de thème, layout/sidenav, icônes I
 | vendor partagé lazy (chunk-XYP6CBYJ) | 376 kB | 95 kB |
 | main.js | 119 kB | 33 kB |
 | polyfills + divers (6 petits chunks) | ~97 kB | ~28 kB |
-| **Initial total** | **4,23 Mo** | **740 kB** |
+| **Initial total** | **4,11 Mo** | **712 kB** |
 
-Historique : 30,8 Mo (webpack v16, 2025-09) → 5,01/912 kB (standalone) → 5,00/909 kB (row 16-17) → **4,23/740 kB (row 18)**. Chunks lazy dominants : properties-page 1,49 Mo, theme-dark/light 554 kB chacun, contract-templates 459 kB, xlsx 422 kB, landing-page 418 kB.
+Historique : 30,8 Mo (webpack v16, 2025-09) → 5,01/912 kB (standalone) → **4,11/712 kB (row 19, batch 4)**. Chunks lazy dominants : properties-page → 1,49 Mo, theme-dark/light 554 kB chacun (chargés dynamiquement via `#client-theme`), contract-templates 459 kB, xlsx 422 kB, landing-page 418 kB.
 
 ### Démarrage & loader (ce qui masque/perçoit la lenteur)
 Deux couches indépendantes :
 1. **Loader HTML statique** (`#app-loading-holder` dans `index.html`) : retiré uniquement à la résolution de `bootstrapModule(AppModule)` (`main.ts` → `appBootstrap`). Couvre donc le parse/exec JS initial. Sur les pages **SSR** (auth/onboarding/support), le HTML arrive vite mais est couvert par ce loader tant que le JS client n'a pas booté → c'est la source principale restante de « page qui traîne au refresh » sur ces pages. Levier restant : le retirer plus tôt quand le DOM bootstrappé est prêt (ou `afterNextRender`/premier paint) — à traiter.
 2. **Overlay Angular** (`DataDrivenLoaderService` → `AppComponent.overlayVisible`) : depuis row 18 il démarre **masqué** et ne s'affiche que si la route a des `requiredStores` (pattern `/app/*` → `userprofile.initLoadingState` ; `/app/properties*` → + `properties.initLoadingState`, …, `/search` → `countries`). Il disparaît quand tous les stores `LOADED` (+ 2×`requestAnimationFrame`) — erreur → masqué aussitôt ; **timeout de sécurité 12 s → toastr** si un store reste bloqué. Le refresh d'une page `/app/*` connectée demande donc le fetch profil (`AppComponent.ngOnInit` → `loadUserProfileConditionally` → `FetchUserProfileConditional`), ~100-300 ms en local, ~1-3 s sinon : c'est la condition **contractuelle** (pas réseau) qui garde l'overlay. Budget initial de 909 → **740 kB gz** réduit directement le temps avant cette résolution.
 
-### Récupération code mort (sweep composant par composant — en cours)
-Pass 2026 : 2,21 Mo de vendor initial + `main.js` 297→119 kB retirés via des composants **jamais instanciés** (`SharedModule` eager n'exposait que des morts). Prochaines cibles identifiées (à vérifier une à une dans le sweep) : `@youpez/components/app-lock-screen`, `app-search`, `app-tasks`, `app-content-tabs` (aucun usage template trouvé hors de leurs propres fichiers) ; usage de `ngx-scrollbar` après suppression de `galery-video360` ; réévaluer `@kundai/angular` (eager, tracking) ; warning cosmétique tailwind `line-clamp` (plugin inclus par défaut en v3.3, à retirer de `tailwind.config.js`).
+### Récupération code mort (sweep composant par composant — done, 4 pass)
+Pass 2026 (commits `f567e39`, `ae7f2c7`, `1382bcb` + batch 4) : 2,21 Mo de vendor initial + `main.js` 297→119 kB retirés via des composants **jamais instanciés** :
+- **Batch 1** : 6 galeries 360 mortes + `SwiperDirective` + register swiper (main.ts), `UIShellModule` (app.module + youpez.module), imports morts, plugin tailwind line-clamp, loader overlay sans flash (`_overlayVisible=false`), retrait `@photo-sphere-viewer`/`swiper` du eager.
+- **Batch 2** : 17 composants partagés morts (dummy-tables×4, language-switchers×2, data-loader-debug, debug-token-panel, mobile-dashboard-warning, modern button/card/input, modern-sidebar, navigation-button, tenant-avatar component, translation-tester, agent-subscription-info), pipes morts (localized-date, max, dynamic-translate, month-translate, input-type-advanced, text-higlight), `@youpez` morts (AppTasks, AppTable, ContentTabs, CreditCard, dummy.ts), packages npm inutilisés désinstallés (`swiper`, `angular-bem`, `@tailwindcss/line-clamp`) + CSS swiper retiré de styles.scss.
+- **Batch 3** : `main/` morts (statistics → seule `performance-alerts.service` conservée pour `property-finances`/`modern-financial-dashboard`, `dashboard` entier, modals/ménages jamais ouverts : tour-help-button, unit-header, modern-unit-details-panel, actual-revenue-analysis, advanced-financial-dashboard, tenant-payment-analysis, annual-financial-recap, payment-list-recap-total, payment-list-type-property, premium-access-button, error500, details-room-galery) ; **`theme-light.css` devient non-bloquant au 1er paint** (`media="print" onload="this.media='all'"` dans index.html — le chargement réel reste piloté par `SettingsService#loadStyle`→`#client-theme`).
+- **Batch 4** : 9 sections landing orphelines (baniere-slide, contact-us, how-its-work, property-vedette, scroll-to-top, show-number, show-solution-complete, slogan-text, tarifs-list), `payment-loading`, dossier parasite `-p`, dossiers vides.
+
+Reste identifié (à traiter si souhaité) : `moment` import `*` (main.js +300 kB), 4 systèmes UI, `import *` lodash/xlsx, TinyMCE/Pdf-viewer assets (~7 Mo), `@kundai/angular` (eager, tracking), `scrollTo`/`ngx-scrollbar` réévaluer.
 
 ### 5 causes principales de l'embonpoint
 1. **`moment` importé `*` dans `app.component.ts` (racine)** — ~300 kB+ locales dans main.js.
@@ -238,7 +244,7 @@ Pass 2026 : 2,21 Mo de vendor initial + `main.js` 297→119 kB retirés via des 
 ### index.html — points bloquants
 - 5+ familles de fonts (Inter ×2, Roboto, IBM Plex ×3, Material Icons, FontAwesome), toutes render-blocking `<link rel="stylesheet">`.
 - ~400 lignes de JS inline diagnostique avant le rendu (error handler, appBootstrap, TinyMCE telemetry).
-- Preloads redondants `theme-light.css` + `styles.css`.
+- `theme-light.css` rendu **non-bloquant** (batch 3) : chargement réel par `SettingsService` (→ `#client-theme`), plus aucun preload css bloquant au premier paint hors fonts CDN.
 - Excellente **structured data** (Organization/WebSite/ItemList) malgré l'absence de SSR.
 
 ## A6. Styles & UI
