@@ -27,7 +27,9 @@ export interface DataLoadingConfig {
 export class DataDrivenLoaderService {
 
   // ─── Observable consommé par AppComponent pour afficher l'overlay Angular ──
-  private _overlayVisible = new BehaviorSubject<boolean>(true);
+  // Démarré masqué : l'overlay ne s'affiche que lors d'une navigation
+  // nécessitant des stores (évite le « flash » de loader à la première peinture).
+  private _overlayVisible = new BehaviorSubject<boolean>(false);
   private _overlayMessage = new BehaviorSubject<string>('Chargement…');
   private _overlayProgress = new BehaviorSubject<number>(0);
 

@@ -3,20 +3,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ErrorHandler, LOCALE_ID, NgModule } from '@angular/core';
 import localeFr from '@angular/common/locales/fr';
 import localeEn from '@angular/common/locales/en';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 // carbon-components-angular default imports
-import { IconModule, ThemeModule, UIShellModule } from 'carbon-components-angular';
+import { IconModule, ThemeModule } from 'carbon-components-angular';
 
 // Icons
 import { SharedModule } from './shared/shared.module';
 import { NgxsModule } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthTokenInterceptor, CorrelationIdInterceptor } from './shared/interceptors';
 import { registerLocaleData } from '@angular/common';
 
@@ -53,7 +52,6 @@ export function getDynamicLocale(): string {
 		BrowserModule,
 		BrowserAnimationsModule,
 		AppRoutingModule,
-		UIShellModule,
 		IconModule,
 		HttpClientModule,
 		ThemeModule,

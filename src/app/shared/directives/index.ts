@@ -1,1 +1,0 @@
-export * from "./swipper/swipper.directive"

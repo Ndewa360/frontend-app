@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {NavigationEnd, NavigationStart, Router, RouterModule} from '@angular/router';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {RouterModule} from '@angular/router';
 import {TranslateModule} from '@ngx-translate/core';
 
 
@@ -15,7 +14,6 @@ import {MatIconModule} from '@angular/material/icon';
 
 
 import {ResizableModule} from 'angular-resizable-element';
-import {BemModule} from 'angular-bem';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 import {AppSidenavComponent} from './components/app-sidenav/app-sidenav/app-sidenav.component';
@@ -52,7 +50,6 @@ import {
   ModalModule,
   LoadingModule,
   ProgressIndicatorModule,
-  UIShellModule,
   StructuredListModule,
   CodeSnippetModule
 } from 'carbon-components-angular';
@@ -60,7 +57,6 @@ import {
 import {AppMenuComponent} from './components/app-menu/app-menu/app-menu.component';
 import {AppMenuHeaderComponent} from './components/app-menu/app-menu-header/app-menu-header.component';
 import {AppMenuItemComponent} from './components/app-menu/app-menu-item/app-menu-item.component';
-import {IbmIconComponent} from './components/ibm-icon/ibm-icon.component';
 import {AppTableComponent} from './components/app-table/app-table.component';
 import {AppHeaderComponent} from './layout/app-header/app-header.component';
 import {AppHeaderTitleComponent} from './layout/app-header/app-header-title/app-header-title.component';
@@ -155,7 +151,6 @@ const CarbonModules = [
   ProgressBarModule,
   ProgressIndicatorModule,
 
-  UIShellModule,
   StructuredListModule,
   CodeSnippetModule,
   InputModule

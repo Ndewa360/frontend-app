@@ -36,14 +36,6 @@ import { FileSizePipe } from './pipes/file-size.pipe';
 import { MonthTranslatePipe } from './pipes/month-translate.pipe';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { UploadFilesState } from './store/files-upload';
-import { GaleryImageComponent } from './components/galery-image/galery-image.component';
-import { GaleryVideoComponent } from './components/galery-video/galery-video.component';
-import { GaleryVideo360Component } from './components/galery-video360/galery-video360.component';
-import { GaleryVideo360ItemComponent } from './components/galery-video360-item/galery-video360-item.component';
-import { SliderComponentGaleryComponent } from './components/slider-component-galery/slider-component-galery.component';
-import { FullScreenGaleryComponent } from './components/full-screen-galery/full-screen-galery.component';
-import { SinglePageScreenGaleryComponent } from './components/single-page-screen-galery/single-page-screen-galery.component';
-import { SwiperDirective } from './directives';
 import { ContractTemplateSelectorComponent } from './components/contract-template-selector/contract-template-selector.component';
 import { ScrollRevealDirective } from './directives/scroll-reveal/scroll-reveal.directive';
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
@@ -61,9 +53,7 @@ const DECLARATIONS = [
   DummyTableRichComponent, DummyTablePaginationComponent, DummyTableExpansionComponent,
   DummyTableAdvancedComponent, NoDataComponent, LocalizedDatePipe, MaxPipe,
   DynamicTranslatePipe, FileSizePipe, MonthTranslatePipe, FileUploadComponent,
-  GaleryImageComponent, GaleryVideoComponent, GaleryVideo360Component,
-  GaleryVideo360ItemComponent, SliderComponentGaleryComponent, FullScreenGaleryComponent,
-  SinglePageScreenGaleryComponent, SwiperDirective, ScrollRevealDirective, CountUpDirective,
+  ScrollRevealDirective, CountUpDirective,
   SmartNotificationsComponent, LoadingOverlayComponent, DebugTokenPanelComponent,
   ContractTemplateSelectorComponent, DataLoaderDebugComponent, SubscriptionLimitModalComponent,
   SubscriptionStatusWidgetComponent, NavigationButtonComponent, LanguageSwitcherComponent,

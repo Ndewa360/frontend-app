@@ -2,7 +2,7 @@
 
 > **Document maître** regroupant l'analyse exhaustive du frontend Angular, le plan d'optimisation et la stratégie microfrontend.
 >
-> Version : 1.7 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone complet — exécutées)
+> Version : 1.8 | Date : 2026 | Statut : Référence (vague 1 + 2 — PWA/SSR/SEO/budgets/lint/trackBy — + vague 3 — Angular 17 + builder esbuild + standalone complet — + pass 2026 code-morts/perf boot — exécutées)
 > Jumeau backend : [`ANALYSE_COMPLETE_BACKEND.md`](ANALYSE_COMPLETE_BACKEND.md)
 
 ---
@@ -32,6 +32,7 @@ Statut : **migration exécutée et vérifiée (build production ✅, design dor�
 | 15 | **Prune-ng-modules** : `@angular/core:standalone-migration --mode=prune-ng-modules --path=src` — seuls 2 barils purement standalone supprimés (`ModernModalsModule`, `GeographySelectorsModule`) ; NgModules à forRoot/forFeature/schemas (`SharedModule`, `YoupezModule`, ~38 feature modules) préservés par le schéma | ✅ | Bundle **5,00 Mo / 909,14 kB** (−10 kB) ; build browser + serveur + SSR vérifiés ; import mort `TourHelpButtonComponent` retiré ; lint propre |
 | 16 | **Build 100 % warnings** : erreur `TS2307 geography-selectors.module` = état stale (déjà résolue, 0 référence source) ; 2 dépréciations sass `/` → multiplications `math`-safe (`app.helpers.scss` l.76/98/99/101, éligibles Sass 2.0) ; **17 modificateurs `&--` en CSS natif invalide → sélecteurs BEM complets** (`plan-list.component.css`, règles **silencieusement inactives depuis l'esbuild** → restaurées) ; `<link styles.css>` codé en dur retiré (`index.html`) — auto-injecté par Angular (l'émission contenait ensuite `styles-ZLGOXBC3.css`, this warning `Unable to locate F:\styles.css` disparu) ; `dayjs`/`dayjs/locale/fr` ajoutés à `allowedCommonJsDependencies` ; budget `anyComponentStyle` warn 50 kB → 100 kB (3 styles >50 kB pré-existants : dialog 91,34 / home 60,35 / alert 58,63) | ✅ | Build prod EXIT=0 **5,00 Mo / 909,22 kB** ; **1 seul warning résiduel** = CSS carbon `node_modules` (toggletip `:host([object Object])`, 1 règle ignorée, hors périmètre) ; SSR support/onboarding/login 8–108 ms ; home/search fallback SPA 15 s |
 | 17 | **Crash runtime NgClass legacy (flex-layout)** : `this._renderer.addClass is not a function` sur `/fr/auth/signin` — les bindings `[ngClass.lt-md]`/`[ngClass.lt-lg]` instancient `ResponsiveClassDirective` d'ExtendedModule, **héritière de l'ancien `NgClass`** dont le constructeur v17 ne renseigne plus `_renderer` (incompat flex-layout ≠ Angular 17, pipeline dev/server). Remplacement par `window.matchMedia` natif (garde `isPlatformBrowser`, `(max-width: 959.98px)` lt-md / `(max-width: 1279.98px)` lt-lg) dans 3 composants : `layout.component` (`app-layout--show-header`), `billing-page` et `manual` (`app-bg-container`/`app-docs-list-holder--opened`/`app-border-r`). `fxLayout`/`fxFlex` (FlexModule) et `fxHide`/`fxShow` (ShowHideDirective, indépendants de NgClass) **restent fonctionnels et conservés**. Usage `[ngClass.*]`/`[ngStyle.*]` = 0 dans le code. Cache purge (`npx ng cache clean`) requis : le cache webpack périmé rejouait l'`index.ts` supprimé (TS2307) + le CSS `&--` d'avant | ✅ | Dév runtime corrigé (plus de directive NgClass-incompatible instanciée) ; build prod EXIT=0 **5,00 Mo / 909,32 kB**, 1 seul warning (carbon lib) ; SSR `/fr/auth/signin` 388 ms + login/support/onboarding <50 ms |
+| 18 | **Code mort retiré du chemin critique + loader** : 6 composants galerie sans AUCUNE instanciation template (`full-screen-galery`, `slider-component-galery`, `single-page-screen-galery`, `galery-video360`, `galery-image`, `galery-video` — greps `<galery-*`), + `SwiperDirective` → fichiers **supprimés** et retirés de `SharedModule` (exposé en eager par `app.module`). `galery-video360-item` (seul encore instancié — room + search, lazy) sorti de SharedModule, importé **en direct** par ses 2 consommateurs (déjà le cas). Résultat : `registerSwiperElements()` + `swiper/element/bundle` retirés de `main.ts` et `@photo-sphere-viewer/core` **disparus du bundle** (uniquement référencés par du code mort eager). `UIShellModule` carbon retiré (app.module + youpez.module — **0 template `<cds-shell/header/sidenav>`** ; non tree-shakable car référencé dans `imports[]`). `DataDrivenLoaderService._overlayVisible` démarre désormais **`false`** : l'overlay Angular ne s'affiche que lors d'une navigation exigeant des stores → **fini le « flash » loader sur pages publiques/auth/SSR à la première peinture** (avant : le loader était le *premier* élément rendu et couvrait le contenu SSR). Côté perception : sur refresh d'une page `/app/*`, l'overlay attend encore `userprofile.initLoadingState === 'LOADED'` (fetch lancé dès `AppComponent.ngOnInit` via `loadUserProfileConditionally`) — flux local ~100-300 ms, mais c'est LA condition contractuelle du masquage (timeout de sécurité 12 s) ; sur les pages sans stores (home/auth/payment) l'overlay ne s'affiche plus du tout | ✅ | Initial **5,00 Mo / 909 kB → 4,23 Mo / 740 kB** (−15,4 % raw, **−169 kB gz = −18,6 % transfer**) ; chunk vendor principal `chunk-HTQAIMVH` 2,21 → **1,62 Mo** ; `main.js` 297 → **119 kB** ; `swiper`/`photo-sphere` absents de la sortie dist (plus même en lazy) ; build prod EXIT=0 en 385 s, 1 warning carbon connu ; entrée serveur SSR inchangée (browser-only) |
 
 Autres changements antérieurs tracés : sécurité (clés Stripe/TinyMCE → `window.env`), `moment → dayjs`, budgets réalistes, `vendorChunk:true`, préchargement stratégique, suppression 32 `.md` de debug + `core/`, fix `CountryState.countrys`, nettoyage `index.html`.
 
@@ -188,22 +189,26 @@ Bibliothèque UI interne vendored (settings de thème, layout/sidenav, icônes I
 
 ## A5. Performance & bundle
 
-### Taille réelle (dist/app/browser — build du 2025-09-01)
-| Chunk | Taille | Type |
+### Taille réelle (build prod esbuild — après suppression code mort, 2026-09)
+| Chunk initial | Raw | Transfer |
 |---|---|---|
-| vendor.js | 15 Mo | initial |
-| main.js | 12 Mo | initial |
-| styles.css | 3,8 Mo | initial |
-| theme-light.css / dark.css | 640 kB chacun | preload (non injectés) |
-| **Initial total** | **~27 Mo JS + 3,8 Mo CSS ≈ 30,8 Mo** | |
-| properties-page | 5,4 Mo | lazy |
-| main module | 3,7 Mo | lazy |
-| admin module | 2,7 Mo | lazy (11 pages non éclatées) |
-| landing-page | 1,6 Mo | lazy |
-| search module | 1,0 Mo | lazy |
-| … (reste ≤1 Mo chacun) | | |
+| vendor Angular/carbon/toastr/flex (chunk-HTQAIMVH) | 1,62 Mo | 346 kB |
+| styles.css (Tailwind JIT + carbon global) | 1,46 Mo | 126 kB |
+| UI partagé (chunk-CASO2GR7) | 590 kB | 112 kB |
+| vendor partagé lazy (chunk-XYP6CBYJ) | 376 kB | 95 kB |
+| main.js | 119 kB | 33 kB |
+| polyfills + divers (6 petits chunks) | ~97 kB | ~28 kB |
+| **Initial total** | **4,23 Mo** | **740 kB** |
 
-**Dist total : ~150 Mo** (sources maps, fonts, assets TinyMCE, PDF viewer).
+Historique : 30,8 Mo (webpack v16, 2025-09) → 5,01/912 kB (standalone) → 5,00/909 kB (row 16-17) → **4,23/740 kB (row 18)**. Chunks lazy dominants : properties-page 1,49 Mo, theme-dark/light 554 kB chacun, contract-templates 459 kB, xlsx 422 kB, landing-page 418 kB.
+
+### Démarrage & loader (ce qui masque/perçoit la lenteur)
+Deux couches indépendantes :
+1. **Loader HTML statique** (`#app-loading-holder` dans `index.html`) : retiré uniquement à la résolution de `bootstrapModule(AppModule)` (`main.ts` → `appBootstrap`). Couvre donc le parse/exec JS initial. Sur les pages **SSR** (auth/onboarding/support), le HTML arrive vite mais est couvert par ce loader tant que le JS client n'a pas booté → c'est la source principale restante de « page qui traîne au refresh » sur ces pages. Levier restant : le retirer plus tôt quand le DOM bootstrappé est prêt (ou `afterNextRender`/premier paint) — à traiter.
+2. **Overlay Angular** (`DataDrivenLoaderService` → `AppComponent.overlayVisible`) : depuis row 18 il démarre **masqué** et ne s'affiche que si la route a des `requiredStores` (pattern `/app/*` → `userprofile.initLoadingState` ; `/app/properties*` → + `properties.initLoadingState`, …, `/search` → `countries`). Il disparaît quand tous les stores `LOADED` (+ 2×`requestAnimationFrame`) — erreur → masqué aussitôt ; **timeout de sécurité 12 s → toastr** si un store reste bloqué. Le refresh d'une page `/app/*` connectée demande donc le fetch profil (`AppComponent.ngOnInit` → `loadUserProfileConditionally` → `FetchUserProfileConditional`), ~100-300 ms en local, ~1-3 s sinon : c'est la condition **contractuelle** (pas réseau) qui garde l'overlay. Budget initial de 909 → **740 kB gz** réduit directement le temps avant cette résolution.
+
+### Récupération code mort (sweep composant par composant — en cours)
+Pass 2026 : 2,21 Mo de vendor initial + `main.js` 297→119 kB retirés via des composants **jamais instanciés** (`SharedModule` eager n'exposait que des morts). Prochaines cibles identifiées (à vérifier une à une dans le sweep) : `@youpez/components/app-lock-screen`, `app-search`, `app-tasks`, `app-content-tabs` (aucun usage template trouvé hors de leurs propres fichiers) ; usage de `ngx-scrollbar` après suppression de `galery-video360` ; réévaluer `@kundai/angular` (eager, tracking) ; warning cosmétique tailwind `line-clamp` (plugin inclus par défaut en v3.3, à retirer de `tailwind.config.js`).
 
 ### 5 causes principales de l'embonpoint
 1. **`moment` importé `*` dans `app.component.ts` (racine)** — ~300 kB+ locales dans main.js.

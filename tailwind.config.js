@@ -312,8 +312,8 @@ const config = {
         require(path.resolve(__dirname, ('src/@youpez/tailwind/plugins/theming')))({themes}),
 
         // Other third party and/or custom plugins
-        require('@tailwindcss/typography')({modifiers: ['sm', 'lg']}),
-        require('@tailwindcss/line-clamp')
+        require('@tailwindcss/typography')({modifiers: ['sm', 'lg']})
+        // line-clamp retiré : inclus par défaut depuis Tailwind v3.1+ (warning build)
         // require("tw-elements/dist/plugin.cjs")
     ]
 };
