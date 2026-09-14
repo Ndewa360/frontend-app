@@ -8,7 +8,6 @@ import { AgGridModule } from '@ag-grid-community/angular';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ChartsModule } from '../../../@youpez';
 import { LocationPaymentModule } from '../location-payment/location-payment.module';
-import { StatisticsModule } from '../statistics/statistics.module';
 import { AssignLocationModule } from '../assign-location/assign-location.module';
 import { PropertiesRoutingModule } from './properties-routing.module';
 
@@ -26,21 +25,15 @@ import { PropertyUnitsListComponent } from './components/property-units-list/pro
 import { ModernFinancialDashboardComponent } from './components/modern-financial-dashboard/modern-financial-dashboard.component';
 import { TenantDetailsPanelComponent } from './components/tenant-details-panel/tenant-details-panel.component';
 import { FinancialOverviewComponent } from './components/property-finances/components/financial-overview/financial-overview.component';
-import { TenantPaymentAnalysisComponent } from './components/property-finances/components/tenant-payment-analysis/tenant-payment-analysis.component';
 import { DepositsSummaryComponent } from './components/property-finances/components/deposits-summary/deposits-summary.component';
 import { MonthlyRevenueAnalysisComponent } from './components/property-finances/components/monthly-revenue-analysis/monthly-revenue-analysis.component';
 import { TenantPaymentTrackingComponent } from './components/property-finances/components/tenant-payment-tracking/tenant-payment-tracking.component';
-import { ActualRevenueAnalysisComponent } from './components/property-finances/components/actual-revenue-analysis/actual-revenue-analysis.component';
-import { AdvancedFinancialDashboardComponent } from './components/property-finances/components/advanced-financial-dashboard/advanced-financial-dashboard.component';
 import { UnitDetailsPanelComponent } from './components/unit-details-panel/unit-details-panel.component';
-import { ModernUnitDetailsPanelComponent } from './components/modern-unit-details-panel/modern-unit-details-panel.component';
-import { UnitHeaderComponent } from './components/unit-details-panel/components/unit-header/unit-header.component';
 import { UnitPaymentsTabComponent } from './components/unit-details-panel/components/unit-payments-tab/unit-payments-tab.component';
 import { AddPaymentModalComponent } from './components/unit-details-panel/components/add-payment-modal/add-payment-modal.component';
 import { GeneratePaymentLinkModalComponent } from './components/generate-payment-link-modal/generate-payment-link-modal.component';
 import { ContractViewerModalComponent } from './components/contract-viewer-modal/contract-viewer-modal.component';
 import { PropertyGalleryComponent } from './components/property-gallery/property-gallery.component';
-import { TourHelpButtonComponent } from './components/tour-help-button/tour-help-button.component';
 import { AssignManagerModalComponent } from './components/property-managers/assign-manager-modal/assign-manager-modal.component';
 import { ManagersListComponent } from './components/property-managers/managers-list/managers-list.component';
 import { RevokeConfirmModalComponent } from './components/property-managers/revoke-confirm-modal/revoke-confirm-modal.component';
@@ -48,7 +41,6 @@ import { EditPermissionsModalComponent } from './components/property-managers/ed
 import { PropertiesSharedModule } from './properties-shared.module';
 
 import { Error404Component } from '../errors/error404/error404.component';
-import { Error500Component } from '../errors/error500/error500.component';
 
 @NgModule({
   imports: [
@@ -60,7 +52,6 @@ import { Error500Component } from '../errors/error500/error500.component';
     NgxExtendedPdfViewerModule,
     LocationPaymentModule,
     AgGridModule,
-    StatisticsModule,
     AssignLocationModule,
     PropertiesSharedModule,
     TranslateModule,
@@ -78,27 +69,20 @@ import { Error500Component } from '../errors/error500/error500.component';
     ModernFinancialDashboardComponent,
     TenantDetailsPanelComponent,
     FinancialOverviewComponent,
-    TenantPaymentAnalysisComponent,
     DepositsSummaryComponent,
     MonthlyRevenueAnalysisComponent,
     TenantPaymentTrackingComponent,
-    ActualRevenueAnalysisComponent,
-    AdvancedFinancialDashboardComponent,
     UnitDetailsPanelComponent,
-    ModernUnitDetailsPanelComponent,
-    UnitHeaderComponent,
     UnitPaymentsTabComponent,
     AddPaymentModalComponent,
     GeneratePaymentLinkModalComponent,
     ContractViewerModalComponent,
     PropertyGalleryComponent,
-    TourHelpButtonComponent,
     AssignManagerModalComponent,
     ManagersListComponent,
     RevokeConfirmModalComponent,
     EditPermissionsModalComponent,
-    Error404Component,
-    Error500Component
+    Error404Component
   ]
 })
 export class PropertiesPageModule {}

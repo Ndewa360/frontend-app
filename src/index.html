@@ -126,8 +126,8 @@
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
   
-  <!-- Chargement des styles -->
-  <link rel="stylesheet" href="theme-light.css">
+  <!-- Chargement des styles (cf. settingsService qui gère theme-light/dark via #client-theme) -->
+  <link rel="stylesheet" href="theme-light.css" media="print" onload="this.media='all'">
 
   <script type="application/ld+json">
     {

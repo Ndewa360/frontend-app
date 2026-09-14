@@ -8,8 +8,6 @@ import { AgGridModule } from '@ag-grid-community/angular';
 import { ChartsModule } from 'src/@youpez';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { YoupezModule } from 'src/@youpez/youpez.module';
-import { PaymentListTypePropertyComponent } from './components/payment-list-type-property/payment-list-type-property.component';
-import { PaymentListRecapTotalComponent } from './components/payment-list-recap-total/payment-list-recap-total.component';
 
 
 @NgModule({
@@ -20,13 +18,8 @@ import { PaymentListRecapTotalComponent } from './components/payment-list-recap-
     YoupezModule,
     AgGridModule,
     MatDialogModule,
-    LocationPaymentRoutingModule,
-    PaymentListTypePropertyComponent,
-    PaymentListRecapTotalComponent
+    LocationPaymentRoutingModule
   ],
-  exports: [
-    PaymentListTypePropertyComponent,
-    PaymentListRecapTotalComponent
-  ]
+  exports: []
 })
 export class LocationPaymentModule { }
