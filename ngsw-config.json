@@ -38,7 +38,7 @@
   "dataGroups": [
     {
       "name": "api",
-      "urls": ["/api/**"],
+      "urls": ["https://api.ndewa-360.com/**"],
       "cacheConfig": {
         "strategy": "networkFirst",
         "maxSize": 100,

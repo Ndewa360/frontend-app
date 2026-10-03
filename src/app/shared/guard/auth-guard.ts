@@ -1,40 +1,29 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { AuthTokenState } from '../store/auth-token';
 import { map } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { LanguageUrlService } from '../services/language-url.service';
 import { LanguagePreservationService } from '../services/language-preservation.service';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanActivate {
+export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+  const store = inject(Store);
+  const router = inject(Router);
+  const toastr = inject(ToastrService);
+  const languagePreservation = inject(LanguagePreservationService);
 
-  constructor(
-    private _toastrService: ToastrService,
-    private _store: Store,
-    private router: Router,
-    private languageUrlService: LanguageUrlService,
-    private languagePreservation: LanguagePreservationService
-  ) {}
-
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return this._store.select(AuthTokenState.selectStateAuthToken).pipe(
-      map((authToken) => {
-        if (authToken) return true;
-        const currentLang = this.languagePreservation.getCurrentOrPreservedLanguage();
-        if (state.url.includes('/auth/')) {
-          return this.router.parseUrl(`/${currentLang}/auth/signin`);
-        }
-        this._toastrService.warning(
-          this.languagePreservation.getLocalizedMessage('NOTIFICATIONS.AUTH_REQUIRED') || 'Veuillez vous connecter.',
-          'Ndewa360°'
-        );
-        const tree = this.router.createUrlTree([`/${currentLang}/auth/signin`], { queryParams: { returnUrl: state.url } });
-        return tree;
-      })
-    );
-  }
-}
+  return store.select(AuthTokenState.selectStateAuthToken).pipe(
+    map((authToken) => {
+      if (authToken) return true;
+      const currentLang = languagePreservation.getCurrentOrPreservedLanguage();
+      if (state.url.includes('/auth/')) {
+        return router.parseUrl(`/${currentLang}/auth/signin`);
+      }
+      toastr.warning(
+        languagePreservation.getLocalizedMessage('NOTIFICATIONS.AUTH_REQUIRED') || 'Veuillez vous connecter.',
+        'Ndewa360°'
+      );
+      return router.createUrlTree([`/${currentLang}/auth/signin`], { queryParams: { returnUrl: state.url } });
+    })
+  );
+};

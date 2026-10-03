@@ -13,84 +13,60 @@ const routes: Routes = [
     path: '',
     component: AdminLayoutComponent,
     canActivate: [AuthGuard, AdminGuard],
-    children: [      
+    children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('./pages/dashboard/admin-dashboard.module').then(m => m.AdminDashboardModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.DASHBOARD',
-          breadcrumb: 'ADMIN.BREADCRUMBS.DASHBOARD'
-        }
+        loadComponent: () => import('./pages/dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.DASHBOARD', breadcrumb: 'ADMIN.BREADCRUMBS.DASHBOARD' }
       },
       {
         path: 'users',
-        loadChildren: () => import('./pages/users/admin-users.module').then(m => m.AdminUsersModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.USERS',
-          breadcrumb: 'ADMIN.BREADCRUMBS.USERS'
-        }
+        loadComponent: () => import('./pages/users/admin-users.component').then(m => m.AdminUsersComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.USERS', breadcrumb: 'ADMIN.BREADCRUMBS.USERS' }
       },
       {
         path: 'users/:id',
-        loadChildren: () => import('./pages/user-details/admin-user-details.module').then(m => m.AdminUserDetailsModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.USER_DETAILS',
-          breadcrumb: 'ADMIN.BREADCRUMBS.USER_DETAILS'
-        }
+        loadComponent: () => import('./pages/user-details/user-details.component').then(m => m.UserDetailsComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.USER_DETAILS', breadcrumb: 'ADMIN.BREADCRUMBS.USER_DETAILS' }
       },
       {
         path: 'roles',
-        loadChildren: () => import('./pages/roles/admin-roles.module').then(m => m.AdminRolesModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.ROLES',
-          breadcrumb: 'ADMIN.BREADCRUMBS.ROLES'
-        }
+        loadComponent: () => import('./pages/roles/admin-roles.component').then(m => m.AdminRolesComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.ROLES', breadcrumb: 'ADMIN.BREADCRUMBS.ROLES' }
       },
       {
         path: 'geography',
-        loadChildren: () => import('./pages/geography/admin-geography.module').then(m => m.AdminGeographyModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.GEOGRAPHY',
-          breadcrumb: 'ADMIN.BREADCRUMBS.GEOGRAPHY'
-        }
+        loadComponent: () => import('./pages/geography/admin-geography.component').then(m => m.AdminGeographyComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.GEOGRAPHY', breadcrumb: 'ADMIN.BREADCRUMBS.GEOGRAPHY' }
       },
       {
         path: 'payments',
-        loadChildren: () => import('./pages/payments/admin-payments.module').then(m => m.AdminPaymentsModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.PAYMENTS',
-          breadcrumb: 'ADMIN.BREADCRUMBS.PAYMENTS'
-        }
+        loadComponent: () => import('./pages/payments/admin-payments.component').then(m => m.AdminPaymentsComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.PAYMENTS', breadcrumb: 'ADMIN.BREADCRUMBS.PAYMENTS' }
       },
       {
         path: 'settings',
-        loadChildren: () => import('./pages/settings/admin-settings.module').then(m => m.AdminSettingsModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.SETTINGS',
-          breadcrumb: 'ADMIN.BREADCRUMBS.SETTINGS'
-        }
+        loadComponent: () => import('./pages/settings/admin-settings.component').then(m => m.AdminSettingsComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.SETTINGS', breadcrumb: 'ADMIN.BREADCRUMBS.SETTINGS' }
       },
       {
         path: 'agents',
-        loadChildren: () => import('./pages/agent-management/admin-agent-management.module').then(m => m.AdminAgentManagementModule),
-        data: {
-          title: 'ADMIN.PAGE_TITLES.AGENTS',
-          breadcrumb: 'ADMIN.BREADCRUMBS.AGENTS'
-        }
+        loadComponent: () => import('./pages/agent-management/agent-management.component').then(m => m.AgentManagementComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.AGENTS', breadcrumb: 'ADMIN.BREADCRUMBS.AGENTS' }
       },
       {
         path: 'subscriptions',
-        loadChildren: () => import('./pages/subscriptions/admin-subscriptions.module').then(m => m.AdminSubscriptionsModule),
+        loadComponent: () => import('./pages/subscriptions/admin-subscriptions.component').then(m => m.AdminSubscriptionsComponent),
         data: { title: 'ADMIN.PAGE_TITLES.SUBSCRIPTIONS', breadcrumb: 'ADMIN.BREADCRUMBS.SUBSCRIPTIONS' }
       },
       {
         path: 'platform-finance',
-        loadChildren: () => import('./pages/platform-finance/admin-platform-finance.module').then(m => m.AdminPlatformFinanceModule),
+        loadComponent: () => import('./pages/platform-finance/platform-finance.component').then(m => m.PlatformFinanceComponent),
         data: { title: 'Super Wallet Plateforme', breadcrumb: 'Wallet Plateforme' }
       },
       {
         path: 'breach',
-        loadChildren: () => import('./pages/breach/admin-breach.module').then(m => m.AdminBreachModule),
+        loadComponent: () => import('./pages/breach/admin-breach.component').then(m => m.AdminBreachComponent),
         data: { title: 'Violations de données', breadcrumb: 'Violations de données' }
       },
       {

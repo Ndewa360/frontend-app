@@ -4,22 +4,21 @@ import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolve
 import { AuthGuard } from './shared/guard';
 import { SelectivePreloadingStrategy } from './shared/services/preloading/selective-preloading-strategy';
 
-import { LayoutComponent } from './layout/default/layout.component';
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
 import { Error404Component } from './main/errors/error404/error404.component';
 
-/** Détecte la langue du navigateur et retourne 'fr', 'en' ou 'en' par défaut */
+/** Détecte la langue sauvegardée ou du navigateur — SSR-safe */
 function getBrowserLang(): string {
+  // SSR : localStorage et navigator ne sont pas disponibles côté serveur
+  if (typeof window === 'undefined') return 'fr';
   try {
-    if (typeof localStorage !== 'undefined') {
-      const saved = localStorage.getItem('selectedLanguage');
-      if (saved === 'fr' || saved === 'en') return saved;
-    }
+    const saved = localStorage.getItem('selectedLanguage');
+    if (saved === 'fr' || saved === 'en') return saved;
   } catch {}
-  if (typeof navigator !== 'undefined') {
+  try {
     const browser = (navigator.language || '').split('-')[0].toLowerCase();
     return browser === 'fr' ? 'fr' : 'en';
-  }
+  } catch {}
   return 'fr';
 }
 
@@ -72,8 +71,6 @@ const routes: Routes = [
 			},
 			{
 				path: 'admin',
-				canActivate:[AuthGuard],
-				component: LayoutComponent,
 				data:{
 					breadcrumb: 'Acceuil',
 					preload: false

@@ -27,7 +27,6 @@
   },
   "private": true,
   "dependencies": {
-    "@ag-grid-community/all-modules": "^27.3.0",
     "@ag-grid-community/angular": "^32.3.3",
     "@ag-grid-community/client-side-row-model": "^32.1.0",
     "@ag-grid-community/core": "^32.3.3",
@@ -78,7 +77,6 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "libphonenumber-js": "^1.12.9",
-    "lodash": "^4.17.21",
     "lodash-es": "^4.18.1",
     "ngx-extended-pdf-viewer": "^21.4.6",
     "ngx-print": "^1.5.1",
@@ -114,7 +112,7 @@
     "jest-preset-angular": "^13.1.2",
     "sass": "^1.78.0",
     "tailwindcss": "^3.4.11",
-    "ts-node": "~8.4.1",
+    "ts-node": "^10.9.2",
     "typescript": "~5.2.2"
   }
 }

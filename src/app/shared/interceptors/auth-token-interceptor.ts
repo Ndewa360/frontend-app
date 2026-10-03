@@ -1,5 +1,5 @@
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpErrorResponse, HttpEvent } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { AuthTokenAction, AuthTokenState, GlobalAction } from "../store";
 import { Store } from "@ngxs/store";
 import { catchError, filter, switchMap, take, timeout } from "rxjs/operators";
@@ -14,10 +14,9 @@ import { ErrorLogService } from "../services/error-log.service";
 import { LogoutFlagService } from "../services/logout-flag.service";
 
 @Injectable()
-export class AuthTokenInterceptor implements HttpInterceptor {
+export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
-  private refreshTokenTimeout: any;
   private readonly maxRetries = 3;
   private readonly retryDelay = 1000; // 1 seconde
 
@@ -231,31 +230,9 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     }
   }
 
-  // Configurer un timer pour rafraîchir le token avant son expiration
-  private setupRefreshTokenTimer() {
-    // Nettoyer tout timer existant
-    if (this.refreshTokenTimeout) {
-      clearTimeout(this.refreshTokenTimeout);
-    }
-
-    // Rafraîchir le token 1 minute avant son expiration (supposons que le token dure 1 heure)
-    // Vous devriez ajuster cette valeur en fonction de la durée réelle de votre token
-    const tokenDuration = 55 * 60 * 1000; // 55 minutes en millisecondes
-    
-    this.refreshTokenTimeout = setTimeout(() => {
-      if (this._store.selectSnapshot(AuthTokenState.selectStateUserIsLogin)) {
-        this.refreshTokenService.refreshAccessToken().subscribe({
-          next: () => {
-            // Token rafraîchi avec succès
-          },
-          error: () => {
-            // Échec du rafraîchissement, déconnexion
-            this._store.dispatch(new AuthTokenAction.Logout());
-            this.languagePreservation.redirectToLogin();
-          }
-        });
-      }
-    }, tokenDuration);
+  ngOnDestroy(): void {
+    // Nettoyage des ressources à la destruction du service
+    this.refreshTokenSubject.complete();
   }
 
   /**

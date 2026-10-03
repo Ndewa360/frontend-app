@@ -8,7 +8,7 @@ const envVars: Record<string, string | undefined> =
 
 export const environment = {
 	// 🔒 SÉCURITÉ: Utiliser les variables d'environnement pour les URLs sensibles
-  apiUrl: envVars['API_URL'] || 'http://localhost:3001',
+  apiUrl: envVars['API_URL'] || 'https://api.ndewa-360.com',
 	url: envVars['APP_URL'] || 'http://localhost:4200',
 
 	production: false,
@@ -19,7 +19,7 @@ export const environment = {
   googleClientId: envVars['GOOGLE_CLIENT_ID'] || '293692850952-cba58thne3gjki7r4l678p9lcvftvav7.apps.googleusercontent.com',
   version: '2.0.0',
   // KundAi — mode proxy : le frontend pointe vers le backend Ndewa360
-  kundaiTrackingUrl: envVars['API_URL'] ? `${envVars['API_URL']}/tracking` : 'http://localhost:3001/tracking',
+  kundaiTrackingUrl: envVars['API_URL'] ? `${envVars['API_URL']}/tracking` : 'http://localhost:3002/tracking',
   kundaiApiKey: '', // vide en mode proxy — la clé reste côté backend
 }
   
