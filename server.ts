@@ -3,24 +3,47 @@ import 'zone.js/node';
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr';
 import * as express from 'express';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { AppServerModule } from './src/main.server';
 
+/**
+ * Le template HTML du shell Angular.
+ *
+ * Sur Vercel, les fichiers de `dist/app/browser` sont publiés comme assets
+ * statiques (Build Output API v3) et ne sont PAS copiés dans la lambda. La
+ * fonction doit donc recevoir le document en mémoire : `api/index.js` l'injecte
+ * via le module généré `api/_document.js` (voir scripts/prepare-vercel-document.js).
+ * En local (`npm run serve:ssr`) on le lit directement sur le disque.
+ */
+function resolveDocument(injected?: string): string | undefined {
+  if (injected && injected.trim().length > 0) {
+    return injected;
+  }
+  const distFolder = join(process.cwd(), 'dist/app/browser');
+  const candidates = ['index.original.html', 'index.csr.html', 'index.html'];
+  for (const candidate of candidates) {
+    const file = join(distFolder, candidate);
+    if (existsSync(file)) {
+      return readFileSync(file, 'utf-8');
+    }
+  }
+  return undefined;
+}
+
 // The Express app is exported so that it can be used by serverless Functions.
-export function app(): express.Express {
+export function app(injectedDocument?: string): express.Express {
   const server = express();
   // Le builder application esbuild imbrique sa sortie dans {outputPath}/browser
   const distFolder = join(process.cwd(), 'dist/app/browser');
-  const indexHtml = existsSync(join(distFolder, 'index.original.html'))
-    ? join(distFolder, 'index.original.html')
-    : join(distFolder, 'index.html');
+  const document = resolveDocument(injectedDocument);
   const commonEngine = new CommonEngine({ bootstrap: AppServerModule });
 
   server.set('view engine', 'html');
   server.set('views', distFolder);
 
-  // Serve static files from /browser
+  // Sert les fichiers statiques en local. Sur Vercel ils sont servis par le CDN
+  // (phase `filesystem` avant la réécriture vers la lambda), cette branche est donc inerte.
   server.get('*.*', express.static(distFolder, {
     maxAge: '1y'
   }));
@@ -57,6 +80,13 @@ export function app(): express.Express {
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
+    if (!document) {
+      // Ne jamais laisser Express répondre 404 sur un template manquant :
+      // c'est un défaut de build, il doit être visible dans les logs.
+      console.error('[SSR] document Angular introuvable (dist/app/browser/index*.html)');
+      res.status(500).type('text/plain').send('SSR document not found');
+      return;
+    }
     if (isSsrRoute(req.url)) {
       let settled = false;
       // Watchdog SSR : si le rendu ne converge pas (tâches Angular instables,
@@ -65,12 +95,12 @@ export function app(): express.Express {
         if (settled) return;
         settled = true;
         console.error(`[SSR] TIMEOUT ${renderTimeoutMs}ms — fallback SPA`, req.url);
-        res.sendFile(indexHtml);
+        res.send(document);
       }, renderTimeoutMs);
       commonEngine
         .render({
           bootstrap: AppServerModule,
-          documentFilePath: indexHtml,
+          document,
           url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
           publicPath: distFolder,
           providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]
@@ -86,10 +116,10 @@ export function app(): express.Express {
           clearTimeout(watchdog);
           settled = true;
           console.error('[SSR] render error', req.url, (err as Error).message || err);
-          res.sendFile(indexHtml);
+          res.send(document);
         });
     } else {
-      res.sendFile(indexHtml);
+      res.send(document);
     }
   });
 

@@ -1,39 +1,63 @@
 {
-  "version": 2,
-  "buildCommand": "npm run build && npm run build:ssr",
-  "outputDirectory": "dist/app/browser",
-  "installCommand": "npm install",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
+  "installCommand": "npm install",
+  "buildCommand": "npm run build:vercel",
+  "outputDirectory": "dist/app/browser",
   "functions": {
     "api/index.js": {
-      "maxDuration": 30,
-      "includeFiles": "dist/app/server/**"
+      "memory": 1024,
+      "maxDuration": 30
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/webfonts/(.*)",
-      "dest": "/webfonts/$1",
-      "headers": { "cache-control": "public, max-age=31536000, immutable" }
+      "source": "/((?!api(?:/|$)).*)",
+      "destination": "/api/index"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1",
-      "headers": { "cache-control": "public, max-age=31536000, immutable" }
+      "source": "/webfonts/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "/tinymce/(.*)",
-      "dest": "/tinymce/$1",
-      "headers": { "cache-control": "public, max-age=31536000, immutable" }
+      "source": "/tinymce/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "/(.*\\.(?:js|css|ico|png|jpg|jpeg|svg|woff|woff2|ttf|eot|webmanifest|txt|map))",
-      "dest": "/$1",
-      "headers": { "cache-control": "public, max-age=31536000, immutable" }
+      "source": "/:name([A-Za-z0-9_-]+)-:hash([A-Z0-9]{8}).(js|css)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "source": "/ngsw.json",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/ngsw-worker.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
     }
   ]
 }

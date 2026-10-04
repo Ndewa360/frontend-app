@@ -6,6 +6,9 @@
 /android
 /ios
 
+# generated for the Vercel lambda (see scripts/prepare-vercel-document.js)
+/api/_document.js
+
 # dependencies
 /node_modules
 
