@@ -11,15 +11,23 @@
   },
   "routes": [
     {
-      "src": "/webfonts/(.*)",
+      "src": "/webfonts/.+",
       "dest": "/webfonts/$1"
     },
     {
-      "src": "/assets/(.*)",
+      "src": "/assets/.+",
       "dest": "/assets/$1"
     },
     {
-      "src": "/(.*\\.(js|css|ico|png|jpg|jpeg|svg|woff|woff2|ttf|eot|webmanifest|txt|json))",
+      "src": "/.+\\.js",
+      "dest": "/$1"
+    },
+    {
+      "src": "/.+\\.css",
+      "dest": "/$1"
+    },
+    {
+      "src": "/.+\\.(ico|png|jpg|jpeg|svg|woff|woff2|ttf|eot|webmanifest|txt)",
       "dest": "/$1"
     },
     {
@@ -35,7 +43,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css|woff2|woff))",
+      "source": "/webfonts/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
