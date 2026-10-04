@@ -11,7 +11,7 @@ import { AppServerModule } from './src/main.server';
 export function app(): express.Express {
   const server = express();
   // Le builder application esbuild imbrique sa sortie dans {outputPath}/browser
-  const distFolder = join(process.cwd(), 'dist/app/browser/browser');
+  const distFolder = join(process.cwd(), 'dist/app/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html'))
     ? join(distFolder, 'index.original.html')
     : join(distFolder, 'index.html');
