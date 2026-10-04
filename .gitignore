@@ -45,3 +45,6 @@ Thumbs.db
 # Angular cache
 .angular
 
+
+#Android APK
+src/assets/Ndewa360.apk
