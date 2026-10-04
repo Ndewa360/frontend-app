@@ -2018,6 +2018,21 @@
     }
   },
   "LANDING": {
+    "APP": {
+      "BADGE": "Android app",
+      "TITLE": "Your property management, anywhere",
+      "SUBTITLE": "Your properties, rent and alerts — in a single app.",
+      "FEATURES": {
+        "VISIT_360": "Immersive 360° visits",
+        "ALERTS": "Payment alerts",
+        "RECEIPTS": "Automatic receipts"
+      },
+      "BTN": "Download the app",
+      "VERSION": "Version {{version}}",
+      "SIZE": "APK · {{size}}",
+      "SECURE": "Secure download",
+      "PHONE_CTA": "My properties"
+    },
     "TEAM": {
       "TITLE": "Our team",
       "SUBTITLE": "A passionate team dedicated to revolutionizing real estate management in Africa",

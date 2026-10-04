@@ -884,6 +884,70 @@
 </div><!-- /profile-content-wrapper -->
 
 
+<!-- ══════════════════════════════
+     APPLICATION ANDROID — hors profile-content-wrapper : toujours visible
+═══════════════════════════════════════ -->
+<section class="appdl-section deco-bg" id="app-download">
+  <div class="appdl-inner">
+
+    <div class="appdl-copy scroll-animate-left">
+      <span class="appdl-badge">
+        <i class="fas fa-mobile-screen"></i>
+        {{ t('LANDING.APP.BADGE') }}
+      </span>
+
+      <h2 class="appdl-title">{{ t('LANDING.APP.TITLE') }}</h2>
+      <p class="appdl-subtitle">{{ t('LANDING.APP.SUBTITLE') }}</p>
+
+      <div class="appdl-cta">
+        <a class="appdl-btn" [href]="androidApp.url" [attr.download]="androidApp.fileName">
+          <i class="fas fa-download"></i>
+          <span>{{ t('LANDING.APP.BTN') }}</span>
+        </a>
+        <span class="appdl-version">{{ t('LANDING.APP.VERSION', { version: '1.0.0' }) }}</span>
+      </div>
+
+      <ul class="appdl-meta">
+        <li><i class="fas fa-tag"></i>{{ t('LANDING.APP.SIZE', { size: androidApp.sizeLabel }) }}</li>
+        <li><i class="fas fa-shield-halved"></i>{{ t('LANDING.APP.SECURE') }}</li>
+      </ul>
+
+      <ul class="appdl-points mt-2">
+        <li *ngFor="let f of androidFeatures">
+          <span class="appdl-point-icon"><i [class]="f.icon"></i></span>
+          <span class="appdl-point-label">{{ t('LANDING.APP.' + f.key) }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="appdl-visual scroll-animate-right">
+      <div class="appdl-glow" aria-hidden="true"></div>
+
+      <div class="appdl-phone">
+        <div class="appdl-phone__notch" aria-hidden="true"></div>
+        <div class="appdl-phone__screen">
+          <div class="appdl-screen-logo">
+            <img src="assets/img/logo/logo-basic.png" alt="Ndewa360" loading="lazy" width="104" height="34">
+          </div>
+          <div class="appdl-screen-row" *ngFor="let row of [1, 2]">
+            <span class="appdl-screen-thumb" [style.animation-delay.ms]="row * 160"></span>
+            <span class="appdl-screen-lines">
+              <span class="appdl-screen-line"></span>
+              <span class="appdl-screen-line appdl-screen-line--short"></span>
+            </span>
+          </div>
+          <div class="appdl-screen-cta">
+            <i class="fas fa-house"></i>
+            {{ t('LANDING.APP.PHONE_CTA') }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
 <!-- MODALE DÉMO AGENT -->
 <div class="modal-overlay" [class.modal-overlay--open]="isAgentDemoModalOpen" (click)="closeAgentDemoModal()">
   <div class="demo-modal" (click)="$event.stopPropagation()">

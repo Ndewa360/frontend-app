@@ -46,6 +46,20 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   agentDemoForm = { name: '', email: '', phone: '', agency: '', portfolio: '' };
 
+  // ── Application Android (section toujours visible, hors profil) ─────────────
+
+  readonly androidApp = {
+    url: 'assets/Ndewa360.apk',
+    fileName: 'Ndewa360.apk',
+    sizeLabel: '134,5 Mo'
+  };
+
+  readonly androidFeatures = [
+    { icon: 'fas fa-camera',  key: 'FEATURES.VISIT_360'  },
+    { icon: 'fas fa-bell',    key: 'FEATURES.ALERTS'     },
+    { icon: 'fas fa-receipt', key: 'FEATURES.RECEIPTS'   }
+  ];
+
   // ── Données statiques par profil ───────────────────────────────────────────
 
   readonly ownerPains = [

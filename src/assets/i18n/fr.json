@@ -2018,6 +2018,21 @@
     }
   },
   "LANDING": {
+    "APP": {
+      "BADGE": "Application Android",
+      "TITLE": "Votre gestion, partout avec vous",
+      "SUBTITLE": "Vos biens, vos loyers et vos alertes — dans une seule application.",
+      "FEATURES": {
+        "VISIT_360": "Visites 360° immersives",
+        "ALERTS": "Alertes de paiement",
+        "RECEIPTS": "Reçus automatiques"
+      },
+      "BTN": "Télécharger l'application",
+      "VERSION": "Version {{version}}",
+      "SIZE": "APK · {{size}}",
+      "SECURE": "Téléchargement sécurisé",
+      "PHONE_CTA": "Mes biens"
+    },
     "TEAM": {
       "TITLE": "Notre équipe",
       "SUBTITLE": "Une équipe passionnée dédiée à révolutionner la gestion immobilière en Afrique",

@@ -1393,6 +1393,185 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
 }
 
 // ═══════════════════════════════════════════════════════════
+// APPLICATION ANDROID
+// ═══════════════════════════════════════════════════════════
+.appdl-section {
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, #fff 0%, $bg-page 60%, darken($bg-page, 1.5%) 100%);
+  border-top: 1px solid rgba($primary, .08);
+  padding: 8rem 1.25rem 6rem;
+  box-sizing: border-box;
+  @media(min-width: 768px) { padding: 8rem 2rem 6rem; }
+}
+.appdl-section::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 55% 60% at 82% 18%, rgba(204,140,10,.10) 0%, transparent 62%),
+    radial-gradient(ellipse 45% 55% at 6% 88%, rgba(204,140,10,.06) 0%, transparent 66%);
+}
+
+// ── Bloc principal : texte + visuel ─────────────────────────────────────────
+.appdl-inner {
+  position: relative; z-index: 1;
+  max-width: 68rem; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1.1fr .9fr;
+  gap: 5rem; align-items: center;
+}
+.appdl-copy { max-width: 30rem; }
+
+.appdl-badge {
+  display: inline-flex; align-items: center; gap: .625rem;
+  background: rgba($primary, .10); border: 1px solid rgba($primary, .26);
+  color: darken($primary-dark, 6%) !important;
+  border-radius: 9999px; padding: .5rem 1.125rem;
+  font-size: .8125rem !important; font-weight: 700; letter-spacing: .03em;
+  text-transform: uppercase; margin-bottom: 2rem;
+  i { color: $primary !important; font-size: .9375rem; }
+}
+.appdl-title {
+  font-size: 2.875rem !important; font-weight: 900 !important; color: $text-dark !important;
+  margin-bottom: 1.25rem !important; line-height: 1.1 !important; letter-spacing: -.03em;
+}
+.appdl-subtitle {
+  font-size: 1.1875rem !important; color: $text-mid !important;
+  margin-bottom: 2.75rem !important; line-height: 1.65 !important;
+}
+
+.appdl-cta { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.25rem; }
+.appdl-btn {
+  display: inline-flex; align-items: center; gap: .75rem;
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+  color: #fff !important; border-radius: $radius-lg;
+  padding: 1.25rem 2.25rem;
+  font-size: 1.0625rem !important; font-weight: 800; letter-spacing: -.01em;
+  box-shadow: 0 8px 28px rgba(204,140,10,.30), inset 0 1px 0 rgba(255,255,255,.25);
+  transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s, filter .3s;
+  i { color: #fff !important; font-size: 1.0625rem; }
+  &:hover {
+    color: #fff !important; filter: brightness(1.06);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 44px rgba(204,140,10,.40), inset 0 1px 0 rgba(255,255,255,.3);
+  }
+}
+.appdl-version {
+  font-size: .875rem !important; color: $text-soft !important; font-weight: 600;
+  padding: .4375rem .875rem; border-radius: 9999px;
+  background: $bg-gray; border: 1px solid $border;
+}
+
+.appdl-meta {
+  display: flex; flex-wrap: wrap; gap: .625rem 1.75rem; list-style: none; padding: 0;
+  margin-bottom: 2rem !important;
+  li {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .8125rem !important; color: $text-soft !important; font-weight: 500;
+    i { color: $primary !important; font-size: .8125rem; }
+  }
+}
+
+// ── Visuel : maquette téléphone ─────────────────────────────────────────────
+.appdl-visual {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  min-height: 28rem;
+}
+.appdl-glow {
+  position: absolute; width: 26rem; height: 26rem; border-radius: 50%;
+  background: radial-gradient(circle, rgba(204,140,10,.20) 0%, rgba(204,140,10,.05) 45%, transparent 70%);
+  filter: blur(14px); animation: float 7s ease-in-out infinite;
+}
+.appdl-phone {
+  position: relative; width: 16.5rem; height: 32rem;
+  background: linear-gradient(160deg, #2b2b2b 0%, #161616 55%, #000 100%);
+  border-radius: 2.5rem; padding: .625rem;
+  box-shadow: 0 40px 90px rgba(0,0,0,.26), 0 12px 28px rgba(0,0,0,.18),
+              inset 0 0 0 1px rgba(255,255,255,.14);
+  animation: float 6s ease-in-out infinite;
+}
+.appdl-phone__notch {
+  position: absolute; top: .875rem; left: 50%; transform: translateX(-50%);
+  width: 6.5rem; height: 1.375rem; border-radius: 9999px; background: #000; z-index: 3;
+}
+.appdl-phone__screen {
+  width: 100%; height: 100%; border-radius: 2rem; overflow: hidden;
+  background: linear-gradient(180deg, #fafafa 0%, #f4f4f4 100%);
+  padding: 3.5rem 1.125rem 1.125rem;
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.appdl-screen-logo { display: flex; justify-content: center; margin-bottom: .5rem; }
+.appdl-screen-row {
+  display: flex; align-items: center; gap: .75rem;
+  background: #fff; border: 1px solid $gray-20; border-radius: 1rem; padding: .75rem;
+}
+.appdl-screen-thumb {
+  flex-shrink: 0; width: 3rem; height: 3rem; border-radius: .75rem;
+  background: linear-gradient(135deg, rgba(204,140,10,.22), rgba(204,140,10,.08));
+  border: 1px solid rgba(204,140,10,.22);
+  animation: pulse 2.6s ease-in-out infinite;
+}
+.appdl-screen-lines { flex: 1; display: flex; flex-direction: column; gap: .4375rem; }
+.appdl-screen-line {
+  height: .5rem; border-radius: 9999px; background: $gray-20;
+  &--short { width: 60%; background: $gray-10; }
+}
+.appdl-screen-cta {
+  margin-top: auto;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+  color: #fff !important; border-radius: 1rem; padding: .875rem;
+  font-size: .75rem !important; font-weight: 800;
+  box-shadow: 0 6px 18px rgba(204,140,10,.28);
+  i { color: #fff !important; font-size: .75rem; }
+}
+
+// ── Points forts : dans la colonne gauche (appdl-copy) ──────────────────────
+
+.home-content ul.appdl-points {
+  list-style: none;
+  display: flex; flex-direction: column; gap: .75rem;
+  margin-top: 2rem !important; 
+  padding-top: 2rem !important; 
+  border-top: 1px solid $border;
+  width: 100%;
+  li {
+    display: flex; align-items: center; gap: 1rem;
+    min-width: 0;
+  }
+}
+.appdl-point-icon {
+  width: 2.75rem; height: 2.75rem; border-radius: .875rem; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba($primary, .10); border: 1px solid rgba($primary, .20);
+  i { color: $primary !important; font-size: 1.125rem; }
+}
+.appdl-point-label {
+  font-size: .9375rem !important; color: $text-dark !important;
+  font-weight: 700; line-height: 1.4;
+}
+
+@media (max-width: 1023px) {
+  .appdl-section { padding: 6rem 1.5rem 5rem; }
+  .appdl-inner { grid-template-columns: 1fr; gap: 4rem; }
+  .appdl-copy { max-width: 100%; margin: 0 auto; text-align: center; }
+  .appdl-cta { justify-content: center; }
+  .appdl-meta { justify-content: center; }
+  .appdl-visual { order: -1; min-height: 24rem; }
+  .appdl-points {  }
+  .appdl-points li { justify-content: center; }
+}
+@media (max-width: 640px) {
+  .appdl-section { padding: 4.5rem 1.25rem 4rem; }
+  .appdl-title { font-size: 2.125rem !important; }
+  .appdl-subtitle { font-size: 1.0625rem !important; margin-bottom: 2.25rem !important; }
+  .appdl-cta { flex-direction: column; align-items: stretch; gap: 1.25rem; }
+  .appdl-btn { justify-content: center; padding: 1.25rem 1.5rem !important; }
+  .appdl-version { align-self: center; }
+  .appdl-visual { min-height: 20rem; }
+  .appdl-phone { width: 13.5rem; height: 26.5rem; border-radius: 2.125rem; }
+  .appdl-phone__screen { border-radius: 1.75rem; padding: 3rem 1rem 1rem; }
+  .appdl-points li { justify-content: flex-start; }
+}
+
+// ═══════════════════════════════════════════════════════════
 // MODALES
 // ═══════════════════════════════════════════════════════════
 .modal-overlay {
