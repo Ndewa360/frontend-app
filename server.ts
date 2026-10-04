@@ -50,7 +50,9 @@ export function app(): express.Express {
 
   // SSR uniquement sur les pages publiques critiques (SEO) : landing et recherche.
   // Les pages privées restent servies en SPA (201 index.html), ce qui réduit les risques runtime serveur.
-  const isSsrRoute = (url: string) => /^\/[a-z]{2}\/(home|search)(\/.*)?(\?.*)?$/.test(url) || url === '/';
+  const isSsrRoute = (url: string) =>
+    /^\/[a-z]{2}\/(home|search)(\/.*)?(\?.*)?$/.test(url) ||
+    url === '/';
   const renderTimeoutMs = 15000;
 
   // All regular routes use the Universal engine

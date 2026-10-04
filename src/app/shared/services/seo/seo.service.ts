@@ -22,7 +22,7 @@ interface RoomWithProperty {
   property: PropertyModel;
 }
 
-const BASE_URL = 'https://ndewa360.com';
+const BASE_URL = 'https://ndewa-360.com';
 const DEFAULT_IMAGE = `${BASE_URL}/assets/img/logo/logo-basic.png`;
 
 @Injectable({ providedIn: 'root' })
@@ -47,37 +47,55 @@ export class SeoService {
   // ── Méthode principale appelée par AppComponent sur chaque navigation ──────
 
   needsMetaTags(url: string): boolean {
+    // Supprimer le préfixe de langue (/fr/ ou /en/) avant de comparer
+    const stripped = url.replace(/^\/[a-z]{2}(\/|$)/, '/');
     return this.publicRoutes.some(route =>
-      url === route ||
-      url.startsWith(route + '/') ||
-      url.startsWith(route + '?')
-    );
+      stripped === route ||
+      stripped.startsWith(route + '/') ||
+      stripped.startsWith(route + '?')
+    ) || url === '/';
   }
 
   updateMetaTagsForRoute(url: string): void {
     this.clearMetaTags();
-    if (!this.needsMetaTags(url)) return;
+
+    // Séparer path et query string
+    const [path, queryString] = url.split('?');
+    const params = new URLSearchParams(queryString || '');
+    const unitId = params.get('unit');
 
     // Détecter la langue depuis l'URL (/fr/... ou /en/...)
     const langMatch = url.match(/^\/(fr|en)\//);
     const lang = (langMatch ? langMatch[1] : 'fr') as 'fr' | 'en';
 
-    if (url.includes('/home') && !url.includes('/home/')) {
+    if (path.includes('/home')) {
       this.setLandingPageSeo(lang);
-    } else if (url.includes('/search/index') || url === '/') {
-      this.setSearchPageSeo(lang);
-    } else if (url.includes('/search/room/')) {
-      const roomId = url.split('/search/room/')[1]?.split('?')[0];
-      if (roomId) this.setupRoomPageMetaTags(roomId);
+    } else if (path.includes('/search/room/')) {
+      const roomId = path.split('/search/room/')[1];
+      if (roomId) this.setupRoomPageMetaTags(roomId, lang);
       else this.setSearchPageSeo(lang);
-    } else if (url.includes('/search/property/')) {
-      const propertyId = url.split('/search/property/')[1]?.split('?')[0];
+    } else if (path.includes('/search/property/')) {
+      const propertyId = path.split('/search/property/')[1];
       if (propertyId) this.setupPropertyDetailPageMetaTags(propertyId);
       else this.setupPropertyPageMetaTags();
-    } else if (url.includes('/search/property')) {
+    } else if (path.includes('/search/property')) {
       this.setupPropertyPageMetaTags();
-    } else if (url.includes('/support')) {
+    } else if (path.includes('/search')) {
+      // ?unit=<id> → meta tags de l'unité spécifique
+      if (unitId) this.setupRoomPageMetaTags(unitId, lang);
+      else this.setSearchPageSeo(lang);
+    } else if (path.includes('/support')) {
       this.setupSupportPageMetaTags();
+    } else if (path.includes('/about')) {
+      this.setupAboutPageMetaTags(lang);
+    } else if (path.includes('/contact')) {
+      this.setupContactPageMetaTags(lang);
+    } else if (path.includes('/privacy-policy')) {
+      this.setupPrivacyPageMetaTags(lang);
+    } else if (path.includes('/terms')) {
+      this.setupTermsPageMetaTags(lang);
+    } else if (url === '/') {
+      this.setLandingPageSeo(lang);
     }
   }
 
@@ -147,23 +165,34 @@ export class SeoService {
     this.setSearchPageSeo('fr');
   }
 
-  setupRoomPageMetaTags(roomId: string): void {
+  setupRoomPageMetaTags(roomId: string, lang: 'fr' | 'en' = 'fr'): void {
     this.getRoomWithPropertyDetails(roomId).subscribe(data => {
-      if (!data?.room) { this.setSearchPageSeo('fr'); return; }
+      if (!data?.room) { this.setSearchPageSeo(lang); return; }
       const { room, property } = data;
-      const roomUrl = `${BASE_URL}/search/room/${roomId}`;
+      // URL canonique : pointe vers la page search avec le paramètre unit
+      const roomUrl = `${BASE_URL}/${lang}/search/index?unit=${roomId}`;
       const mainImage = room.image || (room.medias?.length > 0 ? room.medias[0] : DEFAULT_IMAGE);
       const roomTypeText = this.getRoomTypeText(room.type);
-      let title = `${roomTypeText} ${room.code} - ${room.price} FCFA`;
+      const isFr = lang === 'fr';
+      let title = `${roomTypeText} ${room.code} — ${room.price} FCFA`;
       if (property?.location) title += ` à ${property.location}`;
       title += ` | Ndewa360`;
-      const description = this.generateRoomDescription(room, property);
+      const description = this.generateRoomDescription(room, property, isFr);
       let keywords = `location, ${roomTypeText}, ${room.code}, ${room.price} FCFA, logement, immobilier, Ndewa360`;
       if (property) {
         keywords += `, ${property.location}`;
         if (property.geolocationCity?.fullName) keywords += `, ${property.geolocationCity.fullName}`;
       }
-      this.apply({ title, description, keywords, ogImage: mainImage, ogUrl: roomUrl }, roomUrl);
+      this.apply({
+        title,
+        description,
+        keywords,
+        ogTitle: title,
+        ogDescription: description,
+        ogImage: mainImage,
+        ogUrl: roomUrl,
+        lang
+      }, roomUrl);
       this.addStructuredData({
         '@context': 'https://schema.org',
         '@type': 'Apartment',
@@ -233,6 +262,58 @@ export class SeoService {
     }, `${BASE_URL}/support`);
   }
 
+  setupAboutPageMetaTags(lang: 'fr' | 'en'): void {
+    const isFr = lang === 'fr';
+    const canonicalUrl = `${BASE_URL}/${lang}/home/about`;
+    this.apply({
+      title: isFr ? 'À propos de Ndewa360 — Gestion immobilière en Afrique' : 'About Ndewa360 — Property Management in Africa',
+      description: isFr
+        ? 'Découvrez l\'histoire et la mission de Ndewa360, la plateforme de gestion immobilière locative en Afrique francophone.'
+        : 'Discover the story and mission of Ndewa360, the rental property management platform in francophone Africa.',
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl);
+  }
+
+  setupContactPageMetaTags(lang: 'fr' | 'en'): void {
+    const isFr = lang === 'fr';
+    const canonicalUrl = `${BASE_URL}/${lang}/home/contact`;
+    this.apply({
+      title: isFr ? 'Contactez Ndewa360 — Support & Assistance' : 'Contact Ndewa360 — Support & Assistance',
+      description: isFr
+        ? 'Contactez l\'équipe Ndewa360 pour toute question sur la gestion immobilière, les abonnements ou le support technique.'
+        : 'Contact the Ndewa360 team for any question about property management, subscriptions or technical support.',
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl);
+  }
+
+  setupPrivacyPageMetaTags(lang: 'fr' | 'en'): void {
+    const isFr = lang === 'fr';
+    const canonicalUrl = `${BASE_URL}/${lang}/home/privacy-policy`;
+    this.apply({
+      title: isFr ? 'Politique de confidentialité | Ndewa360' : 'Privacy Policy | Ndewa360',
+      description: isFr
+        ? 'Consultez la politique de confidentialité de Ndewa360 : collecte, utilisation et protection de vos données personnelles.'
+        : 'Read Ndewa360\'s privacy policy: collection, use and protection of your personal data.',
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl);
+  }
+
+  setupTermsPageMetaTags(lang: 'fr' | 'en'): void {
+    const isFr = lang === 'fr';
+    const canonicalUrl = `${BASE_URL}/${lang}/home/terms`;
+    this.apply({
+      title: isFr ? 'Conditions d\'utilisation | Ndewa360' : 'Terms of Service | Ndewa360',
+      description: isFr
+        ? 'Lisez les conditions générales d\'utilisation de la plateforme Ndewa360 avant d\'utiliser nos services.'
+        : 'Read the terms of service of the Ndewa360 platform before using our services.',
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl);
+  }
+
   // ── Méthodes utilitaires ───────────────────────────────────────────────────
 
   clearMetaTags(): void {
@@ -257,13 +338,18 @@ export class SeoService {
   }
 
   addStructuredData(data: any): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    document.getElementById('structured-data')?.remove();
-    const script = document.createElement('script');
-    script.id = 'structured-data';
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(data);
-    document.head.appendChild(script);
+    if (isPlatformBrowser(this.platformId)) {
+      document.getElementById('structured-data')?.remove();
+      const script = document.createElement('script');
+      script.id = 'structured-data';
+      script.type = 'application/ld+json';
+      script.text = JSON.stringify(data);
+      document.head.appendChild(script);
+    }
+    // SSR : injecter via Meta service (Angular Universal sérialise le head)
+    else {
+      this.meta.updateTag({ id: 'structured-data-ld', name: 'ld+json', content: JSON.stringify(data) });
+    }
   }
 
   getPropertyDetails(propertyId: string): Observable<PropertyModel> {
@@ -313,10 +399,12 @@ export class SeoService {
     this.meta.updateTag({ name: 'twitter:description', content: config.ogDescription || config.description });
     this.meta.updateTag({ name: 'twitter:image',       content: config.ogImage || DEFAULT_IMAGE });
 
+    // Canonical : fonctionne en SSR et browser
+    this.meta.updateTag({ name: 'canonical-url', content: canonicalUrl });
     if (isPlatformBrowser(this.platformId)) {
       this.setCanonical(canonicalUrl);
-      if (structuredData) this.addStructuredData(structuredData);
     }
+    if (structuredData) this.addStructuredData(structuredData);
   }
 
   private setCanonical(url: string): void {
@@ -378,14 +466,16 @@ export class SeoService {
     }
   }
 
-  private generateRoomDescription(room: RoomModel, property?: PropertyModel): string {
+  private generateRoomDescription(room: RoomModel, property?: PropertyModel, isFr = true): string {
     const roomType = this.getRoomTypeText(room.type);
-    let desc = `${roomType} ${room.code} à louer`;
+    let desc = isFr
+      ? `${roomType} ${room.code} à louer`
+      : `${roomType} ${room.code} for rent`;
     if (property) {
-      desc += ` à ${property.location}`;
+      desc += isFr ? ` à ${property.location}` : ` in ${property.location}`;
       if (property.geolocationCity?.fullName) desc += `, ${property.geolocationCity.fullName}`;
     }
-    desc += `. Prix: ${room.price} FCFA/mois`;
+    desc += isFr ? `. Prix : ${room.price} FCFA/mois` : `. Price: ${room.price} FCFA/month`;
     if (room.description) desc += `. ${room.description.substring(0, 100)}`;
     if (room.specifity) {
       const specs = [];
