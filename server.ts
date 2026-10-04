@@ -31,8 +31,32 @@ function resolveDocument(injected?: string): string | undefined {
   return undefined;
 }
 
+/**
+ * Neutralise les timers périodiques côté serveur.
+ *
+ * `zone.js` (patchée par `zone.js/node`) comptait une tâche `setInterval` comme
+ * "pending" jusqu'à son annulation. Or un intervalle serveur n'est jamais
+ * annulé : l'application ne devient donc jamais stable et `CommonEngine.render`
+ * ne résout jamais. Le watchdog retournait alors le shell CSR au lieu du HTML
+ * rendu, sur chaque requête SSR.
+ *
+ * Côté serveur, aucun re-rendu n'a lieu après le rendu initial : ces intervales
+ * n'ont donc aucune utilité. On les neutralise au niveau global, après le patch
+ * zone.js, pour que zone.js n'enregistre aucune tâche périodique.
+ * Poser SSR_ALLOW_PERIODIC_TIMERS=1 pour désactiver ce garde-fou.
+ */
+function disableServerPeriodicTimers(): void {
+  if (process.env['SSR_ALLOW_PERIODIC_TIMERS'] === '1') {
+    return;
+  }
+  const globals = globalThis as Record<string, any>;
+  globals['setInterval'] = (_handler: unknown, _timeout?: number, ..._args: unknown[]) => ({ unref: () => {} });
+  globals['clearInterval'] = (_handle: unknown) => {};
+}
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(injectedDocument?: string): express.Express {
+  disableServerPeriodicTimers();
   const server = express();
   // Le builder application esbuild imbrique sa sortie dans {outputPath}/browser
   const distFolder = join(process.cwd(), 'dist/app/browser');

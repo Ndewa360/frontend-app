@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { CorrelationIdInterceptor } from '../interceptors/correlation-id-interceptor';
 import { environment } from 'src/environments/environment';
 
@@ -25,7 +26,11 @@ export class ErrorLogService {
   private flushTimer: any;
   private isFlushing = false;
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {
+    if (!isPlatformBrowser(this.platformId)) return;
     this.restoreBuffer();
     this.startFlushTimer();
     this.registerLifecycleHooks();

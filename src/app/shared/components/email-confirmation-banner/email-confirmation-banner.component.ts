@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { environment } from 'src/environments/environment';
 import { UserProfileState } from '../../store/user-profile/user-profile.state';
-import { NgIf } from '@angular/common';
+import { NgIf, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-email-confirmation-banner',
@@ -33,7 +33,8 @@ export class EmailConfirmationBannerComponent implements OnInit, OnDestroy {
     private store: Store,
     private http: HttpClient,
     private toastr: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +79,7 @@ export class EmailConfirmationBannerComponent implements OnInit, OnDestroy {
     };
 
     update();
+    if (!isPlatformBrowser(this.platformId)) return;
     this.timerInterval = setInterval(update, 60000);
   }
 
