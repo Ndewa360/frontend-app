@@ -98,7 +98,10 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
   background-color: $bg-page;
   color: $text-dark;
   overflow-x: hidden; // Empêche tout débordement horizontal
-  * { font-family: 'Inter', sans-serif !important; box-sizing: border-box; }
+  * { box-sizing: border-box; }
+  // Exclusion des icônes : les polices d'icônes (FontAwesome) utilisent des
+  // codes points Private Use Area qu'Inter ne possède pas -> glyphes invisibles.
+  *:not([class*="fa-"]) { font-family: 'Inter', sans-serif !important; }
   h1,h2,h3,h4,h5,h6 { margin: 0 !important; padding: 0 !important; }
   ul,ol { list-style: none !important; margin: 0 !important; padding: 0 !important; }
   a  { text-decoration: none !important; }

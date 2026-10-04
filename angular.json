@@ -91,6 +91,7 @@
               }
             ],
             "styles": [
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/@youpez/styles/scss/theme/app-custom-theme.scss",
               "driver.js/dist/driver.css",
               "src/styles.scss",
@@ -104,8 +105,8 @@
                 "bundleName": "theme-dark",
                 "inject": false
               },
-              "node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
-              "node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+              "node_modules/@ag-grid-community/styles/ag-grid.css",
+              "node_modules/@ag-grid-community/styles/ag-theme-balham.css",
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/@youpez/styles/scss/theme/app.scss",
               "node_modules/ngx-toastr/toastr.css",

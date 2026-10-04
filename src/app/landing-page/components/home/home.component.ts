@@ -50,21 +50,21 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   readonly ownerPains = [
     { key: 'WHO_PAID',          icon: 'fas fa-question-circle', bg: 'bg-red-100',    color: 'text-red-600'    },
-    { key: 'UNTIL_WHEN',        icon: 'fas fa-calendar-times',  bg: 'bg-orange-100', color: 'text-orange-600' },
-    { key: 'NO_PROOF',          icon: 'fas fa-file-alt',         bg: 'bg-red-100',    color: 'text-red-600'    },
+    { key: 'UNTIL_WHEN',        icon: 'fas fa-calendar-xmark',  bg: 'bg-orange-100', color: 'text-orange-600' },
+    { key: 'NO_PROOF',          icon: 'fas fa-file-lines',       bg: 'bg-red-100',    color: 'text-red-600'    },
     { key: 'MENTAL_MANAGEMENT', icon: 'fas fa-brain',            bg: 'bg-gray-100',   color: 'text-gray-600'   }
   ];
 
   readonly ownerFaqs = [
-    { key: 'ACCESS',    icon: 'fas fa-mobile-alt'  },
+    { key: 'ACCESS',    icon: 'fas fa-mobile-screen'  },
     { key: 'PAYMENT',   icon: 'fas fa-credit-card' },
     { key: 'SECURITY',  icon: 'fas fa-lock'        },
     { key: 'IMPORT',    icon: 'fas fa-download'    }
   ];
 
   readonly agentPains = [
-    { key: 'NO_TOOLS',    icon: 'fas fa-tools'       },
-    { key: 'NO_PROFILE',  icon: 'fas fa-id-card-alt' },
+    { key: 'NO_TOOLS',    icon: 'fas fa-screwdriver-wrench' },
+    { key: 'NO_PROFILE',  icon: 'fas fa-id-card'            },
     { key: 'NO_TRACKING', icon: 'fas fa-chart-line'  },
     { key: 'NO_TRUST',    icon: 'fas fa-handshake'   }
   ];
@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     { titleKey: 'FEAT_1_TITLE', descKey: 'FEAT_1_DESC', icon: 'fas fa-search',       premium: false },
     { titleKey: 'FEAT_2_TITLE', descKey: 'FEAT_2_DESC', icon: 'fas fa-street-view',  premium: false },
     { titleKey: 'FEAT_3_TITLE', descKey: 'FEAT_3_DESC', icon: 'fas fa-filter',       premium: false },
-    { titleKey: 'FEAT_4_TITLE', descKey: 'FEAT_4_DESC', icon: 'fas fa-phone-alt',    premium: true  }
+    { titleKey: 'FEAT_4_TITLE', descKey: 'FEAT_4_DESC', icon: 'fas fa-phone',        premium: true  }
   ];
 
   readonly seekerPricingFeatures = ['FREE_SEARCH', 'TOURS_360', 'VERIFIED_LISTINGS', 'PREMIUM_ACCESS'];

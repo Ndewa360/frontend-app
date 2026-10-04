@@ -48,8 +48,6 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
 
   <!-- Configuration TinyMCE pour désactiver la télémétrie -->
   <script>
@@ -126,8 +124,10 @@
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
   
-  <!-- Chargement des styles (cf. settingsService qui gère theme-light/dark via #client-theme) -->
-  <link rel="stylesheet" href="theme-light.css" media="print" onload="this.media='all'">
+  <!-- theme-light.css / theme-dark.css : NE PAS déclarer de <link> ici.
+       Angular les émet en bundle autonome (inject:false dans angular.json) et
+       settingsService.loadStyle() injecte <link id="client-theme"> à l'exécution.
+       Un lien statique en media="print" est téléchargé (556 Ko) sans jamais s'appliquer. -->
 
   <script type="application/ld+json">
     {

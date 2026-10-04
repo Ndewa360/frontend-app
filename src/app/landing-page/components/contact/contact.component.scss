@@ -446,11 +446,10 @@ $primary-light: #D4A00D;
     }
   }
 
-  // Force les icônes FontAwesome
-  .fas {
-    font-family: 'Font Awesome 5 Free' !important;
-    font-weight: 900 !important;
-  }
+  // Les icônes FontAwesome héritent de la police via la variable --_fa-family
+  // définie par @fortawesome/fontawesome-free/css/all.min.css.
+  // Ne pas forcer un nom de police ici : le nom change entre les versions
+  // (v5 "Font Awesome 5 Free" -> v7 "Font Awesome 7 Free").
 }
 
 /* Responsive */

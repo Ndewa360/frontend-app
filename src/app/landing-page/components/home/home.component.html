@@ -96,7 +96,7 @@
         <span>{{ t('LANDING.HERO.ILLUS.CONTRACT_BADGE') }}</span>
       </div>
       <div class="hero-float-badge hero-float-badge--mobile">
-        <i class="fas fa-mobile-alt"></i>
+        <i class="fas fa-mobile-screen"></i>
         <span>{{ t('LANDING.HERO.ILLUS.MOBILE_BADGE') }}</span>
       </div>
     </div>
@@ -168,7 +168,7 @@
            [class.profile-card--active]="activeProfile === 'seeker'"
            (click)="selectProfile('seeker')">
         <div class="profile-card__header pcard-seeker">
-          <div class="profile-card__icon"><i class="fas fa-search-location"></i></div>
+          <div class="profile-card__icon"><i class="fas fa-location-dot"></i></div>
           <span class="profile-card__badge">{{ t('LANDING.PROFILES.SEEKER.BADGE') }}</span>
         </div>
         <div class="profile-card__body">
@@ -248,7 +248,7 @@
       <div class="section-inner">
         <div class="section-header scroll-animate">
           <div class="profile-section-badge badge-owner">
-            <i class="fas fa-magic"></i> {{ t('LANDING.OWNER_SECTION.BADGE') }}
+            <i class="fas fa-wand-magic-sparkles"></i> {{ t('LANDING.OWNER_SECTION.BADGE') }}
           </div>
           <h2 class="section-title">{{ t('LANDING.OWNER_SECTION.TITLE') }}</h2>
           <p class="section-subtitle">{{ t('LANDING.OWNER_SECTION.SUBTITLE') }}</p>
@@ -319,7 +319,7 @@
             <div class="platforms-grid">
               <div class="platform-card" *ngFor="let p of ['MOBILE','WEB','CLOUD','SECURE']">
                 <div class="platform-icon">
-                  <i class="fas fa-mobile-alt" *ngIf="p==='MOBILE'"></i>
+                  <i class="fas fa-mobile-screen" *ngIf="p==='MOBILE'"></i>
                   <i class="fas fa-laptop"     *ngIf="p==='WEB'"></i>
                   <i class="fas fa-cloud"       *ngIf="p==='CLOUD'"></i>
                   <i class="fas fa-shield-alt"  *ngIf="p==='SECURE'"></i>
@@ -545,7 +545,7 @@
     <section class="features-section bg-white deco-bg deco-bg--agent">
       <div class="section-inner">
         <div class="section-header scroll-animate">
-          <div class="profile-section-badge badge-agent"><i class="fas fa-magic"></i> {{ t('LANDING.AGENT_SECTION.BADGE') }}</div>
+          <div class="profile-section-badge badge-agent"><i class="fas fa-wand-magic-sparkles"></i> {{ t('LANDING.AGENT_SECTION.BADGE') }}</div>
           <h2 class="section-title">{{ t('LANDING.AGENT_SECTION.TITLE') }}</h2>
           <p class="section-subtitle">{{ t('LANDING.AGENT_SECTION.SUBTITLE') }}</p>
         </div>
@@ -772,7 +772,7 @@
     <section class="features-section bg-white deco-bg deco-bg--seeker">
       <div class="section-inner">
         <div class="section-header scroll-animate">
-          <div class="profile-section-badge badge-seeker"><i class="fas fa-magic"></i> {{ t('LANDING.SEEKER_SECTION.BADGE') }}</div>
+          <div class="profile-section-badge badge-seeker"><i class="fas fa-wand-magic-sparkles"></i> {{ t('LANDING.SEEKER_SECTION.BADGE') }}</div>
           <h2 class="section-title">{{ t('LANDING.SEEKER_SECTION.TITLE') }}</h2>
           <p class="section-subtitle">{{ t('LANDING.SEEKER_SECTION.SUBTITLE') }}</p>
         </div>
@@ -818,7 +818,7 @@
                 <span class="mockup-price">{{ t('LANDING.DISCOVERY.TOUR_360.PREVIEW.PRICE') }}</span>
               </div>
               <div class="mockup-verified-badge">
-                <i class="fas fa-shield-check"></i>
+                <i class="fas fa-shield-halved"></i>
                 {{ t('LANDING.DISCOVERY.TOUR_360.MOCKUP.BADGE_VERIFIED.TITLE') }}
               </div>
             </div>
@@ -869,7 +869,7 @@
     <!-- CTA CHERCHEUR -->
     <section class="cta-section cta-section--seeker">
       <div class="cta-inner text-center">
-        <div class="cta-icon-wrap cta-icon--seeker"><i class="fas fa-search-location"></i></div>
+        <div class="cta-icon-wrap cta-icon--seeker"><i class="fas fa-location-dot"></i></div>
         <h2 class="cta-title">{{ t('LANDING.CTA.SEEKER.TITLE') }}</h2>
         <p class="cta-subtitle">{{ t('LANDING.CTA.SEEKER.SUBTITLE') }}</p>
         <a [routerLink]="['/' + getCurrentLanguage() + '/search']" class="cta-btn-main cta-btn--seeker">
