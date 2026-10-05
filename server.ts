@@ -54,6 +54,60 @@ function disableServerPeriodicTimers(): void {
   globals['clearInterval'] = (_handle: unknown) => {};
 }
 
+/**
+ * Les scripts d'analytics Vercel (`@vercel/analytics`, `@vercel/speed-insights`).
+ *
+ * Ces paquets injectent à l'exécution des balises pointant sur des chemins de
+ * même origine : `/_vercel/insights/script.js` et `/_vercel/speed-insights/script.js`.
+ * Ces endpoints sont normalement servis par le edge Vercel. S'ils ne le sont pas
+ * (projet sans Analytics activé, build qui ne les a pas ajoutés à la sortie), la
+ * requête tombe dans la réécriture catch-all et la lambda répondait du HTML —
+ * ce qui produit une erreur de type MIME dans le navigateur.
+ *
+ * Les fichiers servis par Vercel sont strictement identiques à ceux du CDN public
+ * (vérifié par MD5), donc on peut les servir nous-mêmes sans divergence.
+ */
+const VERCEL_SCRIPT_SOURCES: Record<string, string> = {
+  '/_vercel/insights/script.js': 'https://va.vercel-scripts.com/v1/script.js',
+  '/_vercel/speed-insights/script.js': 'https://va.vercel-scripts.com/v1/speed-insights/script.js',
+};
+
+const vercelScriptCache = new Map<string, string>();
+
+async function serveVercelScripts(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+  const source = VERCEL_SCRIPT_SOURCES[req.path];
+  if (!source || req.method !== 'GET') {
+    next();
+    return;
+  }
+
+  const cached = vercelScriptCache.get(source);
+  if (cached) {
+    sendVercelScript(res, cached);
+    return;
+  }
+
+  try {
+    const response = await fetch(source, { signal: AbortSignal.timeout(5000) });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const body = await response.text();
+    vercelScriptCache.set(source, body);
+    sendVercelScript(res, body);
+  } catch (err) {
+    console.error('[vercel-script] fallback indisponible', source, (err as Error).message);
+    res.status(502).type('text/plain').send('Analytics script unavailable');
+  }
+}
+
+function sendVercelScript(res: express.Response, body: string): void {
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+  res.send(body);
+}
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(injectedDocument?: string): express.Express {
   disableServerPeriodicTimers();
@@ -68,9 +122,21 @@ export function app(injectedDocument?: string): express.Express {
 
   // Sert les fichiers statiques en local. Sur Vercel ils sont servis par le CDN
   // (phase `filesystem` avant la réécriture vers la lambda), cette branche est donc inerte.
+  server.use(serveVercelScripts);
   server.get('*.*', express.static(distFolder, {
     maxAge: '1y'
   }));
+
+  // Un fichier absent doit répondre 404, jamais le shell Angular : renvoyer du HTML
+  // pour un `*.js` provoque une erreur MIME côté navigateur qui masque la vraie cause.
+  const ASSET_EXTENSIONS = /\.(?:js|mjs|css|map|json|webmanifest|ico|png|jpe?g|gif|svg|webp|avif|woff2?|ttf|eot|mp4|webm|txt|xml|pdf)$/i;
+  server.get('*', (req, res, next) => {
+    if (ASSET_EXTENSIONS.test(req.path)) {
+      res.status(404).type('text/plain').send('Not found');
+      return;
+    }
+    next();
+  });
 
   // Headers SEO et cache pour la landing page
   server.use((req, res, next) => {
