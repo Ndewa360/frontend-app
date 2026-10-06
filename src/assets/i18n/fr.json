@@ -5450,5 +5450,13 @@
       "CARD": "Carte bancaire",
       "EASY_TRANSACT": "Easy Transact"
     }
+  },
+  "LOADER": {
+    "LOAD_ERROR": "Impossible de charger les données. Vérifiez votre connexion.",
+    "RETRY": "Réessayer",
+    "TIMEOUT_WARNING": "Le chargement prend plus de temps que prévu.",
+    "OFFLINE_ERROR": "Connexion internet perdue pendant le chargement.",
+    "OFFLINE_WARNING": "Vous êtes hors ligne.",
+    "ONLINE_SUCCESS": "Connexion rétablie."
   }
 }

@@ -29,13 +29,17 @@ export class DataDrivenLoaderService {
   // ─── Observable consommé par AppComponent pour afficher l'overlay Angular ──
   // Démarré masqué : l'overlay ne s'affiche que lors d'une navigation
   // nécessitant des stores (évite le « flash » de loader à la première peinture).
-  private _overlayVisible = new BehaviorSubject<boolean>(false);
+private _overlayVisible = new BehaviorSubject<boolean>(false);
   private _overlayMessage = new BehaviorSubject<string>('Chargement…');
   private _overlayProgress = new BehaviorSubject<number>(0);
+  // Un store passé à 'ERROR' : l'overlay ne disparaît plus silencieusement,
+  // il propose une action « Réessayer » à l'utilisateur.
+  private _overlayError = new BehaviorSubject<string | null>(null);
 
   public overlayVisible$  = this._overlayVisible.asObservable();
-  public overlayMessage$  = this._overlayMessage.asObservable();
+  public overlayMessage$ = this._overlayMessage.asObservable();
   public overlayProgress$ = this._overlayProgress.asObservable();
+  public overlayError$ = this._overlayError.asObservable();
 
   // Rétrocompatibilité avec les composants qui utilisent globalLoaderVisible$
   public globalLoaderVisible$ = this._overlayVisible.asObservable();
@@ -140,13 +144,19 @@ export class DataDrivenLoaderService {
       this._overlayProgress.next(progress);
 
       if (errored) {
-        // Erreur réseau détectée dans les stores
-        this.hide();
+        // Erreur réseau dans un store : on ne masque plus le loader en silence.
+        // L'utilisateur voit pourquoi la page est vide et peut relancer.
+        this.cancelSub();
+        this._overlayError.next(
+          this.translate.instant('LOADER.LOAD_ERROR') || 'Impossible de charger les données.'
+        );
+        clearTimeout(this.hideTimer);
         return;
       }
 
       if (allLoaded) {
         this.cancelSub();
+        this._overlayError.next(null);
         // Attendre 1 tick Angular pour que les composants soient rendus
         // avant de masquer l'overlay — évite la page blanche
         if (typeof requestAnimationFrame !== 'undefined') {
@@ -204,6 +214,7 @@ export class DataDrivenLoaderService {
   // ─── Affichage / masquage ─────────────────────────────────────────────────
 
   private show(message: string, progress: number): void {
+    this._overlayError.next(null);
     this._overlayMessage.next(message);
     this._overlayProgress.next(progress);
     this._overlayVisible.next(true);
@@ -252,4 +263,19 @@ export class DataDrivenLoaderService {
   public forceStopLoading(): void { this.cancelSub(); this.hide(); }
   public addRouteConfig(config: DataLoadingConfig): void { this.routeConfigs[config.route] = config; }
   public getCurrentLoadingState(): any { return null; }
+
+  /**
+   * Relance le chargement après un échec.
+   *
+   * Rejoue la navigation courante : gardes, resolvers et `ngOnInit` des
+   * composants rejouent leurs actions de chargement. C'est plus robuste qu'une
+   * liste d'actions à maintenir en dur, qui divergerait à chaque évolution du
+   * `routeConfigs`.
+   */
+  public retry(): void {
+    this.hide();
+    const url = this.router.url;
+    this.router.navigateByUrl(url, { onSameUrlNavigation: 'reload' })
+      .catch(() => this.router.navigateByUrl('/'));
+  }
 }

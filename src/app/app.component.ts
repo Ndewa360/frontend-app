@@ -21,6 +21,7 @@ import { DeviceDetectionService } from './shared/services/device-detection.servi
 import { TranslateService } from '@ngx-translate/core';
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
+import { AppLoadingPhaseService } from './shared/services/app-loading-phase.service';
 import { LanguageUrlService } from './shared/services/language-url.service';
 import { HealthCheckService } from './shared/services/health-check.service';
 import { SwUpdate } from '@angular/service-worker';
@@ -43,6 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
   overlayVisible  = false;
   overlayMessage  = 'Chargement…';
   overlayProgress = 0;
+  overlayError: string | null = null;
 
   private tokenCheckInterval: Subscription;
   private userProfileCheckInterval: Subscription;
@@ -68,6 +70,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private authStateService: AuthStateService,
     private cdr: ChangeDetectorRef,
     public dataDrivenLoader: DataDrivenLoaderService,
+    private loadingPhase: AppLoadingPhaseService,
     private languageUrlService: LanguageUrlService,
     private translateService: TranslateService,
     private healthCheck: HealthCheckService,
@@ -94,7 +97,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Overlay Angular piloté par DataDrivenLoaderService
     this.dataDrivenLoader.overlayVisible$.pipe(takeUntil(this.destroy$))
-      .subscribe(v => { this.overlayVisible = v; this.cdr.detectChanges(); });
+      .subscribe(v => {
+        this.overlayVisible = v;
+        // L'intercepteur HTTP utilise cet état pour ne pas toaster les erreurs
+        // de lecture survenues pendant un chargement de page.
+        this.loadingPhase.setLoading(v);
+        this.cdr.detectChanges();
+      });
+
+    // L'état d'erreur garde l'overlay affiché : la phase de chargement reste
+    // active tant que l'utilisateur n'a pas relancé ou changé de page.
+    this.dataDrivenLoader.overlayError$.pipe(takeUntil(this.destroy$))
+      .subscribe(err => {
+        this.overlayError = err;
+        this.loadingPhase.setLoading(this.overlayVisible);
+      });
 
     this.dataDrivenLoader.overlayMessage$.pipe(takeUntil(this.destroy$))
       .subscribe(m => { this.overlayMessage = m; });
@@ -156,6 +173,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Charger le profil si connecté
     this.authStateService.loadUserProfileConditionally(false);
+  }
+
+  /** Action « Réessayer » de l'overlay après un échec de chargement. */
+  retryLoading(): void {
+    this.dataDrivenLoader.retry();
   }
 
   private isInFrontOffice = false;

@@ -1,12 +1,24 @@
 <!-- Overlay Angular — remplace le loader HTML, évite la page blanche -->
-<div class="app-data-overlay" *ngIf="overlayVisible" aria-live="polite" aria-busy="true">
+<div class="app-data-overlay" *ngIf="overlayVisible" aria-live="polite" [attr.aria-busy]="overlayError ? 'false' : 'true'">
   <div class="app-data-overlay__inner">
     <img loading="lazy" src="assets/img/logo/logo-basic.png" alt="Ndewa360°" class="app-data-overlay__logo">
-    <div class="app-data-overlay__spinner"></div>
-    <p class="app-data-overlay__message">{{ overlayMessage }}</p>
-    <div class="app-data-overlay__bar" *ngIf="overlayProgress > 0">
-      <div class="app-data-overlay__bar-fill" [style.width.%]="overlayProgress"></div>
-    </div>
+
+    <!-- Échec de chargement : message explicite + action « Réessayer ».
+         Avant, l'overlay disparaissait silencieusement et la page restait vide. -->
+    <ng-container *ngIf="overlayError; else loadingState">
+      <p class="app-data-overlay__error" role="alert">{{ overlayError }}</p>
+      <button type="button" class="app-data-overlay__retry" (click)="retryLoading()">
+        {{ 'LOADER.RETRY' | translate }}
+      </button>
+    </ng-container>
+
+    <ng-template #loadingState>
+      <div class="app-data-overlay__spinner"></div>
+      <p class="app-data-overlay__message">{{ overlayMessage }}</p>
+      <div class="app-data-overlay__bar" *ngIf="overlayProgress > 0">
+        <div class="app-data-overlay__bar-fill" [style.width.%]="overlayProgress"></div>
+      </div>
+    </ng-template>
   </div>
 </div>
 

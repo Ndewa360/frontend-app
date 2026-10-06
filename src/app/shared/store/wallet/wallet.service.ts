@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { silentHttp } from '../../http/http-error-context';
 import { WalletSummary, WalletTransaction, WithdrawalRequest, WithdrawalMethod, PaymentProvider, DepositInitiateResult } from './wallet.model';
 
 @Injectable({ providedIn: 'root' })
@@ -39,7 +40,12 @@ export class WalletHttpService {
    * Interroge le provider si le retrait est encore PENDING/PROCESSING.
    */
   getWithdrawalStatus(withdrawalId: string): Observable<{ data: WithdrawalRequest }> {
-    return this.http.get<{ data: WithdrawalRequest }>(`${this.api}/withdraw/${withdrawalId}/status`);
+    // Polling toutes les 5 s : un échec réseau transitoire ne doit pas produire
+    // de toast. Le statepolling gère déjà l'échec métier (FAILED) explicitement.
+    return this.http.get<{ data: WithdrawalRequest }>(
+      `${this.api}/withdraw/${withdrawalId}/status`,
+      { context: silentHttp() }
+    );
   }
 
   /**

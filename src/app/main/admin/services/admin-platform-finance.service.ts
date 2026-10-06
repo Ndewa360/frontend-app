@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { silentHttp } from '../../../shared/http/http-error-context';
 
 const API = `${environment.apiUrl}/admin/platform-finance`;
 
@@ -141,7 +142,9 @@ export class AdminPlatformFinanceService {
   }
 
   checkWithdrawalStatus(id: string): Observable<PlatformWithdrawal> {
-    return this.http.get<any>(`${API}/withdrawals/${id}/status`).pipe(map(r => r.data));
+    // Polling 5 s (72 tentatives) : silence sur les échecs transitoires,
+    // les états métier CONFIRMED/FAILED sont notifiés par le composant.
+    return this.http.get<any>(`${API}/withdrawals/${id}/status`, { context: silentHttp() }).pipe(map(r => r.data));
   }
 
   getWithdrawal(id: string): Observable<PlatformWithdrawal> {

@@ -6,6 +6,7 @@ import { ApiResultFormat } from "../global";
 import { environment } from "src/environments/environment";
 import { catchError } from "rxjs/operators";
 import { ErrorHandlerService } from "../../services/error-handler.service";
+import { silentHttp } from "../../http/http-error-context";
 
 @Injectable({
     providedIn:'root'
@@ -40,7 +41,9 @@ export class UserService
      */
     getAllUsers(): Observable<ApiResultFormat<UserModel[]>>
     {
-        return this._httpClient.get<ApiResultFormat<UserModel[]>>(`${environment.apiUrl}/users/`)
+        // Lecture : l'échec est traité par l'appelant (état vide + loader),
+        // pas signalé comme une erreur d'action utilisateur.
+        return this._httpClient.get<ApiResultFormat<UserModel[]>>(`${environment.apiUrl}/users/`, { context: silentHttp() })
             .pipe(
                 catchError((error: HttpErrorResponse) =>
                     this.errorHandler.handleHttpError(error, 'Récupération des utilisateurs')
@@ -57,7 +60,7 @@ export class UserService
             return throwError(() => new Error('User ID is required'));
         }
 
-        return this._httpClient.get<ApiResultFormat<UserModel>>(`${environment.apiUrl}/users/${userId}`)
+        return this._httpClient.get<ApiResultFormat<UserModel>>(`${environment.apiUrl}/users/${userId}`, { context: silentHttp() })
             .pipe(
                 catchError((error: HttpErrorResponse) =>
                     this.errorHandler.handleHttpError(error, 'Récupération de l\'utilisateur')

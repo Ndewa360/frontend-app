@@ -1,6 +1,7 @@
 import { Action, Selector, State, StateContext, Store, createSelector } from "@ngxs/store";
 import { UserProfileModel } from "./user-profile.model";
 import { Injectable } from "@angular/core";
+import { markAsHandled } from "../../services/global-error-handler.service";
 import { Router } from "@angular/router";
 import { UserProfileAction } from "./user-profile.actions";
 import { UserProfileService } from "./user-profile.service";
@@ -96,7 +97,7 @@ export class UserProfileState {
         return this._authService.login(email, password).pipe(
             tap((result) => {
                 if (!result || !result.data || !result.data.user) {
-                    throw new Error("Réponse de connexion invalide");
+                    throw markAsHandled(new Error("Réponse de connexion invalide"));
                 }
 
                 ctx.patchState({
@@ -135,7 +136,7 @@ export class UserProfileState {
         return this._authService.loginWithGoogle(token).pipe(
             tap((result) => {
                 if (!result || !result.data || !result.data.user) {
-                    throw new Error('Réponse de connexion Google invalide');
+                    throw markAsHandled(new Error('Réponse de connexion Google invalide'));
                 }
                 ctx.patchState({
                     loadingUserProfile: false,
@@ -179,7 +180,7 @@ export class UserProfileState {
 
         return this._authService.registerWithOnboarding(payload).pipe(
             tap((result) => {
-                if (!result || !result.data) throw new Error('Réponse invalide');
+                if (!result || !result.data) throw markAsHandled(new Error('Réponse invalide'));
 
                 const data = result.data;
                 ctx.patchState({
@@ -393,7 +394,7 @@ export class UserProfileState {
             retry({ count: 2, delay: 1000 }),
             tap(result => {
                 if (!result || !result.data) {
-                    throw new Error("Réponse de profil utilisateur invalide");
+                    throw markAsHandled(new Error("Réponse de profil utilisateur invalide"));
                 }
                 
                 ctx.patchState({
@@ -618,7 +619,7 @@ export class UserProfileState {
             retry({ count: 1, delay: 1000 }),
             tap(result => {
                 if (!result || !result.data) {
-                    throw new Error("Réponse de profil utilisateur invalide");
+                    throw markAsHandled(new Error("Réponse de profil utilisateur invalide"));
                 }
 
                 ctx.patchState({

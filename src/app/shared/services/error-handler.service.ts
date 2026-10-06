@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, throwError } from 'rxjs';
 
 export interface ErrorInfo {
@@ -9,113 +8,146 @@ export interface ErrorInfo {
   details?: any;
 }
 
+/**
+ * Erreur HTTP déjà traitée par l'appelant.
+ *
+ * Le drapeau `handled` est ce que `GlobalErrorHandler` inspecte pour ne pas
+ * afficher de toast générique par-dessus une erreur déjà expliquée.
+ */
+export interface HandledHttpError extends HttpErrorResponse {
+  handled: true;
+  /** Origine métier, utile pour la télémétrie. */
+  context?: string;
+  /** Message normalisé, affichable tel quel. */
+  userMessage?: string;
+}
+
+/**
+ * Traduit une `HttpErrorResponse` en informations exploitables.
+ *
+ * Ce service n'affiche **plus** de toast : l'intercepteur HTTP s'en charge,
+ * et uniquement pour les requêtes relevant d'une action utilisateur. Voir
+ * `http/http-error-context.ts` et `AppLoadingPhaseService`.
+ *
+ * Il reste utile pour deux choses :
+ *  - normaliser les codes/messages une seule fois ;
+ *  - allow-lister les codes techniques qui ne doivent jamais atteindre
+ *    l'utilisateur.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorHandlerService {
 
-  constructor(private toastr: ToastrService) {}
+  /** Messages techniques à ne jamais exposer à l'utilisateur. */
+  private readonly TECHNICAL_PATTERNS: RegExp[] = [
+    /nested bson depth/i,
+    /bson/i,
+    /document exceeds maximum/i,
+    /MongoServerError/i,
+    /MongoError/i,
+    /CastError/i,
+    /ValidationError/i,
+    /buffering timed out/i,
+    /topology/i,
+    /ECONNREFUSED/i,
+    /ETIMEDOUT/i,
+    /ENOTFOUND/i,
+    /parsePhoneNumber/i,
+    /Cannot read propert/i,
+    /socket hang up/i,
+    /getaddrinfo/i,
+  ];
+
+  private readonly GENERIC_MESSAGE = 'Une erreur est survenue. Veuillez réessayer.';
 
   /**
-   * Gère les erreurs HTTP de manière centralisée
+   * Normalise puis propage l'erreur. Aucun affichage.
+   *
+   * L'erreur retournée est une `HandledError` : `GlobalErrorHandler` la
+   * reconnaîtra et n'affichera pas de toast générique par-dessus.
    */
   handleHttpError(error: HttpErrorResponse, context?: string): Observable<never> {
-    const errorInfo = this.parseHttpError(error);
-
-    if (errorInfo.code !== 'NO_INTERNET' && errorInfo.code !== 'SERVICE_UNAVAILABLE') {
-      this.showErrorToast(errorInfo, context);
-    }
-
-    return throwError(() => errorInfo);
+    return throwError(() => this.toHandledError(error, context));
   }
 
   /**
-   * Parse les erreurs HTTP en messages utilisateur
+   * Construit une erreur marquée comme déjà traitée.
+   *
+   * Le marqueur remplace les anciens filtrages par sous-chaîne sur du texte
+   * français (`includes('Réponse')`), qui cassaient dès qu'un message changeait.
    */
-  private parseHttpError(error: HttpErrorResponse): ErrorInfo {
-    switch (error.status) {
+  toHandledError(error: HttpErrorResponse, context?: string): HandledHttpError {
+    const info = this.parseHttpError(error);
+    const handled = error as HandledHttpError;
+    handled.handled = true;
+    if (context) {
+      handled.context = context;
+    }
+    handled.userMessage = info.message;
+    return handled;
+  }
+
+  /**
+   * Parse les erreurs HTTP en informations utilisateur.
+   */
+  parseHttpError(error: HttpErrorResponse): ErrorInfo {
+    switch (error?.status) {
       case 0:
-        return {
-          message: 'Aucune connexion internet. Vérifiez votre connexion.',
-          code: 'NO_INTERNET'
-        };
-      
+        return { message: 'Aucune connexion internet. Vérifiez votre connexion.', code: 'NO_INTERNET' };
+
       case 400:
         return {
           message: error.error?.message || 'Données invalides',
           code: 'BAD_REQUEST',
-          details: error.error?.details
+          details: error.error?.details,
         };
-      
+
       case 401:
-        return {
-          message: 'Session expirée. Veuillez vous reconnecter.',
-          code: 'UNAUTHORIZED'
-        };
-      
+        return { message: 'Session expirée. Veuillez vous reconnecter.', code: 'UNAUTHORIZED' };
+
       case 403:
-        return {
-          message: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.',
-          code: 'FORBIDDEN'
-        };
-      
+        return { message: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.', code: 'FORBIDDEN' };
+
       case 404:
-        return {
-          message: 'Ressource non trouvée',
-          code: 'NOT_FOUND'
-        };
-      
+        return { message: 'Ressource non trouvée', code: 'NOT_FOUND' };
+
       case 409:
-        return {
-          message: error.error?.message || 'Conflit de données',
-          code: 'CONFLICT'
-        };
-      
+        return { message: error.error?.message || 'Conflit de données', code: 'CONFLICT' };
+
       case 422:
         return {
           message: 'Données de validation incorrectes',
           code: 'VALIDATION_ERROR',
-          details: error.error?.errors
+          details: error.error?.errors,
         };
-      
+
       case 500:
-        return {
-          message: 'Erreur serveur. Veuillez réessayer plus tard.',
-          code: 'SERVER_ERROR'
-        };
-      
+        return { message: 'Erreur serveur. Veuillez réessayer plus tard.', code: 'SERVER_ERROR' };
+
       case 503:
-        return {
-          message: 'Service temporairement indisponible',
-          code: 'SERVICE_UNAVAILABLE'
-        };
-      
+        return { message: 'Service temporairement indisponible', code: 'SERVICE_UNAVAILABLE' };
+
       default:
-        return {
-          message: error.error?.message || 'Une erreur inattendue s\'est produite',
-          code: 'UNKNOWN_ERROR'
-        };
+        return { message: this.sanitize(error.error?.message) || 'Une erreur inattendue s\'est produite', code: 'UNKNOWN_ERROR' };
     }
   }
 
-  /**
-   * Affiche un toast d'erreur
-   */
-  private showErrorToast(errorInfo: ErrorInfo, context?: string): void {
-    this.toastr.error(errorInfo.message, 'Ndewa360°', {
-      timeOut: 5000,
-      closeButton: true,
-      progressBar: true
-    });
+  /** Masque un message technique derrière un texte générique. */
+  sanitize(message: any): string {
+    const msg = Array.isArray(message) ? message[0] : (message || '');
+    if (typeof msg === 'string' && this.TECHNICAL_PATTERNS.some(r => r.test(msg))) {
+      return this.GENERIC_MESSAGE;
+    }
+    return typeof msg === 'string' ? msg : '';
   }
 
   /**
-   * Gère les erreurs de validation de formulaire
+   * Aplatit un objet d'erreurs de validation en liste de messages.
    */
   handleFormValidationError(errors: any): string[] {
     const messages: string[] = [];
-    
-    if (typeof errors === 'object') {
+    if (errors && typeof errors === 'object') {
       Object.keys(errors).forEach(field => {
         const fieldErrors = errors[field];
         if (Array.isArray(fieldErrors)) {
@@ -125,18 +157,6 @@ export class ErrorHandlerService {
         }
       });
     }
-    
     return messages;
-  }
-
-  /**
-   * Affiche les erreurs de validation
-   */
-  showValidationErrors(errors: string[]): void {
-    errors.forEach(error => {
-      this.toastr.warning(error, 'Ndewa360°', {
-        timeOut: 4000
-      });
-    });
   }
 }

@@ -12,6 +12,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { LanguagePreservationService } from "../services/language-preservation.service";
 import { ErrorLogService } from "../services/error-log.service";
 import { LogoutFlagService } from "../services/logout-flag.service";
+import { isSilentHttpError } from "../http/http-error-context";
+import { AppLoadingPhaseService } from "../services/app-loading-phase.service";
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
@@ -29,6 +31,7 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
     private translate: TranslateService,
     private languagePreservation: LanguagePreservationService,
     private errorLog: ErrorLogService,
+    private loadingPhase: AppLoadingPhaseService,
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -59,15 +62,21 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
   }
 
   /**
-   * Gère les requêtes sans token
+   * Gère les requêtes sans token (pages publiques : landing, recherche, paiement).
+   *
+   * Pas de refresh possible ici : on se contente de journaliser l'échec et
+   * d'appliquer la même règle d'affichage que pour les requêtes authentifiées.
+   * Sans ce journal, la télémétrie des pages publiques était totalement absente.
    */
   private handleRequestWithoutToken(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Si pas de token et qu'on essaie d'accéder à une route protégée, rediriger vers login
     if (!req.url.includes('user/auth/login') && !req.url.includes('user/auth/register') && !req.url.includes('prospection')) {
       return next.handle(req).pipe(
-        catchError((error) => {
-          if (error instanceof HttpErrorResponse && error.status === 401) {
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
             this.redirectToLogin();
+          } else {
+            this.reportFailure(error, req);
           }
           return throwError(() => error);
         })
@@ -92,17 +101,11 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
    * Gère les erreurs HTTP avec retry, feedback réseau et logging
    */
   private handleHttpError(error: HttpErrorResponse, originalRequest: HttpRequest<any>, next: HttpHandler, retryCount: number): Observable<HttpEvent<any>> {
-    // Éviter les boucles infinies en marquant les requêtes déjà traitées
+    // Filet de sécurité anti-boucle. En pratique `next.handle()` court-circuite
+    // le reste de la chaîne d'intercepteurs, donc la requête retentée ne
+    // repasse pas ici : ce cas est traité plus bas par le retry lui-même.
     if (originalRequest.headers.has('X-Retry-Request')) {
-      this.errorLog.log({
-        type: 'http',
-        message: error.message || 'Erreur après retry',
-        statusCode: error.status,
-        url: originalRequest.url,
-        method: originalRequest.method,
-        timestamp: new Date().toISOString(),
-      });
-      this._store.dispatch(new AuthTokenAction.Logout());
+      this.reportFailure(error, originalRequest);
       return throwError(() => error);
     }
 
@@ -118,36 +121,50 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
         switchMap(() => {
           const retriedReq = originalRequest.clone({ setHeaders: { 'X-Retry-Request': 'true' } });
           return next.handle(retriedReq);
+        }),
+        // L'échec de la tentative retentée ne repasse pas par le `catchError()`
+        // de ce même intercepteur : sans ce bloc, un 5xx persistant après
+        // épuisement des retries n'était ni journalisé ni affiché.
+        catchError((retryError: HttpErrorResponse) => {
+          this.reportFailure(retryError, originalRequest);
+          return throwError(() => retryError);
         })
       );
     }
 
-    // Erreur réseau (status 0) — feedback persistant
+    // Statut 0 : bascule l'état "hors ligne" et affiche un bandeau persistant
+    // tant que la connexion n'est pas revenue. Sinon, on applique la règle
+    // d'affichage (action utilisateur vs chargement de fond).
+    this.reportFailure(error, originalRequest);
+
+    return throwError(() => error);
+  }
+
+  /**
+   * Traitement commun d'un échec HTTP : mise à jour de l'état réseau,
+   * affichage selon `shouldDisplayError()`, puis journalisation.
+   *
+   * La journalisation est inconditionnelle : même une requête déclarée
+   * silencieuse doit rester visible dans les logs de l'application.
+   */
+  private reportFailure(error: HttpErrorResponse, request: HttpRequest<any>): void {
     if (error.status === 0) {
       this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
-      const online = navigator.onLine;
-      if (!online) {
-        this._toastrService.warning(
-          this.translate.instant('NOTIFICATIONS.NETWORK_ERROR') || 'Aucune connexion internet. Vérifiez votre réseau.',
-          'Ndewa360°',
-          { timeOut: 0, extendedTimeOut: 0, closeButton: true }
-        );
+      if (this.isBrowser() && !navigator.onLine) {
+        this.showOfflineNotice();
       }
-    } else if (!this.shouldSkipErrorDisplay(error, originalRequest)) {
+    } else if (this.shouldDisplayError(request)) {
       this.showErrorMessage(error);
     }
 
-    // Logger l'erreur
     this.errorLog.log({
       type: 'http',
       message: this.sanitizeMessage(error?.error?.message),
       statusCode: error.status,
-      url: originalRequest.url,
-      method: originalRequest.method,
+      url: request.url,
+      method: request.method,
       timestamp: new Date().toISOString(),
     });
-
-    return throwError(() => error);
   }
 
   /**
@@ -257,13 +274,27 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
   }
 
   /**
-   * Détermine si l'affichage d'erreur doit être ignoré pour certaines requêtes
+   * Décide si l'intercepteur doit signaler l'échec à l'utilisateur.
+   *
+   * Trois filtres, dans cet ordre :
+   *  1. la requête s'est déclarée silencieuse (`silentHttp()`) : l'appelant
+   *     affiche son propre message ou l'échec est attendu ;
+   *  2. la requête est une lecture (GET/HEAD/OPTIONS) émise pendant un
+   *     chargement de page : l'erreur appartient au `DataDrivenLoaderService`,
+   *     qui affiche un état d'erreur avec une action « Réessayer ». Sans ce
+   *     filtre, un simple rechargement de page suffisait à faire apparaître des
+   *     toasts d'erreur alors que l'utilisateur n'avait rien demandé ;
+   *  3. quelques endpoints où l'échec est attendu par nature.
+   *
+   * Les requêtes mutantes (POST/PUT/PATCH/DELETE) ne sont jamais filtrées par
+   * les points 1 et 2 : elles sont toujours issues d'une action utilisateur.
    */
-  private shouldSkipErrorDisplay(error: HttpErrorResponse, request: HttpRequest<any>): boolean {
+  private shouldDisplayError(request: HttpRequest<any>): boolean {
+    if (isSilentHttpError(request.context)) return false;
+    if (this.loadingPhase.shouldSuppress(request.method)) return false;
+
     // Ignorer les erreurs 404 pour la vérification de liens de paiement existants
-    if (error.status === 404 && request.url.includes('/payment-link/existing/')) {
-      return true;
-    }
+    if (request.url.includes('/payment-link/existing/')) return false;
 
     // Ignorer les erreurs 404 pour d'autres endpoints où c'est normal
     const skipUrls = [
@@ -272,11 +303,36 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       '/favicon.ico',  // Ne pas afficher d'erreur pour les favicons manquants
     ];
 
-    if (error.status === 404 && skipUrls.some(skipUrl => request.url.includes(skipUrl))) {
-      return true;
-    }
+    return !skipUrls.some(skipUrl => request.url.includes(skipUrl));
+  }
 
-    return false;
+  /**
+   * Bandeau « hors ligne ». Persistant (`timeOut: 0`) mais affiché une seule fois :
+   * une rafale d'échecs réseau ne doit pas empiler le même message.
+   */
+  private offlineNoticeShown = false;
+
+  /** L'intercepteur s'exécute aussi pendant le rendu SSR, où `window` n'existe pas. */
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof navigator !== 'undefined';
+  }
+
+  private showOfflineNotice(): void {
+    if (this.offlineNoticeShown || !this.isBrowser()) return;
+    this.offlineNoticeShown = true;
+    this._toastrService.warning(
+      this.translate.instant('NOTIFICATIONS.NETWORK_ERROR') || 'Aucune connexion internet. Vérifiez votre réseau.',
+      'Ndewa360°',
+      { timeOut: 0, extendedTimeOut: 0, closeButton: true }
+    );
+    // Réarmement dès que la connexion revient.
+    const rearm = () => {
+      if (navigator.onLine) {
+        this.offlineNoticeShown = false;
+        window.removeEventListener('online', rearm);
+      }
+    };
+    window.addEventListener('online', rearm);
   }
 
   // Messages techniques à ne jamais afficher à l'utilisateur
@@ -309,33 +365,19 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
     return msg || this.translate.instant('NOTIFICATIONS.GENERIC_ERROR');
   }
 
-  showErrorMessage(error: any, isLoginProcess=false) {
-    if(isLoginProcess) {
-      switch(error.status) {
-          case 401:
-              const invalidCredentials = this.translate.instant('NOTIFICATIONS.UNAUTHORIZED');
-              this._toastrService.error(invalidCredentials, 'Ndewa360°');
-              break;
-
-          case 406:
-              const accountInactive = this.translate.instant('NOTIFICATIONS.ACCOUNT_NOT_FOUND');
-              this._toastrService.warning(accountInactive, 'Ndewa360°');
-              break;
-          default:
-              const msg1 = this.sanitizeMessage(error?.error?.message);
-              this._toastrService.error(msg1, 'Ndewa360°');
-      }
-    } else {
-      switch(error.status) {
-          case 0:
-              this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
-              break;
-
-          default:
-              const msg2 = this.sanitizeMessage(error?.error?.message);
-              this._toastrService.error(msg2, 'Ndewa360°');
-      }
+  /**
+   * Affiche l'échec d'une requête. Le status 0 est traité en amont par
+   * `showOfflineNotice()` (bandeau persistant) et ne produit pas de second toast.
+   *
+   * La branche `isLoginProcess` qui existait auparavant n'était jamais appelée
+   * (le message 406 de connexion est géré par `auth-login.component.ts`) :
+   * elle est supprimée pour éviter deux chemins divergents.
+   */
+  showErrorMessage(error: HttpErrorResponse) {
+    if (error?.status === 0) {
+      this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
+      return;
     }
+    this._toastrService.error(this.sanitizeMessage(error?.error?.message), 'Ndewa360°');
   }
-
 }

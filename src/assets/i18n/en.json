@@ -5450,5 +5450,13 @@
       "CARD": "Bank card",
       "EASY_TRANSACT": "Easy Transact"
     }
+  },
+  "LOADER": {
+    "LOAD_ERROR": "Could not load the data. Please check your connection.",
+    "RETRY": "Retry",
+    "TIMEOUT_WARNING": "Loading is taking longer than expected.",
+    "OFFLINE_ERROR": "Internet connection lost while loading.",
+    "OFFLINE_WARNING": "You are offline.",
+    "ONLINE_SUCCESS": "Connection restored."
   }
 }

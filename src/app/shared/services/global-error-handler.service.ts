@@ -3,6 +3,31 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { ErrorLogService } from './error-log.service';
 
+/**
+ * Erreur déjà traitée par l'appelant :aucun toast global ne doit être affiché.
+ *
+ * À poser sur une erreur avant de la propager :
+ * ```ts
+ * const e = new Error('message');
+ * e.handled = true;
+ * throw e;
+ * ```
+ *
+ * Ce marqueur remplace les anciens filtrages par sous-chaîne sur du texte
+ * français (`message.includes('profil utilisateur')`, `includes('Réponse')`),
+ * qui cessaient de fonctionner dès qu'un message changeait ou passait en
+ * production dans une autre langue.
+ */
+export interface MarkedHandledError extends Error {
+  handled: true;
+}
+
+/** Marque une erreur comme déjà traitée. À utiliser avec `throw`. */
+export function markAsHandled<T extends Error>(error: T): T & MarkedHandledError {
+  (error as T & MarkedHandledError).handled = true;
+  return error as T & MarkedHandledError;
+}
+
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
 
@@ -19,14 +44,12 @@ export class GlobalErrorHandler implements ErrorHandler {
       this.translate = this.injector.get(TranslateService);
     }
 
-    // Ignorer les erreurs HTTP — déjà gérées par les catchError des states NGXS
+    // Erreurs HTTP : traitées par l'intercepteur et par l'appelant.
     if (error?.status !== undefined || error?.name === 'HttpErrorResponse') return;
 
-    // Ignorer les erreurs custom déjà gérées (marquées handled ou venant de NGXS)
+    // Erreurs explicitement marquées comme traitées (ErrorHandlerService,
+    // states NGXS, composants). Marker typé, pas de filtrage sur le texte.
     if (error?.handled === true) return;
-
-    // Ignorer les erreurs de profil utilisateur — gérées dans user-profile.state.ts
-    if (error?.message?.includes('profil utilisateur') || error?.message?.includes('Réponse')) return;
 
     const message = error?.message || error?.toString() || 'Unknown error';
     const stack = error?.stack || '';

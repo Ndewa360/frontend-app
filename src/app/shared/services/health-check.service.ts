@@ -6,6 +6,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
 import { GlobalAction } from '../store';
 import { environment } from 'src/environments/environment';
+import { silentHttp } from '../http/http-error-context';
 
 @Injectable({ providedIn: 'root' })
 export class HealthCheckService implements OnDestroy {
@@ -25,7 +26,7 @@ export class HealthCheckService implements OnDestroy {
     if (!isPlatformBrowser(this.platformId)) return;
     this.healthSub = interval(this.CHECK_INTERVAL).pipe(
       switchMap(() =>
-        this.http.get<{ status: string }>(this.HEALTH_URL).pipe(
+        this.http.get<{ status: string }>(this.HEALTH_URL, { context: silentHttp() }).pipe(
           catchError(() => of(null))
         )
       ),
