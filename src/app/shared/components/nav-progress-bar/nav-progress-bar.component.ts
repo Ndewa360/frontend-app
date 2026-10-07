@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NavigationLoaderService } from '../../services/navigation-loader.service';
 import { DataDrivenLoaderService } from '../../services/data-driven-loader.service';
 import { NgIf } from '@angular/common';
 
@@ -60,35 +59,20 @@ export class NavProgressBarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private progressTimer: any;
 
-  constructor(
-    private navLoader: NavigationLoaderService,
-    private dataLoader: DataDrivenLoaderService
-  ) {}
+  constructor(private dataLoader: DataDrivenLoaderService) {}
 
   ngOnInit(): void {
-    // Barre de progression pilotée par la navigation ET les stores
-    this.navLoader.loading$.pipe(takeUntil(this.destroy$)).subscribe(loading => {
-      if (loading) {
+    // Une seule source de vérité : la visibilité de l'overlay Angular.
+    //
+    // Avant, la barre était aussi pilotée par `NavigationLoaderService`, ce qui
+    // la démarrait à CHAQUE NavigationStart — y compris sur les navigations où
+    // aucun store n'est en attente. Résultat : une barre orange clignotante en
+    // haut de chaque page, sans rapport avec une réelle attente de données.
+    // `pageLoading$` était en plus un BehaviorSubject jamais émis (abonnement mort).
+    this.dataLoader.overlayVisible$.pipe(takeUntil(this.destroy$)).subscribe(visible => {
+      if (visible) {
         this.startProgress();
-      }
-    });
-
-    this.dataLoader.pageLoading$.pipe(takeUntil(this.destroy$)).subscribe(state => {
-      if (!state) return;
-
-      if (state.isLoading) {
-        this.visible = true;
-        this.complete = false;
-        // Synchroniser la progression avec les stores
-        this.progress = Math.max(this.progress, state.progress || 10);
-      } else {
-        // Chargement terminé — compléter la barre
-        this.completeProgress();
-      }
-    });
-
-    this.dataLoader.globalLoaderVisible$.pipe(takeUntil(this.destroy$)).subscribe(visible => {
-      if (!visible && this.visible) {
+      } else if (this.visible) {
         this.completeProgress();
       }
     });

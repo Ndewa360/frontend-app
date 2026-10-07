@@ -6,7 +6,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AgGridModule } from '@ag-grid-community/angular';
 
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ChartsModule } from '../../../@youpez';
 import { LocationPaymentModule } from '../location-payment/location-payment.module';
 import { AssignLocationModule } from '../assign-location/assign-location.module';
 import { PropertiesRoutingModule } from './properties-routing.module';
@@ -47,7 +46,6 @@ import { Error404Component } from '../errors/error404/error404.component';
     CommonModule,
     PropertiesRoutingModule,
     SharedModule,
-    ChartsModule,
     MatDialogModule,
     NgxExtendedPdfViewerModule,
     LocationPaymentModule,

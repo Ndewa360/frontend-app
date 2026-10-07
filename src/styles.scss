@@ -41,8 +41,11 @@
 }
 
 
-// Import Google Fonts - Inter
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+// Google Fonts - Inter : chargée par index.html (preload + stylesheet async).
+// Ne pas la `@import` ici : double chargement avec le <link> d'index.html ET
+// déclenche le « font inlining » d'Angular au build, qui télécharge la police
+// depuis Internet (le build plantait quand fonts.googleapis.com était
+// injoignable : ENOTFOUND).
 
 html, body { height: 100%; }
 body {

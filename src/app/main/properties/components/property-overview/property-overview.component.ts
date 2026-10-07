@@ -516,7 +516,7 @@ export class PropertyOverviewComponent implements OnInit, OnChanges {
 
   // Méthode pour gérer les erreurs d'images
   onImageError(event: any): void {
-    event.target.src = 'assets/images/default-property.jpg';
+    event.target.src = 'assets/images/properties/property-placeholder-1.svg';
   }
 
   getQuickActions(): Array<{

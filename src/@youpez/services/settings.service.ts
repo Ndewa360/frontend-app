@@ -4,8 +4,21 @@ import {Inject} from "@angular/core"
 import {BehaviorSubject} from 'rxjs'
 
 import {environment} from "../../environments/environment"
-import {registerTheme} from 'echarts/lib/echarts'
 import {getLightEchartsTheme, getDarkEchartsTheme, appThemes, headerThemes, sideBarThemes} from "../helpers"
+
+// echarts est chargé en différé : les composants `youpez-echarts` ne sont
+// utilisés dans aucun template de l'application (ChartsModule a été retiré de
+// l'arbre de modules). L'import statique de `registerTheme` tirait pourtant
+// toute la lib echarts (~1,5 Mo) dans le bundle critique, car SettingsService
+// est injecté dans AppComponent (racine, chargée en premier). Le chargement
+// différé ne coûte qu'un petit chunk envoyé uniquement si besoin.
+let _echartsModule: Promise<any> | null = null
+const getEchartsModule = (): Promise<any> => {
+  if (!_echartsModule) {
+    _echartsModule = import('echarts/lib/echarts')
+  }
+  return _echartsModule
+}
 
 const checkClass = (arr: any[], name: any) => {
   return arr.some(el => el.name === name)
@@ -127,19 +140,26 @@ export class SettingsService {
   }
 
   private loadLightTheme() {
-    registerTheme('inverse', getDarkEchartsTheme())
-    registerTheme('default', getLightEchartsTheme())
+    this.registerEchartsThemes(getDarkEchartsTheme(), getLightEchartsTheme())
     this.removeTheme('app-theme--dark')
     this.setClass('app-theme--light')
     this.loadStyle('theme-light.css')
   }
 
   private loadDarkTheme() {
-    registerTheme('inverse', getLightEchartsTheme())
-    registerTheme('default', getDarkEchartsTheme())
+    this.registerEchartsThemes(getLightEchartsTheme(), getDarkEchartsTheme())
     this.removeTheme('app-theme--light')
     this.setClass('app-theme--dark')
     this.loadStyle('theme-dark.css')
+  }
+
+  private registerEchartsThemes(inverseTheme: any, defaultTheme: any) {
+    getEchartsModule()
+      .then((echarts: any) => {
+        echarts.registerTheme('inverse', inverseTheme)
+        echarts.registerTheme('default', defaultTheme)
+      })
+      .catch(() => {})
   }
 
   private loadStyle(styleName: string) {

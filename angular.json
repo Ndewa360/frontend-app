@@ -43,7 +43,14 @@
             "assets": [
               "src/favicon.ico",
               "src/manifest.webmanifest",
-              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets",
+                "ignore": [
+                  "Ndewa360.apk"
+                ]
+              },
               {
                 "glob": "*.min.mjs",
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/",
@@ -64,16 +71,21 @@
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/",
                 "output": "/assets/"
               },
-              {
-                "glob": "locale/**",
-                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
-                "output": "/assets/"
-              },
-              {
-                "glob": "additional-locale/**",
-                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
-                "output": "/assets/"
-              },
+{
+  "glob": "fr/**",
+  "input": "node_modules/ngx-extended-pdf-viewer/assets/locale/",
+  "output": "/assets/locale/"
+ },
+ {
+  "glob": "en-US/**",
+  "input": "node_modules/ngx-extended-pdf-viewer/assets/locale/",
+  "output": "/assets/locale/"
+ },
+ {
+  "glob": "locale.json",
+  "input": "node_modules/ngx-extended-pdf-viewer/assets/locale/",
+  "output": "/assets/locale/"
+ },
               {
                 "glob": "images/**",
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/",
@@ -85,7 +97,7 @@
                 "output": "./svg"
               },
               {
-                "glob": "**/*",
+                "glob": "{tinymce*.js,icons/**,models/**,skins/**,themes/**,plugins/{advlist,autolink,lists,link,image,charmap,preview,searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,help,wordcount}/**}",
                 "input": "node_modules/tinymce",
                 "output": "/tinymce/"
               }
@@ -117,7 +129,13 @@
           },
           "configurations": {
             "production": {
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": true,
+                "fonts": {
+                  "inline": false
+                }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "extractLicenses": true,

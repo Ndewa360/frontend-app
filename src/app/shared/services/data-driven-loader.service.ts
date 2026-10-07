@@ -7,15 +7,6 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { GlobalAction } from '../store';
 
-export interface PageLoadingState {
-  route: string;
-  isLoading: boolean;
-  requiredData: string[];
-  loadedData: string[];
-  message?: string;
-  progress?: number;
-}
-
 export interface DataLoadingConfig {
   route: string;
   requiredStores: string[];
@@ -41,10 +32,6 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
   public overlayProgress$ = this._overlayProgress.asObservable();
   public overlayError$ = this._overlayError.asObservable();
 
-  // Rétrocompatibilité avec les composants qui utilisent globalLoaderVisible$
-  public globalLoaderVisible$ = this._overlayVisible.asObservable();
-  public pageLoading$ = new BehaviorSubject<PageLoadingState | null>(null).asObservable();
-
   private storeSubscription: Subscription | null = null;
   private loadingStartTime = 0;
   private hideTimer: any = null;
@@ -53,7 +40,10 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
     '/app/properties':         { route: '/app/properties',         requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState'], customMessage: 'Chargement de vos propriétés…',     minLoadingTime: 0 },
     '/app/properties/home':    { route: '/app/properties/home',    requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState'], customMessage: 'Chargement de vos propriétés…',     minLoadingTime: 0 },
     '/app/properties/list':    { route: '/app/properties/list',    requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState'], customMessage: 'Chargement de la liste…',           minLoadingTime: 0 },
-    '/app/properties/details': { route: '/app/properties/details', requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState', 'rooms.initLoadingState', 'locataires.initLoadingState', 'locations.initLoadingState'], customMessage: 'Chargement des détails…', minLoadingTime: 0 },
+    // Noms de state RÉELS : `locatairelist` / `locationlist`. Les anciens noms
+    // (`locataires`, `locations`) n'existaient pas → `undefined` → l'overlay
+    // tournait les 12 s complètes sur chaque fiche de bien.
+    '/app/properties/details': { route: '/app/properties/details', requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState', 'rooms.initLoadingState', 'locatairelist.initLoadingState', 'locationlist.initLoadingState'], customMessage: 'Chargement des détails…', minLoadingTime: 0 },
     '/app/contract':           { route: '/app/contract',           requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement des contrats…',        minLoadingTime: 0 },
     '/app/contract-templates': { route: '/app/contract-templates', requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement des modèles…',         minLoadingTime: 0 },
     '/app/facturation':        { route: '/app/facturation',        requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement de la facturation…',   minLoadingTime: 0 },
@@ -62,7 +52,13 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
     '/app/assign-location':    { route: '/app/assign-location',    requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState'], customMessage: 'Chargement…', minLoadingTime: 0 },
     '/app/welcome':            { route: '/app/welcome',            requiredStores: ['userprofile.initLoadingState'], customMessage: 'Bienvenue sur Ndewa360°…',        minLoadingTime: 0 },
     '/admin':                  { route: '/admin',                  requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement de l\'administration…', minLoadingTime: 0 },
-    '/search':                 { route: '/search',                 requiredStores: ['countries.initLoadingState'],  customMessage: 'Chargement de la recherche…',     minLoadingTime: 0 },
+    // `/search` : aucun store à attendre. `PublicDataResolver` dispatche
+    // `FetchCountries()` puis retourne `of(true)` immédiatement — la navigation
+    // ne bloque jamais — et la page possède déjà son propre état de chargement
+    // (`SearchState.selectStateLoading` + `isLoading`/`isLoadingMore`).
+    // Afficher l'overlay ici couvrait une page déjà interactive, pendant au
+    // pire 6 s si `countries` était en échec. → pas d'overlay.
+    '/search':                 { route: '/search',                 requiredStores: [],                             customMessage: '', minLoadingTime: 0 },
     '/auth':                   { route: '/auth',                   requiredStores: [],                              customMessage: '',                                minLoadingTime: 0 },
     '/payment':                { route: '/payment',                requiredStores: [],                              customMessage: '',                                minLoadingTime: 0 },
   };
@@ -101,13 +97,19 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
   private onStart(url: string): void {
     this.cancelSub();
     clearTimeout(this.hideTimer);
+    this.hideTimer = null;
     this.loadingStartTime = Date.now();
 
     const config = this.findConfig(url);
-    if (config && config.requiredStores.length > 0) {
+    // Routes sans stores (auth, payment) → pas d'overlay, pas de budget.
+    // On n'affiche que s'il reste quelque chose à attendre : les navigations
+    // internes (stores déjà LOADED) ne doivent plus faire clignoter l'overlay.
+    if (config && config.requiredStores.length > 0 && this.hasPendingStore(config)) {
+      // Le budget est armé dès NavigationStart : le temps passé dans les
+      // resolvers compte dans la durée totale de l'overlay.
+      this.armSafetyTimer();
       this.show(config.customMessage || 'Chargement…', 0);
     }
-    // Routes sans stores (auth, payment) → pas d'overlay
   }
 
   private onEnd(url: string): void {
@@ -119,7 +121,34 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
       return;
     }
 
+    if (!this.hasPendingStore(config)) {
+      // Tout est déjà en cache : rien à observer, surtout pas un timer.
+      this.hide();
+      return;
+    }
+
+    // Un resolver a lancé une requête pendant la navigation alors que tout
+    // semblait prêt au démarrage : on affiche maintenant, avant d'attendre.
+    if (!this._overlayVisible.value) {
+      this.show(config.customMessage || 'Chargement…', 0);
+    }
+
+    // Garantie qu'un budget existe dès qu'on va attendre — couvre le premier
+    // chargement, où le NavigationStart est raté (le service n'est injecté
+    // qu'au constructeur d'AppComponent, après l'APP_INITIALIZER). En revanche
+    // on ne réarme JAMAIS : le budget court depuis le début de la navigation.
+    if (!this.hideTimer) {
+      this.armSafetyTimer();
+    }
+
     this.observeStores(config);
+  }
+
+  /** Vrai si au moins un store attendu n'est pas encore à 'LOADED'. */
+  private hasPendingStore(config: DataLoadingConfig): boolean {
+    return config.requiredStores.some(
+      path => this.store.selectSnapshot((state: any) => this.get(state, path)) !== 'LOADED'
+    );
   }
 
   // ─── Observation des stores ───────────────────────────────────────────────
@@ -151,6 +180,7 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
           this.translate.instant('LOADER.LOAD_ERROR') || 'Impossible de charger les données.'
         );
         clearTimeout(this.hideTimer);
+        this.hideTimer = null;
         return;
       }
 
@@ -168,9 +198,19 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
         }
       }
     });
+  }
 
-    // Timeout de sécurité : 12 secondes max
+  /**
+   * Filet de sécurité : 6 s maximum de budget total pour l'overlay.
+   *
+   * 6 s plutôt que 12 s : ces stores se résolvent en ~300 ms au premier
+   * chargement et en quasi-immédiat ensuite — 12 s masquait un
+   * dysfonctionnement pendant une éternité. Au-delà, on laisse la page
+   * s'afficher avec ses propres états de chargement.
+   */
+  private armSafetyTimer(): void {
     this.hideTimer = setTimeout(() => {
+      this.hideTimer = null;
       this.cancelSub();
       this.hide();
       this.toastr.warning(
@@ -178,7 +218,7 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
         'Ndewa360°',
         { timeOut: 5000 }
       );
-    }, 12000);
+    }, 6000);
   }
 
   // ─── Détection connexion réseau ───────────────────────────────────────────
@@ -222,6 +262,7 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
 
   private hide(): void {
     clearTimeout(this.hideTimer);
+    this.hideTimer = null;
     this._overlayVisible.next(false);
     this._overlayProgress.next(0);
   }
@@ -259,10 +300,8 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
   }
 
   // ─── API publique ─────────────────────────────────────────────────────────
-
-  public forceStopLoading(): void { this.cancelSub(); this.hide(); }
-  public addRouteConfig(config: DataLoadingConfig): void { this.routeConfigs[config.route] = config; }
-  public getCurrentLoadingState(): any { return null; }
+  // Supprimé (jamais appelé dans l'application) : forceStopLoading(),
+  // addRouteConfig(), getCurrentLoadingState().
 
   /**
    * Relance le chargement après un échec.

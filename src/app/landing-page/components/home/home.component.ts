@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   // ── Application Android (section toujours visible, hors profil) ─────────────
 
   readonly androidApp = {
-    url: 'assets/Ndewa360.apk',
+    url: environment.apkUrl,
     fileName: 'Ndewa360.apk',
     sizeLabel: '134,5 Mo'
   };

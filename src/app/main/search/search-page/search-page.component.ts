@@ -1234,7 +1234,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Obtient la liste des médias pour une carte avec fallback
    */
   getMediasForCard(result: any): string[] {
-    if (!result) return ['/assets/images/placeholder-room.jpg'];
+    if (!result) return ['/assets/images/properties/property-placeholder-1.svg'];
 
     // Clé de cache basée sur l'ID du résultat
     const cacheKey = result._id || JSON.stringify(result);
@@ -1253,7 +1253,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         return t === 'image' || t === 'unknown';
       });
 
-    const result2 = images.length > 0 ? images : ['/assets/images/placeholder-room.jpg'];
+    const result2 = images.length > 0 ? images : ['/assets/images/properties/property-placeholder-1.svg'];
     this.mediasCache.set(cacheKey, result2);
     return result2;
   }

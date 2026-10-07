@@ -14,6 +14,8 @@ export const environment = {
   version: '2.0.0',
   // KundAi — mode proxy
   kundaiTrackingUrl: 'https://api.ndewa-360.com/tracking',
-  kundaiApiKey: '', // vide en mode proxy
+kundaiApiKey: '', // vide en mode proxy
+  // APK Android : exclu du build (141 Mo). Hébergé sur Google Cloud Storage.
+  apkUrl: envVars['APK_URL'] || 'https://storage.googleapis.com/dist_apk/Ndewa360.apk',
   }
   

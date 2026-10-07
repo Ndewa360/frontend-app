@@ -13,9 +13,6 @@ export {AppMenuService} from "./services/app-menu.service"
 
 /** COMPONENTS **/
 
-/** MODULES **/
-export {ChartsModule} from './modules/charts/charts.module'
-
 /** UTILS **/
 export * from './helpers'
 export * from './types'

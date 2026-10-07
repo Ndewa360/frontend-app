@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import {SharedModule} from '../shared/shared.module';
 import {LayoutModule} from '../layout/layout.module';
-import {ChartsModule} from '../../@youpez';
 import {MainRoutingModule} from './main-routing.module';
 
 import {WelcomeComponent} from './welcome/welcome.component';
@@ -30,7 +29,6 @@ ModuleRegistry.registerModules([
     MainRoutingModule,
     LayoutModule,
     SharedModule,
-    ChartsModule,
     MatDialogModule,
     LocationPaymentModule,
     AgGridModule,

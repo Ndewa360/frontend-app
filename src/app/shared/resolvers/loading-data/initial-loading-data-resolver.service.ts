@@ -43,7 +43,13 @@ export class InitialLoadingDataResolver implements Resolve<any> {
             catchError(() => of(false))
           ),
         ]).pipe(
-          // timeout(10000),
+          // Sans timeout, un store resté à 'LOADING'/'NO_LOADED' (erreur HTTP sur
+          // countries n'a même pas de catchError) faisait échouer `skipWhile`
+          // pour toujours : NavigationEnd n'était jamais émis et TOUTES les
+          // navigations suivantes restaient bloquées.
+          // 5000 < les 6000 ms de budget de l'overlay : la navigation se
+          // termine toujours avant que le loader n'abandonne.
+          timeout(5000),
           map(() => true),
           catchError(() => of(true))
         );

@@ -21,6 +21,8 @@ export const environment = {
   // KundAi — mode proxy : le frontend pointe vers le backend Ndewa360
   kundaiTrackingUrl: envVars['API_URL'] ? `${envVars['API_URL']}/tracking` : 'http://localhost:3002/tracking',
   kundaiApiKey: '', // vide en mode proxy — la clé reste côté backend
+  // APK Android : exclu du build (141 Mo). URL de téléchargement configurable.
+  apkUrl: envVars['APK_URL'] || 'https://storage.googleapis.com/dist_apk/Ndewa360.apk',
 }
   
   /*

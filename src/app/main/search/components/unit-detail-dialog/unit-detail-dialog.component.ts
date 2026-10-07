@@ -341,7 +341,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
 
   private buildMediaItems(): void {
     if (!this.unit) {
-      this.unitMediaItems = [{ url: '/assets/images/placeholder-room.jpg', type: 'image' }];
+      this.unitMediaItems = [{ url: '/assets/images/properties/property-placeholder-1.svg', type: 'image' }];
       this.mediaLoading = false;
       this.cdr.detectChanges();
       return;
@@ -358,7 +358,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     const unique = this.collectRawUrls();
     const items = unique.length > 0
       ? MediaUtil.getMediaItems(unique)
-      : [{ url: '/assets/images/placeholder-room.jpg', type: 'image' as const }];
+      : [{ url: '/assets/images/properties/property-placeholder-1.svg', type: 'image' as const }];
 
     if (cacheKey) this.mediaCache.set(cacheKey, items);
     this.unitMediaItems = items;
@@ -430,7 +430,7 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   // ── Utilitaires ──────────────────────────────────────────────────────────
 
   trackByIndex(index: number): number { return index; }
-  onImageError(event: any, _index: number): void { event.target.src = '/assets/images/placeholder-room.jpg'; }
+  onImageError(event: any, _index: number): void { event.target.src = '/assets/images/properties/property-placeholder-1.svg'; }
   onImageLoad(_event: any, _index: number): void {}
 
   formatPrice(price: number): string {

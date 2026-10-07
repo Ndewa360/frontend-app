@@ -173,9 +173,12 @@ export class UserState{
         return this._usersService.getUsers(usersId.length>0?notFounds:[]).pipe(
             tap(
                 result => {
-                    if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
+                    // `initLoadingState` devait passer à 'LOADED' : resté bloqué à
+                    // 'LOADING' en succès, il rendait les conditions de cache
+                    // (ci-dessus) toujours fausses et gelait LoadingAdminDataResolver.
                     ctx.patchState({
                         loadingUser:false,
+                        initLoadingState:'LOADED',
                         users:[...result.data],
                     })
                 }
@@ -200,9 +203,12 @@ export class UserState{
         return this._usersService.getAllUsers().pipe(
             tap(
                 result => {
-                    if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
+                    // Idem : sans 'LOADED' ici, LoadingAdminDataResolver attendait
+                    // toujours son timeout(10000) → 10 s bloquées à chaque entrée
+                    // dans `/:lang/admin/*`.
                     ctx.patchState({
                         loadingUser:false,
+                        initLoadingState:'LOADED',
                         users:[...result.data],
                     })
                 }

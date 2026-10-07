@@ -1007,7 +1007,7 @@
       <h3>{{ t('LANDING.VIDEO_MODAL.TITLE') }}</h3>
       <button (click)="closeVideoModal()"><i class="fas fa-times"></i></button>
     </div>
-    <video #modalVideo class="video-modal__player" controls controlsList="nodownload">
+    <video #modalVideo class="video-modal__player" controls controlsList="nodownload" preload="none">
       <source src="assets/presentation.mp4" type="video/mp4">
     </video>
     <div class="video-modal__footer">

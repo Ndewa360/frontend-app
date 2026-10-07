@@ -79,7 +79,6 @@ import { IbmIconModule } from './components/ibm-icon/ibm-icon.module';
 import {NgbDropdownModule, NgbTooltipModule} from '@ng-bootstrap/ng-bootstrap';
 import {MatCardModule} from '@angular/material/card';
 import { YoupezAlertComponent } from './components/alert';
-import { ChartsModule } from './modules/charts/charts.module';
 import { AppLoaderComponent } from './components/app-loader/app-loader.component';
 import { AppProgressBarComponent } from './components/app-progress-bar/app-progress-bar.component';
 import { LandingFooterComponent } from './layout/landing/landing-footer/landing-footer.component';
@@ -108,9 +107,11 @@ const MainModules = [
   DragDropModule,
   A11yModule,
   MatDialogModule,
-  MatIconModule,
-  ChartsModule
+  MatIconModule
   // NgxMatIntlTelInputComponent,
+  // ChartsModule retiré : les composants `youpez-echarts` (et echarts,
+  // ~1,5 Mo) ne sont utilisés nulle part dans l'application. L'importer ici
+  // tirait tout echarts dans le bundle initial via SharedModule (→ app.module).
 ];
 
 const CarbonModules = [
