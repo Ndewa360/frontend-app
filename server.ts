@@ -115,7 +115,10 @@ export function app(injectedDocument?: string): express.Express {
   // Le builder application esbuild imbrique sa sortie dans {outputPath}/browser
   const distFolder = join(process.cwd(), 'dist/app/browser');
   const document = resolveDocument(injectedDocument);
-  const commonEngine = new CommonEngine({ bootstrap: AppServerModule });
+  const commonEngine = new CommonEngine({
+    bootstrap: AppServerModule,
+    enablePerformanceProfiler: process.env['SSR_PROFILE'] === '1',
+  });
 
   server.set('view engine', 'html');
   server.set('views', distFolder);
@@ -166,7 +169,29 @@ export function app(injectedDocument?: string): express.Express {
   const isSsrRoute = (url: string) =>
     /^\/[a-z]{2}\/(home|search)(\/.*)?(\?.*)?$/.test(url) ||
     url === '/';
-  const renderTimeoutMs = 15000;
+  // Budget de rendu court : la page doit répondre vite (<~5 s) même si le rendu
+  // tarde à stabiliser (le builder CommonEngine n'a pas de timeout intrinsèque).
+  // Un watchdog long (15 s) dépassait la fenêtre Vercel -> 504 Gateway Timeout.
+  const renderTimeoutMs = Number(process.env['SSR_TIMEOUT_MS'] || 4000);
+  // Fuite mémoire linéaire observée avec CommonEngine (~ +2 Mo heap et ~ +700 ms
+  // par rendu SSR) : une instance chaude s'embourbe et finit par dépasser la
+  // fenêtre Vercel (30 s) -> 504 Gateway Timeout. On recycle donc le process
+  // avant qu'il ne devienne trop lent. Désactivé hors Vercel (serve:ssr local).
+  const shouldRotate =
+    process.env['VERCEL'] === '1' || process.env['SSR_ROTATION'] === '1';
+  const rotateBudgetRenders = Number(process.env['SSR_ROTATE_RENDERS'] || 6);
+  const rotateAfterMs = Number(process.env['SSR_ROTATE_AFTER_MS'] || 6000);
+  let ssrRenders = 0;
+  let lastRenderMs = 0;
+  const maybeRotate = () => {
+    if (!shouldRotate) return;
+    if (ssrRenders >= rotateBudgetRenders || lastRenderMs >= rotateAfterMs) {
+      console.warn(
+        `[SSR] rotation du process (rendus ${ssrRenders}, dernier ${lastRenderMs}ms)`
+      );
+      setTimeout(() => process.exit(0), 250);
+    }
+  };
 
   // All regular routes use the Universal engine
   server.get('*', (req, res) => {
@@ -178,14 +203,18 @@ export function app(injectedDocument?: string): express.Express {
       return;
     }
     if (isSsrRoute(req.url)) {
+      const reqStart = Date.now();
       let settled = false;
       // Watchdog SSR : si le rendu ne converge pas (tâches Angular instables,
-      // API en aval lente...), on retombe en SPA plutôt que de laisser 000/socket.
+      // API en aval lente...), on retombe en SPA plutôt que de laisser un 000/socket.
       const watchdog = setTimeout(() => {
         if (settled) return;
         settled = true;
         console.error(`[SSR] TIMEOUT ${renderTimeoutMs}ms — fallback SPA`, req.url);
         res.send(document);
+        ssrRenders++;
+        lastRenderMs = Date.now() - reqStart;
+        maybeRotate();
       }, renderTimeoutMs);
       commonEngine
         .render({
@@ -193,6 +222,7 @@ export function app(injectedDocument?: string): express.Express {
           document,
           url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
           publicPath: distFolder,
+          inlineCriticalCss: false,
           providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]
         })
         .then((html) => {
@@ -200,6 +230,9 @@ export function app(injectedDocument?: string): express.Express {
           clearTimeout(watchdog);
           settled = true;
           res.send(html);
+          ssrRenders++;
+          lastRenderMs = Date.now() - reqStart;
+          maybeRotate();
         })
         .catch((err) => {
           if (settled) return;
@@ -207,6 +240,9 @@ export function app(injectedDocument?: string): express.Express {
           settled = true;
           console.error('[SSR] render error', req.url, (err as Error).message || err);
           res.send(document);
+          ssrRenders++;
+          lastRenderMs = Date.now() - reqStart;
+          maybeRotate();
         });
     } else {
       res.send(document);

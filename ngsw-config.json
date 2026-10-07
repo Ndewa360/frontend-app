@@ -18,7 +18,7 @@
     {
       "name": "assets",
       "installMode": "lazy",
-      "updateMode": "prefetch",
+      "updateMode": "lazy",
       "resources": {
         "files": [
           "/assets/**",
@@ -41,7 +41,7 @@
       "name": "api",
       "urls": ["https://api.ndewa-360.com/**"],
       "cacheConfig": {
-        "strategy": "networkFirst",
+        "strategy": "freshness",
         "maxSize": 100,
         "maxAge": "1d",
         "timeout": "10s"
