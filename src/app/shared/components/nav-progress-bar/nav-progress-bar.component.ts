@@ -1,4 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Router,
+  NavigationStart,
+  NavigationEnd,
+  NavigationCancel,
+  NavigationError
+} from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataDrivenLoaderService } from '../../services/data-driven-loader.service';
@@ -58,22 +65,41 @@ export class NavProgressBarComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
   private progressTimer: any;
+  private pendingShowTimer: any;
+  // Compteur partagé entre les deux sources (overlay données + navigation) pour
+  // que la barre reste visible tant que l'une des deux est active.
+  private activeCount = 0;
 
-  constructor(private dataLoader: DataDrivenLoaderService) {}
+  constructor(
+    private dataLoader: DataDrivenLoaderService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    // Une seule source de vérité : la visibilité de l'overlay Angular.
-    //
-    // Avant, la barre était aussi pilotée par `NavigationLoaderService`, ce qui
-    // la démarrait à CHAQUE NavigationStart — y compris sur les navigations où
-    // aucun store n'est en attente. Résultat : une barre orange clignotante en
-    // haut de chaque page, sans rapport avec une réelle attente de données.
-    // `pageLoading$` était en plus un BehaviorSubject jamais émis (abonnement mort).
+    // Source 1 : l'overlay Angular (stores en attente de données).
     this.dataLoader.overlayVisible$.pipe(takeUntil(this.destroy$)).subscribe(visible => {
       if (visible) {
-        this.startProgress();
-      } else if (this.visible) {
-        this.completeProgress();
+        this.show();
+      } else {
+        this.hide();
+      }
+    });
+
+    // Source 2 : chaque navigation Angular (chargement de chunk lazy, resolver,
+    // rendu), pour couvrir le temps mort au clic sur un bouton/lien vers une
+    // route publique non couverte par l'overlay. Une légère temporisation évite
+    // la barre sur les navigations quasi instantanées (chunk en cache).
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
+      if (event instanceof NavigationStart) {
+        clearTimeout(this.pendingShowTimer);
+        this.pendingShowTimer = setTimeout(() => this.show(), 200);
+      } else if (
+        event instanceof NavigationEnd ||
+        event instanceof NavigationCancel ||
+        event instanceof NavigationError
+      ) {
+        clearTimeout(this.pendingShowTimer);
+        this.hide();
       }
     });
   }
@@ -82,9 +108,12 @@ export class NavProgressBarComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     clearInterval(this.progressTimer);
+    clearTimeout(this.pendingShowTimer);
   }
 
-  private startProgress(): void {
+  private show(): void {
+    this.activeCount++;
+    if (this.visible) return;
     clearInterval(this.progressTimer);
     this.visible = true;
     this.complete = false;
@@ -97,6 +126,12 @@ export class NavProgressBarComponent implements OnInit, OnDestroy {
         this.progress = Math.min(90, this.progress + increment);
       }
     }, 200);
+  }
+
+  private hide(): void {
+    this.activeCount = Math.max(0, this.activeCount - 1);
+    if (this.activeCount > 0) return;
+    this.completeProgress();
   }
 
   private completeProgress(): void {

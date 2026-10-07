@@ -21,13 +21,13 @@ import { ToastrService } from 'ngx-toastr';
 import { UserBreachReportService } from 'src/app/shared/services/user-breach-report.service';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { AgentContactDisplaySettingsComponent } from '../agent-contact-display/agent-contact-display.component';
+import { GoogleAnalyticsService } from 'src/app/shared/services/google-analytics.service';
 import { LocalizationSettingsComponent } from './localization-settings.component';
 import { SelectModule } from 'carbon-components-angular';
 import { NgIf } from '@angular/common';
 import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
-const GA_ID = 'G-MKEB3L7EXL';
 
 @Component({
   selector: 'user-profile-infos',
@@ -81,7 +81,8 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       private _activatedRoute: ActivatedRoute,
       private toastr: ToastrService,
       private breachReportService: UserBreachReportService,
-      private translate: TranslateService
+      private translate: TranslateService,
+      private googleAnalytics: GoogleAnalyticsService
   ) { }
   
   ngOnInit(): void {
@@ -417,42 +418,15 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   }
 
   acceptCookies(): void {
-    localStorage.setItem(COOKIE_KEY, 'accepted');
     this.cookieConsent = 'accepted';
-    this.loadGoogleAnalytics();
+    this.googleAnalytics.accept();
     this.toastr.success(this.translate.instant('USER_PROFILE.COOKIES_ACCEPTED'), 'Ndewa360°');
   }
 
   declineCookies(): void {
-    localStorage.setItem(COOKIE_KEY, 'declined');
     this.cookieConsent = 'declined';
-    this.removeGoogleAnalytics();
+    this.googleAnalytics.decline();
     this.toastr.info(this.translate.instant('USER_PROFILE.COOKIES_DECLINED'), 'Ndewa360°');
-  }
-
-  private loadGoogleAnalytics(): void {
-    if (document.getElementById('ga-script')) return;
-
-    const w = window as any;
-    w.dataLayer = w.dataLayer || [];
-    function gtag(...args: any[]) { w.dataLayer.push(args); }
-    w.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', GA_ID, { send_page_view: false });
-
-    const script = document.createElement('script');
-    script.id = 'ga-script';
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-    document.head.appendChild(script);
-  }
-
-  private removeGoogleAnalytics(): void {
-    const script = document.getElementById('ga-script');
-    if (script) script.remove();
-    const w = window as any;
-    delete w.gtag;
-    w.dataLayer = [];
   }
 
   // --- Export données ---

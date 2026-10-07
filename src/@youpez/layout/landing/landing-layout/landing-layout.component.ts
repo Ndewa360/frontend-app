@@ -5,9 +5,10 @@ import { filter, tap } from 'rxjs';
 import { NgIf } from '@angular/common';
 import { LandingFooterComponent } from '../landing-footer/landing-footer.component';
 import { LandingHeaderComponent } from '../landing-header/landing-header.component';
-
-const COOKIE_KEY = 'ndewa_cookie_consent';
-const GA_ID = 'G-MKEB3L7EXL';
+import {
+  COOKIE_CONSENT_KEY,
+  GoogleAnalyticsService
+} from 'src/app/shared/services/google-analytics.service';
 
 @Component({
   selector: 'app-landing-layout',
@@ -17,11 +18,14 @@ const GA_ID = 'G-MKEB3L7EXL';
   imports: [LandingHeaderComponent, NgScrollbar, RouterOutlet, LandingFooterComponent, NgIf, RouterLink]
 })
 export class LandingLayoutComponent implements OnInit, AfterViewInit{
-  
+
   @ViewChild(NgScrollbar,  { static: true }) scrollable: NgScrollbar;
   cookieBannerVisible = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private googleAnalytics: GoogleAnalyticsService
+  ) {}
 
   ngAfterViewInit(): void {
     this.router.events.pipe(
@@ -33,51 +37,24 @@ export class LandingLayoutComponent implements OnInit, AfterViewInit{
 
   ngOnInit(): void {
     let consent: string | null = null;
-    try { consent = localStorage.getItem(COOKIE_KEY); } catch {}
+    try { consent = localStorage.getItem(COOKIE_CONSENT_KEY); } catch {}
     this.cookieBannerVisible = !consent;
     if (consent === 'accepted') {
-      this.loadGoogleAnalytics();
+      this.googleAnalytics.accept();
     }
   }
 
   acceptCookies(): void {
-    localStorage.setItem(COOKIE_KEY, 'accepted');
     this.cookieBannerVisible = false;
-    this.loadGoogleAnalytics();
+    this.googleAnalytics.accept();
   }
 
   declineCookies(): void {
-    localStorage.setItem(COOKIE_KEY, 'declined');
     this.cookieBannerVisible = false;
-    this.removeGoogleAnalytics();
+    this.googleAnalytics.decline();
   }
 
   resetCookieChoice(): void {
     this.cookieBannerVisible = true;
-  }
-
-  private loadGoogleAnalytics(): void {
-    if (document.getElementById('ga-script')) return;
-
-    const w = window as any;
-    w.dataLayer = w.dataLayer || [];
-    function gtag(...args: any[]) { w.dataLayer.push(args); }
-    w.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', GA_ID, { send_page_view: false });
-
-    const script = document.createElement('script');
-    script.id = 'ga-script';
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-    document.head.appendChild(script);
-  }
-
-  private removeGoogleAnalytics(): void {
-    const script = document.getElementById('ga-script');
-    if (script) script.remove();
-    const w = window as any;
-    delete w.gtag;
-    w.dataLayer = [];
   }
 }

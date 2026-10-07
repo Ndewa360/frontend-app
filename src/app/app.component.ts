@@ -22,6 +22,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AuthStateService } from './shared/services/auth-state.service';
 import { DataDrivenLoaderService } from './shared/services/data-driven-loader.service';
 import { AppLoadingPhaseService } from './shared/services/app-loading-phase.service';
+import { GoogleAnalyticsService } from './shared/services/google-analytics.service';
 import { LanguageUrlService } from './shared/services/language-url.service';
 import { HealthCheckService } from './shared/services/health-check.service';
 import { SwUpdate } from '@angular/service-worker';
@@ -71,6 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     public dataDrivenLoader: DataDrivenLoaderService,
     private loadingPhase: AppLoadingPhaseService,
+    private googleAnalytics: GoogleAnalyticsService,
     private languageUrlService: LanguageUrlService,
     private translateService: TranslateService,
     private healthCheck: HealthCheckService,
@@ -119,6 +121,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.dataDrivenLoader.overlayProgress$.pipe(takeUntil(this.destroy$))
       .subscribe(p => { this.overlayProgress = p; });
 
+    // Google Analytics — applique le consentement stocké (chargement ou retrait
+    // du script gtag). Les pagevues partent depuis l'abonnement NavigationEnd.
+    if (isPlatformBrowser(this.platformId)) this.googleAnalytics.initFromConsent();
+
     // Front office detection
     this.initializeFrontOfficeDetection();
 
@@ -147,6 +153,10 @@ export class AppComponent implements OnInit, OnDestroy {
       filter(e => e instanceof NavigationEnd)
     ).subscribe((e: NavigationEnd) => {
       this.seoService.updateMetaTagsForRoute(e.urlAfterRedirects);
+      // Google Analytics — pagevues suivies uniquement si consentement accepté.
+      if (this.googleAnalytics.consentAccepted) {
+        this.googleAnalytics.trackPageView(e.urlAfterRedirects);
+      }
     });
 
     // Les timers/activity/profile ne doivent pas s'activer en SSR (rendu serveur)

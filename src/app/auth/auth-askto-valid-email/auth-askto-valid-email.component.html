@@ -21,7 +21,7 @@
 
               <div class="app-timeline__group" fxLayout="row wrap">
                 <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
-                     ngClass.lt-sm="app-timeline__time--collapse">
+                     [class.app-timeline__time--collapse]="ltSm">
                   <div class="app-helper-text-01"><h3>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP1_LABEL' | translate }}</h3></div>
                 </div>
                 <div fxFlex class="app-timeline__item app-timeline__item--circle app-timeline__item--info pb-5">
@@ -37,7 +37,7 @@
 
               <div class="app-timeline__group" fxLayout="row wrap">
                 <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
-                     ngClass.lt-sm="app-timeline__time--collapse">
+                     [class.app-timeline__time--collapse]="ltSm">
                   <div class="app-helper-text-01"><h3>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP2_LABEL' | translate }}</h3></div>
                 </div>
                 <div fxFlex class="app-timeline__item app-timeline__item--circle app-timeline__item--success pb-5">
@@ -53,7 +53,7 @@
 
               <div class="app-timeline__group" fxLayout="row wrap">
                 <div class="app-timeline__time text-right" fxFlex="100%" fxFlex.gt-sm="105px"
-                     ngClass.lt-sm="app-timeline__time--collapse">
+                     [class.app-timeline__time--collapse]="ltSm">
                   <div class="app-helper-text-01"><h3>{{ 'AUTH_CONFIRM_EMAIL.NORMAL.STEP3_LABEL' | translate }}</h3></div>
                 </div>
                 <div fxFlex class="app-timeline__item app-timeline__item--circle pb-5 app-timeline__item--warning">

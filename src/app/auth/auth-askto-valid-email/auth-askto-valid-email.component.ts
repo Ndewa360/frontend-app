@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -8,7 +8,7 @@ import { LanguageUrlService } from 'src/app/shared/services/language-url.service
 import { IbmIconComponent } from '../../../@youpez/components/ibm-icon/ibm-icon.component';
 import { ButtonModule } from 'carbon-components-angular/button';
 import { FlexModule } from '@angular/flex-layout/flex';
-import { NgIf } from '@angular/common';
+import { NgIf, isPlatformBrowser } from '@angular/common';
 import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
 import { ExtendedModule } from '@angular/flex-layout/extended';
 
@@ -27,21 +27,36 @@ export class AuthAsktoValidEmailComponent implements OnInit, OnDestroy {
   resendSuccess = false;
   currentLang = 'fr';
 
+  // [ngClass.lt-sm] => [class.app-timeline__time--collapse]="ltSm" (matchMedia natif).
+  // L'API ngClass legacy de flex-layout crashe sur Angular 17 (addClass absente).
+  public ltSm = false;
+  private mqlLtSm?: MediaQueryList;
+  private readonly onLtSmChange = (e: MediaQueryListEvent) => { this.ltSm = e.matches; };
+
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private languageUrlService: LanguageUrlService
+    private languageUrlService: LanguageUrlService,
+    @Inject(PLATFORM_ID) private readonly platformId: object
   ) {}
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const mql = window.matchMedia('(max-width: 599.98px)');
+      this.ltSm = mql.matches;
+      mql.addEventListener('change', this.onLtSmChange);
+      this.mqlLtSm = mql;
+    }
     this.currentLang = this.languageUrlService.getCurrentLanguage();
     this.userEmail = this.route.snapshot.queryParams['email'] || '';
     this.isExpired = this.route.snapshot.queryParams['expired'] === 'true';
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.mqlLtSm?.removeEventListener('change', this.onLtSmChange);
+  }
 
   resendEmail(): void {
     if (!this.userEmail || this.resending) return;
