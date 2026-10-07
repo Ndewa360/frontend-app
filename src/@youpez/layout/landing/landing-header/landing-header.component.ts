@@ -52,29 +52,34 @@ export class LandingHeaderComponent implements OnInit {
   }
 
   scrollToProfiles(): void {
-    const currentUrl = this.router.url;
-    const isOnHome = currentUrl.includes('/home') && !currentUrl.includes('/home/');
+    const isOnHome = this.router.url.includes('/home') && !this.router.url.includes('/home/');
 
     if (isOnHome) {
       // Déjà sur la landing — scroll direct vers la section profils
-      const el = document.getElementById('profiles-section');
-      if (el) {
-        const offset = 80; // hauteur du header fixe
-        const top = el.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
+      this.scrollToProfilesSection();
     } else {
       // Naviguer vers la landing puis scroller
       this.router.navigate([`/${this.getCurrentLanguage()}/home`]).then(() => {
-        setTimeout(() => {
-          const el = document.getElementById('profiles-section');
-          if (el) {
-            const offset = 80;
-            const top = el.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top, behavior: 'smooth' });
-          }
-        }, 400);
+        setTimeout(() => this.scrollToProfilesSection(), 400);
       });
+    }
+  }
+
+  private scrollToProfilesSection(): void {
+    const el = document.getElementById('profiles-section');
+    if (!el) return;
+    const offset = 80; // hauteur du header fixe
+
+    // La landing rend son contenu dans un conteneur ngx-scrollbar : le scroll
+    // se fait sur `.ng-scroll-viewport`, pas sur le `window` (sinon rien ne bouge).
+    const viewport = document.querySelector<HTMLElement>('ng-scrollbar .ng-scroll-viewport');
+    if (viewport) {
+      const top = el.getBoundingClientRect().top - viewport.getBoundingClientRect().top
+        + viewport.scrollTop - offset;
+      viewport.scrollTo({ top, behavior: 'smooth' });
+    } else {
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
     }
   }
 
