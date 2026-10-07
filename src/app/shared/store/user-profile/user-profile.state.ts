@@ -200,10 +200,16 @@ export class UserProfileState {
                 );
             }),
             catchError((error) => {
+                const rawMessage = error?.error?.message || 'Erreur lors de la création du compte';
+                const message = Array.isArray(rawMessage) ? rawMessage[0] : rawMessage;
                 ctx.patchState({
                     loadingUserProfile: false,
-                    lastError: error?.error?.message || 'Erreur lors de la création du compte'
+                    lastError: message
                 });
+                this._toastrService.error(
+                    message || this._translateService.instant('NOTIFICATIONS.GENERIC_ERROR_RETRY'),
+                    'Ndewa360°'
+                );
                 return throwError(() => error);
             })
         );
