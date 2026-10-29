@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -193,10 +194,10 @@ export class AgentProfileCompletionComponent implements OnInit {
         businessLogoUrl: this.uploadedFiles['business-logo'] || ''
       };
 
-      const response = await this.http.post(
+      const response = await lastValueFrom(this.http.post(
         `${environment.apiUrl}/agents/${userId}/complete-profile`,
         formData
-      ).toPromise();
+      ), { defaultValue: undefined });
 
       this.router.navigate(['/app/agent/pending-approval']);
     } catch (error) {

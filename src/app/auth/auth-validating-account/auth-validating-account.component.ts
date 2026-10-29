@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
@@ -99,7 +100,7 @@ export class AuthValidatingAccountComponent implements OnInit {
 
   private async redirectAgent(user: any): Promise<void> {
     try {
-      const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
+      const response: any = await lastValueFrom(this.http.get(`${environment.apiUrl}/agents/${user._id}`), { defaultValue: undefined });
       
       if (!response) {
         const currentLang = this.languageUrlService.getCurrentLanguage();

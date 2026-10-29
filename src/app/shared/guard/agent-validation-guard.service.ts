@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -38,7 +39,7 @@ export class AgentValidationGuard implements CanActivate {
       return true;
     }
     try {
-      const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
+      const response: any = await lastValueFrom(this.http.get(`${environment.apiUrl}/agents/${user._id}`), { defaultValue: undefined });
       
       if (!response) {
         this.router.navigateByUrl('/app/agent/complete-profile', { replaceUrl: true });
@@ -101,14 +102,13 @@ export class AgentValidationGuard implements CanActivate {
     }
 
     try {
-      await this.store
+      await lastValueFrom(this.store
         .select((state: any) => state.userprofile?.initLoadingState)
         .pipe(
           filter((s: string) => s === 'LOADED' || s === 'ERROR'),
           take(1),
           timeout(AgentValidationGuard.PROFILE_WAIT_MS)
-        )
-        .toPromise();
+        ), { defaultValue: undefined });
     } catch {
       // Expiration : on repart avec l'état actuel plutôt que de bloquer la route.
     }

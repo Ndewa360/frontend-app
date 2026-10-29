@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
@@ -39,7 +40,7 @@ export class ModernDeleteUnitModalComponent implements OnInit {
     if (this.isDeleting) return;
     this.isDeleting = true;
     try {
-      await this.store.dispatch(new RoomAction.DeleteRoom(this.data.unit._id)).toPromise();
+      await lastValueFrom(this.store.dispatch(new RoomAction.DeleteRoom(this.data.unit._id)), { defaultValue: undefined });
       this.toastr.success(this.translate.instant('NOTIFICATIONS.UNIT_DELETED_SUCCESS'), 'Ndewa360°');
       this.dialogRef.close(true);
     } catch (error) {

@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -23,7 +24,7 @@ export class AgentProfileGuard implements CanActivate {
     }
 
     try {
-      const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
+      const response: any = await lastValueFrom(this.http.get(`${environment.apiUrl}/agents/${user._id}`), { defaultValue: undefined });
       const agentProfile = response.data || response;
 
       if (!agentProfile) {

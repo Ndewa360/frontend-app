@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, lastValueFrom } from 'rxjs';
 import { LocalizationService } from './localization.service';
 import { Store, Select } from '@ngxs/store';
 import { UserProfileAction } from '../../store/user-profile/user-profile.actions';
@@ -76,7 +76,7 @@ export class TranslationService {
       }
 
       // 1. Vérifier si l'utilisateur a une préférence dans son profil (utilisateur connecté)
-      const userProfile = await this.userProfile$.pipe(take(1)).toPromise();
+      const userProfile = await lastValueFrom(this.userProfile$.pipe(take(1)), { defaultValue: undefined });
       if (userProfile?.preferredLanguage && this.isLanguageSupported(userProfile.preferredLanguage)) {
         return userProfile.preferredLanguage;
       }

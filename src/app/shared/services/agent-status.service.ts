@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, lastValueFrom } from 'rxjs';
 import { UserProfileState } from '../store/user-profile/user-profile.state';
 import { environment } from 'src/environments/environment';
 import { silentHttp } from '../http/http-error-context';
@@ -39,9 +39,8 @@ export class AgentStatusService {
     try {
       // Sonde de fond au démarrage : l'appelant n'a rien demandé, l'échec est
       // silencieux (le journal de l'intercepteur reste alimenté).
-      const response: any = await this.http
-        .get(`${environment.apiUrl}/agents/${user._id}`, { context: silentHttp() })
-        .toPromise();
+      const response: any = await lastValueFrom(this.http
+        .get(`${environment.apiUrl}/agents/${user._id}`, { context: silentHttp() }), { defaultValue: undefined });
 
       if (!response) {
         this.agentStatusSubject.next('INCOMPLETE');

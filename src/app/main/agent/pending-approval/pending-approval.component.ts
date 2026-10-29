@@ -1,3 +1,4 @@
+import { lastValueFrom } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngxs/store';
@@ -29,7 +30,7 @@ export class PendingApprovalComponent implements OnInit {
     const user = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     
     try {
-      const response: any = await this.http.get(`${environment.apiUrl}/agents/${user._id}`).toPromise();
+      const response: any = await lastValueFrom(this.http.get(`${environment.apiUrl}/agents/${user._id}`), { defaultValue: undefined });
       this.agentProfile = response.data || response;
     } catch (error) {
     } finally {

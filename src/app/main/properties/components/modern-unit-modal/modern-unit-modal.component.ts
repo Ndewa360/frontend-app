@@ -2,7 +2,7 @@ import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angula
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted } from '@ngxs/store';
-import { Subject } from 'rxjs';
+import { Subject, lastValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -350,7 +350,7 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
           contentRoomType: ContentUploadRoomType.FOR_ROOM
         });
         
-        await this.store.dispatch(uploadAction).toPromise();
+        await lastValueFrom(this.store.dispatch(uploadAction), { defaultValue: undefined });
         uploadedUrls.push(file.name); // Adapter selon votre API
       }
       
