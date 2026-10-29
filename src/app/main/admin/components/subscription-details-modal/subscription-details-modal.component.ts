@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscriptions.actions';
 import { AdminUserSubscription } from '../../store/subscriptions/admin-subscriptions.model';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
+import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 import { FormsModule } from '@angular/forms';
 import { ExtendedModule } from '@angular/flex-layout/extended';
 import { NgClass, NgIf, NgFor } from '@angular/common';
@@ -30,6 +31,8 @@ export class SubscriptionDetailsModalComponent implements OnInit {
   actionReason = '';
   showReasonInput = false;
   pendingAction: string | null = null;
+  customAmount: number | null = null;
+  savingAmount = false;
 
   constructor(
     public dialogRef: MatDialogRef<SubscriptionDetailsModalComponent>,
@@ -37,10 +40,13 @@ export class SubscriptionDetailsModalComponent implements OnInit {
     private store: Store,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private currencyService: AdminCurrencyService
+    private currencyService: AdminCurrencyService,
+    private subscriptionsService: AdminSubscriptionsService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.customAmount = this.subscription.customMonthlyAmount ?? null;
+  }
 
   get subscription(): AdminUserSubscription {
     return this.data.subscription;
@@ -56,9 +62,32 @@ export class SubscriptionDetailsModalComponent implements OnInit {
 
   // ── Actions ──────────────────────────────────────────────────────────────
 
-  onUpgrade(): void {
-    this.pendingAction = 'upgrade';
+  /** Ouvre la saisie du montant Gold négocié pour ce compte. */
+  onCustomAmount(): void {
+    this.pendingAction = 'custom-amount';
     this.showReasonInput = true;
+  }
+
+  private saveCustomAmount(): void {
+    const amount = this.customAmount === null || (this.customAmount as any) === '' ? null : Math.round(Number(this.customAmount));
+    if (amount !== null && (!Number.isFinite(amount) || amount < 0)) {
+      this.toastr.warning('Montant invalide');
+      return;
+    }
+    this.savingAmount = true;
+    this.subscriptionsService.setCustomAmount(this.subscription._id, amount, this.actionReason || undefined).subscribe({
+      next: (res) => {
+        this.savingAmount = false;
+        this.toastr.success(res?.appliesNow
+          ? 'Montant Gold appliqué à ce compte.'
+          : 'Montant enregistré : il s\'appliquera dès que le compte sera au palier Gold.');
+        this.dialogRef.close({ action: 'custom-amount' });
+      },
+      error: () => {
+        this.savingAmount = false;
+        this.toastr.error('Le montant n\'a pas pu être enregistré.');
+      }
+    });
   }
 
   onSuspend(): void {
@@ -81,12 +110,9 @@ export class SubscriptionDetailsModalComponent implements OnInit {
     if (!this.pendingAction) return;
 
     switch (this.pendingAction) {
-    case 'upgrade':
-      this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(
-        this.subscription._id, this.actionReason
-      ));
-      this.dialogRef.close({ action: 'upgrade' });
-      break;
+    case 'custom-amount':
+      this.saveCustomAmount();
+      return;
     case 'suspend':
       if (!this.actionReason.trim()) {
         this.toastr.warning(this.translate.instant('ADMIN.SUBSCRIPTION.SUSPENSION_REASON_REQUIRED'));
@@ -115,7 +141,8 @@ export class SubscriptionDetailsModalComponent implements OnInit {
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   getPlanLabel(plan: string): string {
-    return plan === 'premium' ? 'Premium' : 'Gratuit';
+    if (plan === 'premium') return this.subscription.currentTier === 'GOLD' ? 'Gold' : 'Pro';
+    return plan === 'trial' ? 'Essai' : 'Gratuit';
   }
 
   getPlanClass(plan: string): string {

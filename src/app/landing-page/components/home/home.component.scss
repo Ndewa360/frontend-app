@@ -1194,7 +1194,9 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
   &::before { background: rgba(255,255,255,.3) !important; }
   // Forcer tout en blanc SAUF le bouton
   .pricing-plan-name, .pricing-amount-premium, .pricing-desc, .pricing-note,
-  .pricing-recommended, .pricing-features li { color: #fff !important; }
+  .pricing-features li { color: #fff !important; }
+  // Badge sur fond blanc : texte dans la couleur primaire
+  .pricing-recommended { color: $primary !important; }
   .pricing-features li { border-color: rgba(255,255,255,.18) !important; }
   // Bouton : blanc avec texte coloré, lisible
   .pricing-btn--primary {
@@ -1276,6 +1278,88 @@ $shadow-2xl: 0 40px 80px rgba(0,0,0,.24);
   > div { display: flex; flex-direction: column; gap: .35rem; }
   strong { font-size: 1rem !important; font-weight: 700 !important; color: #1e40af !important; display: block; margin: 0 !important; }
   p { font-size: .9375rem !important; color: #1d4ed8 !important; line-height: 1.6 !important; margin: 0 !important; }
+}
+
+// Offre « Loyers sous contrôle » : 3 cartes (Gratuit / Pro / Gold)
+.pricing-grid.pricing-grid--three {
+  max-width: 76rem;
+  align-items: stretch;
+  @media(min-width: 640px)  { grid-template-columns: repeat(2, 1fr); }
+  @media(min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+  // Sur 2 colonnes, la carte Gold occupe toute la largeur
+  @media(min-width: 640px) and (max-width: 1023px) {
+    .pricing-card--gold { grid-column: 1 / -1; }
+  }
+}
+.offer-label {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .375rem 1rem; margin-bottom: 1rem;
+  border-radius: 9999px; background: rgba($primary,.1); color: $primary-dark !important;
+  font-size: .8125rem; font-weight: 800; letter-spacing: .02em;
+  i { color: $primary; }
+}
+.pricing-amount-premium--from {
+  font-size: 2.75rem !important;
+  small { display: block; font-size: .875rem; font-weight: 600; opacity: .85; letter-spacing: 0; margin-bottom: .25rem; }
+}
+.pricing-amount--text { font-size: 2.5rem !important; color: $primary-dark !important; }
+.pricing-tiers {
+  flex: 1;
+  margin: 0 0 1rem !important; padding: 0 !important; list-style: none;
+  li {
+    display: flex; justify-content: space-between; align-items: baseline; gap: .75rem;
+    padding: .625rem 0 !important; border-bottom: 1px solid rgba(255,255,255,.2);
+    font-size: .875rem !important; color: #fff !important; line-height: 1.4;
+    &:last-child { border-bottom: none; }
+    span { opacity: .92; min-width: 0; }
+    strong { white-space: nowrap; font-size: .9375rem; font-weight: 800; flex-shrink: 0; }
+    small { font-weight: 500; opacity: .85; margin-left: .2rem; }
+  }
+}
+.pricing-card--gold {
+  border-color: rgba($primary,.45);
+  background: linear-gradient(180deg, #fffbeb 0%, #fff 55%);
+  &::before { background: linear-gradient(90deg,$primary-dark,$primary) !important; }
+}
+.pricing-contact {
+  display: flex; flex-direction: column; gap: .75rem; margin-top: auto;
+  .pricing-btn { margin-top: 0; }
+}
+.pricing-btn--whatsapp {
+  background: #25d366; color: #fff !important; i { color: #fff !important; }
+  box-shadow: 0 4px 16px rgba(37,211,102,.3);
+  &:hover { filter: brightness(.94); transform: translateY(-1px); }
+}
+.pricing-rule {
+  display: flex; align-items: flex-start; justify-content: center; gap: .5rem;
+  max-width: 48rem; margin: 1.75rem auto 0 !important; text-align: center;
+  font-size: .875rem !important; color: $text-mid; line-height: 1.55 !important;
+  i { color: $primary; margin-top: .2rem; flex-shrink: 0; }
+}
+.offer-bonuses {
+  max-width: 76rem; margin: 3rem auto 0;
+  &__title {
+    text-align: center; font-size: 1.375rem !important; font-weight: 800 !important;
+    color: $text-dark; margin-bottom: 1.5rem !important;
+  }
+  &__grid {
+    display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.25rem;
+    @media(min-width: 640px)  { grid-template-columns: repeat(2, 1fr); }
+    @media(min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+  }
+}
+.offer-bonus {
+  display: flex; gap: 1rem; align-items: flex-start;
+  background: #fff; border: 1px solid $border; border-radius: $radius-lg;
+  padding: 1.25rem 1.375rem; box-shadow: $shadow-sm;
+  &__icon {
+    width: 2.5rem; height: 2.5rem; border-radius: .75rem; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba($primary,.1);
+    i { color: $primary; font-size: 1.05rem; }
+  }
+  strong { display: block; font-size: .975rem !important; font-weight: 700 !important; color: $text-dark; margin-bottom: .25rem; }
+  p { margin: 0 !important; font-size: .875rem !important; color: $text-mid; line-height: 1.5 !important; }
 }
 
 // ═══════════════════════════════════════════════════════════

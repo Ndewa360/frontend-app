@@ -85,8 +85,8 @@
             <div class="w-full lg:w-72 flex-shrink-0">
               <div class="p-8 text-center app-bg-success-lt-30 app-text-contrast h-full flex flex-col justify-center">
                 <div class="flex items-center justify-center">
-                  <span class="app-productive-heading-07 mr-1 font-bold">2%</span>
-                  <span class="app-productive-heading-02">/unité/mois</span>
+                  <span class="app-productive-heading-05 mr-1 font-bold">{{ 'BILLING.PREMIUM_PLAN.PRICE_FROM' | translate }}</span>
+                  <span class="app-productive-heading-02">{{ 'BILLING.PREMIUM_PLAN.PER_MONTH' | translate }}</span>
                 </div>
                 <div class="app-body-short-01 mt-1 mb-6">
                   {{ 'BILLING.PREMIUM_PLAN.SUBTITLE' | translate }}
@@ -94,17 +94,12 @@
                 <div>
                   <ng-container *ngIf="(currentSubscription$ | async) as sub; else loadingPremiumBtn">
                     <button
-                      *ngIf="(sub.plan === 'FREE' || sub.plan === 'free') && sub.accountStatus !== 'suspended'; else alreadyPremium"
+                      *ngIf="!isPremiumPlan(sub) && sub.accountStatus !== 'suspended'; else alreadyPremium"
                       (click)="showBillingContract()"
-                      [disabled]="isUpgrading$ | async"
                       ibmButton="primary"
                       size="md"
                       class="app-ibm-btn-full custom-primary-button">
-                      <span *ngIf="!(isUpgrading$ | async)">{{ 'BILLING.PREMIUM_PLAN.UPGRADE_TO_PREMIUM' | translate }}</span>
-                      <span *ngIf="isUpgrading$ | async">
-                        <i class="fas fa-spinner fa-spin mr-2"></i>
-                        {{ 'BILLING.PREMIUM_PLAN.UPGRADING' | translate }}
-                      </span>
+                      {{ 'BILLING.PREMIUM_PLAN.VIEW_TERMS' | translate }}
                     </button>
                     <ng-template #alreadyPremium>
                       <button *ngIf="sub.accountStatus === 'suspended'; else isPremium"
@@ -137,39 +132,54 @@
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div class="flex items-center app-body-short-01">
                   <i class="fas fa-infinity app-color-success mr-2"></i>
-                  Biens immobiliers illimités
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_UNLIMITED_PROPERTIES' | translate }}
                 </div>
                 <div class="flex items-center app-body-short-01">
-                  <i class="fas fa-infinity app-color-success mr-2"></i>
-                  Unités locatives illimitées
+                  <i class="fas fa-tag app-color-success mr-2"></i>
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_FIXED_PRICE' | translate }}
                 </div>
                 <div class="flex items-center app-body-short-01">
-                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                  Gestion des finances
+                  <i class="fas fa-door-open app-color-success mr-2"></i>
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_OCCUPIED_ONLY' | translate }}
                 </div>
                 <div class="flex items-center app-body-short-01">
-                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                  Gestion des contrats
-                </div>
-                <div class="flex items-center app-body-short-01">
-                  <i class="fas fa-check-circle app-color-success mr-2"></i>
-                  Notifications de non paiement
+                  <i class="fab fa-whatsapp app-color-success mr-2"></i>
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_WHATSAPP_SUMMARY' | translate }}
                 </div>
                 <div class="flex items-center app-body-short-01">
                   <i class="fas fa-check-circle app-color-success mr-2"></i>
-                  Tableau de bord détaillé
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_FINANCES' | translate }}
                 </div>
                 <div class="flex items-center app-body-short-01">
                   <i class="fas fa-check-circle app-color-success mr-2"></i>
-                  Support prioritaire
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_CONTRACTS' | translate }}
                 </div>
                 <div class="flex items-center app-body-short-01">
                   <i class="fas fa-check-circle app-color-success mr-2"></i>
-                  Rapports avancés
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_REMINDERS' | translate }}
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_DASHBOARD' | translate }}
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_SETUP' | translate }}
+                </div>
+                <div class="flex items-center app-body-short-01">
+                  <i class="fas fa-check-circle app-color-success mr-2"></i>
+                  {{ 'BILLING.PREMIUM_PLAN.FEATURE_ANNUAL_STATEMENT' | translate }}
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Grille des paliers Pro et Gold -->
+        <div class="app-card mb-6 px-6 sm:px-10 py-8">
+          <div class="app-productive-heading-03 mb-2 font-bold">{{ 'BILLING.TIERS_TITLE' | translate }}</div>
+          <div class="app-body-short-02 mb-6">{{ 'BILLING.TIERS_SUBTITLE' | translate }}</div>
+          <app-pricing-tiers [summary]="pricing"></app-pricing-tiers>
         </div>
 
       </div>

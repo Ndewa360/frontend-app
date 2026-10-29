@@ -379,34 +379,60 @@
         "BODY_3": "Après inscription, un email de confirmation vous est envoyé. Votre compte doit être confirmé pour accéder à l'ensemble des fonctionnalités de la plateforme."
       },
       "SECTION_3": {
-        "TITLE": "4. Plans et tarification",
-        "SUBTITLE_0": "Plan Gratuit (Freemium)",
-        "CALLOUT_TITLE": "Plan Gratuit — Pour toujours",
-        "CALLOUT_TEXT": "Le plan gratuit est disponible sans limite de durée et sans carte bancaire requise.",
-        "LIST_0": "Jusqu'à 1 bien immobilier",
-        "LIST_1": "Jusqu'à 5 unités locatives par bien",
-        "LIST_2": "Accès à 100% des fonctionnalités de la plateforme",
-        "LIST_3": "Support par email",
-        "SUBTITLE_1": "Plan Trial (Essai Premium)",
-        "LIST_4": "Durée : 60 jours à compter de l'activation",
-        "LIST_5": "Accès illimité à tous les biens et unités locatives",
-        "LIST_6": "Toutes les fonctionnalités Premium incluses",
+        "TITLE": "4. Forfaits et tarification",
+        "SUBTITLE_0": "Forfait Gratuit",
+        "CALLOUT_TITLE": "Forfait Gratuit — Pour toujours",
+        "CALLOUT_TEXT": "Le forfait gratuit est disponible sans limite de durée et sans carte bancaire, tant que le compte compte 1 bien et au plus 4 logements occupés.",
+        "LIST_0": "1 bien immobilier",
+        "LIST_1": "Jusqu'à 4 logements occupés",
+        "LIST_2": "Accès aux fonctionnalités de suivi de la plateforme",
+        "LIST_3": "Support par email et WhatsApp",
+        "SUBTITLE_1": "Essai gratuit",
+        "LIST_4": "Durée : 30 jours à compter de l'inscription",
+        "LIST_5": "Biens et logements illimités",
+        "LIST_6": "Toutes les fonctionnalités incluses, rien n'est facturé",
         "LIST_7": "Aucune carte bancaire requise",
-        "LIST_8": "À l'expiration du trial, retour automatique au plan Gratuit",
-        "SUBTITLE_2": "Plan Premium",
-        "LIST_9": "Biens immobiliers et unités locatives illimités",
-        "LIST_10": "Facturation mensuelle : 2% du loyer mensuel de chaque unité occupée (minimum 15 jours dans le mois)",
-        "LIST_11": "Unité vide = 0 FCFA facturé",
-        "LIST_12": "Toutes les fonctionnalités de la plateforme",
-        "LIST_13": "Support prioritaire",
+        "LIST_8": "À la fin de l'essai, le forfait correspondant à la situation du compte s'applique automatiquement (Gratuit, Pro ou Gold)",
+        "SUBTITLE_2": "Forfaits Pro et Gold",
+        "LIST_9": "Le compte passe automatiquement au forfait Pro dès le 2e bien, quel que soit le nombre de logements, ou dès le 5e logement occupé",
+        "LIST_10": "Prix mensuel fixe selon le total des loyers des logements occupés : 3 000 FCFA jusqu'à 250 000 FCFA ; 6 000 FCFA de 250 001 à 500 000 FCFA ; 10 000 FCFA de 500 001 à 1 000 000 FCFA ; 20 000 FCFA de 1 000 001 à 2 500 000 FCFA",
+        "LIST_11": "Seuls les logements occupés comptent : un logement occupé au moins 15 jours dans le mois compte pour le mois entier ; un logement vide n'est pas facturé",
+        "LIST_12": "Forfait Gold au-delà de 2 500 000 FCFA de loyers mensuels : tarif convenu avec Ndewa360 (contact@ndewa-360.com, WhatsApp +237 698 29 53 68) ; à défaut, 20 000 FCFA par mois",
+        "LIST_13": "Le palier est vérifié chaque mois et à chaque changement de biens ou d'occupation ; l'utilisateur est informé par email et notification de tout changement de palier",
         "SUBTITLE_3": "Facturation",
-        "BODY_0": "La facturation Premium est automatique et mensuelle. Les factures sont disponibles dans votre espace personnel. En cas de non-paiement, votre compte peut être suspendu conformément à la section 10.",
+        "BODY_0": "La facturation est mensuelle. Les factures sont disponibles dans votre espace personnel. Une facture déjà payée n'est jamais modifiée : un changement de palier s'applique au mois suivant. En cas de non-paiement, votre compte peut être suspendu conformément à la section 10. Les frais Mobile Money des retraits sont refacturés au coût, sans marge, et affichés avant chaque retrait.",
         "BODY_1": "Les conditions de remboursement sont décrites dans notre Politique de Remboursement.",
-        "TABLE_HEADERS": ["Plan", "Prix", "Biens", "Unités par bien"],
+        "TABLE_HEADERS": [
+          "Forfait",
+          "Prix",
+          "Biens",
+          "Logements occupés"
+        ],
         "TABLE_ROWS": [
-          ["Gratuit", "0 FCFA", "1", "5 maximum"],
-          ["Trial", "0 FCFA (60 jours)", "Illimité", "Illimité"],
-          ["Premium", "2% du loyer/unité occupée/mois", "Illimité", "Illimité"]
+          [
+            "Gratuit",
+            "0 FCFA",
+            "1",
+            "4 maximum"
+          ],
+          [
+            "Essai",
+            "0 FCFA (30 jours)",
+            "Illimité",
+            "Illimité"
+          ],
+          [
+            "Pro",
+            "3 000 à 20 000 FCFA / mois selon les loyers",
+            "Illimité",
+            "Illimité"
+          ],
+          [
+            "Gold",
+            "Sur mesure (au-delà de 2 500 000 FCFA de loyers)",
+            "Illimité",
+            "Illimité"
+          ]
         ]
       },
       "SECTION_4": {
@@ -467,7 +493,7 @@
       "SECTION_9": {
         "TITLE": "10. Suspension et résiliation",
         "SUBTITLE_0": "Suspension pour non-paiement",
-        "BODY_0": "En cas de non-paiement des factures Premium échues, Ndewa360 se réserve le droit de suspendre l'accès à votre compte. Votre compte sera automatiquement réactivé dès le règlement des factures impayées.",
+        "BODY_0": "En cas de non-paiement des factures échues, Ndewa360 se réserve le droit de suspendre l'accès à votre compte. Votre compte sera automatiquement réactivé dès le règlement des factures impayées.",
         "SUBTITLE_1": "Suspension pour violation des CGU",
         "BODY_1": "Ndewa360 se réserve le droit de suspendre ou de résilier votre compte sans préavis en cas de :",
         "LIST_0": "violation des présentes CGU ;",
@@ -566,28 +592,54 @@
         "BODY_1": "Cette politique ne couvre pas les litiges entre propriétaires et locataires concernant les loyers ou cautions, qui relèvent de la responsabilité exclusive du propriétaire."
       },
       "SECTION_1": {
-        "TITLE": "2. Plan Gratuit et Trial",
-        "SUBTITLE_0": "Plan Gratuit",
-        "BODY_0": "Le plan Gratuit est disponible sans frais et sans limite de durée. Aucun remboursement n'est applicable car aucun paiement n'est effectué.",
-        "SUBTITLE_1": "Plan Trial (Essai Premium)",
-        "BODY_1": "Le plan Trial offre un accès gratuit aux fonctionnalités Premium pendant une durée de 60 jours. Aucune carte bancaire n'est requise. À l'expiration du trial, le compte revient automatiquement au plan Gratuit. Aucun remboursement n'est applicable car aucun paiement n'est effectué."
+        "TITLE": "2. Forfait Gratuit et essai",
+        "SUBTITLE_0": "Forfait Gratuit",
+        "BODY_0": "Le forfait Gratuit (1 bien et jusqu'à 4 logements occupés) est disponible sans frais et sans limite de durée. Aucun remboursement n'est applicable car aucun paiement n'est effectué.",
+        "SUBTITLE_1": "Essai gratuit",
+        "BODY_1": "L'essai offre un accès gratuit à toutes les fonctionnalités pendant 30 jours. Aucune carte bancaire n'est requise. À la fin de l'essai, le forfait correspondant à la situation du compte s'applique. Aucun remboursement n'est applicable car aucun paiement n'est effectué."
       },
       "SECTION_2": {
-        "TITLE": "3. Plan Premium — Conditions de facturation",
+        "TITLE": "3. Forfaits Pro et Gold — Conditions de facturation",
         "SUBTITLE_0": "Modèle de facturation",
-        "BODY_0": "Le plan Premium est facturé mensuellement selon le modèle suivant :",
-        "TABLE_HEADERS": ["Élément", "Détail"],
+        "BODY_0": "Les forfaits Pro et Gold sont facturés mensuellement selon le modèle suivant :",
+        "TABLE_HEADERS": [
+          "Élément",
+          "Détail"
+        ],
         "TABLE_ROWS": [
-          ["Taux de facturation", "2% du loyer mensuel de chaque unité locative occupée"],
-          ["Seuil minimum de présence", "L'unité doit être occupée au minimum 15 jours dans le mois pour être facturée"],
-          ["Unité vide", "0 FCFA facturé"],
-          ["Périodicité", "Mensuelle, en fin de mois"],
-          ["Moyens de paiement", "Orange Money, MTN Mobile Money, Carte bancaire"]
+          [
+            "Passage au Pro",
+            "Automatique dès le 2e bien ou le 5e logement occupé"
+          ],
+          [
+            "Prix Pro",
+            "Fixe selon le total des loyers des logements occupés : 3 000, 6 000, 10 000 ou 20 000 FCFA par mois"
+          ],
+          [
+            "Gold",
+            "Au-delà de 2 500 000 FCFA de loyers : tarif convenu ; à défaut, 20 000 FCFA par mois"
+          ],
+          [
+            "Logements pris en compte",
+            "Logements occupés au moins 15 jours dans le mois (comptés pour le mois entier)"
+          ],
+          [
+            "Logement vide",
+            "Non pris en compte"
+          ],
+          [
+            "Périodicité",
+            "Mensuelle ; palier vérifié chaque mois"
+          ],
+          [
+            "Moyens de paiement",
+            "Orange Money, MTN Mobile Money, portefeuille Ndewa360"
+          ]
         ],
         "CALLOUT_TITLE": "Exemple de calcul",
-        "CALLOUT_TEXT": "Si vous avez 3 unités occupées avec des loyers de 50 000 FCFA, 75 000 FCFA et 100 000 FCFA, votre facture mensuelle sera : (50 000 × 2%) + (75 000 × 2%) + (100 000 × 2%) = 1 000 + 1 500 + 2 000 = 4 500 FCFA.",
+        "CALLOUT_TEXT": "Vous avez 2 biens et 6 logements occupés, pour un total de 420 000 FCFA de loyers par mois : vous êtes au forfait Pro, palier de 250 001 à 500 000 FCFA, soit 6 000 FCFA par mois.",
         "SUBTITLE_1": "Facturation et paiement",
-        "BODY_1": "Les factures sont générées automatiquement et disponibles dans votre espace personnel. Le paiement est exigible dès réception de la facture.",
+        "BODY_1": "Les factures sont générées automatiquement et disponibles dans votre espace personnel. Le paiement est exigible dès réception de la facture. Une facture déjà payée n'est jamais modifiée.",
         "BODY_2": "En cas de non-paiement, conformément aux CGU section 10, votre compte peut être suspendu. Votre compte sera automatiquement réactivé dès le règlement des factures impayées."
       },
       "SECTION_3": {
@@ -600,7 +652,7 @@
       "SECTION_4": {
         "TITLE": "5. Annulation et remboursement",
         "SUBTITLE_0": "Annulation par l'utilisateur",
-        "BODY_0": "Vous pouvez annuler votre abonnement Premium à tout moment depuis votre espace personnel. L'annulation prend effet à la fin de la période de facturation en cours.",
+        "BODY_0": "Votre forfait dépend de votre situation (biens et logements occupés). Vous pouvez supprimer des biens ou fermer votre compte à tout moment depuis votre espace personnel ; le changement prend effet à la fin de la période de facturation en cours.",
         "LIST_0": "Annulation en cours de mois : la facture du mois en cours reste due. Aucun remboursement partiel n'est effectué pour la période restante du mois en cours.",
         "LIST_1": "Annulation avant facturation : si vous annulez avant la génération de la facture mensuelle, aucun montant ne sera prélevé pour le mois suivant.",
         "SUBTITLE_1": "Suppression de compte",

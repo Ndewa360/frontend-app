@@ -19,5 +19,5 @@ export interface RealtimePayloads {
   'notifications.changed': Record<string, never>;
   'wallet.withdrawal.updated': { withdrawalId: string; status: string };
   'wallet.updated': { balance: number };
-  'subscription.updated': { periodId: string; state: string };
+  'subscription.updated': { periodId?: string; state?: string; tier?: string; amount?: number };
 }

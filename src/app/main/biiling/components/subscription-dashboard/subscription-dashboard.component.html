@@ -105,7 +105,7 @@
               </div>
               <div class="info-item">
                 <label>{{ 'SUBSCRIPTION_DASHBOARD.BILLED_PROPERTIES' | translate }}</label>
-                <span>{{ currentPeriod?.occupiedUnitsCount || 0 }} unité(s) facturée(s)</span>
+                <span>{{ 'SUBSCRIPTION_DASHBOARD.OCCUPIED_UNITS_COUNT' | translate : { count: currentPeriod?.occupiedUnitsCount || 0 } }}</span>
               </div>
             </div>
 
@@ -163,12 +163,12 @@
             <div class="stat-label">{{ 'SUBSCRIPTION_DASHBOARD.PROPERTIES_COUNT' | translate }}</div>
           </div>
           <div class="stat-item" *ngIf="currentSubscription.plan === 'free'">
-            <div class="stat-value">{{ currentSubscription.propertyLimit || 5 }}</div>
+            <div class="stat-value">{{ currentSubscription.propertyLimit || 1 }}</div>
             <div class="stat-label">{{ 'SUBSCRIPTION_DASHBOARD.FREE_PLAN_LIMIT' | translate }}</div>
           </div>
           <div class="stat-item" *ngIf="currentPeriod">
             <div class="stat-value">{{ currentPeriod.occupiedUnitsCount || 0 }}</div>
-            <div class="stat-label">Unités occupées ce mois</div>
+            <div class="stat-label">{{ 'SUBSCRIPTION_DASHBOARD.OCCUPIED_UNITS_THIS_MONTH' | translate }}</div>
           </div>
           <div class="stat-item">
             <div class="stat-value">
@@ -192,6 +192,14 @@
           <i class="fas fa-plus"></i>
           {{ 'SUBSCRIPTION_DASHBOARD.SUBSCRIBE_TO_PREMIUM' | translate }}
         </button>
+      </div>
+    </div>
+
+    <!-- Palier tarifaire « Loyers sous contrôle » -->
+    <div class="pricing-section">
+      <h2 class="section-title">{{ 'SUBSCRIPTION_DASHBOARD.PRICING_TITLE' | translate }}</h2>
+      <div class="pricing-card">
+        <app-pricing-tiers [summary]="pricing"></app-pricing-tiers>
       </div>
     </div>
 

@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ShowBillingContractComponent } from '../show-billing-contract/show-billing-contract.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { Store, Actions, ofActionSuccessful, ofActionErrored } from '@ngxs/store';
+import { Store } from '@ngxs/store';
 import { SouscriptionState, SouscriptionAction } from 'src/app/shared/store';
 import { SubscriptionLimitAction, SubscriptionLimitState } from 'src/app/shared/store/subscription-limit';
 import { Observable, Subject } from 'rxjs';
@@ -12,61 +11,41 @@ import { ButtonModule } from 'carbon-components-angular/button';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { AppLogoComponent } from '../../../../../@youpez/components/app-logo/app-logo.component';
 import { NgScrollbar } from 'ngx-scrollbar';
+import { PricingTiersComponent } from 'src/app/shared/components/pricing-tiers/pricing-tiers.component';
+import { SubscriptionLimitService } from 'src/app/shared/services/subscription-limit.service';
+import { PricingSummary } from 'src/app/shared/pricing/pricing-grid';
 
 @Component({
   selector: 'choise-plan',
   templateUrl: './choise-plan.component.html',
   styleUrls: ['./choise-plan.component.css'],
   standalone: true,
-  imports: [NgScrollbar, AppLogoComponent, NgIf, ButtonModule, AsyncPipe, TranslatePipe]
+  imports: [NgScrollbar, AppLogoComponent, NgIf, ButtonModule, AsyncPipe, TranslatePipe, PricingTiersComponent]
 })
 export class ChoisePlanComponent implements OnInit, OnDestroy {
   currentSubscription$: Observable<any>;
-  isUpgrading$: Observable<boolean>;
   subscriptionStatus$: Observable<any>;
+  pricing: PricingSummary | null = null;
 
   private destroy$ = new Subject<void>();
-  private lang = 'fr';
 
   constructor(
     private dialog: MatDialog,
     private store: Store,
-    private actions: Actions,
-    private router: Router
+    private subscriptionLimitService: SubscriptionLimitService
   ) {}
 
   ngOnInit(): void {
-    this.lang = window.location.pathname.split('/')[1] || 'fr';
-
     this.currentSubscription$ = this.store.select(SouscriptionState.selectCurrentSubscription);
-    this.isUpgrading$          = this.store.select(SubscriptionLimitState.selectLoading);
     this.subscriptionStatus$   = this.store.select(SubscriptionLimitState.selectSubscriptionStatus);
 
     // Toujours recharger depuis le backend a chaque visite
     this.store.dispatch(new SouscriptionAction.FetchCurrentSubscription());
     this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
 
-    // Ecouter le succes de l'upgrade (declenche depuis ShowBillingContractComponent)
-    this.actions.pipe(
-      ofActionSuccessful(SubscriptionLimitAction.UpgradeToPremium),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      // Mettre a jour le store immediatement
-      const current = this.store.selectSnapshot(SouscriptionState.selectCurrentSubscription);
-      if (current) {
-        this.store.dispatch(new SouscriptionAction.SetCurrentSubscription({
-          ...current,
-          plan: 'premium' as any,
-          accountStatus: 'active' as any
-        }));
-      }
-      // Recharger les donnees fraiches depuis le backend
-      this.store.dispatch(new SouscriptionAction.FetchCurrentSubscription());
-      this.store.dispatch(new SouscriptionAction.FetchSubscriptionHistory());
-      this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
-      // Naviguer vers le dashboard
-      this.router.navigate([`/${this.lang}/app/facturation/plan/dashboard`]);
-    });
+    this.subscriptionLimitService.getPricing()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: res => { this.pricing = res?.data ?? null; }, error: () => { this.pricing = null; } });
   }
 
   ngOnDestroy(): void {

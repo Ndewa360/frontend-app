@@ -245,7 +245,7 @@ export class InvoiceDownloadService {
         <th class="right">Loyer mensuel</th>
         <th class="center">Jours occupés</th>
         <th class="center">Éligible</th>
-        <th class="right">Frais (2%)</th>
+        <th class="right">Frais Mobile Money</th>
       </tr>
     </thead>
     <tbody>

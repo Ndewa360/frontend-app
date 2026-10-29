@@ -406,24 +406,9 @@ export class ModernUnitModalComponent implements OnInit, OnDestroy {
             return;
           }
 
-          if (status.plan === 'free') {
-            const propertyId = this.data.property._id;
-            const currentRooms = this.store.selectSnapshot(
-              (state: any) => (state.rooms?.rooms || []).filter((r: any) => {
-                const rProp = r.property?._id || r.property;
-                return rProp === propertyId || rProp?.toString() === propertyId?.toString();
-              })
-            );
-            const unitsLimit = status.unitsPerPropertyLimit ?? 8;
-
-            if (currentRooms.length >= unitsLimit) {
-              this.isLoading = false;
-              this.cdr.detectChanges();
-              this.showRoomLimitModal(unitsLimit);
-              return;
-            }
-          }
-
+          // Créer une unité n'a pas d'effet sur le forfait : seuls les
+          // logements occupés comptent (le passage au Pro est annoncé
+          // par email et notification lors de l'occupation du 5e logement).
           this.createOrUpdateRoom();
         },
         error: () => {

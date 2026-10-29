@@ -1,0 +1,68 @@
+<div class="pt" [class.pt--compact]="compact">
+
+  <!-- Situation du compte -->
+  <div *ngIf="summary && !compact" class="pt__status">
+    <div class="pt__status-main">
+      <span class="pt__label">{{ 'PRICING.CURRENT_TIER' | translate }}</span>
+      <span class="pt__tier-name">{{ ('PRICING.TIERS.' + summary.tier) | translate }}</span>
+      <span class="pt__amount">
+        <ng-container *ngIf="summary.tier === 'FREE'">{{ 'PRICING.FREE_PRICE' | translate }}</ng-container>
+        <ng-container *ngIf="summary.tier !== 'FREE'">{{ fcfa(summary.amount) }} / {{ 'PRICING.MONTH' | translate }}</ng-container>
+      </span>
+    </div>
+    <div class="pt__status-facts">
+      <span>{{ 'PRICING.FACT_PROPERTIES' | translate: { count: summary.propertiesCount } }}</span>
+      <span>{{ 'PRICING.FACT_UNITS' | translate: { count: summary.occupiedUnitsCount } }}</span>
+      <span>{{ 'PRICING.FACT_RENT' | translate: { amount: fcfa(summary.totalRent) } }}</span>
+    </div>
+    <p *ngIf="summary.trialActive" class="pt__note pt__note--trial">{{ 'PRICING.TRIAL_NOTE' | translate }}</p>
+    <p *ngIf="summary.proReason === 'MULTIPLE_PROPERTIES'" class="pt__note">{{ 'PRICING.REASON_MULTIPLE_PROPERTIES' | translate }}</p>
+    <p *ngIf="summary.proReason === 'OCCUPIED_UNITS'" class="pt__note">{{ 'PRICING.REASON_OCCUPIED_UNITS' | translate: { max: freeMaxUnits } }}</p>
+    <p *ngIf="summary.tier !== 'FREE' && summary.occupiedUnitsCount === 0" class="pt__note">{{ 'PRICING.NO_OCCUPIED_UNITS' | translate }}</p>
+    <p *ngIf="summary.nextThreshold?.price" class="pt__note">
+      {{ 'PRICING.NEXT_THRESHOLD' | translate: { rent: fcfa(summary.nextThreshold!.rent), price: fcfa(summary.nextThreshold!.price) } }}
+    </p>
+    <p *ngIf="summary.nextThreshold && !summary.nextThreshold.price" class="pt__note">
+      {{ 'PRICING.NEXT_THRESHOLD_GOLD' | translate: { rent: fcfa(summary.nextThreshold.rent) } }}
+    </p>
+    <p *ngIf="summary.goldPendingCustomAmount" class="pt__note">{{ 'PRICING.GOLD_PENDING' | translate: { price: fcfa(summary.amount) } }}</p>
+  </div>
+
+  <!-- Grille -->
+  <div class="pt__grid">
+    <div class="pt__row" [ngClass]="{ 'pt__row--active': isActive('FREE') }">
+      <div class="pt__row-name">
+        <strong>{{ 'PRICING.TIERS.FREE' | translate }}</strong>
+        <span>{{ 'PRICING.FREE_CONDITION' | translate: { properties: freeMaxProperties, units: freeMaxUnits } }}</span>
+      </div>
+      <div class="pt__row-price">{{ 'PRICING.FREE_PRICE' | translate }}</div>
+    </div>
+
+    <div *ngFor="let b of brackets; let first = first" class="pt__row" [ngClass]="{ 'pt__row--active': isActive(b.tier) }">
+      <div class="pt__row-name">
+        <strong>{{ ('PRICING.TIERS.' + b.tier) | translate }}</strong>
+        <span *ngIf="first">{{ 'PRICING.RENT_UP_TO' | translate: { max: fcfa(b.maxRent) } }}</span>
+        <span *ngIf="!first">{{ 'PRICING.RENT_BETWEEN' | translate: { min: fcfa(b.minRent), max: fcfa(b.maxRent) } }}</span>
+      </div>
+      <div class="pt__row-price">{{ fcfa(b.price) }}<small> / {{ 'PRICING.MONTH' | translate }}</small></div>
+    </div>
+
+    <div class="pt__row" [ngClass]="{ 'pt__row--active': isActive('GOLD') }">
+      <div class="pt__row-name">
+        <strong>{{ 'PRICING.TIERS.GOLD' | translate }}</strong>
+        <span>{{ 'PRICING.RENT_ABOVE' | translate: { min: fcfa(goldThreshold) } }}</span>
+      </div>
+      <div class="pt__row-price pt__row-price--contact">
+        <a [href]="mailtoLink">{{ 'PRICING.CONTACT_US' | translate }}</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="pt__rule">{{ 'PRICING.OCCUPATION_RULE' | translate: { days: minDays } }}</p>
+
+  <div *ngIf="!compact" class="pt__contact">
+    <span>{{ 'PRICING.GOLD_CONTACT' | translate }}</span>
+    <a [href]="mailtoLink" class="pt__contact-link">{{ contact.email }}</a>
+    <a [href]="contact.whatsappLink" target="_blank" rel="noopener" class="pt__contact-link pt__contact-link--wa">WhatsApp {{ contact.whatsapp }}</a>
+  </div>
+</div>

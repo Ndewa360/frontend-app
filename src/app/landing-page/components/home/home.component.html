@@ -429,49 +429,86 @@
       </div>
     </section>
 
-    <!-- TARIF -->
-    <section class="pricing-section deco-hex">
+    <!-- TARIF — offre « Loyers sous contrôle » -->
+    <section class="pricing-section deco-hex" id="tarifs">
       <div class="section-inner">
         <div class="section-header scroll-animate">
+          <div class="offer-label"><i class="fas fa-shield-halved"></i>{{ t('LANDING.PRICING.OFFER_NAME') }}</div>
           <h2 class="section-title">{{ t('LANDING.PRICING.TITLE') }}</h2>
           <p class="section-subtitle">{{ t('LANDING.PRICING.OWNER_SUBTITLE') }}</p>
         </div>
-        <div class="pricing-grid">
+        <div class="pricing-grid pricing-grid--three">
+          <!-- Gratuit -->
           <div class="pricing-card scroll-animate-scale">
             <div class="pricing-plan-name">{{ t('LANDING.PRICING.FREEMIUM.TITLE') }}</div>
             <div class="pricing-amount">{{ t('LANDING.PRICING.FREEMIUM.PRICE') }}</div>
-            <p class="pricing-desc">{{ t('LANDING.PRICING.FREEMIUM.DESCRIPTION') }}</p>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.FREEMIUM.DESCRIPTION', pricingParams) }}</p>
             <ul class="pricing-features">
               <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.PROPERTIES') }}</li>
-              <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.UNITS') }}</li>
+              <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.UNITS', pricingParams) }}</li>
               <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.ALL_FEATURES') }}</li>
               <li><i class="fas fa-check text-green-500"></i>{{ t('LANDING.PRICING.FREEMIUM.FEATURES.EMAIL_SUPPORT') }}</li>
             </ul>
             <a [routerLink]="['/' + getCurrentLanguage() + '/auth/signup']" [queryParams]="{plan:'free'}"
                class="pricing-btn pricing-btn--secondary">{{ t('LANDING.PRICING.FREEMIUM.BUTTON') }}</a>
           </div>
+          <!-- Pro -->
           <div class="pricing-card pricing-card--premium scroll-animate-scale" style="animation-delay:.1s">
             <div class="pricing-recommended">{{ t('LANDING.PRICING.PREMIUM.BADGE') }}</div>
             <div class="pricing-plan-name">{{ t('LANDING.PRICING.PREMIUM.TITLE') }}</div>
-            <div class="pricing-amount-premium">{{ t('LANDING.PRICING.PREMIUM.PRICE') }}</div>
-            <p class="pricing-desc">{{ t('LANDING.PRICING.PREMIUM.DESCRIPTION') }}</p>
-            <p class="pricing-note">{{ t('LANDING.PRICING.PREMIUM.SUBTITLE_1') }}</p>
-            <ul class="pricing-features pricing-features--premium">
-              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_PROPERTIES') }}</li>
-              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.UNLIMITED_UNITS') }}</li>
-              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.ALL_FEATURES') }}</li>
-              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PRIORITY_SUPPORT') }}</li>
-              <li><i class="fas fa-check"></i>{{ t('LANDING.PRICING.PREMIUM.FEATURES.PERSONAL_TRAINING') }}</li>
+            <div class="pricing-amount-premium pricing-amount-premium--from">
+              <small>{{ t('LANDING.PRICING.PREMIUM.FROM') }}</small>{{ fcfa(proTiers[0].price) }}
+            </div>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.PREMIUM.DESCRIPTION', pricingParams) }}</p>
+            <ul class="pricing-tiers">
+              <li *ngFor="let tier of proTiers; let first = first">
+                <span *ngIf="first">{{ t('LANDING.PRICING.PREMIUM.RANGE_UP_TO', { max: fcfa(tier.maxRent) }) }}</span>
+                <span *ngIf="!first">{{ t('LANDING.PRICING.PREMIUM.RANGE_BETWEEN', { min: fcfa(tier.minRent), max: fcfa(tier.maxRent) }) }}</span>
+                <strong>{{ fcfa(tier.price) }}<small>{{ t('LANDING.PRICING.PREMIUM.PER_MONTH') }}</small></strong>
+              </li>
             </ul>
+            <p class="pricing-note">{{ t('LANDING.PRICING.PREMIUM.SUBTITLE_1', pricingParams) }}</p>
             <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'owner', plan:'trial'}"
-               class="pricing-btn pricing-btn--primary"><i class="fas fa-rocket"></i>{{ t('LANDING.PRICING.PREMIUM.BUTTON') }}</a>
+               class="pricing-btn pricing-btn--primary"><i class="fas fa-rocket"></i>{{ t('LANDING.PRICING.PREMIUM.BUTTON', pricingParams) }}</a>
+          </div>
+          <!-- Gold -->
+          <div class="pricing-card pricing-card--gold scroll-animate-scale" style="animation-delay:.2s">
+            <div class="pricing-plan-name">{{ t('LANDING.PRICING.GOLD.TITLE') }}</div>
+            <div class="pricing-amount pricing-amount--text">{{ t('LANDING.PRICING.GOLD.PRICE') }}</div>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.GOLD.DESCRIPTION', pricingParams) }}</p>
+            <ul class="pricing-features">
+              <li><i class="fas fa-check text-primary"></i>{{ t('LANDING.PRICING.GOLD.FEATURES.CUSTOM_PRICE') }}</li>
+              <li><i class="fas fa-check text-primary"></i>{{ t('LANDING.PRICING.GOLD.FEATURES.DELEGATION') }}</li>
+              <li><i class="fas fa-check text-primary"></i>{{ t('LANDING.PRICING.GOLD.FEATURES.DEDICATED') }}</li>
+              <li><i class="fas fa-check text-primary"></i>{{ t('LANDING.PRICING.GOLD.FEATURES.ALL_PRO') }}</li>
+            </ul>
+            <div class="pricing-contact">
+              <a [href]="goldMailto" class="pricing-btn pricing-btn--secondary"><i class="fas fa-envelope"></i>{{ t('LANDING.PRICING.GOLD.EMAIL_BUTTON') }}</a>
+              <a [href]="pricingContact.whatsappLink" target="_blank" rel="noopener" class="pricing-btn pricing-btn--whatsapp"><i class="fab fa-whatsapp"></i>{{ pricingContact.whatsapp }}</a>
+            </div>
           </div>
         </div>
+        <p class="pricing-rule scroll-animate"><i class="fas fa-circle-info"></i>{{ t('LANDING.PRICING.RULE', pricingParams) }}</p>
+
+        <!-- Ce qui est inclus -->
+        <div class="offer-bonuses scroll-animate">
+          <h3 class="offer-bonuses__title">{{ t('LANDING.PRICING.BONUSES.TITLE') }}</h3>
+          <div class="offer-bonuses__grid">
+            <div class="offer-bonus" *ngFor="let bonus of offerBonuses">
+              <div class="offer-bonus__icon"><i [class]="bonus.icon"></i></div>
+              <div>
+                <strong>{{ t('LANDING.PRICING.BONUSES.' + bonus.key + '.TITLE') }}</strong>
+                <p>{{ t('LANDING.PRICING.BONUSES.' + bonus.key + '.DESCRIPTION') }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="guarantee-box scroll-animate">
           <i class="fas fa-clock"></i>
           <div>
             <strong>{{ t('LANDING.PRICING.GUARANTEE.TITLE') }}</strong>
-            <p>{{ t('LANDING.PRICING.GUARANTEE.DESCRIPTION') }}</p>
+            <p>{{ t('LANDING.PRICING.GUARANTEE.DESCRIPTION', pricingParams) }}</p>
           </div>
         </div>
       </div>
@@ -691,10 +728,10 @@
           <div class="pricing-card pricing-card--agent scroll-animate-scale">
             <div class="pricing-plan-name">{{ t('LANDING.PRICING.AGENT_PLAN.TITLE') }}</div>
             <div class="pricing-amount agent-price">{{ t('LANDING.PRICING.AGENT_PLAN.PRICE') }}</div>
-            <p class="pricing-desc">{{ t('LANDING.PRICING.AGENT_PLAN.DESCRIPTION') }}</p>
+            <p class="pricing-desc">{{ t('LANDING.PRICING.AGENT_PLAN.DESCRIPTION', pricingParams) }}</p>
             <ul class="pricing-features">
               <li *ngFor="let f of agentPricingFeatures">
-                <i class="fas fa-check text-agent"></i>{{ t('LANDING.PRICING.AGENT_PLAN.FEATURES.' + f) }}
+                <i class="fas fa-check text-agent"></i>{{ t('LANDING.PRICING.AGENT_PLAN.FEATURES.' + f, pricingParams) }}
               </li>
             </ul>
             <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'agent'}"

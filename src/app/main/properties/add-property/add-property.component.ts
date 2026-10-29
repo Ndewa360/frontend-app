@@ -233,11 +233,13 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         const canCreate = this._store.selectSnapshot(state => state.subscriptionLimit.canCreateProperty);
         const needsUpgrade = this._store.selectSnapshot(state => state.subscriptionLimit.needsUpgrade);
         const status = this._store.selectSnapshot(state => state.subscriptionLimit.subscriptionStatus);
-        if (canCreate) {
+        if (canCreate && !needsUpgrade) {
           this.createProperty();
         } else {
+          // Ce bien fait passer le compte du Gratuit au Pro : on l'explique
+          // et on attend la confirmation de l'utilisateur avant de créer.
           this.waittingResponse = false;
-          this.showSubscriptionLimitModal(needsUpgrade, status?.propertyLimit ?? 1);
+          this.showSubscriptionLimitModal(true, status?.propertyLimit ?? 1);
         }
       },
       error: (error) => {
@@ -348,7 +350,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.upgraded) {
-        // L'utilisateur a upgradé, permettre la création
+        // L'utilisateur a confirmé le passage au Pro, permettre la création
         this.waittingResponse = true;
         this.createProperty();
       }

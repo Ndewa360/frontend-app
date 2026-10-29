@@ -139,13 +139,19 @@ export class SubscriptionStatusWidgetComponent implements OnInit, OnDestroy {
     if (this.subscriptionStatus.accountStatus === 'suspended') {
       return 'Compte suspendu';
     } else if (this.subscriptionStatus.plan === 'premium') {
-      return 'Forfait Premium';
+      return `Forfait ${this.tierLabel(this.subscriptionStatus.tier)}`;
     } else if (this.subscriptionStatus.plan === 'trial') {
       const days = this.subscriptionStatus.trialInfo?.daysRemaining || 0;
-      return `Essai Premium (${days}j)`;
+      return `Essai gratuit (${days}j)`;
     } else {
       return 'Forfait Gratuit';
     }
+  }
+
+  private tierLabel(tier?: string): string {
+    if (tier === 'GOLD') return 'Gold';
+    const level = /^PRO_(\d)$/.exec(tier || '')?.[1];
+    return level ? `Pro ${level}` : 'Pro';
   }
 
   get showUpgradeButton(): boolean {

@@ -20,6 +20,8 @@ import {
 } from 'src/app/shared/models/assignation-assistant.model';
 
 import { AssignationAssistantService } from 'src/app/shared/services/assignation-assistant.service';
+import { SubscriptionLimitService } from 'src/app/shared/services/subscription-limit.service';
+import { FREE_MAX_OCCUPIED_UNITS, PricingSummary, formatFcfa, proTierForRent } from 'src/app/shared/pricing/pricing-grid';
 import {
   PropertyModel,
   RoomModel,
@@ -54,6 +56,9 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
   // Sélecteurs NGXS (seront initialisés dans ngOnInit avec le propertyId)
   rooms$: Observable<RoomModel[]>;
   locataires$: Observable<LocataireModel[]>;
+
+  /** Palier actuel du compte, pour prévenir d'un passage au Pro. */
+  pricing: PricingSummary | null = null;
 
   // État de l'assistant
   assistantState: AssistantState = {
@@ -136,7 +141,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     private store: Store,
     private toastr: ToastrService,
     private assistantService: AssignationAssistantService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private subscriptionLimitService: SubscriptionLimitService
   ) {
     this.initializeForms();
   }
@@ -145,6 +151,9 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     this.initializeSelectors();
     this.loadData();
     this.setupFormSubscriptions();
+    this.subscriptionLimitService.getPricing()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: res => { this.pricing = res?.data ?? null; }, error: () => { this.pricing = null; } });
 
     // Pre-selections : attendre que les donnees soient chargees
     // On s'abonne a rooms$ et locataires$ et on applique des qu'ils sont disponibles
@@ -534,6 +543,21 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       acc[`error_${index}`] = error;
       return acc;
     }, {} as { [key: string]: string });
+  }
+
+  /**
+   * Message affiché à la confirmation quand cette occupation fait passer le
+   * compte du Gratuit au Pro (5e logement occupé) ; null sinon.
+   */
+  get proSwitchNotice(): string | null {
+    const p = this.pricing;
+    if (!p || p.tier !== 'FREE' || p.occupiedUnitsCount < FREE_MAX_OCCUPIED_UNITS) return null;
+    const rent = (p.totalRent || 0) + (Number(this.selectedRoom?.price) || 0);
+    const projected = proTierForRent(rent);
+    return this.translate.instant(
+      projected.price ? 'ASSIGNMENT_ASSISTANT.PRO_SWITCH_NOTICE' : 'ASSIGNMENT_ASSISTANT.PRO_SWITCH_NOTICE_GOLD',
+      { count: FREE_MAX_OCCUPIED_UNITS + 1, price: formatFcfa(projected.price), rent: formatFcfa(rent) }
+    );
   }
 
   // Actions

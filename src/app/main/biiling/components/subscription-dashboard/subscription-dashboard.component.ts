@@ -23,13 +23,18 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ExtendedModule } from '@angular/flex-layout/extended';
 import { AppLoaderComponent } from '../../../../../@youpez/components/app-loader/app-loader.component';
 import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { PricingTiersComponent } from 'src/app/shared/components/pricing-tiers/pricing-tiers.component';
+import { SubscriptionLimitService } from 'src/app/shared/services/subscription-limit.service';
+import { PricingSummary } from 'src/app/shared/pricing/pricing-grid';
+import { RealtimeService } from 'src/app/core/realtime/realtime.service';
+import { RealtimeEvent } from 'src/app/core/realtime/realtime.events';
 
 @Component({
   selector: 'app-subscription-dashboard',
   templateUrl: './subscription-dashboard.component.html',
   styleUrls: ['./subscription-dashboard.component.scss'],
   standalone: true,
-  imports: [NgIf, AppLoaderComponent, NgClass, ExtendedModule, RouterLink, NgFor, AsyncPipe, TranslatePipe]
+  imports: [NgIf, AppLoaderComponent, NgClass, ExtendedModule, RouterLink, NgFor, AsyncPipe, TranslatePipe, PricingTiersComponent]
 })
 export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -55,13 +60,16 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   subscriptionHistory: SouscriptionModel[] = [];
   loadingHistory = false;
   progressPercentage = 0;
+  pricing: PricingSummary | null = null;
 
   constructor(
     private store: Store,
     private router: Router,
     private route: ActivatedRoute,
     private paymentSessionService: PaymentSessionService,
-    private invoiceDownloadService: InvoiceDownloadService
+    private invoiceDownloadService: InvoiceDownloadService,
+    private subscriptionLimitService: SubscriptionLimitService,
+    private realtime: RealtimeService
   ) {}
 
   ngOnInit(): void {
@@ -90,9 +98,27 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
 
     // Groupe 3 : statut limites (compteurs biens, plan, suspension)
     this.store.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
+
+    // Groupe 4 : palier tarifaire (biens, logements occupés, loyers)
+    this.loadPricing();
+  }
+
+  private loadPricing(): void {
+    this.subscriptionLimitService.getPricing()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: res => { this.pricing = res?.data ?? null; }, error: () => { this.pricing = null; } });
   }
 
   private setupSubscriptions(): void {
+    // Changement de palier poussé par le backend : grille et facture à jour
+    this.realtime.on(RealtimeEvent.SubscriptionUpdated)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadPricing();
+        this.store.dispatch(new SouscriptionAction.FetchCurrentSubscription());
+        this.store.dispatch(new SouscriptionPeriodAction.FetchCurrentPeriodWithDetails());
+      });
+
     this.currentSubscription$.pipe(takeUntil(this.destroy$)).subscribe(subscription => {
       this.currentSubscription = subscription;
     });
@@ -220,7 +246,10 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   }
 
   getPlanLabel(plan: SouscriptionPlan): string {
-    return plan?.toLowerCase() === 'premium' ? 'Premium' : 'Gratuit';
+    const p = plan?.toLowerCase();
+    if (p === 'premium') return this.pricing?.tier === 'GOLD' ? 'Gold' : 'Pro';
+    if (p === 'trial') return 'Essai gratuit';
+    return 'Gratuit';
   }
 
   getAccountStatusLabel(status: string): string {

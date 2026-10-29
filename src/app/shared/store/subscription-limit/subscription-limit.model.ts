@@ -10,6 +10,9 @@ export interface SubscriptionStatus {
   suspensionDate?: Date;
   needsUpgrade?: boolean;
   userType?: 'PROPERTY_OWNER' | 'AGENT';
+  /** Palier de la grille « Loyers sous contrôle » (FREE, PRO_1…PRO_4, GOLD). */
+  tier?: string;
+  customMonthlyAmount?: number | null;
   trialInfo?: {
     isTrial: boolean;
     daysRemaining: number;

@@ -185,7 +185,7 @@
       "TITLE": "Ajoutez votre premier bien",
       "SUBTITLE": "Vous n'avez pas encore de propriété enregistrée. Créez votre premier bien pour commencer à gérer vos locataires, suivre vos paiements et analyser vos revenus.",
       "HINT": "La configuration prend moins de 2 minutes.",
-      "GUARANTEE_FREE": "Gratuit jusqu'à 1 bien, 5 unités",
+      "GUARANTEE_FREE": "Gratuit pour 1 bien et 4 logements occupés",
       "GUARANTEE_SETUP": "Configuration en 2 minutes",
       "GUARANTEE_NO_CARD": "Aucune carte requise"
     },
@@ -1304,7 +1304,7 @@
     "CONTRACT_TEMPLATE_CONTENT_UPDATED_SUCCESS": "Contenu du modèle mis à jour avec succès",
     "CONTRACT_TEMPLATE_CONTENT_UPDATE_ERROR": "Erreur lors de la mise à jour du contenu",
     "PROSPECTION_SUCCESS": "Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais",
-    "SUBSCRIPTION_UPGRADE_SUCCESS": "Félicitations ! Vous êtes maintenant sur le plan Premium.",
+    "SUBSCRIPTION_UPGRADE_SUCCESS": "Votre compte est maintenant au forfait Pro.",
     "SUBSCRIPTION_UPGRADE_ERROR": "Une erreur s'est produite lors de la mise à niveau.",
     "ACCOUNT_REACTIVATED_SUCCESS": "Votre compte a été réactivé avec succès.",
     "ACCOUNT_REACTIVATION_ERROR": "Une erreur s'est produite lors de la réactivation.",
@@ -1317,7 +1317,7 @@
     "PAYMENT_REMINDERS_ERROR": "Impossible d'envoyer les rappels de paiement.",
     "PAYMENT_PROCESSED_SUCCESS": "Paiement traité avec succès.",
     "PAYMENT_PROCESS_ERROR": "Une erreur est survenue lors du traitement du paiement.",
-    "TRIAL_STARTED_SUCCESS": "Votre essai gratuit de 60 jours Premium a démarré ! Profitez de toutes les fonctionnalités.",
+    "TRIAL_STARTED_SUCCESS": "Votre essai gratuit de 30 jours a démarré ! Profitez de toutes les fonctionnalités.",
     "SOUSCRIPTION_CREATED_SUCCESS": "Votre abonnement a été activé avec succès.",
     "SOUSCRIPTION_REMOVED_SUCCESS": "Votre souscription a été retirée avec succès.",
     "WALLET_WITHDRAWAL_SUCCESS": "Retrait effectué avec succès.",
@@ -1361,13 +1361,13 @@
     "WITHDRAWAL_SUCCESS": "Votre demande de retrait a été envoyée avec succès.",
     "WITHDRAWAL_ERROR": "Impossible d'effectuer le retrait. Veuillez réessayer.",
     "PAYMENT_CONFIRMED": "Votre paiement a été confirmé avec succès !",
-    "ADMIN_UPGRADE_SUCCESS": "Le compte a été passé en Premium avec succès.",
+    "ADMIN_UPGRADE_SUCCESS": "Le compte a été passé au forfait Pro avec succès.",
     "ADMIN_UPGRADE_ERROR": "Impossible d'effectuer l'upgrade. Veuillez réessayer.",
     "ADMIN_PLAN_CHANGED": "Le plan a été changé vers {{plan}} avec succès.",
     "ADMIN_ACCOUNT_SUSPENDED": "Le compte a été suspendu avec succès.",
     "ADMIN_ACCOUNT_REACTIVATED": "Le compte a été réactivé avec succès.",
     "ADMIN_REMINDER_SENT": "Le rappel de paiement a été envoyé.",
-    "ADMIN_BULK_UPGRADED": "{{count}} compte(s) passé(s) en Premium avec succès.",
+    "ADMIN_BULK_UPGRADED": "{{count}} compte(s) passé(s) au forfait Pro avec succès.",
     "ADMIN_BULK_SUSPENDED": "{{count}} compte(s) suspendu(s) avec succès.",
     "ADMIN_EXPORT_SUCCESS": "L'export a été généré avec succès.",
     "ADMIN_SUBSCRIPTIONS_LOAD_ERROR": "Impossible de charger les souscriptions.",
@@ -1422,6 +1422,20 @@
     "MONITORING_GRAFANA": "Monitoring déplacé vers Grafana"
   },
   "SUBSCRIPTION_MODAL": {
+    "PRO_SWITCH": {
+      "WHAT_CHANGES": "Ce qui change pour vous :",
+      "POINT_FIXED_PRICE": "Un prix fixe par mois selon le total de vos loyers, pas un pourcentage.",
+      "POINT_OCCUPIED_ONLY": "Seuls les logements occupés comptent : un bien vide ne vous coûte rien.",
+      "POINT_MONTHLY_CHECK": "Votre palier est vérifié chaque mois ; vous êtes prévenu par email et notification s'il change.",
+      "PROJECTED": "Avec vos loyers actuels ({{rent}}), votre abonnement sera de {{price}} par mois.",
+      "PROJECTED_NONE": "Aucun logement n'est occupé pour l'instant : rien ne sera facturé tant que c'est le cas. Dès le premier, le prix démarre à 3 000 FCFA / mois.",
+      "PROJECTED_GOLD": "Avec {{rent}} de loyers, vous relevez du forfait Gold : nous vous contacterons pour un tarif adapté.",
+      "TRIAL_NOTE": "Vous êtes en période d'essai : rien ne sera facturé avant la fin de l'essai.",
+      "CONFIRM": "J'ai compris, continuer"
+    },
+    "CANCEL": "Annuler",
+    "OCCUPIED_UNITS": "Logements occupés ce mois :",
+    "PLAN_TRIAL": "Essai gratuit",
     "PLAN_VERIFICATION": "Vérification de votre plan",
     "ANALYZING_SUBSCRIPTION": "Nous analysons votre souscription actuelle...",
     "CURRENT_PLAN": "Forfait actuel :",
@@ -1431,34 +1445,35 @@
     "UNITS_MAX": "max",
     "MONTHLY_AMOUNT": "Montant mensuel :",
     "PLAN_FREE": "Gratuit",
-    "PLAN_PREMIUM": "Premium",
-    "PREMIUM_BENEFITS_TITLE": "Avantages du forfait Premium :",
+    "PLAN_PREMIUM": "Pro",
+    "PREMIUM_BENEFITS_TITLE": "Avantages du forfait Pro :",
     "BENEFIT_UNLIMITED_PROPERTIES": "Nombre illimité de biens immobiliers",
     "BENEFIT_OCCUPIED_UNITS_ONLY": "Paiement uniquement sur les unités occupées (15+ jours/mois)",
-    "BENEFIT_ADVANTAGEOUS_RATE": "Tarif avantageux : seulement 2% du loyer mensuel",
+    "BENEFIT_ADVANTAGEOUS_RATE": "Prix fixe selon vos loyers, dès 3 000 FCFA / mois",
     "BENEFIT_PRIORITY_SUPPORT": "Support prioritaire et fonctionnalités avancées",
     "SUSPENSION_DATE": "Date de suspension :",
     "AUTO_REACTIVATION_INFO": "Votre compte sera automatiquement réactivé dès le règlement de vos factures impayées.",
     "UPGRADING": "Upgrade en cours...",
-    "UPGRADE_TO_PREMIUM": "Passer au Premium",
+    "UPGRADE_TO_PREMIUM": "Continuer",
     "REACTIVATING": "Réactivation...",
     "REACTIVATE_ACCOUNT": "Réactiver le compte",
     "CALCULATE_MONTHLY_AMOUNT": "Calculer le montant mensuel",
     "LATER": "Plus tard",
     "CLOSE": "Fermer",
     "MODAL_TITLES": {
+      "PRO_SWITCH": "Passage au forfait Pro",
       "UNITS_LIMIT_REACHED": "Limite d'unités atteinte",
       "PROPERTIES_LIMIT_REACHED": "Limite de biens atteinte",
       "RENTAL_UNITS_LIMIT_REACHED": "Limite d'unités locatives atteinte",
       "ACCOUNT_SUSPENDED": "Compte suspendu",
-      "UPGRADE_TO_PREMIUM": "Passer au forfait Premium",
+      "UPGRADE_TO_PREMIUM": "Nos tarifs",
       "SUBSCRIPTION_MANAGEMENT": "Gestion de souscription"
     },
     "MODAL_MESSAGES": {
-      "ROOM_LIMIT_MESSAGE": "Vous avez atteint la limite de {{limit}} unités locatives par bien pour le forfait gratuit. Pour créer plus d'unités, passez au forfait Premium.",
-      "PROPERTY_LIMIT_MESSAGE": "Vous avez atteint la limite de {{limit}} bien pour le forfait gratuit. Pour créer plus de biens, passez au forfait Premium.",
+      "ROOM_LIMIT_MESSAGE": "Ce logement sera votre 5e logement occupé : votre compte passera au forfait Pro.",
+      "PROPERTY_LIMIT_MESSAGE": "Ce sera votre 2e bien : votre compte passera au forfait Pro. Le forfait gratuit couvre 1 bien et jusqu'à 4 logements occupés.",
       "ACCOUNT_SUSPENDED_MESSAGE": "Votre compte est suspendu pour impayé. Veuillez régler vos factures pour réactiver votre compte.",
-      "UPGRADE_PROMPT_MESSAGE": "Le forfait Premium vous permet de créer un nombre illimité de biens et d'unités locatives. Vous ne payez que 2% du loyer des unités effectivement occupées."
+      "UPGRADE_PROMPT_MESSAGE": "Votre forfait s'adapte automatiquement à vos biens et à vos loyers : aucune démarche n'est nécessaire. Le prix est fixe pour chaque palier, et seuls les logements occupés comptent."
     },
     "ACCOUNT_STATUS_LABELS": {
       "ACTIVE": "Actif",
@@ -1467,17 +1482,20 @@
     }
   },
   "SUBSCRIPTION_DASHBOARD": {
+    "PRICING_TITLE": "Votre palier tarifaire",
+    "OCCUPIED_UNITS_THIS_MONTH": "Logements occupés ce mois",
+    "OCCUPIED_UNITS_COUNT": "{{count}} logement(s) occupé(s)",
     "TITLE": "Gestion de votre souscription",
     "REFRESH": "Actualiser",
     "CURRENT_SUBSCRIPTION": "Souscription actuelle",
     "PLAN_LABEL": "Plan",
     "ACTIVE_SINCE": "Actif depuis le",
-    "UPGRADE_TO_PREMIUM": "Passer au Premium",
-    "PREMIUM_PLAN_ACTIVE": "Plan Premium Actif",
+    "UPGRADE_TO_PREMIUM": "Voir les tarifs",
+    "PREMIUM_PLAN_ACTIVE": "Forfait Pro actif",
     "CURRENT_PERIOD": "Période actuelle",
     "PERIOD_LABEL": "Période",
     "AMOUNT_LABEL": "Montant",
-    "BILLED_PROPERTIES": "Propriétés facturées",
+    "BILLED_PROPERTIES": "Logements pris en compte",
     "PERIOD_PROGRESS": "Progression de la période",
     "DAYS_REMAINING": "jours restants",
     "PERIOD_EXPIRED": "Période expirée",
@@ -1489,8 +1507,8 @@
     "FREE_PLAN": "Gratuit",
     "MONTHLY_AMOUNT": "Montant mensuel",
     "NO_ACTIVE_SUBSCRIPTION": "Aucune souscription active",
-    "NO_SUBSCRIPTION_MESSAGE": "Vous n'avez pas encore de souscription. Souscrivez au plan Premium pour débloquer toutes les fonctionnalités.",
-    "SUBSCRIBE_TO_PREMIUM": "Souscrire au plan Premium",
+    "NO_SUBSCRIPTION_MESSAGE": "Aucun abonnement n'est actif sur votre compte. Consultez nos tarifs : le forfait s'applique automatiquement selon vos biens et vos loyers.",
+    "SUBSCRIBE_TO_PREMIUM": "Voir les tarifs",
     "UNPAID_INVOICES": "Factures impayées",
     "UNPAID_INVOICES_MESSAGE": "Vous avez {{count}} facture(s) impayée(s) pour un montant total de {{amount}}",
     "VIEW_DETAILS": "Voir les détails",
@@ -2200,50 +2218,95 @@
       }
     },
     "PRICING": {
-      "TITLE": "Tarifs transparents et équitables",
-      "SUBTITLE": "Toutes les fonctionnalités pour tous. Vous ne payez que si vous générez des revenus.",
+      "BONUSES": {
+        "TITLE": "Inclus dans l'offre « Loyers sous contrôle »",
+        "SETUP_48H": {
+          "TITLE": "Installé pour vous en 48 h",
+          "DESCRIPTION": "Biens, locataires et baux saisis par notre équipe, ou import de votre fichier Excel."
+        },
+        "ONBOARDING_30": {
+          "TITLE": "30 minutes de prise en main",
+          "DESCRIPTION": "Par WhatsApp ou en visio, avec vous et votre proche ou votre gardien."
+        },
+        "WHATSAPP_SUMMARY": {
+          "TITLE": "Un résumé WhatsApp chaque mois",
+          "DESCRIPTION": "Qui a payé, qui est en retard, ce qui a été encaissé pour vous."
+        },
+        "ANNUAL_STATEMENT": {
+          "TITLE": "Relevé annuel sur demande",
+          "DESCRIPTION": "Un récapitulatif des loyers de l'année, si vous en avez besoin."
+        },
+        "PRIVACY": {
+          "TITLE": "Vos données restent les vôtres",
+          "DESCRIPTION": "Jamais vendues, jamais partagées avec un tiers commercial ; suppression complète à votre demande."
+        },
+        "MOMO_AT_COST": {
+          "TITLE": "Frais Mobile Money au coût",
+          "DESCRIPTION": "Sans marge, affichés avant chaque retrait. En saisie manuelle, aucun argent ne passe par Ndewa360."
+        }
+      },
+      "RULE": "Seuls les logements réellement occupés comptent : un logement occupé au moins {{days}} jours dans le mois compte pour le mois entier. Votre palier est vérifié chaque mois et vous êtes prévenu par email et notification s'il change.",
+      "GOLD": {
+        "TITLE": "Gold",
+        "PRICE": "Sur mesure",
+        "DESCRIPTION": "Au-delà de {{gold}} de loyers par mois, ou si vous voulez déléguer la gestion. On en discute ensemble.",
+        "FEATURES": {
+          "CUSTOM_PRICE": "Tarif convenu pour votre patrimoine",
+          "DELEGATION": "Accompagnement vers la gestion déléguée",
+          "DEDICATED": "Un interlocuteur dédié",
+          "ALL_PRO": "Tout le forfait Pro inclus"
+        },
+        "EMAIL_BUTTON": "Nous écrire"
+      },
+      "OFFER_NAME": "Loyers sous contrôle · installé pour vous en 48 h",
+      "TITLE": "Un prix fixe, pas un pourcentage",
+      "SUBTITLE": "Sachez exactement ce que votre gardien ou votre proche encaisse pour vous, mois par mois.",
       "FREEMIUM": {
-        "TITLE": "Freemium",
+        "TITLE": "Gratuit",
         "PRICE": "0 FCFA",
-        "DESCRIPTION": "Pour toujours • Aucune carte bancaire",
+        "DESCRIPTION": "Pour toujours, tant que vous restez à 1 bien et {{units}} logements occupés.",
         "SUBTITLE": "Parfait pour commencer :",
         "FEATURES": {
-          "PROPERTIES": "1 propriété",
-          "UNITS": "Jusqu'à 5 unités locatives",
-          "ALL_FEATURES": "100% des fonctionnalités",
-          "EMAIL_SUPPORT": "Support par email"
+          "PROPERTIES": "1 bien",
+          "UNITS": "Jusqu'à {{units}} logements occupés",
+          "ALL_FEATURES": "Toutes les fonctionnalités de suivi",
+          "EMAIL_SUPPORT": "Support par email et WhatsApp"
         },
         "BUTTON": "Commencer gratuitement"
       },
       "PREMIUM": {
-        "TITLE": "Premium",
-        "PRICE": "2%",
-        "DESCRIPTION": "du loyer par unité occupée/mois",
-        "SUBTITLE_1": "Unité vide = 0 FCFA • Modèle équitable",
-        "SUBTITLE_2": "Pour les professionnels :",
+        "TITLE": "Pro",
+        "FROM": "à partir de",
+        "PRICE": "3 000 FCFA",
+        "PER_MONTH": " / mois",
+        "DESCRIPTION": "Dès le 2e bien ou le {{nextUnit}}e logement occupé. Prix fixe selon le total de vos loyers :",
+        "RANGE_UP_TO": "Jusqu'à {{max}}",
+        "RANGE_BETWEEN": "{{min}} à {{max}}",
+        "SUBTITLE_1": "Logement vide = 0 FCFA. Installation en 48 h et prise en main incluses.",
+        "SUBTITLE_2": "Pour les propriétaires qui délèguent l'encaissement :",
         "BADGE": "RECOMMANDÉ",
         "FEATURES": {
-          "UNLIMITED_PROPERTIES": "Propriétés illimitées",
-          "UNLIMITED_UNITS": "Unités locatives illimitées",
-          "ALL_FEATURES": "100% des fonctionnalités",
-          "PRIORITY_SUPPORT": "Support prioritaire 24/7",
-          "PERSONAL_TRAINING": "Formation personnalisée"
+          "UNLIMITED_PROPERTIES": "Biens illimités",
+          "UNLIMITED_UNITS": "Logements illimités",
+          "ALL_FEATURES": "Toutes les fonctionnalités",
+          "PRIORITY_SUPPORT": "Support prioritaire",
+          "PERSONAL_TRAINING": "Prise en main personnalisée"
         },
-        "BUTTON": "Essayer 60 jours gratuits"
+        "BUTTON": "Essayer {{trialDays}} jours gratuits"
       },
       "GUARANTEE": {
-        "TITLE": "Aucun engagement — retour au plan gratuit automatique",
-        "DESCRIPTION": "60 jours pour tester toutes les fonctionnalités Premium sans aucune carte bancaire. À la fin du trial, retour automatique au plan Freemium."
+        "TITLE": "Prêt en 48 h, ou votre premier mois est offert",
+        "DESCRIPTION": "Si votre espace n'est pas prêt 48 h après réception de votre liste, votre premier mois est offert. Et pour commencer, {{trialDays}} jours d'essai gratuit, sans carte bancaire : à la fin, le forfait qui correspond à votre situation s'applique, gratuit si vous restez à 1 bien et 4 logements occupés."
       },
-      "OWNER_SUBTITLE": "Des plans adaptes a vos besoins. Vous ne payez que si vous generez des revenus.",
-      "AGENT_SUBTITLE": "Un plan gratuit pour demarrer, extensible selon votre portefeuille.",
+      "OWNER_SUBTITLE": "Sachez exactement ce que votre gardien ou votre proche encaisse pour vous, mois par mois : qui est à jour, qui est en retard et de combien, qui est en avance.",
+      "AGENT_SUBTITLE": "La même grille que les propriétaires : gratuit pour démarrer, puis un prix fixe selon les loyers gérés.",
       "SEEKER_SUBTITLE": "La recherche est entierement gratuite. Les coordonnees du proprietaire sont disponibles via un acces premium ponctuel.",
       "AGENT_PLAN": {
         "TITLE": "Plan Agent",
-        "PRICE": "Gratuit",
-        "DESCRIPTION": "Pour les agents immobiliers. Jusqu a 5 biens geres en plan gratuit.",
+        "PRICE": "Gratuit pour démarrer",
+        "DESCRIPTION": "Pour les agents immobiliers : gratuit pour 1 bien et {{units}} logements occupés, puis forfait Pro à prix fixe selon les loyers gérés.",
         "FEATURES": {
-          "MAX_PROPERTIES": "Jusqu a 5 biens geres (plan gratuit)",
+          "MAX_PROPERTIES": "Pro dès {{minPrice}} / mois, Gold au-delà de {{gold}} de loyers",
           "ALL_FEATURES": "100% des fonctionnalites de gestion",
           "VERIFIED_PROFILE": "Profil agence verifie et visible",
           "EMAIL_SUPPORT": "Support par email"
@@ -2272,20 +2335,20 @@
           "ANSWER": "Ndewa360 est accessible depuis n'importe quel appareil : smartphone, tablette ou ordinateur. Aucune installation requise, tout fonctionne dans votre navigateur web. Vos données sont synchronisées en temps réel sur tous vos appareils."
         },
         "PAYMENT": {
-          "QUESTION": "Comment fonctionne le paiement \"2% du loyer\" ?",
-          "ANSWER": "Vous ne payez que pour les unités qui génèrent des revenus. Si vous avez 10 appartements mais seulement 7 sont occupés, vous payez uniquement pour les 7 occupés. Appartement vide = 0 FCFA. C'est un modèle équitable qui grandit avec votre succès."
+          "QUESTION": "Combien coûte Ndewa360 ?",
+          "ANSWER": "Gratuit pour 1 bien et jusqu'à 4 logements occupés. Dès le 2e bien ou le 5e logement occupé, vous passez au forfait Pro : un prix fixe par mois selon le total de vos loyers (3 000 FCFA jusqu'à 250 000 FCFA, 6 000 jusqu'à 500 000, 10 000 jusqu'à 1 000 000, 20 000 jusqu'à 2 500 000). Au-delà, le forfait Gold est sur mesure. Seuls les logements occupés comptent : un bien vide ne vous coûte rien."
         },
         "SECURITY": {
           "QUESTION": "Mes données sont-elles sécurisées ?",
-          "ANSWER": "Absolument. Vos données sont chiffrées avec les mêmes standards que les banques (SSL 256-bit), sauvegardées quotidiennement et hébergées sur des serveurs sécurisés. Nous respectons le RGPD et ne partageons jamais vos informations."
+          "ANSWER": "Vos données sont chiffrées, sauvegardées chaque jour et hébergées sur des serveurs sécurisés. Elles ne sont jamais vendues ni partagées avec un tiers commercial, et vous pouvez demander leur suppression complète à tout moment. En saisie manuelle, aucun argent ne passe par Ndewa360."
         },
         "IMPORT": {
           "QUESTION": "Puis-je importer mes données existantes ?",
-          "ANSWER": "Oui ! Notre équipe vous aide gratuitement à migrer toutes vos données depuis Excel, Word, cahiers ou tout autre système. La migration se fait généralement en moins de 24h et nous nous occupons de tout."
+          "ANSWER": "Oui. Envoyez-nous votre liste (Excel, cahier, photos) : nous installons vos biens, locataires et baux pour vous en 48 h. Si votre espace n'est pas prêt 48 h après réception de votre liste, votre premier mois est offert."
         },
         "SUPPORT": {
           "QUESTION": "Quel support proposez-vous ?",
-          "ANSWER": "Support par email pour tous les utilisateurs, support prioritaire 24/7 pour les Premium, plus formation personnalisée et accompagnement à la prise en main. Notre équipe parle français et connaît le contexte africain."
+          "ANSWER": "Support par email et WhatsApp pour tous les utilisateurs. Avec l'offre « Loyers sous contrôle », nous installons tout pour vous en 48 h et organisons 30 minutes de prise en main avec vous et votre proche ou votre gardien. Notre équipe parle français et connaît le contexte local."
         },
         "COUNTRIES": {
           "QUESTION": "Ndewa360 fonctionne-t-il dans tous les pays d'Afrique ?",
@@ -2301,7 +2364,7 @@
         },
         "AGENT_PAYMENT": {
           "QUESTION": "Combien ca coute pour un agent immobilier ?",
-          "ANSWER": "Le plan gratuit permet de gerer jusqu a 5 biens. Au-dela, le plan Premium s applique : 2% du loyer des unites occupees par mois, identique au plan proprietaire."
+          "ANSWER": "La même grille que pour les propriétaires : gratuit pour 1 bien et jusqu'à 4 logements occupés, puis forfait Pro à prix fixe selon le total des loyers gérés, de 3 000 à 20 000 FCFA par mois. Au-delà de 2 500 000 FCFA de loyers, le forfait Gold est sur mesure."
         },
         "SEEKER_SEARCH": {
           "QUESTION": "Comment chercher un logement sur Ndewa360 ?",
@@ -2325,12 +2388,12 @@
         "TALK_EXPERT": "Parler à un expert"
       },
       "GUARANTEES": {
-        "FREE_FOREVER": "Plan gratuit a vie",
+        "FREE_FOREVER": "Gratuit pour 1 bien et 4 logements",
         "NO_CARD": "Aucune carte requise",
-        "SUPPORT_INCLUDED": "Support inclus"
+        "SUPPORT_INCLUDED": "Installation et prise en main incluses"
       },
       "TRUST_SIGNALS": {
-        "GUARANTEE": "Garantie 60 jours",
+        "GUARANTEE": "Prêt en 48 h ou 1er mois offert",
         "RATING": "4.9/5 étoiles",
         "USERS": "20+ utilisateurs satisfaits"
       },
@@ -2341,7 +2404,7 @@
         "TITLE": "Pret a reprendre le controle de vos loyers ?",
         "SUBTITLE": "Rejoignez des centaines de proprietaires qui ont transforme leur gestion immobiliere.",
         "BTN": "Commencer mon onboarding gratuit",
-        "NOTE": "Gratuit, aucune carte requise"
+        "NOTE": "30 jours d'essai gratuit, aucune carte requise"
       },
       "AGENT": {
         "TITLE": "Developpez votre activite avec Ndewa360",
@@ -2540,7 +2603,7 @@
       "ADV_1_TITLE": "Profil vérifié & crédible",
       "ADV_1_DESC": "Votre profil agence est visible publiquement après validation. Logo, description, portfolio — vos clients voient qui vous êtes.",
       "ADV_2_TITLE": "Gestion multi-biens",
-      "ADV_2_DESC": "Gérez jusqu'à 5 biens en plan gratuit avec toutes les fonctionnalités : locataires, contrats, paiements.",
+      "ADV_2_DESC": "Commencez gratuitement avec 1 bien et jusqu'à 4 logements occupés, puis passez au forfait Pro à prix fixe, dès 3 000 FCFA / mois.",
       "ADV_3_TITLE": "Statistiques et suivi",
       "ADV_3_DESC": "Tableau de bord complet. Taux d'occupation, revenus, historique — tout est centralisé.",
       "ADV_4_TITLE": "Prospection facilitée",
@@ -2949,9 +3012,9 @@
       },
       "REVENUE_MODEL": {
         "COMMISSIONS": "Commissions",
-        "COMMISSIONS_DESC": "2% du loyer mensuel",
+        "COMMISSIONS_DESC": "Abonnement à prix fixe selon les loyers gérés",
         "SUBSCRIPTIONS": "Abonnements",
-        "SUBSCRIPTIONS_DESC": "Plans premium",
+        "SUBSCRIPTIONS_DESC": "Forfaits Pro et Gold",
         "SERVICE_FEES": "Frais de service",
         "SERVICE_FEES_DESC": "Accès premium et réservations",
         "ADDITIONAL_SERVICES": "Services additionnels",
@@ -4051,6 +4114,8 @@
     }
   },
   "ASSIGNMENT_ASSISTANT": {
+    "PRO_SWITCH_NOTICE_GOLD": "Ce sera votre {{count}}e logement occupé : avec {{rent}} de loyers, votre compte relève du forfait Gold. Nous vous contacterons pour un tarif adapté.",
+    "PRO_SWITCH_NOTICE": "Ce sera votre {{count}}e logement occupé : votre compte passera au forfait Pro, soit {{price}} par mois avec {{rent}} de loyers. Vous serez prévenu par email et notification.",
     "TITLE": "Assistant d'assignation de locataire",
     "ASSIGNMENT_TYPE": "Type d'assignation",
     "CHOOSE_TENANT_TYPE": "Choisissez le type de locataire que vous souhaitez assigner",
@@ -4537,40 +4602,56 @@
     "TOUR_360": "360°"
   },
   "BILLING": {
+    "TIERS_SUBTITLE": "Un prix fixe par mois, selon le total des loyers de vos logements occupés. Votre palier est mis en évidence.",
+    "TIERS_TITLE": "La grille « Loyers sous contrôle »",
     "TITLE": "Facturation",
     "PRICING_TITLE": "Prix & Plan",
     "PRICING_SUBTITLE": "Ndewa360 la plateforme de gestion de location réinventé en 360.",
-    "FREEMIUM_PLAN": "Plan Freemium",
+    "FREEMIUM_PLAN": "Forfait gratuit",
     "ACTIVATE_PRO_PLAN": "Activez le plan Pro pour bénéficier de toutes les fonctionnalités",
     "CLICK_TO_ACTIVATE": "Cliquez ici pour activer",
     "UNPAID_INVOICES": "Factures impayées",
     "UNPAID_INVOICES_COUNT": "Vous avez {{count}} facture(s) impayée(s) pour un montant de {{amount}} FCFA",
     "FREE_PLAN": {
       "TITLE": "GRATUIT",
-      "SUBTITLE": "Plan automatique à l'inscription",
+      "SUBTITLE": "1 bien, jusqu'à 4 logements occupés",
       "NAME": "Ndewa360 FREE",
       "DESCRIPTION": "Commencez gratuitement avec les fonctionnalités de base pour gérer votre premier bien immobilier",
-      "LIMITS_TITLE": "LIMITES DU PLAN FREE",
-      "MAX_PROPERTIES": "Maximum 1 bien immobilier",
-      "MAX_UNITS": "Maximum 8 unités locatives",
+      "LIMITS_TITLE": "CE QUI EST INCLUS",
+      "MAX_PROPERTIES": "1 bien immobilier",
+      "MAX_UNITS": "Jusqu'à 4 logements occupés",
       "FINANCIAL_MANAGEMENT": "Gestion des finances",
       "CONTRACT_MANAGEMENT": "Gestion des contrats",
       "CURRENT_PLAN": "Plan actuel",
       "BASE_PLAN": "Plan de base"
     },
     "PREMIUM_PLAN": {
-      "TITLE": "2%",
-      "SUBTITLE": "Upgrade vers Premium",
-      "NAME": "Ndewa360 Premium",
-      "DESCRIPTION": "Gérez un nombre illimité de biens immobiliers et débloquez toutes les fonctionnalités avancées",
-      "FEATURES_TITLE": "FONCTIONNALITES PREMIUM",
+      "FEATURE_ANNUAL_STATEMENT": "Relevé annuel sur demande",
+      "FEATURE_SETUP": "Installation faite pour vous en 48 h",
+      "FEATURE_DASHBOARD": "Tableau de bord détaillé",
+      "FEATURE_REMINDERS": "Rappels de paiement",
+      "FEATURE_CONTRACTS": "Gestion des contrats",
+      "FEATURE_FINANCES": "Suivi de chaque locataire : à jour, en retard, en avance",
+      "FEATURE_WHATSAPP_SUMMARY": "Résumé WhatsApp chaque mois",
+      "FEATURE_OCCUPIED_ONLY": "Seuls les logements occupés comptent",
+      "FEATURE_FIXED_PRICE": "Prix fixe de 3 000 à 20 000 FCFA / mois",
+      "FEATURE_UNLIMITED_PROPERTIES": "Biens et logements illimités",
+      "CURRENT_PLAN": "Votre forfait actuel",
+      "VIEW_TERMS": "Voir les conditions",
+      "PER_MONTH": "/ mois",
+      "PRICE_FROM": "Dès 3 000 FCFA",
+      "TITLE": "Pro",
+      "SUBTITLE": "Automatique dès le 2e bien ou le 5e logement occupé",
+      "NAME": "Ndewa360 Pro",
+      "DESCRIPTION": "Un prix fixe selon le total de vos loyers, pas un pourcentage. Seuls les logements occupés comptent.",
+      "FEATURES_TITLE": "INCLUS DANS LE FORFAIT PRO",
       "UNLIMITED_PROPERTIES": "Biens immobiliers illimités",
       "UNLIMITED_UNITS": "Unités locatives illimitées",
       "PAYMENT_NOTIFICATIONS": "Notifications de non paiement",
       "DETAILED_DASHBOARD": "Tableau de bord détaillé",
       "PRIORITY_SUPPORT": "Support prioritaire",
       "ADVANCED_REPORTS": "Rapports avancés",
-      "UPGRADE_TO_PREMIUM": "Passer au Premium",
+      "UPGRADE_TO_PREMIUM": "Voir les conditions",
       "UPGRADING": "Upgrade en cours..."
     },
     "INVOICES": {
@@ -4578,7 +4659,7 @@
     },
     "PLAN_LABELS": {
       "FREE": "Plan Gratuit",
-      "PREMIUM": "Plan Premium"
+      "PREMIUM": "Forfait Pro"
     },
     "STATUS_LABELS": {
       "ACTIVE": "Actif",
@@ -4596,12 +4677,12 @@
       "PROPERTIES_CREATED": "Biens créés",
       "MONTHLY_AMOUNT": "Montant mensuel :",
       "LIMIT_SOON_REACHED": "Limite bientôt atteinte",
-      "UPGRADE_TO_PREMIUM": "Passer au Premium",
+      "UPGRADE_TO_PREMIUM": "Voir les tarifs",
       "SETTLE_UNPAID": "Régler les impayés",
       "CALCULATE": "Calculer",
       "UNPAID_AMOUNT": "{{amount}} FCFA impayés",
       "ACCOUNT_SUSPENDED": "Compte suspendu",
-      "PREMIUM_PLAN": "Forfait Premium",
+      "PREMIUM_PLAN": "Forfait Pro",
       "FREE_PLAN": "Forfait Gratuit"
     },
     "MENU": {
@@ -4860,7 +4941,7 @@
         },
         "IS_FREE": {
           "QUESTION": "Est-ce que l'utilisation de Ndewa360 est gratuite ?",
-          "ANSWER": "L'inscription est gratuite. Toutes les fonctionnalités sont gratuite en dessous de un bien avec au plus 10 unités locative. A la onzieme unité, il faut payer 2% du loyer de chaque unité locative activé par mois."
+          "ANSWER": "L'inscription est gratuite et comprend 30 jours d'essai. Le forfait gratuit couvre 1 bien et jusqu'à 4 logements occupés. Dès le 2e bien ou le 5e logement occupé, le forfait Pro s'applique : un prix fixe de 3 000 à 20 000 FCFA par mois selon le total de vos loyers. Au-delà de 2 500 000 FCFA de loyers, le forfait Gold est sur mesure."
         },
         "TRAINING_VIDEOS": {
           "QUESTION": "Où puis-je trouver les vidéos de formation ?",
@@ -5221,7 +5302,7 @@
     "STEP2": {
       "TITLE": "Vos unités locatives",
       "SUBTITLE": "Ajoutez les unités de votre bien (chambres, studios, appartements).",
-      "FREE_PLAN_INFO": "Plan gratuit : jusqu'à <strong>8 unités par bien</strong>. Vous pouvez en ajouter jusqu'à 5 ici, et compléter depuis le tableau de bord. Passez au plan Premium pour des unités illimitées.",
+      "FREE_PLAN_INFO": "Forfait gratuit : <strong>1 bien et jusqu'à 4 logements occupés</strong>. Vous pouvez ajouter jusqu'à 5 unités ici et compléter depuis le tableau de bord. Au-delà, le forfait Pro s'applique, dès 3 000 FCFA / mois.",
       "UNIT_LABEL": "Unité",
       "REMOVE_UNIT": "Supprimer",
       "TYPE_LABEL": "Type",
@@ -5458,5 +5539,35 @@
     "OFFLINE_ERROR": "Connexion internet perdue pendant le chargement.",
     "OFFLINE_WARNING": "Vous êtes hors ligne.",
     "ONLINE_SUCCESS": "Connexion rétablie."
+  },
+  "PRICING": {
+    "CURRENT_TIER": "Votre palier :",
+    "TIERS": {
+      "FREE": "Gratuit",
+      "PRO_1": "Pro 1",
+      "PRO_2": "Pro 2",
+      "PRO_3": "Pro 3",
+      "PRO_4": "Pro 4",
+      "GOLD": "Gold"
+    },
+    "FREE_PRICE": "0 FCFA",
+    "MONTH": "mois",
+    "FACT_PROPERTIES": "{{count}} bien(s)",
+    "FACT_UNITS": "{{count}} logement(s) occupé(s)",
+    "FACT_RENT": "{{amount}} de loyers / mois",
+    "TRIAL_NOTE": "Vous êtes en période d'essai : rien n'est facturé. À la fin de l'essai, ce palier s'appliquera.",
+    "REASON_MULTIPLE_PROPERTIES": "Vous êtes en Pro parce que vous avez plus d'un bien.",
+    "REASON_OCCUPIED_UNITS": "Vous êtes en Pro parce que plus de {{max}} logements sont occupés.",
+    "NO_OCCUPIED_UNITS": "Aucun logement occupé ce mois-ci : rien à payer.",
+    "NEXT_THRESHOLD": "Au-delà de {{rent}} de loyers, votre abonnement passera à {{price}} / mois.",
+    "NEXT_THRESHOLD_GOLD": "Au-delà de {{rent}} de loyers, vous passerez au forfait Gold (tarif sur mesure).",
+    "GOLD_PENDING": "Forfait Gold : un tarif adapté vous sera proposé. En attendant, {{price}} / mois s'applique.",
+    "FREE_CONDITION": "{{properties}} bien et jusqu'à {{units}} logements occupés",
+    "RENT_UP_TO": "Loyers jusqu'à {{max}}",
+    "RENT_BETWEEN": "Loyers de {{min}} à {{max}}",
+    "RENT_ABOVE": "Loyers au-delà de {{min}}",
+    "CONTACT_US": "Contactez-nous",
+    "OCCUPATION_RULE": "Seuls les logements occupés comptent. Un logement occupé au moins {{days}} jours dans le mois compte pour tout le mois. Le palier est vérifié chaque mois.",
+    "GOLD_CONTACT": "Forfait Gold ou question sur votre tarif :"
   }
 }

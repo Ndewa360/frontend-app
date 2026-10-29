@@ -96,19 +96,25 @@
     <!-- Actions -->
     <ng-container *ngIf="activeTab === 'actions'">
       <div *ngIf="showReasonInput" class="sub-modal__reason-form">
-        <label>{{ pendingAction === 'upgrade' ? 'Raison (optionnel)' : 'Raison de la suspension *' }}</label>
+        <ng-container *ngIf="pendingAction === 'custom-amount'">
+          <label>Montant mensuel Gold (FCFA)</label>
+          <input type="number" min="0" step="500" [(ngModel)]="customAmount" class="sub-modal__textarea"
+                 placeholder="Vide = prix par défaut (20 000 FCFA)" />
+          <small class="sub-modal__hint">S'applique uniquement à ce compte, et seulement lorsqu'il dépasse 2 500 000 FCFA de loyers (palier Gold).</small>
+        </ng-container>
+        <label>{{ pendingAction === 'custom-amount' ? 'Motif (optionnel)' : 'Raison de la suspension *' }}</label>
         <textarea [(ngModel)]="actionReason" rows="3" class="sub-modal__textarea"
-                  [placeholder]="pendingAction === 'upgrade' ? 'Ex: Offre commerciale...' : 'Ex: Factures impayées...'"></textarea>
+                  [placeholder]="pendingAction === 'custom-amount' ? 'Ex: Accord commercial du...' : 'Ex: Factures impayées...'"></textarea>
         <div class="sub-modal__reason-actions">
-          <button class="admin-btn admin-btn--secondary" (click)="cancelAction()">Annuler</button>
-          <button class="admin-btn admin-btn--primary" (click)="confirmAction()">Confirmer</button>
+          <button class="admin-btn admin-btn--secondary" (click)="cancelAction()" [disabled]="savingAmount">Annuler</button>
+          <button class="admin-btn admin-btn--primary" (click)="confirmAction()" [disabled]="savingAmount">Confirmer</button>
         </div>
       </div>
 
       <div *ngIf="!showReasonInput" class="sub-modal__actions-grid">
-        <button *ngIf="subscription.plan !== 'premium'" class="sub-modal__action-btn sub-modal__action-btn--upgrade" (click)="onUpgrade()">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-          <div><strong>Upgrade Premium</strong><span>Forcer le passage au plan Premium</span></div>
+        <button class="sub-modal__action-btn sub-modal__action-btn--upgrade" (click)="onCustomAmount()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div><strong>Montant Gold</strong><span>{{ subscription.customMonthlyAmount != null ? 'Montant négocié : ' + formatCurrency(subscription.customMonthlyAmount) : 'Fixer le montant mensuel de ce compte (au-delà de 2 500 000 FCFA de loyers)' }}</span></div>
         </button>
         <button *ngIf="subscription.accountStatus === 'active'" class="sub-modal__action-btn sub-modal__action-btn--suspend" (click)="onSuspend()">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>

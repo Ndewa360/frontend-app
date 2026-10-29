@@ -380,33 +380,59 @@
       },
       "SECTION_3": {
         "TITLE": "4. Plans and pricing",
-        "SUBTITLE_0": "Free Plan (Freemium)",
-        "CALLOUT_TITLE": "Free Plan — Forever",
-        "CALLOUT_TEXT": "The free plan is available with no time limit and no credit card required.",
-        "LIST_0": "Up to 1 real estate property",
-        "LIST_1": "Up to 5 rental units per property",
-        "LIST_2": "Access to 100% of platform features",
-        "LIST_3": "Email support",
-        "SUBTITLE_1": "Trial Plan (Premium Trial)",
-        "LIST_4": "Duration: 60 days from activation",
-        "LIST_5": "Unlimited access to all properties and rental units",
-        "LIST_6": "All Premium features included",
-        "LIST_7": "No credit card required",
-        "LIST_8": "Upon trial expiration, automatic return to the Free plan",
-        "SUBTITLE_2": "Premium Plan",
-        "LIST_9": "Unlimited real estate properties and rental units",
-        "LIST_10": "Monthly billing: 2% of the monthly rent of each occupied unit (minimum 15 days in the month)",
-        "LIST_11": "Vacant unit = 0 FCFA billed",
-        "LIST_12": "All platform features",
-        "LIST_13": "Priority support",
+        "SUBTITLE_0": "Free plan",
+        "CALLOUT_TITLE": "Free plan — Forever",
+        "CALLOUT_TEXT": "The free plan is available with no time limit and no bank card, as long as the account has 1 property and at most 4 occupied units.",
+        "LIST_0": "1 property",
+        "LIST_1": "Up to 4 occupied units",
+        "LIST_2": "Access to the platform's tracking features",
+        "LIST_3": "Email and WhatsApp support",
+        "SUBTITLE_1": "Free trial",
+        "LIST_4": "Duration: 30 days from sign-up",
+        "LIST_5": "Unlimited properties and units",
+        "LIST_6": "All features included, nothing is billed",
+        "LIST_7": "No bank card required",
+        "LIST_8": "When the trial ends, the plan matching the account's situation applies automatically (Free, Pro or Gold)",
+        "SUBTITLE_2": "Pro and Gold plans",
+        "LIST_9": "The account moves automatically to the Pro plan from the 2nd property, whatever the number of units, or from the 5th occupied unit",
+        "LIST_10": "Fixed monthly price based on the total rent of occupied units: 3,000 FCFA up to 250,000 FCFA; 6,000 FCFA from 250,001 to 500,000 FCFA; 10,000 FCFA from 500,001 to 1,000,000 FCFA; 20,000 FCFA from 1,000,001 to 2,500,000 FCFA",
+        "LIST_11": "Only occupied units count: a unit occupied at least 15 days in a month counts for the whole month; an empty unit is not billed",
+        "LIST_12": "Gold plan above 2,500,000 FCFA of monthly rent: price agreed with Ndewa360 (contact@ndewa-360.com, WhatsApp +237 698 29 53 68); otherwise 20,000 FCFA per month",
+        "LIST_13": "The tier is checked every month and whenever properties or occupancy change; the user is informed by email and notification of any tier change",
         "SUBTITLE_3": "Billing",
-        "BODY_0": "Premium billing is automatic and monthly. Invoices are available in your personal space. In the event of non-payment, your account may be suspended in accordance with section 10.",
+        "BODY_0": "Billing is monthly. Invoices are available in your personal space. An invoice that has been paid is never modified: a tier change applies from the following month. In the event of non-payment, your account may be suspended in accordance with section 10. Mobile Money withdrawal fees are passed on at cost, with no margin, and shown before every withdrawal.",
         "BODY_1": "Refund conditions are described in our Refund Policy.",
-        "TABLE_HEADERS": ["Plan", "Price", "Properties", "Units per property"],
+        "TABLE_HEADERS": [
+          "Plan",
+          "Price",
+          "Properties",
+          "Occupied units"
+        ],
         "TABLE_ROWS": [
-          ["Free", "0 FCFA", "1", "5 maximum"],
-          ["Trial", "0 FCFA (60 days)", "Unlimited", "Unlimited"],
-          ["Premium", "2% of rent per occupied unit/month", "Unlimited", "Unlimited"]
+          [
+            "Free",
+            "0 FCFA",
+            "1",
+            "4 maximum"
+          ],
+          [
+            "Trial",
+            "0 FCFA (30 days)",
+            "Unlimited",
+            "Unlimited"
+          ],
+          [
+            "Pro",
+            "3,000 to 20,000 FCFA / month depending on rent",
+            "Unlimited",
+            "Unlimited"
+          ],
+          [
+            "Gold",
+            "Custom (above 2,500,000 FCFA of rent)",
+            "Unlimited",
+            "Unlimited"
+          ]
         ]
       },
       "SECTION_4": {
@@ -467,7 +493,7 @@
       "SECTION_9": {
         "TITLE": "10. Suspension and termination",
         "SUBTITLE_0": "Suspension for non-payment",
-        "BODY_0": "In the event of non-payment of overdue Premium invoices, Ndewa360 reserves the right to suspend access to your account. Your account will be automatically reactivated upon settlement of outstanding invoices.",
+        "BODY_0": "In the event of non-payment of overdue invoices, Ndewa360 reserves the right to suspend access to your account. Your account will be automatically reactivated upon settlement of outstanding invoices.",
         "SUBTITLE_1": "Suspension for GTU violation",
         "BODY_1": "Ndewa360 reserves the right to suspend or terminate your account without notice in the event of:",
         "LIST_0": "violation of these GTU;",
@@ -566,29 +592,55 @@
         "BODY_1": "This policy does not cover disputes between owners and tenants regarding rent or deposits, which are the sole responsibility of the owner."
       },
       "SECTION_1": {
-        "TITLE": "2. Free Plan and Trial",
-        "SUBTITLE_0": "Free Plan",
-        "BODY_0": "The Free Plan is available at no cost and with no time limit. No refund applies as no payment is made.",
-        "SUBTITLE_1": "Trial Plan (Premium Trial)",
-        "BODY_1": "The Trial Plan offers free access to Premium features for a period of 60 days. No credit card is required. Upon trial expiration, the account automatically returns to the Free Plan. No refund applies as no payment is made."
+        "TITLE": "2. Free plan and trial",
+        "SUBTITLE_0": "Free plan",
+        "BODY_0": "The Free plan (1 property and up to 4 occupied units) is available free of charge with no time limit. No refund applies as no payment is made.",
+        "SUBTITLE_1": "Free trial",
+        "BODY_1": "The trial gives free access to every feature for 30 days. No bank card is required. When the trial ends, the plan matching the account's situation applies. No refund applies as no payment is made."
       },
       "SECTION_2": {
-        "TITLE": "3. Premium Plan — Billing terms",
+        "TITLE": "3. Pro and Gold plans — Billing terms",
         "SUBTITLE_0": "Billing model",
-        "BODY_0": "The Premium Plan is billed monthly according to the following model:",
-        "TABLE_HEADERS": ["Element", "Detail"],
+        "BODY_0": "The Pro and Gold plans are billed monthly according to the following model:",
+        "TABLE_HEADERS": [
+          "Item",
+          "Detail"
+        ],
         "TABLE_ROWS": [
-          ["Billing rate", "2% of the monthly rent of each occupied rental unit"],
-          ["Minimum presence threshold", "The unit must be occupied for at least 15 days in the month to be billed"],
-          ["Vacant unit", "0 FCFA billed"],
-          ["Frequency", "Monthly, at the end of the month"],
-          ["Payment methods", "Orange Money, MTN Mobile Money, Credit card"]
+          [
+            "Moving to Pro",
+            "Automatic from the 2nd property or the 5th occupied unit"
+          ],
+          [
+            "Pro price",
+            "Fixed, based on the total rent of occupied units: 3,000, 6,000, 10,000 or 20,000 FCFA per month"
+          ],
+          [
+            "Gold",
+            "Above 2,500,000 FCFA of rent: agreed price; otherwise 20,000 FCFA per month"
+          ],
+          [
+            "Units counted",
+            "Units occupied at least 15 days in the month (counted for the whole month)"
+          ],
+          [
+            "Empty unit",
+            "Not counted"
+          ],
+          [
+            "Frequency",
+            "Monthly; tier checked every month"
+          ],
+          [
+            "Payment methods",
+            "Orange Money, MTN Mobile Money, Ndewa360 wallet"
+          ]
         ],
         "CALLOUT_TITLE": "Calculation example",
-        "CALLOUT_TEXT": "If you have 3 occupied units with rents of 50,000 FCFA, 75,000 FCFA, and 100,000 FCFA, your monthly invoice will be: (50,000 × 2%) + (75,000 × 2%) + (100,000 × 2%) = 1,000 + 1,500 + 2,000 = 4,500 FCFA.",
+        "CALLOUT_TEXT": "You have 2 properties and 6 occupied units, for a total of 420,000 FCFA of rent per month: you are on the Pro plan, 250,001 to 500,000 FCFA tier, i.e. 6,000 FCFA per month.",
         "SUBTITLE_1": "Billing and payment",
-        "BODY_1": "Invoices are generated automatically and available in your personal space. Payment is due upon receipt of the invoice.",
-        "BODY_2": "In the event of non-payment, in accordance with GTU section 10, your account may be suspended. Your account will be automatically reactivated upon settlement of outstanding invoices."
+        "BODY_1": "Invoices are generated automatically and available in your personal space. Payment is due upon receipt of the invoice. An invoice that has been paid is never modified.",
+        "BODY_2": "In the event of non-payment, in accordance with section 10 of the Terms, your account may be suspended. Your account will be automatically reactivated upon settlement of outstanding invoices."
       },
       "SECTION_3": {
         "TITLE": "4. Billing errors",
@@ -600,7 +652,7 @@
       "SECTION_4": {
         "TITLE": "5. Cancellation and refund",
         "SUBTITLE_0": "Cancellation by the user",
-        "BODY_0": "You may cancel your Premium subscription at any time from your personal space. Cancellation takes effect at the end of the current billing period.",
+        "BODY_0": "Your plan depends on your situation (properties and occupied units). You can delete properties or close your account at any time from your personal space; the change takes effect at the end of the current billing period.",
         "LIST_0": "Cancellation during the month: the current month's invoice remains due. No partial refund is issued for the remaining days of the current month.",
         "LIST_1": "Cancellation before billing: if you cancel before the monthly invoice is generated, no amount will be charged for the following month.",
         "SUBTITLE_1": "Account deletion",

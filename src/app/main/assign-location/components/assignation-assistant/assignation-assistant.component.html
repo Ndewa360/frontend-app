@@ -615,6 +615,12 @@
           <p>{{ 'ASSIGNMENT_ASSISTANT.VERIFY_BEFORE_CONFIRM' | translate }}</p>
         </div>
 
+        <!-- Passage au forfait Pro (5e logement occupé) -->
+        <div *ngIf="proSwitchNotice as notice" class="pricing-notice">
+          <i class="fas fa-info-circle"></i>
+          <p>{{ notice }}</p>
+        </div>
+
         <div class="confirmation-summary">
           <!-- Informations générales -->
           <div class="summary-section">

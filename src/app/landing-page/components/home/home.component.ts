@@ -18,6 +18,7 @@ import { SelectModule } from 'carbon-components-angular';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ExtendedModule } from '@angular/flex-layout/extended';
+import { FREE_MAX_OCCUPIED_UNITS, GOLD_THRESHOLD, MIN_OCCUPATION_DAYS, PRICING_CONTACT, PRO_BRACKETS, TRIAL_DURATION_DAYS, formatFcfa } from 'src/app/shared/pricing/pricing-grid';
 
 @Component({
   selector: 'home',
@@ -70,11 +71,36 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
 
   readonly ownerFaqs = [
-    { key: 'ACCESS',    icon: 'fas fa-mobile-screen'  },
     { key: 'PAYMENT',   icon: 'fas fa-credit-card' },
+    { key: 'IMPORT',    icon: 'fas fa-download'    },
     { key: 'SECURITY',  icon: 'fas fa-lock'        },
-    { key: 'IMPORT',    icon: 'fas fa-download'    }
+    { key: 'ACCESS',    icon: 'fas fa-mobile-screen'  }
   ];
+
+  // ── Offre « Loyers sous contrôle » (grille partagée avec la facturation) ──
+  readonly proTiers = PRO_BRACKETS;
+  readonly pricingContact = PRICING_CONTACT;
+  readonly fcfa = formatFcfa;
+  readonly pricingParams = {
+    units: FREE_MAX_OCCUPIED_UNITS,
+    nextUnit: FREE_MAX_OCCUPIED_UNITS + 1,
+    gold: formatFcfa(GOLD_THRESHOLD),
+    days: MIN_OCCUPATION_DAYS,
+    trialDays: TRIAL_DURATION_DAYS,
+    minPrice: formatFcfa(PRO_BRACKETS[0].price),
+  };
+  readonly offerBonuses = [
+    { key: 'SETUP_48H',        icon: 'fas fa-bolt'                 },
+    { key: 'ONBOARDING_30',    icon: 'fas fa-chalkboard-user'      },
+    { key: 'WHATSAPP_SUMMARY', icon: 'fab fa-whatsapp'             },
+    { key: 'ANNUAL_STATEMENT', icon: 'fas fa-file-invoice'         },
+    { key: 'PRIVACY',          icon: 'fas fa-user-shield'          },
+    { key: 'MOMO_AT_COST',     icon: 'fas fa-mobile-screen-button' }
+  ];
+
+  get goldMailto(): string {
+    return `mailto:${this.pricingContact.email}?subject=${encodeURIComponent('Offre Gold Ndewa360')}`;
+  }
 
   readonly agentPains = [
     { key: 'NO_TOOLS',    icon: 'fas fa-screwdriver-wrench' },

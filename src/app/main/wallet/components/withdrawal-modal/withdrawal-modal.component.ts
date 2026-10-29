@@ -9,7 +9,7 @@ import { WalletAction, WalletState, WithdrawalMethod } from 'src/app/shared/stor
 import { ExtendedModule } from '@angular/flex-layout/extended';
 import { NgIf, NgFor, NgClass } from '@angular/common';
 
-const FEE_RATE  = 0.02;  // 2% total (1.5% EasyTransact + 0.5% Ndewa360)
+const FEE_RATE  = 0.015; // frais Mobile Money refacturés au coût (agrégateur), sans marge Ndewa360
 const MIN_AMOUNT = 500;
 const MAX_AMOUNT = 5_000_000;
 

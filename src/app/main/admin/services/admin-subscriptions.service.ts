@@ -75,6 +75,15 @@ export class AdminSubscriptionsService {
   }
 
   /**
+   * Montant Gold négocié pour ce compte (null pour revenir au prix par défaut)
+   */
+  setCustomAmount(subscriptionId: string, amount: number | null, reason?: string): Observable<any> {
+    return this.http.patch<ApiResultFormat<any>>(`${this.apiUrl}/${subscriptionId}/custom-amount`, { amount, reason }).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /**
    * Changer le plan d'une souscription
    */
   changePlan(subscriptionId: string, targetPlan: string, reason?: string): Observable<SubscriptionActionResult> {

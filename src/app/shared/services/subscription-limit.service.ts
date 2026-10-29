@@ -8,6 +8,7 @@ import {
   PropertyCreationCheck,
   MonthlyCalculation,
 } from '../store/subscription-limit/subscription-limit.model';
+import { PricingSummary } from '../pricing/pricing-grid';
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionLimitService {
@@ -30,6 +31,13 @@ export class SubscriptionLimitService {
     return this.http.post<ApiResultFormat<any>>(
       `${environment.apiUrl}/subscription-limit/upgrade-to-premium`,
       {}
+    );
+  }
+
+  /** Palier actuel du compte (grille « Loyers sous contrôle »). */
+  getPricing(): Observable<ApiResultFormat<PricingSummary>> {
+    return this.http.get<ApiResultFormat<PricingSummary>>(
+      `${environment.apiUrl}/subscription-limit/pricing`
     );
   }
 

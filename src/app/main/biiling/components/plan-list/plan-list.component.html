@@ -32,7 +32,7 @@
       </div>
       <div>
         <div class="pl__plan-name">
-          Plan {{ subscriptionStatus.plan === 'premium' ? 'Premium' : 'Gratuit' }}
+          Plan {{ subscriptionStatus.plan === 'premium' ? 'Pro' : subscriptionStatus.plan === 'trial' ? 'Essai gratuit' : 'Gratuit' }}
         </div>
         <div class="pl__plan-status">
           <span class="pl__dot"

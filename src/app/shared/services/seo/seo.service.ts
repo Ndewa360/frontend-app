@@ -433,8 +433,8 @@ export class SeoService {
         'price': '0',
         'priceCurrency': 'XAF',
         'description': isFr
-          ? 'Gratuit jusqu\'à 8 biens. Premium : 2% du loyer/unité occupée.'
-          : 'Free up to 8 properties. Premium: 2% of rent/occupied unit.',
+          ? 'Gratuit pour 1 bien et 4 logements occupés. Pro à prix fixe de 3 000 à 20 000 FCFA/mois selon les loyers. Gold sur mesure.'
+          : 'Free for 1 property and 4 occupied units. Pro at a fixed 3,000 to 20,000 FCFA/month based on rent. Custom Gold plan.',
       },
       'aggregateRating': {
         '@type': 'AggregateRating',

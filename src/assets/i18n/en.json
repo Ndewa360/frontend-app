@@ -185,7 +185,7 @@
       "TITLE": "Add your first property",
       "SUBTITLE": "You don't have any property registered yet. Create your first property to start managing your tenants, tracking payments and analyzing your revenue.",
       "HINT": "Setup takes less than 2 minutes.",
-      "GUARANTEE_FREE": "Free up to 8 properties",
+      "GUARANTEE_FREE": "Free for 1 property and 4 occupied units",
       "GUARANTEE_SETUP": "2-minute setup",
       "GUARANTEE_NO_CARD": "No credit card required"
     },
@@ -1304,7 +1304,7 @@
     "CONTRACT_TEMPLATE_CONTENT_UPDATED_SUCCESS": "Template content updated successfully",
     "CONTRACT_TEMPLATE_CONTENT_UPDATE_ERROR": "Error updating content",
     "PROSPECTION_SUCCESS": "Your request has been successfully transferred! You will be contacted by email as soon as possible",
-    "SUBSCRIPTION_UPGRADE_SUCCESS": "Congratulations ! You are now on the Premium plan.",
+    "SUBSCRIPTION_UPGRADE_SUCCESS": "Your account is now on the Pro plan.",
     "SUBSCRIPTION_UPGRADE_ERROR": "An error occurred during the upgrade.",
     "ACCOUNT_REACTIVATED_SUCCESS": "Your account has been successfully reactivated.",
     "ACCOUNT_REACTIVATION_ERROR": "An error occurred during reactivation.",
@@ -1319,7 +1319,7 @@
     "PAYMENT_PROCESS_ERROR": "An error occurred while processing the payment.",
     "LOCATION_UPDATED_SUCCESS": "The rental has been updated successfully.",
     "LOCATION_CREATED_SUCCESS": "The tenant has been assigned to the unit successfully.",
-    "TRIAL_STARTED_SUCCESS": "Your 60-day free Premium trial has started! Enjoy all the features.",
+    "TRIAL_STARTED_SUCCESS": "Your 30-day free trial has started! Enjoy all the features.",
     "SOUSCRIPTION_CREATED_SUCCESS": "Your subscription has been activated successfully.",
     "SOUSCRIPTION_REMOVED_SUCCESS": "Your subscription has been removed successfully.",
     "WALLET_WITHDRAWAL_SUCCESS": "Withdrawal completed successfully.",
@@ -1363,13 +1363,13 @@
     "WITHDRAWAL_SUCCESS": "Your withdrawal request has been sent successfully.",
     "WITHDRAWAL_ERROR": "Unable to process withdrawal. Please try again.",
     "PAYMENT_CONFIRMED": "Your payment has been confirmed successfully!",
-    "ADMIN_UPGRADE_SUCCESS": "Account successfully upgraded to Premium.",
+    "ADMIN_UPGRADE_SUCCESS": "Account successfully moved to the Pro plan.",
     "ADMIN_UPGRADE_ERROR": "Unable to perform upgrade. Please try again.",
     "ADMIN_PLAN_CHANGED": "Plan successfully changed to {{plan}}.",
     "ADMIN_ACCOUNT_SUSPENDED": "Account has been successfully suspended.",
     "ADMIN_ACCOUNT_REACTIVATED": "Account has been successfully reactivated.",
     "ADMIN_REMINDER_SENT": "Payment reminder has been sent.",
-    "ADMIN_BULK_UPGRADED": "{{count}} account(s) successfully upgraded to Premium.",
+    "ADMIN_BULK_UPGRADED": "{{count}} account(s) successfully moved to the Pro plan.",
     "ADMIN_BULK_SUSPENDED": "{{count}} account(s) successfully suspended.",
     "ADMIN_EXPORT_SUCCESS": "Export generated successfully.",
     "ADMIN_SUBSCRIPTIONS_LOAD_ERROR": "Unable to load subscriptions.",
@@ -1422,6 +1422,20 @@
     "MONITORING_GRAFANA": "Monitoring moved to Grafana"
   },
   "SUBSCRIPTION_MODAL": {
+    "PRO_SWITCH": {
+      "WHAT_CHANGES": "What changes for you:",
+      "POINT_FIXED_PRICE": "A fixed monthly price based on your total rent, not a percentage.",
+      "POINT_OCCUPIED_ONLY": "Only occupied units count: an empty property costs you nothing.",
+      "POINT_MONTHLY_CHECK": "Your tier is checked every month; you are told by email and notification if it changes.",
+      "PROJECTED": "With your current rent ({{rent}}), your subscription will be {{price}} per month.",
+      "PROJECTED_NONE": "No unit is occupied yet: nothing is billed while that is the case. From the first one, the price starts at 3,000 FCFA / month.",
+      "PROJECTED_GOLD": "With {{rent}} of rent, you fall under the Gold plan: we will contact you with a tailored price.",
+      "TRIAL_NOTE": "You are on your free trial: nothing will be billed before it ends.",
+      "CONFIRM": "Got it, continue"
+    },
+    "CANCEL": "Cancel",
+    "OCCUPIED_UNITS": "Occupied units this month:",
+    "PLAN_TRIAL": "Free trial",
     "PLAN_VERIFICATION": "Checking your plan",
     "ANALYZING_SUBSCRIPTION": "We analyze your current subscription...",
     "CURRENT_PLAN": "Current plan:",
@@ -1431,34 +1445,35 @@
     "UNITS_MAX": "max",
     "MONTHLY_AMOUNT": "Monthly amount:",
     "PLAN_FREE": "Free",
-    "PLAN_PREMIUM": "Premium",
-    "PREMIUM_BENEFITS_TITLE": "Benefits of the Premium plan:",
+    "PLAN_PREMIUM": "Pro",
+    "PREMIUM_BENEFITS_TITLE": "Pro plan benefits:",
     "BENEFIT_UNLIMITED_PROPERTIES": "Unlimited number of properties",
     "BENEFIT_OCCUPIED_UNITS_ONLY": "Payment only on occupied units (15+ days/month)",
-    "BENEFIT_ADVANTAGEOUS_RATE": "Advantageous rate: only 2% of the monthly rent",
+    "BENEFIT_ADVANTAGEOUS_RATE": "Fixed price based on your rent, from 3,000 FCFA / month",
     "BENEFIT_PRIORITY_SUPPORT": "Priority support and advanced features",
     "SUSPENSION_DATE": "Suspension date:",
     "AUTO_REACTIVATION_INFO": "Your account will be automatically reactivated upon payment of your unpaid invoices.",
     "UPGRADING": "Upgrade in progress...",
-    "UPGRADE_TO_PREMIUM": "Upgrade to Premium",
+    "UPGRADE_TO_PREMIUM": "Continue",
     "REACTIVATING": "Reactivation...",
     "REACTIVATE_ACCOUNT": "Reactivate account",
     "CALCULATE_MONTHLY_AMOUNT": "Calculate monthly amount",
     "LATER": "Later",
     "CLOSE": "Close",
     "MODAL_TITLES": {
+      "PRO_SWITCH": "Moving to the Pro plan",
       "UNITS_LIMIT_REACHED": "Unit limit reached",
       "PROPERTIES_LIMIT_REACHED": "Asset limit reached",
       "RENTAL_UNITS_LIMIT_REACHED": "Rental unit limit reached",
       "ACCOUNT_SUSPENDED": "Account suspended",
-      "UPGRADE_TO_PREMIUM": "Upgrade to Premium plan",
+      "UPGRADE_TO_PREMIUM": "Our pricing",
       "SUBSCRIPTION_MANAGEMENT": "Subscription management"
     },
     "MODAL_MESSAGES": {
-      "ROOM_LIMIT_MESSAGE": "You have reached the limit of {{limit}} rental units per property for the free plan. To create more units, upgrade to the Premium plan.",
-      "PROPERTY_LIMIT_MESSAGE": "You have reached the limit of {{limit}} well for the free plan. To create more assets, upgrade to the Premium plan.",
+      "ROOM_LIMIT_MESSAGE": "This will be your 5th occupied unit: your account will move to the Pro plan.",
+      "PROPERTY_LIMIT_MESSAGE": "This will be your 2nd property: your account will move to the Pro plan. The free plan covers 1 property and up to 4 occupied units.",
       "ACCOUNT_SUSPENDED_MESSAGE": "Your account is suspended for unpaid. Please pay your bills to reactivate your account.",
-      "UPGRADE_PROMPT_MESSAGE": "The Premium plan allows you to create an unlimited number of properties and rental units. You only pay 2% of the rent for the units actually occupied."
+      "UPGRADE_PROMPT_MESSAGE": "Your plan adapts automatically to your properties and your rent: there is nothing to do. Each tier has a fixed price, and only occupied units count."
     },
     "ACCOUNT_STATUS_LABELS": {
       "ACTIVE": "Active",
@@ -1467,17 +1482,20 @@
     }
   },
   "SUBSCRIPTION_DASHBOARD": {
+    "PRICING_TITLE": "Your pricing tier",
+    "OCCUPIED_UNITS_THIS_MONTH": "Occupied units this month",
+    "OCCUPIED_UNITS_COUNT": "{{count}} occupied unit(s)",
     "TITLE": "Managing your subscription",
     "REFRESH": "Refresh",
     "CURRENT_SUBSCRIPTION": "Current subscription",
     "PLAN_LABEL": "Plan",
     "ACTIVE_SINCE": "Active since",
-    "UPGRADE_TO_PREMIUM": "Upgrade to Premium",
-    "PREMIUM_PLAN_ACTIVE": "Active Premium Plan",
+    "UPGRADE_TO_PREMIUM": "See pricing",
+    "PREMIUM_PLAN_ACTIVE": "Pro plan active",
     "CURRENT_PERIOD": "Current period",
     "PERIOD_LABEL": "Period",
     "AMOUNT_LABEL": "Amount",
-    "BILLED_PROPERTIES": "Billed properties",
+    "BILLED_PROPERTIES": "Units counted",
     "PERIOD_PROGRESS": "Progress of the period",
     "DAYS_REMAINING": "days left",
     "PERIOD_EXPIRED": "Expired period",
@@ -1489,8 +1507,8 @@
     "FREE_PLAN": "Free",
     "MONTHLY_AMOUNT": "Monthly amount",
     "NO_ACTIVE_SUBSCRIPTION": "No active subscription",
-    "NO_SUBSCRIPTION_MESSAGE": "You do not yet have a subscription. Subscribe to the Premium plan to unlock all features.",
-    "SUBSCRIBE_TO_PREMIUM": "Subscribe to the Premium plan",
+    "NO_SUBSCRIPTION_MESSAGE": "No subscription is active on your account. See our pricing: the plan applies automatically based on your properties and your rent.",
+    "SUBSCRIBE_TO_PREMIUM": "See pricing",
     "UNPAID_INVOICES": "Unpaid invoices",
     "UNPAID_INVOICES_MESSAGE": "You have {{count}} unpaid invoice(s) for a total amount of {{amount}}",
     "VIEW_DETAILS": "See details",
@@ -2200,50 +2218,95 @@
       }
     },
     "PRICING": {
-      "TITLE": "Transparent and fair pricing",
-      "SUBTITLE": "All features for everyone. You only pay if you generate revenue.",
+      "BONUSES": {
+        "TITLE": "Included in the “Rent under control” offer",
+        "SETUP_48H": {
+          "TITLE": "Set up for you in 48 hours",
+          "DESCRIPTION": "Properties, tenants and leases entered by our team, or an import of your Excel file."
+        },
+        "ONBOARDING_30": {
+          "TITLE": "30-minute onboarding",
+          "DESCRIPTION": "On WhatsApp or by video, with you and your relative or caretaker."
+        },
+        "WHATSAPP_SUMMARY": {
+          "TITLE": "A WhatsApp summary every month",
+          "DESCRIPTION": "Who paid, who is late, what was collected for you."
+        },
+        "ANNUAL_STATEMENT": {
+          "TITLE": "Annual statement on request",
+          "DESCRIPTION": "A summary of the year's rent, if you need one."
+        },
+        "PRIVACY": {
+          "TITLE": "Your data stays yours",
+          "DESCRIPTION": "Never sold, never shared with a commercial third party; fully deleted on request."
+        },
+        "MOMO_AT_COST": {
+          "TITLE": "Mobile Money fees at cost",
+          "DESCRIPTION": "No margin, shown before every withdrawal. With manual entry, no money goes through Ndewa360."
+        }
+      },
+      "RULE": "Only units that are really occupied count: a unit occupied at least {{days}} days in a month counts for the whole month. Your tier is checked every month and you are told by email and notification if it changes.",
+      "GOLD": {
+        "TITLE": "Gold",
+        "PRICE": "Custom",
+        "DESCRIPTION": "Above {{gold}} of rent per month, or if you want to delegate management. Let's talk.",
+        "FEATURES": {
+          "CUSTOM_PRICE": "A price agreed for your portfolio",
+          "DELEGATION": "Support towards delegated management",
+          "DEDICATED": "A dedicated contact person",
+          "ALL_PRO": "Everything in the Pro plan"
+        },
+        "EMAIL_BUTTON": "Email us"
+      },
+      "OFFER_NAME": "Rent under control · set up for you in 48 h",
+      "TITLE": "A fixed price, not a percentage",
+      "SUBTITLE": "Know exactly what your caretaker or relative collects for you, month by month.",
       "FREEMIUM": {
-        "TITLE": "Freemium",
+        "TITLE": "Free",
         "PRICE": "0 FCFA",
-        "DESCRIPTION": "Forever • No credit card",
+        "DESCRIPTION": "Forever, as long as you stay at 1 property and {{units}} occupied units.",
         "SUBTITLE": "Perfect to get started:",
         "FEATURES": {
           "PROPERTIES": "1 property",
-          "UNITS": "Up to 10 rental units",
-          "ALL_FEATURES": "100% of features",
-          "EMAIL_SUPPORT": "Email support"
+          "UNITS": "Up to {{units}} occupied units",
+          "ALL_FEATURES": "All tracking features",
+          "EMAIL_SUPPORT": "Email and WhatsApp support"
         },
-        "BUTTON": "Get Started"
+        "BUTTON": "Start for free"
       },
       "PREMIUM": {
-        "TITLE": "Premium",
-        "PRICE": "2%",
-        "DESCRIPTION": "of rent per occupied unit/month",
-        "SUBTITLE_1": "Empty unit = 0 FCFA • Fair model",
-        "SUBTITLE_2": "For professionals:",
+        "TITLE": "Pro",
+        "FROM": "from",
+        "PRICE": "3,000 FCFA",
+        "PER_MONTH": " / month",
+        "DESCRIPTION": "From the 2nd property or occupied unit no. {{nextUnit}}. Fixed price based on your total rent:",
+        "RANGE_UP_TO": "Up to {{max}}",
+        "RANGE_BETWEEN": "{{min}} to {{max}}",
+        "SUBTITLE_1": "Empty unit = 0 FCFA. 48-hour setup and onboarding included.",
+        "SUBTITLE_2": "For owners who delegate rent collection:",
         "BADGE": "RECOMMENDED",
         "FEATURES": {
           "UNLIMITED_PROPERTIES": "Unlimited properties",
-          "UNLIMITED_UNITS": "Unlimited rental units",
-          "ALL_FEATURES": "100% of features",
-          "PRIORITY_SUPPORT": "24/7 priority support",
-          "PERSONAL_TRAINING": "Personalized training"
+          "UNLIMITED_UNITS": "Unlimited units",
+          "ALL_FEATURES": "All features",
+          "PRIORITY_SUPPORT": "Priority support",
+          "PERSONAL_TRAINING": "Personal onboarding"
         },
-        "BUTTON": "Try 60 days free"
+        "BUTTON": "Try {{trialDays}} days free"
       },
       "GUARANTEE": {
-        "TITLE": "No commitment — automatic return to free plan",
-        "DESCRIPTION": "60 days to test all Premium features with no credit card. At the end of the trial, automatic return to the Freemium plan."
+        "TITLE": "Ready in 48 hours, or your first month is free",
+        "DESCRIPTION": "If your space is not ready 48 hours after we receive your list, your first month is free. And to start, a {{trialDays}}-day free trial with no bank card: at the end, the plan that matches your situation applies, free if you stay at 1 property and 4 occupied units."
       },
-      "OWNER_SUBTITLE": "Plans adapted to your needs. You only pay when you generate revenue.",
-      "AGENT_SUBTITLE": "A free plan to get started, scalable with your portfolio.",
+      "OWNER_SUBTITLE": "Know exactly what your caretaker or relative collects for you, month by month: who is up to date, who is late and by how much, who is ahead.",
+      "AGENT_SUBTITLE": "The same grid as owners: free to start, then a fixed price based on the rent you manage.",
       "SEEKER_SUBTITLE": "Search is completely free. Owner contact details are available via a one-time premium access.",
       "AGENT_PLAN": {
         "TITLE": "Agent Plan",
-        "PRICE": "Free",
-        "DESCRIPTION": "For real estate agents. Up to 5 managed properties on the free plan.",
+        "PRICE": "Free to start",
+        "DESCRIPTION": "For real estate agents: free for 1 property and {{units}} occupied units, then the fixed-price Pro plan based on the rent you manage.",
         "FEATURES": {
-          "MAX_PROPERTIES": "Up to 5 managed properties (free plan)",
+          "MAX_PROPERTIES": "Pro from {{minPrice}} / month, Gold above {{gold}} of rent",
           "ALL_FEATURES": "100% of management features",
           "VERIFIED_PROFILE": "Verified and visible agency profile",
           "EMAIL_SUPPORT": "Email support"
@@ -2272,20 +2335,20 @@
           "ANSWER": "Ndewa360 is accessible from any device: smartphone, tablet or computer. No installation required, everything works in your web browser. Your data is synchronized in real time on all your devices."
         },
         "PAYMENT": {
-          "QUESTION": "How does the \"2% of rent\" payment work?",
-          "ANSWER": "You only pay for units that generate revenue. If you have 10 apartments but only 7 are occupied, you only pay for the 7 occupied ones. Empty apartment = 0 FCFA. It's a fair model that grows with your success."
+          "QUESTION": "How much does Ndewa360 cost?",
+          "ANSWER": "Free for 1 property and up to 4 occupied units. From the 2nd property or the 5th occupied unit, you move to the Pro plan: a fixed monthly price based on your total rent (3,000 FCFA up to 250,000 FCFA, 6,000 up to 500,000, 10,000 up to 1,000,000, 20,000 up to 2,500,000). Above that, the Gold plan is priced on request. Only occupied units count: an empty property costs you nothing."
         },
         "SECURITY": {
           "QUESTION": "Is my data secure?",
-          "ANSWER": "Absolutely. Your data is encrypted with the same standards as banks (SSL 256-bit), backed up daily and hosted on secure servers. We comply with GDPR and never share your information."
+          "ANSWER": "Your data is encrypted, backed up every day and hosted on secure servers. It is never sold or shared with a commercial third party, and you can ask for it to be fully deleted at any time. With manual entry, no money goes through Ndewa360."
         },
         "IMPORT": {
           "QUESTION": "Can I import my existing data?",
-          "ANSWER": "Yes! Our team helps you for free to migrate all your data from Excel, Word, notebooks or any other system. Migration is usually done in less than 24 hours and we take care of everything."
+          "ANSWER": "Yes. Send us your list (Excel, notebook, photos): we set up your properties, tenants and leases for you within 48 hours. If your space is not ready 48 hours after we receive your list, your first month is free."
         },
         "SUPPORT": {
           "QUESTION": "What support do you offer?",
-          "ANSWER": "Email support for all users, 24/7 priority support for Premium users, plus personalized training and onboarding assistance. Our team speaks French and knows the African context."
+          "ANSWER": "Email and WhatsApp support for every user. With the “Rent under control” offer, we set everything up for you within 48 hours and run a 30-minute onboarding with you and your relative or caretaker. Our team speaks French and knows the local context."
         },
         "COUNTRIES": {
           "QUESTION": "Does Ndewa360 work in all African countries?",
@@ -2301,7 +2364,7 @@
         },
         "AGENT_PAYMENT": {
           "QUESTION": "How much does it cost for a real estate agent?",
-          "ANSWER": "The free plan lets you manage up to 5 properties. Beyond that, the Premium plan applies: 2% of the rent of occupied units per month, same as for property owners."
+          "ANSWER": "The same grid as for owners: free for 1 property and up to 4 occupied units, then the Pro plan at a fixed price based on the total rent managed, from 3,000 to 20,000 FCFA per month. Above 2,500,000 FCFA of rent, the Gold plan is priced on request."
         },
         "SEEKER_SEARCH": {
           "QUESTION": "How do I search for a home on Ndewa360?",
@@ -2325,12 +2388,12 @@
         "TALK_EXPERT": "Talk to an expert"
       },
       "GUARANTEES": {
-        "FREE_FOREVER": "Free plan forever",
+        "FREE_FOREVER": "Free for 1 property and 4 units",
         "NO_CARD": "No card required",
-        "SUPPORT_INCLUDED": "Support included"
+        "SUPPORT_INCLUDED": "Setup and onboarding included"
       },
       "TRUST_SIGNALS": {
-        "GUARANTEE": "60-day trial",
+        "GUARANTEE": "Ready in 48 h or first month free",
         "RATING": "4.9/5 stars",
         "USERS": "20+ satisfied users"
       },
@@ -2341,7 +2404,7 @@
         "TITLE": "Ready to take control of your rents?",
         "SUBTITLE": "Join hundreds of owners who have transformed their property management.",
         "BTN": "Start my free onboarding",
-        "NOTE": "Free, no card required"
+        "NOTE": "30-day free trial, no card required"
       },
       "AGENT": {
         "TITLE": "Grow your real estate business with Ndewa360",
@@ -2518,7 +2581,7 @@
       "ADV_1_TITLE": "Verified profile",
       "ADV_1_DESC": "Get the Verified Agent badge.",
       "ADV_2_TITLE": "Portfolio management",
-      "ADV_2_DESC": "Mandates units tenants.",
+      "ADV_2_DESC": "Start free with 1 property and up to 4 occupied units, then move to the fixed-price Pro plan, from 3,000 FCFA / month.",
       "ADV_3_TITLE": "Reporting",
       "ADV_3_DESC": "Monthly reports.",
       "ADV_4_TITLE": "Client relations",
@@ -2949,9 +3012,9 @@
       },
       "REVENUE_MODEL": {
         "COMMISSIONS": "Commissions",
-        "COMMISSIONS_DESC": "2% of the monthly rent",
+        "COMMISSIONS_DESC": "Fixed-price subscription based on rent managed",
         "SUBSCRIPTIONS": "Subscriptions",
-        "SUBSCRIPTIONS_DESC": "Premium plans",
+        "SUBSCRIPTIONS_DESC": "Pro and Gold plans",
         "SERVICE_FEES": "Service fees",
         "SERVICE_FEES_DESC": "Premium access and reservations",
         "ADDITIONAL_SERVICES": "Additional services",
@@ -4051,6 +4114,8 @@
     }
   },
   "ASSIGNMENT_ASSISTANT": {
+    "PRO_SWITCH_NOTICE_GOLD": "This will be occupied unit no. {{count}}: with {{rent}} of rent, your account falls under the Gold plan. We will contact you with a tailored price.",
+    "PRO_SWITCH_NOTICE": "This will be occupied unit no. {{count}}: your account will move to the Pro plan, {{price}} per month with {{rent}} of rent. You will be told by email and notification.",
     "TITLE": "Tenant Assignment Assistant",
     "ASSIGNMENT_TYPE": "Type of assignment",
     "CHOOSE_TENANT_TYPE": "Choose the type of tenant you want to assign",
@@ -4537,40 +4602,56 @@
     "TOUR_360": "360°"
   },
   "BILLING": {
+    "TIERS_SUBTITLE": "A fixed monthly price based on the total rent of your occupied units. Your tier is highlighted.",
+    "TIERS_TITLE": "The “Rent under control” pricing grid",
     "TITLE": "Billing",
     "PRICING_TITLE": "Price & Plan",
     "PRICING_SUBTITLE": "Ndewa360 the rental management platform reinvented in 360.",
-    "FREEMIUM_PLAN": "Freemium Plan",
+    "FREEMIUM_PLAN": "Free plan",
     "ACTIVATE_PRO_PLAN": "Activate Pro plan to benefit from all features",
     "CLICK_TO_ACTIVATE": "Click here to activate",
     "UNPAID_INVOICES": "Unpaid Invoices",
     "UNPAID_INVOICES_COUNT": "You have {{count}} unpaid invoice(s) for an amount of {{amount}} FCFA",
     "FREE_PLAN": {
       "TITLE": "FREE",
-      "SUBTITLE": "Automatic plan upon registration",
+      "SUBTITLE": "1 property, up to 4 occupied units",
       "NAME": "Ndewa360 FREE",
       "DESCRIPTION": "Start for free with the basic features to manage your first property",
-      "LIMITS_TITLE": "FREE PLAN LIMITATIONS",
-      "MAX_PROPERTIES": "Maximum 1 property",
-      "MAX_UNITS": "Maximum 8 rental units",
+      "LIMITS_TITLE": "WHAT IS INCLUDED",
+      "MAX_PROPERTIES": "1 property",
+      "MAX_UNITS": "Up to 4 occupied units",
       "FINANCIAL_MANAGEMENT": "Financial management",
       "CONTRACT_MANAGEMENT": "Contract management",
       "CURRENT_PLAN": "Current plan",
       "BASE_PLAN": "Basic plan"
     },
     "PREMIUM_PLAN": {
-      "TITLE": "2%",
-      "SUBTITLE": "Upgrade to Premium",
-      "NAME": "Ndewa360 Premium",
-      "DESCRIPTION": "Manage unlimited properties and unlock all advanced features",
-      "FEATURES_TITLE": "PREMIUM FEATURES",
+      "FEATURE_ANNUAL_STATEMENT": "Annual statement on request",
+      "FEATURE_SETUP": "Set up for you within 48 hours",
+      "FEATURE_DASHBOARD": "Detailed dashboard",
+      "FEATURE_REMINDERS": "Payment reminders",
+      "FEATURE_CONTRACTS": "Contract management",
+      "FEATURE_FINANCES": "Status of every tenant: up to date, late, ahead",
+      "FEATURE_WHATSAPP_SUMMARY": "A WhatsApp summary every month",
+      "FEATURE_OCCUPIED_ONLY": "Only occupied units count",
+      "FEATURE_FIXED_PRICE": "Fixed price from 3,000 to 20,000 FCFA / month",
+      "FEATURE_UNLIMITED_PROPERTIES": "Unlimited properties and units",
+      "CURRENT_PLAN": "Your current plan",
+      "VIEW_TERMS": "View the terms",
+      "PER_MONTH": "/ month",
+      "PRICE_FROM": "From 3,000 FCFA",
+      "TITLE": "Pro",
+      "SUBTITLE": "Automatic from the 2nd property or the 5th occupied unit",
+      "NAME": "Ndewa360 Pro",
+      "DESCRIPTION": "A fixed price based on your total rent, not a percentage. Only occupied units count.",
+      "FEATURES_TITLE": "INCLUDED IN THE PRO PLAN",
       "UNLIMITED_PROPERTIES": "Unlimited real estate",
       "UNLIMITED_UNITS": "Unlimited rental units",
       "PAYMENT_NOTIFICATIONS": "Non-payment notifications",
       "DETAILED_DASHBOARD": "Detailed dashboard",
       "PRIORITY_SUPPORT": "Priority Support",
       "ADVANCED_REPORTS": "Advanced reporting",
-      "UPGRADE_TO_PREMIUM": "Upgrade to Premium",
+      "UPGRADE_TO_PREMIUM": "View the terms",
       "UPGRADING": "Upgrade in progress..."
     },
     "INVOICES": {
@@ -4578,7 +4659,7 @@
     },
     "PLAN_LABELS": {
       "FREE": "Free Plan",
-      "PREMIUM": "Premium Plan"
+      "PREMIUM": "Pro plan"
     },
     "STATUS_LABELS": {
       "ACTIVE": "Active",
@@ -4596,12 +4677,12 @@
       "PROPERTIES_CREATED": "Properties created",
       "MONTHLY_AMOUNT": "Monthly amount:",
       "LIMIT_SOON_REACHED": "Limit soon reached",
-      "UPGRADE_TO_PREMIUM": "Upgrade to Premium",
+      "UPGRADE_TO_PREMIUM": "See pricing",
       "SETTLE_UNPAID": "Settle unpaid",
       "CALCULATE": "Calculate",
       "UNPAID_AMOUNT": "{{amount}} FCFA unpaid",
       "ACCOUNT_SUSPENDED": "Account suspended",
-      "PREMIUM_PLAN": "Premium Plan",
+      "PREMIUM_PLAN": "Pro plan",
       "FREE_PLAN": "Free Plan"
     },
     "MENU": {
@@ -4860,7 +4941,7 @@
         },
         "IS_FREE": {
           "QUESTION": "Is using Ndewa360 free?",
-          "ANSWER": "Registration is free. All features are free for up to one property with at most 10 rental units. From the eleventh unit, you need to pay 2% of the rent for each rental unit activated per month."
+          "ANSWER": "Sign-up is free and includes a 30-day trial. The free plan covers 1 property and up to 4 occupied units. From the 2nd property or the 5th occupied unit, the Pro plan applies: a fixed price from 3,000 to 20,000 FCFA per month depending on your total rent. Above 2,500,000 FCFA of rent, the Gold plan is priced on request."
         },
         "TRAINING_VIDEOS": {
           "QUESTION": "Where can I find training videos?",
@@ -5221,7 +5302,7 @@
     "STEP2": {
       "TITLE": "Your rental units",
       "SUBTITLE": "Add the units in your property (rooms, studios, apartments).",
-      "FREE_PLAN_INFO": "Free plan: up to <strong>8 units per property</strong>. You can add up to 5 here and complete from the dashboard. Upgrade to Premium for unlimited units.",
+      "FREE_PLAN_INFO": "Free plan: <strong>1 property and up to 4 occupied units</strong>. You can add up to 5 units here and complete the rest from the dashboard. Beyond that, the Pro plan applies, from 3,000 FCFA / month.",
       "UNIT_LABEL": "Unit",
       "REMOVE_UNIT": "Remove",
       "TYPE_LABEL": "Type",
@@ -5458,5 +5539,35 @@
     "OFFLINE_ERROR": "Internet connection lost while loading.",
     "OFFLINE_WARNING": "You are offline.",
     "ONLINE_SUCCESS": "Connection restored."
+  },
+  "PRICING": {
+    "CURRENT_TIER": "Your tier:",
+    "TIERS": {
+      "FREE": "Free",
+      "PRO_1": "Pro 1",
+      "PRO_2": "Pro 2",
+      "PRO_3": "Pro 3",
+      "PRO_4": "Pro 4",
+      "GOLD": "Gold"
+    },
+    "FREE_PRICE": "0 FCFA",
+    "MONTH": "month",
+    "FACT_PROPERTIES": "{{count}} property(ies)",
+    "FACT_UNITS": "{{count}} occupied unit(s)",
+    "FACT_RENT": "{{amount}} of rent / month",
+    "TRIAL_NOTE": "You are on your free trial: nothing is billed. When the trial ends, this tier will apply.",
+    "REASON_MULTIPLE_PROPERTIES": "You are on Pro because you have more than one property.",
+    "REASON_OCCUPIED_UNITS": "You are on Pro because more than {{max}} units are occupied.",
+    "NO_OCCUPIED_UNITS": "No occupied unit this month: nothing to pay.",
+    "NEXT_THRESHOLD": "Above {{rent}} of rent, your subscription will be {{price}} / month.",
+    "NEXT_THRESHOLD_GOLD": "Above {{rent}} of rent, you will move to the Gold plan (custom price).",
+    "GOLD_PENDING": "Gold plan: we will offer you a tailored price. Until then, {{price}} / month applies.",
+    "FREE_CONDITION": "{{properties}} property and up to {{units}} occupied units",
+    "RENT_UP_TO": "Rent up to {{max}}",
+    "RENT_BETWEEN": "Rent from {{min}} to {{max}}",
+    "RENT_ABOVE": "Rent above {{min}}",
+    "CONTACT_US": "Contact us",
+    "OCCUPATION_RULE": "Only occupied units count. A unit occupied at least {{days}} days in a month counts for the whole month. Your tier is checked every month.",
+    "GOLD_CONTACT": "Gold plan or a question about your price:"
   }
 }

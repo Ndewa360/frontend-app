@@ -54,7 +54,7 @@
           <div class="info-item">
             <span class="label">{{ 'SUBSCRIPTION_MODAL.CURRENT_PLAN' | translate }}</span>
             <span class="value" [ngClass]="subscriptionStatus.plan">
-              {{ subscriptionStatus.plan === 'free' ? ('SUBSCRIPTION_MODAL.PLAN_FREE' | translate) : ('SUBSCRIPTION_MODAL.PLAN_PREMIUM' | translate) }}
+              {{ subscriptionStatus.plan === 'free' ? ('SUBSCRIPTION_MODAL.PLAN_FREE' | translate) : subscriptionStatus.plan === 'trial' ? ('SUBSCRIPTION_MODAL.PLAN_TRIAL' | translate) : ('SUBSCRIPTION_MODAL.PLAN_PREMIUM' | translate) }}
             </span>
           </div>
           
@@ -73,9 +73,9 @@
             </span>
           </div>
           
-          <div *ngIf="subscriptionStatus.plan === 'free' && subscriptionStatus.unitsPerPropertyLimit" class="info-item">
-            <span class="label">{{ 'SUBSCRIPTION_MODAL.UNITS_PER_PROPERTY_LIMIT' | translate }}</span>
-            <span class="value">{{ subscriptionStatus.unitsPerPropertyLimit }} {{ 'SUBSCRIPTION_MODAL.UNITS_MAX' | translate }}</span>
+          <div *ngIf="pricing" class="info-item">
+            <span class="label">{{ 'SUBSCRIPTION_MODAL.OCCUPIED_UNITS' | translate }}</span>
+            <span class="value">{{ pricing.occupiedUnitsCount }}</span>
           </div>
           
           <div *ngIf="subscriptionStatus.plan === 'premium'" class="info-item">
@@ -85,27 +85,34 @@
         </div>
       </div>
 
-      <!-- Avantages du forfait Premium -->
-      <div *ngIf="showUpgradeButton" class="premium-benefits">
-        <h3>{{ 'SUBSCRIPTION_MODAL.PREMIUM_BENEFITS_TITLE' | translate }}</h3>
+      <!-- Passage au Pro : ce qui change concrètement -->
+      <div *ngIf="isProSwitch" class="pro-switch">
+        <h3>{{ 'SUBSCRIPTION_MODAL.PRO_SWITCH.WHAT_CHANGES' | translate }}</h3>
         <ul class="benefits-list">
           <li>
             <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            {{ 'SUBSCRIPTION_MODAL.BENEFIT_UNLIMITED_PROPERTIES' | translate }}
+            {{ 'SUBSCRIPTION_MODAL.PRO_SWITCH.POINT_FIXED_PRICE' | translate }}
           </li>
           <li>
             <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            {{ 'SUBSCRIPTION_MODAL.BENEFIT_OCCUPIED_UNITS_ONLY' | translate }}
+            {{ 'SUBSCRIPTION_MODAL.PRO_SWITCH.POINT_OCCUPIED_ONLY' | translate }}
           </li>
           <li>
             <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            {{ 'SUBSCRIPTION_MODAL.BENEFIT_ADVANTAGEOUS_RATE' | translate }}
-          </li>
-          <li>
-            <youpez-ibm-icon iconName="checkmark" iconSize="16" class="check-icon"></youpez-ibm-icon>
-            {{ 'SUBSCRIPTION_MODAL.BENEFIT_PRIORITY_SUPPORT' | translate }}
+            {{ 'SUBSCRIPTION_MODAL.PRO_SWITCH.POINT_MONTHLY_CHECK' | translate }}
           </li>
         </ul>
+        <p class="pro-switch__projection">{{ projectedMessage }}</p>
+        <p *ngIf="pricing?.trialActive" class="pro-switch__trial">{{ 'SUBSCRIPTION_MODAL.PRO_SWITCH.TRIAL_NOTE' | translate }}</p>
+      </div>
+
+      <!-- Grille tarifaire -->
+      <div *ngIf="showPricingGrid" class="pricing-grid-section">
+        <app-pricing-tiers
+          [compact]="true"
+          [summary]="pricing"
+          [highlightTier]="isProSwitch ? projectedTier.tier : null">
+        </app-pricing-tiers>
       </div>
 
       <!-- Informations de suspension -->
@@ -130,13 +137,9 @@
       *ngIf="showUpgradeButton"
       type="button"
       class="btn btn-primary upgrade-btn"
-      (click)="upgradeToPremium()"
-      [disabled]="upgrading">
-      <div *ngIf="upgrading" class="btn-spinner">
-        <div class="mini-spinner"></div>
-      </div>
-      <i *ngIf="!upgrading" class="fas fa-crown"></i>
-      {{ upgrading ? ('SUBSCRIPTION_MODAL.UPGRADING' | translate) : ('SUBSCRIPTION_MODAL.UPGRADE_TO_PREMIUM' | translate) }}
+      (click)="confirmProSwitch()">
+      <i class="fas fa-check"></i>
+      {{ 'SUBSCRIPTION_MODAL.PRO_SWITCH.CONFIRM' | translate }}
     </button>
 
     <!-- Bouton Réactivation -->
@@ -169,7 +172,7 @@
       class="btn btn-outline close-btn"
       (click)="close()"
       [disabled]="upgrading">
-      {{ data.type === 'limit_reached' ? ('SUBSCRIPTION_MODAL.LATER' | translate) : ('SUBSCRIPTION_MODAL.CLOSE' | translate) }}
+      {{ isProSwitch ? ('SUBSCRIPTION_MODAL.CANCEL' | translate) : ('SUBSCRIPTION_MODAL.CLOSE' | translate) }}
     </button>
 
   </div>

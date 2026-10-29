@@ -50,6 +50,9 @@ $danger-color: #dc3545;
 
   .modal-content {
     padding: 24px;
+    // La grille tarifaire allonge la modale : défilement interne sur petits écrans
+    max-height: calc(90vh - 180px);
+    overflow-y: auto;
 
     .loading-container {
       padding: 40px 20px;
@@ -232,8 +235,25 @@ $danger-color: #dc3545;
         }
       }
 
+      .pro-switch,
       .premium-benefits {
         margin-bottom: 24px;
+
+        &__projection {
+          margin: 12px 0 0;
+          padding: 12px 14px;
+          border-radius: 8px;
+          background: rgba($primary-color, 0.08);
+          font-size: 0.95rem;
+          font-weight: 600;
+          line-height: 1.45;
+        }
+
+        &__trial {
+          margin: 8px 0 0;
+          font-size: 0.9rem;
+          color: $success-color;
+        }
 
         h3 {
           margin: 0 0 16px 0;
@@ -259,6 +279,10 @@ $danger-color: #dc3545;
             }
           }
         }
+      }
+
+      .pricing-grid-section {
+        margin-bottom: 24px;
       }
 
       .suspension-info {

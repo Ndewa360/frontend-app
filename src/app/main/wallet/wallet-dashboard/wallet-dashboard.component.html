@@ -95,7 +95,7 @@
           <div class="wallet-alert__details">
             <span>Demandé : <strong>{{ formatCurrency(summary.pendingWithdrawal?.amount) }}</strong></span>
             <span class="wallet-alert__sep">·</span>
-            <span>Frais (2%) : <strong class="wallet-debit">− {{ formatCurrency(summary.pendingWithdrawal?.fees) }}</strong></span>
+            <span>Frais Mobile Money : <strong class="wallet-debit">− {{ formatCurrency(summary.pendingWithdrawal?.fees) }}</strong></span>
             <span class="wallet-alert__sep">·</span>
             <span>Vous recevrez : <strong class="wallet-credit">{{ formatCurrency(summary.pendingWithdrawal?.netAmount) }}</strong></span>
             <span class="wallet-alert__sep">·</span>
@@ -171,7 +171,7 @@
 
           <div class="wallet-kpi wallet-kpi--warning">
             <div class="wallet-kpi__header">
-              <span class="wallet-kpi__label">Frais prélevés (2%)</span>
+              <span class="wallet-kpi__label">Frais Mobile Money prélevés</span>
               <div class="wallet-kpi__icon wallet-kpi__icon--warning">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -446,7 +446,7 @@
                 <strong>{{ formatCurrency(w.amount) }}</strong>
               </div>
               <div class="wallet-withdrawal__row wallet-withdrawal__row--fee">
-                <span>Frais (2%)</span>
+                <span>Frais Mobile Money</span>
                 <span class="wallet-debit">− {{ formatCurrency(w.fees) }}</span>
               </div>
               <div class="wallet-withdrawal__divider"></div>

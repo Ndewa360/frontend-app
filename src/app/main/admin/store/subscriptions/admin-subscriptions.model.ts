@@ -14,6 +14,10 @@ export interface AdminUserSubscription {
   propertyCount: number;
   propertyLimit: number;
   monthlyAmount: number;
+  /** Palier de la grille (FREE, PRO_1…PRO_4, GOLD). */
+  currentTier?: string;
+  /** Montant Gold négocié pour ce compte (null = prix par défaut). */
+  customMonthlyAmount?: number | null;
   hasUnpaidInvoices: boolean;
   totalUnpaidAmount: number;
   unpaidInvoicesCount: number;
