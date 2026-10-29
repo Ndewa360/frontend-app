@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { silentHttp } from '../http/http-error-context';
+import { escapeHtml } from '../utils/html-escape';
 
 export interface InvoiceData {
   invoiceNumber: string;
@@ -33,7 +37,11 @@ export class InvoiceDownloadService {
 
   private readonly api = `${environment.apiUrl}/subscription-payment`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private toastr: ToastrService,
+    private translate: TranslateService,
+  ) {}
 
   // ─── Récupérer les données de la facture depuis le backend ────────────────
   getInvoice(periodId: string): Observable<{ data: InvoiceData }> {
@@ -42,51 +50,36 @@ export class InvoiceDownloadService {
 
   // ─── Télécharger la facture en PDF via le backend ────────────────────────
   // Utilise l'endpoint GET /subscription-payment/invoice/:periodId/pdf
-  // qui retourne un Buffer PDF genere par InvoiceGeneratorService (backend)
-  // Fallback sur la generation locale si le backend echoue
+  // (PDF généré par InvoiceGeneratorService). Passe par HttpClient : le jeton
+  // est ajouté par l'intercepteur, avec rafraîchissement si besoin.
+  // Repli sur la version imprimable locale si le backend échoue.
   downloadInvoicePdf(periodId: string): void {
-    const url = `${this.api}/invoice/${periodId}/pdf`;
-
-    // Creer un lien de telechargement invisible
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `facture_${periodId}.pdf`;
-    link.target = '_blank';
-
-    // Ajouter le token d'auth dans les headers via fetch
-    const token = localStorage.getItem('ndewa360_auth_token')
-      ? JSON.parse(localStorage.getItem('ndewa360_auth_token') || '{}')?.token
-      : null;
-
-    if (token) {
-      // Telechargement via fetch avec auth header
-      fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-        .then(res => {
-          if (!res.ok) throw new Error('PDF non disponible');
-          return res.blob();
-        })
-        .then(blob => {
-          const objectUrl = URL.createObjectURL(blob);
-          link.href = objectUrl;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(objectUrl);
-        })
-        .catch(() => {
-          // Fallback : generer le PDF localement
-          this.downloadInvoicePdfLocal(periodId);
-        });
-    } else {
-      this.downloadInvoicePdfLocal(periodId);
-    }
+    this.http.get(`${this.api}/invoice/${periodId}/pdf`, {
+      responseType: 'blob',
+      context: silentHttp(),
+    }).subscribe({
+      next: (blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = `facture_${periodId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      },
+      error: () => this.downloadInvoicePdfLocal(periodId),
+    });
   }
 
-  // ─── Fallback : génération locale via window.print() ─────────────────────
+  // ─── Repli : génération locale via window.print() ────────────────────────
   private downloadInvoicePdfLocal(periodId: string): void {
     this.getInvoice(periodId).subscribe({
       next: (res) => this.printInvoice(res.data),
-      error: () => alert('Impossible de générer la facture. Veuillez réessayer.'),
+      error: () => this.toastr.error(
+        this.translate.instant('NOTIFICATIONS.PDF_GENERATION_ERROR'),
+        this.translate.instant('COMMON.ERROR'),
+      ),
     });
   }
 
@@ -114,7 +107,8 @@ export class InvoiceDownloadService {
     const fmt = (n: number) => new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 0 }).format(n || 0);
     const fmtDate = (d: any) => d ? new Date(d).toLocaleDateString('fr-FR') : 'N/A';
     const fmtDateTime = (d: any) => d ? new Date(d).toLocaleString('fr-FR') : 'N/A';
-    const planLabel = inv.plan?.toLowerCase() === 'premium' ? 'Premium' : 'Gratuit';
+    const planLabel = inv.plan?.toLowerCase() === 'premium' ? 'Pro' : inv.plan?.toLowerCase() === 'trial' ? 'Essai' : 'Gratuit';
+    const esc = escapeHtml;
     const providerLabel: Record<string, string> = {
       STRIPE: 'Carte bancaire', MTN: 'MTN Mobile Money',
       ORANGE: 'Orange Money', EASY_TRANSACT: 'Easy Transact',
@@ -122,8 +116,8 @@ export class InvoiceDownloadService {
 
     const unitsRows = (inv.unitsDetails || []).map(u => `
       <tr>
-        <td>${u.propertyName || ''}</td>
-        <td>${u.unitCode || ''}</td>
+        <td>${esc(u.propertyName)}</td>
+        <td>${esc(u.unitCode)}</td>
         <td class="right">${fmt(u.unitPrice)} FCFA</td>
         <td class="center">${u.occupiedDays} j</td>
         <td class="center">${u.isEligible ? '✓' : '✗'}</td>
@@ -137,7 +131,7 @@ export class InvoiceDownloadService {
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Facture ${inv.invoiceNumber}</title>
+  <title>Facture ${esc(inv.invoiceNumber)}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a2e; background: #fff; padding: 40px; }
@@ -209,7 +203,7 @@ export class InvoiceDownloadService {
     </div>
     <div class="inv-meta">
       <h1>FACTURE</h1>
-      <p><strong>${inv.invoiceNumber}</strong></p>
+      <p><strong>${esc(inv.invoiceNumber)}</strong></p>
       <p>Émise le ${fmtDate(inv.createdAt)}</p>
       <p style="margin-top:8px;">
         <span class="badge ${inv.status === 'payed' ? 'badge-paid' : inv.status === 'waiting' ? 'badge-waiting' : inv.status === 'unpaid' ? 'badge-unpaid' : 'badge-free'}">
@@ -223,12 +217,12 @@ export class InvoiceDownloadService {
   <div class="info-grid">
     <div class="info-box">
       <h3>Informations client</h3>
-      <p class="value">${inv.userInfo.name || 'N/A'}</p>
-      <p>${inv.userInfo.email || 'N/A'}</p>
+      <p class="value">${esc(inv.userInfo?.name || 'N/A')}</p>
+      <p>${esc(inv.userInfo?.email || 'N/A')}</p>
     </div>
     <div class="info-box">
       <h3>Détails de la période</h3>
-      <p><span class="value">Référence :</span> ${inv.period.billingRef}</p>
+      <p><span class="value">Référence :</span> ${esc(inv.period?.billingRef)}</p>
       <p><span class="value">Période :</span> ${fmtDate(inv.period.startDate)} → ${fmtDate(inv.period.endDate)}</p>
       <p><span class="value">Forfait :</span> ${planLabel}</p>
       <p><span class="value">Unités facturées :</span> ${inv.occupiedUnits}</p>
@@ -276,8 +270,8 @@ export class InvoiceDownloadService {
   <div class="payment-info">
     <h3>✓ Paiement confirmé</h3>
     <p><strong>Date de paiement :</strong> ${fmtDateTime(inv.paidAt || inv.transaction?.processedAt)}</p>
-    ${inv.paymentMethod ? `<p><strong>Méthode :</strong> ${providerLabel[inv.paymentMethod] || inv.paymentMethod}</p>` : ''}
-    ${inv.transaction ? `<p><strong>Référence transaction :</strong> ${inv.transaction.externalRef}</p>` : ''}
+    ${inv.paymentMethod ? `<p><strong>Méthode :</strong> ${esc(providerLabel[inv.paymentMethod] || inv.paymentMethod)}</p>` : ''}
+    ${inv.transaction ? `<p><strong>Référence transaction :</strong> ${esc(inv.transaction.externalRef)}</p>` : ''}
   </div>
   ` : ''}
 

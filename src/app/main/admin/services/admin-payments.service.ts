@@ -58,15 +58,6 @@ export class AdminPaymentsService {
   }
 
   /**
-   * Obtenir un paiement par ID
-   */
-  getPaymentById(paymentId: string): Observable<AdminPayment> {
-    return this.http.get<ApiResultFormat<AdminPayment>>(`${this.apiUrl}/${paymentId}`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Obtenir la liste des souscriptions avec filtres
    */
   getSubscriptions(filters: SubscriptionFilters = {}): Observable<{ subscriptions: AdminSubscription[], total: number, meta: any }> {
@@ -131,15 +122,6 @@ export class AdminPaymentsService {
   }
 
   /**
-   * Obtenir un coupon par ID
-   */
-  getCouponById(couponId: string): Observable<AdminCoupon> {
-    return this.http.get<ApiResultFormat<AdminCoupon>>(`${this.apiUrl}/coupons/${couponId}`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Créer un nouveau coupon
    */
   createCoupon(couponData: CreateCouponDto): Observable<AdminCoupon> {
@@ -167,28 +149,10 @@ export class AdminPaymentsService {
   }
 
   /**
-   * Activer/Désactiver un coupon
-   */
-  toggleCouponStatus(couponId: string, isActive: boolean): Observable<AdminCoupon> {
-    return this.http.patch<ApiResultFormat<AdminCoupon>>(`${this.apiUrl}/coupons/${couponId}/status`, { isActive }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Créer des coupons en masse
    */
   createBulkCoupons(bulkData: { count: number; template: CreateCouponDto }): Observable<{ created: number; coupons: AdminCoupon[] }> {
     return this.http.post<ApiResultFormat<{ created: number; coupons: AdminCoupon[] }>>(`${this.apiUrl}/coupons/bulk`, bulkData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Rembourser un paiement
-   */
-  refundPayment(paymentId: string, refundData: { amount?: number; reason?: string }): Observable<AdminPayment> {
-    return this.http.post<ApiResultFormat<AdminPayment>>(`${this.apiUrl}/${paymentId}/refund`, refundData).pipe(
       map(response => response.data)
     );
   }
@@ -243,22 +207,4 @@ export class AdminPaymentsService {
     );
   }
 
-  /**
-   * Obtenir les statistiques de revenus
-   */
-  getRevenueStats(timeRange: string = '30d'): Observable<any> {
-    const params = new HttpParams().set('timeRange', timeRange);
-    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/revenue-stats`, { params }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Obtenir les métriques de conversion
-   */
-  getConversionMetrics(): Observable<any> {
-    return this.http.get<ApiResultFormat<any>>(`${this.apiUrl}/conversion-metrics`).pipe(
-      map(response => response.data)
-    );
-  }
 }

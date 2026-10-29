@@ -181,33 +181,6 @@ export class LocationState{
         })
     }
 
-    @Action(LocationAction.FetchLocation)
-    fetchLocation(ctx:StateContext<LocationStateModel>,{locationId}:LocationAction.FetchLocation)
-    {
-        const state = ctx.getState();
-        let index = state.locations.findIndex((u)=>u._id==locationId);
-
-        if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingLocation:true
-        })
-        return this._locationsService.getLocation(locationId).pipe(
-            tap(
-                result => {
-                    ctx.patchState({
-                        loadingLocation:false,
-                        locations:[...state.locations, result.data]
-                    })
-                }
-            ),
-            catchError((error) => {
-                ctx.patchState({ loadingLocation: false });
-                return throwError(error);
-            })
-        )
-    }
-
     @Action(LocationAction.CreateLocation)
     createLocation(ctx: StateContext<LocationStateModel>, {location}: LocationAction.CreateLocation) {
         const state = ctx.getState();

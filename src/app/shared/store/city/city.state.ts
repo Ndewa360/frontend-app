@@ -92,37 +92,6 @@ export class CityState{
     }
 
 
-    @Action(CityAction.UpdateCity)
-    updateCity(ctx:StateContext<CityStateModel>, {city,id}:CityAction.UpdateCity)
-    {
-        const state = ctx.getState();
-        ctx.patchState({
-            loadingCity: true
-        })
-
-        return this._citiesService.updateCity(city,id).pipe(
-            tap(
-                (result)=>{
-                    const data = [...state.cities]
-                    let index = data.findIndex((u)=>u._id==id);
-                    if(index>-1) data[index]=result.data;
-                    ctx.patchState({
-                        loadingCity:false,
-                        cities:data
-                    })
-                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.CITY_UPDATED_SUCCESS'), 'Ndewa360°');
-                }
-            ),
-            catchError((error) => {               
-                ctx.patchState({
-                    loadingCity: false
-                })                
-                return throwError(error);
-                
-            })
-        )
-    }
-
 
     
     @Action(CityAction.updateLoadingCityState)

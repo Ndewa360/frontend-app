@@ -66,31 +66,10 @@ export class AdminSubscriptionsService {
   }
 
   /**
-   * Forcer l'upgrade vers Premium
-   */
-  forceUpgradeToPremium(subscriptionId: string, reason?: string): Observable<SubscriptionActionResult> {
-    return this.http.post<ApiResultFormat<SubscriptionActionResult>>(`${this.apiUrl}/${subscriptionId}/force-upgrade`, { reason }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Montant Gold négocié pour ce compte (null pour revenir au prix par défaut)
    */
   setCustomAmount(subscriptionId: string, amount: number | null, reason?: string): Observable<any> {
     return this.http.patch<ApiResultFormat<any>>(`${this.apiUrl}/${subscriptionId}/custom-amount`, { amount, reason }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Changer le plan d'une souscription
-   */
-  changePlan(subscriptionId: string, targetPlan: string, reason?: string): Observable<SubscriptionActionResult> {
-    return this.http.patch<ApiResultFormat<SubscriptionActionResult>>(`${this.apiUrl}/${subscriptionId}/change-plan`, { 
-      targetPlan, 
-      reason 
-    }).pipe(
       map(response => response.data)
     );
   }
@@ -109,15 +88,6 @@ export class AdminSubscriptionsService {
    */
   reactivateAccount(subscriptionId: string): Observable<SubscriptionActionResult> {
     return this.http.patch<ApiResultFormat<SubscriptionActionResult>>(`${this.apiUrl}/${subscriptionId}/reactivate`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Désactiver un compte
-   */
-  disableAccount(subscriptionId: string, reason: string): Observable<SubscriptionActionResult> {
-    return this.http.patch<ApiResultFormat<SubscriptionActionResult>>(`${this.apiUrl}/${subscriptionId}/disable`, { reason }).pipe(
       map(response => response.data)
     );
   }
@@ -144,60 +114,6 @@ export class AdminSubscriptionsService {
   }
 
   /**
-   * Traiter les factures impayées
-   */
-  processUnpaidInvoices(subscriptionId: string): Observable<{ processed: number; errors: any[] }> {
-    return this.http.post<ApiResultFormat<{ processed: number; errors: any[] }>>(`${this.apiUrl}/${subscriptionId}/process-unpaid`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Actions en masse
-   */
-  bulkAction(action: BulkSubscriptionAction): Observable<{ processed: number; failed: number; results: any[] }> {
-    return this.http.post<ApiResultFormat<{ processed: number; failed: number; results: any[] }>>(`${this.apiUrl}/bulk-action`, action).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Upgrade en masse
-   */
-  bulkUpgrade(subscriptionIds: string[], targetPlan: string, reason?: string): Observable<{ processed: number; failed: number; results: any[] }> {
-    return this.http.post<ApiResultFormat<{ processed: number; failed: number; results: any[] }>>(`${this.apiUrl}/bulk-upgrade`, {
-      subscriptionIds,
-      targetPlan,
-      reason
-    }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Suspension en masse
-   */
-  bulkSuspend(subscriptionIds: string[], reason: string): Observable<{ processed: number; failed: number; results: any[] }> {
-    return this.http.post<ApiResultFormat<{ processed: number; failed: number; results: any[] }>>(`${this.apiUrl}/bulk-suspend`, {
-      subscriptionIds,
-      reason
-    }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Réactivation en masse
-   */
-  bulkReactivate(subscriptionIds: string[]): Observable<{ processed: number; failed: number; results: any[] }> {
-    return this.http.post<ApiResultFormat<{ processed: number; failed: number; results: any[] }>>(`${this.apiUrl}/bulk-reactivate`, {
-      subscriptionIds
-    }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Exporter les souscriptions
    */
   exportSubscriptions(filters: SubscriptionFilters = {}, format: string = 'xlsx'): Observable<{ downloadUrl: string }> {
@@ -216,19 +132,6 @@ export class AdminSubscriptionsService {
     });
 
     return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Générer un rapport
-   */
-  generateReport(reportType: string, dateFrom: Date, dateTo: Date): Observable<{ downloadUrl: string }> {
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/generate-report`, {
-      reportType,
-      dateFrom,
-      dateTo
-    }).pipe(
       map(response => response.data)
     );
   }
@@ -262,23 +165,4 @@ export class AdminSubscriptionsService {
     );
   }
 
-  /**
-   * Synchroniser les données de souscription
-   */
-  syncSubscriptionData(): Observable<{ synced: number; errors: any[] }> {
-    return this.http.post<ApiResultFormat<{ synced: number; errors: any[] }>>(`${this.apiUrl}/sync`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Recalculer les montants mensuels
-   */
-  recalculateMonthlyAmounts(subscriptionIds?: string[]): Observable<{ processed: number; updated: number }> {
-    return this.http.post<ApiResultFormat<{ processed: number; updated: number }>>(`${this.apiUrl}/recalculate-amounts`, {
-      subscriptionIds
-    }).pipe(
-      map(response => response.data)
-    );
-  }
 }

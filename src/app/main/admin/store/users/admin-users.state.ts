@@ -384,7 +384,7 @@ export class AdminUsersState {
     return this.adminUsersService.exportUsers(action.filters, action.format).pipe(
       tap((result) => {
         if (result?.downloadUrl) {
-          window.open(result.downloadUrl, '_blank');
+          window.open(result.downloadUrl, '_blank', 'noopener,noreferrer');
         }
       }),
       catchError(error => throwError(error))

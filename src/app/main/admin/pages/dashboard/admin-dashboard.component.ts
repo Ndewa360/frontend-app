@@ -116,12 +116,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   onRefreshData(): void { this.loadDashboardData(); }
 
-  onExportReport(): void {
-    this.store.dispatch(new AdminDashboardAction.ExportDashboardReport())
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({ error: () => {} });
-  }
-
   onViewDetails(section: string): void {
     const lang = this.languageUrlService.getCurrentLanguage();
     const routes: Record<string, string> = {

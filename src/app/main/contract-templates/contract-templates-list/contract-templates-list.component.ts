@@ -20,6 +20,7 @@ import { ExtendedModule } from '@angular/flex-layout/extended';
 import { SelectModule } from 'carbon-components-angular';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 @Component({
   selector: 'app-contract-templates-list',
@@ -274,7 +275,7 @@ export class ContractTemplatesListComponent implements OnInit, OnDestroy {
 
     const link = document.createElement('a');
     link.href = URL.createObjectURL(dataBlob);
-    link.download = `contract-templates-export-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `contract-templates-export-${toLocalIsoDate()}.json`;
     link.click();
   }
 

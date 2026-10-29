@@ -403,30 +403,4 @@ export class RoomState{
         )
     }
 
-    @Action(RoomAction.FetchRooms)
-    fetchRooms(ctx:StateContext<RoomStateModel>)
-    {
-        const state = ctx.getState();
-        if(state.initLoadingState=="LOADED") return of(true);
-        
-        ctx.patchState({
-            loadingRoom:true,
-            initLoadingState:"LOADING"
-        })
-        return this._roomsService.getRooms().pipe(
-            tap(
-                result => {
-                    if(state.initLoadingState!="LOADED") ctx.patchState({initLoadingState:'LOADING'})
-                    ctx.patchState({
-                        loadingRoom:false,
-                        rooms:[...state.rooms,...result.data],
-                    })
-                }
-            ),
-            catchError((error) => {
-                ctx.patchState({ loadingRoom: false, initLoadingState: 'NO_LOADED' });
-                return throwError(error);
-            })
-        )
-    }
 }

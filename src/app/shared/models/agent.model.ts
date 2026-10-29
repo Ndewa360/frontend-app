@@ -59,40 +59,6 @@ export interface AgentStats {
     canAutoPublish: boolean;
 }
 
-export interface CreateAgentRequest {
-    name: string;
-    email: string;
-    password: string;
-    businessName: string;
-    professionalPhone: string;
-    professionalEmail?: string;
-    businessAddress?: string;
-    businessDescription?: string;
-    verificationType: AgentVerificationType;
-    verificationNumber: string;
-    commissionRate?: string;
-    specializations?: string[];
-    operatingZones?: string[];
-}
-
-export interface UpdateAgentProfileRequest {
-    businessName?: string;
-    professionalPhone?: string;
-    professionalEmail?: string;
-    businessAddress?: string;
-    businessDescription?: string;
-    commissionRate?: string;
-    specializations?: string[];
-    operatingZones?: string[];
-}
-
-export interface ValidateAgentRequest {
-    status: AgentStatus;
-    rejectionReason?: string;
-    canAutoPublish?: boolean;
-    notes?: string;
-}
-
 export interface PropertyOwnerInfo {
     _id?: string;
     fullName: string;

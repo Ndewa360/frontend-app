@@ -62,15 +62,6 @@ export class AdminGeographyService {
   }
 
   /**
-   * Obtenir un pays par ID
-   */
-  getCountryById(countryId: string): Observable<AdminCountry> {
-    return this.http.get<ApiResultFormat<AdminCountry>>(`${this.apiUrl}/countries/${countryId}`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Créer un nouveau pays
    */
   createCountry(countryData: CreateCountryDto): Observable<AdminCountry> {
@@ -131,15 +122,6 @@ export class AdminGeographyService {
   }
 
   /**
-   * Obtenir une ville par ID
-   */
-  getCityById(cityId: string): Observable<AdminCity> {
-    return this.http.get<ApiResultFormat<AdminCity>>(`${this.apiUrl}/cities/${cityId}`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Créer une nouvelle ville
    */
   createCity(cityData: CreateCityDto): Observable<AdminCity> {
@@ -171,15 +153,6 @@ export class AdminGeographyService {
    */
   getCurrencies(): Observable<AdminCurrency[]> {
     return this.http.get<ApiResultFormat<AdminCurrency[]>>(`${this.apiUrl}/currencies`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Obtenir une devise par ID
-   */
-  getCurrencyById(currencyId: string): Observable<AdminCurrency> {
-    return this.http.get<ApiResultFormat<AdminCurrency>>(`${this.apiUrl}/currencies/${currencyId}`).pipe(
       map(response => response.data)
     );
   }
@@ -225,44 +198,6 @@ export class AdminGeographyService {
    */
   updateExchangeRates(): Observable<{ updated: number }> {
     return this.http.put<ApiResultFormat<{ updated: number }>>(`${this.apiUrl}/currencies/update-rates`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Importer des pays depuis une API externe
-   */
-  importCountries(source: string = 'restcountries'): Observable<{ imported: number }> {
-    const params = new HttpParams().set('source', source);
-    return this.http.post<ApiResultFormat<{ imported: number }>>(`${this.apiUrl}/countries/import`, {}, { params }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Importer des villes depuis un fichier
-   */
-  importCities(file: File, countryId?: string): Observable<{ imported: number, errors: any[] }> {
-    const formData = new FormData();
-    formData.append('file', file);
-    if (countryId) {
-      formData.append('countryId', countryId);
-    }
-
-    return this.http.post<ApiResultFormat<{ imported: number, errors: any[] }>>(`${this.apiUrl}/cities/import`, formData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Exporter les données géographiques
-   */
-  exportGeographyData(type: 'countries' | 'cities' | 'currencies', format: string = 'xlsx'): Observable<{ downloadUrl: string }> {
-    const params = new HttpParams()
-      .set('type', type)
-      .set('format', format);
-    
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
       map(response => response.data)
     );
   }

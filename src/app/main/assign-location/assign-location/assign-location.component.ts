@@ -17,6 +17,7 @@ import { AppContentSimpleComponent } from '../../../../@youpez/components/app-co
 import { NgScrollbar } from 'ngx-scrollbar';
 import { FlexModule } from '@angular/flex-layout/flex';
 import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 
 @Component({
@@ -166,7 +167,7 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       initialSolde:this.locataireForm.initialSolde
     };
     if(this.locataireForm.isKnowExactDateEntry) bodyToSend['startedAt']=this.locataireForm.entryDate.toISOString().split('T')[0];
-    else bodyToSend['startedAt']= new Date().toISOString().split('T')[0];
+    else bodyToSend['startedAt']= toLocalIsoDate();
     this._store.dispatch(new LocationAction.CreateLocation(bodyToSend));
   }
 

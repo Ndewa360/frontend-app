@@ -115,12 +115,6 @@ export class SearchService {
         );
     }
 
-    getSearchStats(city?: string): Observable<ApiResultFormat<any>> {
-        let params = new HttpParams();
-        if (city) params = params.set('city', city);
-        return this._httpClient.get<ApiResultFormat<any>>(`${environment.apiUrl}/search/stats`, { params });
-    }
-
     getPopularSearches(limit?: number): Observable<ApiResultFormat<any>> {
         let params = new HttpParams();
         if (limit) params = params.set('limit', limit.toString());

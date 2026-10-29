@@ -102,7 +102,6 @@
               <th>Méthode</th>
               <th>Statut</th>
               <th>Date</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -122,13 +121,6 @@
                 </span>
               </td>
               <td>{{ (payment.processedAt ?? payment.createdAt) | date:'dd/MM/yyyy HH:mm' }}</td>
-              <td>
-                <button class="admin-btn admin-btn-outline admin-btn-sm"
-                        *ngIf="payment.status === 'completed'"
-                        (click)="onRefundPayment(payment)">
-                  <i class="fas fa-undo"></i>
-                </button>
-              </td>
             </tr>
           </tbody>
         </table>
@@ -338,31 +330,6 @@
     </div>
   </div>
 
-  <!-- Modal Remboursement -->
-  <div class="admin-modal-overlay" *ngIf="showRefundModal" (click)="cancelRefund()">
-    <div class="admin-modal" (click)="$event.stopPropagation()">
-      <div class="admin-modal-header">
-        <h3>Rembourser le paiement</h3>
-        <button class="admin-modal-close" (click)="cancelRefund()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="admin-modal-body">
-        <div>
-          <label class="admin-form-label">Montant (laisser vide pour remboursement total)</label>
-          <input type="number" class="admin-form-control" [(ngModel)]="refundAmount" min="0">
-        </div>
-        <div style="margin-top:12px">
-          <label class="admin-form-label">Raison *</label>
-          <textarea class="admin-form-control" rows="2" [(ngModel)]="refundReason" placeholder="Raison..."></textarea>
-        </div>
-      </div>
-      <div class="admin-modal-footer">
-        <button class="admin-btn admin-btn-secondary" (click)="cancelRefund()">Annuler</button>
-        <button class="admin-btn admin-btn-warning" (click)="confirmRefund()">
-          <i class="fas fa-undo"></i> Confirmer
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- Modal Suspension abonnement -->
   <div class="admin-modal-overlay" *ngIf="showCancelModal" (click)="cancelCancelSubscription()">

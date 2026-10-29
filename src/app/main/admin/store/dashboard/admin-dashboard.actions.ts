@@ -62,22 +62,6 @@ export namespace AdminDashboardAction {
     constructor(public error: any) {}
   }
 
-  // Export Dashboard Report
-  export class ExportDashboardReport {
-    static readonly type = '[Admin Dashboard] Export Dashboard Report';
-    constructor(public format?: string) {}
-  }
-
-  export class ExportDashboardReportSuccess {
-    static readonly type = '[Admin Dashboard] Export Dashboard Report Success';
-    constructor(public downloadUrl: string) {}
-  }
-
-  export class ExportDashboardReportFailure {
-    static readonly type = '[Admin Dashboard] Export Dashboard Report Failure';
-    constructor(public error: any) {}
-  }
-
   // Load Financial Dashboard
   export class LoadFinancialDashboard {
     static readonly type = '[Admin Dashboard] Load Financial Dashboard';

@@ -19,6 +19,7 @@ import { ContractTemplateService } from 'src/app/shared/services/contract-templa
 import { ContractTemplateModel, ContractTemplateType } from 'src/app/shared/models/contract-template.model';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 export interface ContractViewerData {
   room: RoomModel;
@@ -224,7 +225,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
     try {
       const link = document.createElement('a');
       link.href = this.contractPdfSrc;
-      link.download = `Contrat_${this.tenant.fullName}_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.download = `Contrat_${this.tenant.fullName}_${toLocalIsoDate()}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

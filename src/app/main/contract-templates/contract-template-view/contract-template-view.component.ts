@@ -157,7 +157,7 @@ export class ContractTemplateViewComponent implements OnInit, OnDestroy {
    * Modifier le modèle
    */
   editTemplate(): void {
-    this.template$.pipe(takeUntil(this.destroy$)).subscribe(template => {
+    this.template$.pipe(take(1)).subscribe(template => {
       if (template && !template.isSystemDefault) {
         const currentLang = this.languageUrlService.getCurrentLanguage();
         this.router.navigate([`/${currentLang}/app/contract-templates/edit`, template._id]);

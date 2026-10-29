@@ -43,12 +43,6 @@ export class LocationService
         return this._httpClient.put<ApiResultFormat<LocationModel>>(`${environment.apiUrl}/location/${id}`, location)
     }
 
-    getLocation(locationId):Observable<ApiResultFormat<LocationModel>>
-    {
-        return this._httpClient.get<ApiResultFormat<LocationModel>>(`${environment.apiUrl}/location/${locationId}`)
-
-    }
-
     getLocationByLocataireId(locataireID):Observable<ApiResultFormat<LocationModel[]>>
     {
         return this._httpClient.get<ApiResultFormat<LocationModel[]>>(`${environment.apiUrl}/location/locataire/${locataireID}`)

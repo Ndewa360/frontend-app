@@ -28,6 +28,7 @@ import { SubscriptionLimitService } from 'src/app/shared/services/subscription-l
 import { PricingSummary } from 'src/app/shared/pricing/pricing-grid';
 import { RealtimeService } from 'src/app/core/realtime/realtime.service';
 import { RealtimeEvent } from 'src/app/core/realtime/realtime.events';
+import { isAllowedRedirect } from 'src/app/shared/utils/safe-redirect';
 
 @Component({
   selector: 'app-subscription-dashboard',
@@ -143,16 +144,13 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
       filter(session => !!session?.redirectUrl)
     ).subscribe(session => {
       this.stripeSession = session;
-      // Valider que l'URL de redirection est bien une URL relative ou appartient
-      // au domaine autorisé pour éviter les attaques open redirect
+      // Redirection limitée à l'application et aux prestataires de paiement
+      // autorisés (protection contre les redirections ouvertes).
       const redirectUrl: string = session.redirectUrl;
-      const isSafeUrl = redirectUrl.startsWith('/') ||
-        redirectUrl.startsWith(window.location.origin) ||
-        redirectUrl.includes('checkout.stripe.com') ||
-        redirectUrl.includes('ndewa-360.com');
-      if (isSafeUrl) {
+      if (isAllowedRedirect(redirectUrl)) {
         window.location.href = redirectUrl;
       } else {
+        this.stripeError = 'Adresse de paiement non reconnue. Veuillez réessayer ou contacter le support.';
       }
     });
   }

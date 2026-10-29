@@ -14,12 +14,6 @@
         <button class="admin-btn admin-btn-secondary" (click)="refreshData()">
           <i class="fas fa-sync-alt"></i> Actualiser
         </button>
-        <!-- Upgrade : visible si plan free ou trial ET compte actif -->
-        <button class="admin-btn admin-btn-primary"
-          *ngIf="user.subscription && user.subscription.plan !== 'premium' && user.subscription.accountStatus === 'active'"
-          (click)="upgradeToPremium()">
-          <i class="fas fa-crown"></i> Upgrade Premium
-        </button>
         <!-- Suspendre : visible si compte actif -->
         <button class="admin-btn admin-btn-warning"
           *ngIf="user.subscription?.accountStatus === 'active'"

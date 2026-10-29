@@ -8,13 +8,6 @@ export namespace CityAction
         constructor(public city:CityModel){}
     }
 
-    //Update City profil
-    export class UpdateCity
-    {
-        static readonly type = '[City] Update City';
-        constructor(public city:CityModel, public id:string){}
-    }
-
 
     //Add City from loaded country
     export class AddCityFromLoadedCountry

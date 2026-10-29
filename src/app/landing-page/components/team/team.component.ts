@@ -74,7 +74,7 @@ export class TeamComponent implements OnInit {
 
   openSocialLink(url: string): void {
     if (url) {
-      window.open(url, '_blank');
+      window.open(url, '_blank', 'noopener,noreferrer');
     }
   }
 }

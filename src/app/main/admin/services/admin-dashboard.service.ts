@@ -72,13 +72,6 @@ export class AdminDashboardService {
     );
   }
 
-  exportDashboardReport(format = 'pdf'): Observable<{ downloadUrl: string }> {
-    const params = new HttpParams().set('format', format);
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
-      map(r => r.data)
-    );
-  }
-
   /**
    * Récupère les statistiques globales : souscriptions + portefeuille plateforme.
    */

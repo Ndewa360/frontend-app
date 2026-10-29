@@ -765,35 +765,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Contacte le propriétaire via différents moyens
-   */
-  contactOwner(owner: any, method: 'phone' | 'email' | 'whatsapp'): void {
-    if (!owner) return;
-
-    switch (method) {
-    case 'phone':
-      if (owner.phoneNumber) {
-        window.open(`tel:${owner.phoneNumber}`, '_self');
-      }
-      break;
-
-    case 'email':
-      if (owner.email) {
-        const subject = this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.EMAIL_SUBJECT');
-        window.open(`mailto:${owner.email}?subject=${encodeURIComponent(subject)}`, '_self');
-      }
-      break;
-
-    case 'whatsapp':
-      if (owner.phoneNumber) {
-        const message = encodeURIComponent(this.translationService.instant('SEARCH_MODULE.UNIT_DETAIL.WHATSAPP_MESSAGE'));
-        window.open(`https://wa.me/${owner.phoneNumber.replace(/\D/g, '')}?text=${message}`, '_blank');
-      }
-      break;
-    }
-  }
-
-  /**
    * Vérifie si un logement est en favori
    */
   isFavorite(result: SearchPropertyModel): boolean {

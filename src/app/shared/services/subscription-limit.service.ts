@@ -27,13 +27,6 @@ export class SubscriptionLimitService {
     );
   }
 
-  upgradeToPremium(): Observable<ApiResultFormat<any>> {
-    return this.http.post<ApiResultFormat<any>>(
-      `${environment.apiUrl}/subscription-limit/upgrade-to-premium`,
-      {}
-    );
-  }
-
   /** Palier actuel du compte (grille « Loyers sous contrôle »). */
   getPricing(): Observable<ApiResultFormat<PricingSummary>> {
     return this.http.get<ApiResultFormat<PricingSummary>>(

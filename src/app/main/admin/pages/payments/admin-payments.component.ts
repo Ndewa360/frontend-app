@@ -37,11 +37,6 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   isProcessing = false;
   isRefreshing = false;
 
-  // Modal refund
-  showRefundModal = false;
-  refundingPayment: AdminPayment | null = null;
-  refundAmount: number | null = null;
-  refundReason = '';
 
   // Modal cancel subscription
   showCancelModal = false;
@@ -110,29 +105,6 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
     this.paymentStatusFilter = (event.target as HTMLSelectElement).value;
     this.store.dispatch(new AdminPaymentsAction.LoadPayments({ status: this.paymentStatusFilter }));
   }
-
-  onRefundPayment(payment: AdminPayment): void {
-    this.refundingPayment = payment;
-    this.refundAmount = null;
-    this.refundReason = '';
-    this.showRefundModal = true;
-  }
-
-  confirmRefund(): void {
-    if (!this.refundingPayment) return;
-    const amount = this.refundAmount || undefined;
-    const reason = this.refundReason.trim() || 'Remboursement administratif';
-    this.showRefundModal = false;
-    this.paymentsService.refundPayment(this.refundingPayment._id, { amount, reason })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_REFUND_DONE')); this.store.dispatch(new AdminPaymentsAction.LoadPayments()); },
-        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_REFUND_ERROR'))
-      });
-    this.refundingPayment = null;
-  }
-
-  cancelRefund(): void { this.showRefundModal = false; this.refundingPayment = null; }
 
   // ── Subscriptions ─────────────────────────────────────────────────────────
 

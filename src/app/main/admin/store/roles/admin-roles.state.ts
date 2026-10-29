@@ -344,57 +344,6 @@ export class AdminRolesState {
 
   // ==================== PERMISSIONS CRUD ====================
 
-  @Action(AdminRolesAction.CreatePermission)
-  createPermission(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.CreatePermission) {
-    ctx.patchState({ permissionsLoading: true });
-    return this.adminRolesService.createPermission(action.permissionData).pipe(
-      tap(permission => {
-        const state = ctx.getState();
-        ctx.patchState({ permissions: [...state.permissions, permission as any], permissionsLoading: false });
-      }),
-      catchError(error => {
-        ctx.patchState({ permissionsLoading: false, error: error.message });
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminRolesAction.UpdatePermission)
-  updatePermission(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.UpdatePermission) {
-    ctx.patchState({ permissionsLoading: true });
-    return this.adminRolesService.updatePermission(action.permissionId, action.permissionData).pipe(
-      tap(updated => {
-        const state = ctx.getState();
-        ctx.patchState({
-          permissions: state.permissions.map(p => (p as any)._id === action.permissionId ? updated as any : p),
-          permissionsLoading: false
-        });
-      }),
-      catchError(error => {
-        ctx.patchState({ permissionsLoading: false, error: error.message });
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminRolesAction.DeletePermission)
-  deletePermission(ctx: StateContext<AdminRolesStateModel>, action: AdminRolesAction.DeletePermission) {
-    ctx.patchState({ permissionsLoading: true });
-    return this.adminRolesService.deletePermission(action.permissionId).pipe(
-      tap(() => {
-        const state = ctx.getState();
-        ctx.patchState({
-          permissions: state.permissions.filter(p => (p as any)._id !== action.permissionId),
-          permissionsLoading: false
-        });
-      }),
-      catchError(error => {
-        ctx.patchState({ permissionsLoading: false, error: error.message });
-        return throwError(error);
-      })
-    );
-  }
-
   // ==================== MISC ====================
 
   @Action(AdminRolesAction.SetLoading)

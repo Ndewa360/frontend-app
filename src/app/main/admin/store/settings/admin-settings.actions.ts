@@ -52,36 +52,6 @@ export namespace AdminSettingsAction {
     constructor(public testEmail: string) {}
   }
 
-  // Backup Database
-  export class BackupDatabase {
-    static readonly type = '[Admin Settings] Backup Database';
-  }
-
-  export class BackupDatabaseSuccess {
-    static readonly type = '[Admin Settings] Backup Database Success';
-    constructor(public backupInfo: any) {}
-  }
-
-  export class BackupDatabaseFailure {
-    static readonly type = '[Admin Settings] Backup Database Failure';
-    constructor(public error: any) {}
-  }
-
-  // Clear Cache
-  export class ClearCache {
-    static readonly type = '[Admin Settings] Clear Cache';
-  }
-
-  export class ClearCacheSuccess {
-    static readonly type = '[Admin Settings] Clear Cache Success';
-    constructor(public result: any) {}
-  }
-
-  export class ClearCacheFailure {
-    static readonly type = '[Admin Settings] Clear Cache Failure';
-    constructor(public error: any) {}
-  }
-
   // Set Loading
   export class SetLoading {
     static readonly type = '[Admin Settings] Set Loading';

@@ -194,12 +194,6 @@
                     <button class="subs-dropdown-item" (click)="onViewDetails(sub)">
                       <i class="fas fa-eye"></i> Voir détails
                     </button>
-                    <button class="subs-dropdown-item" *ngIf="sub.plan === 'free'" (click)="onForceUpgrade(sub)">
-                      <i class="fas fa-arrow-up"></i> Upgrade Premium
-                    </button>
-                    <button class="subs-dropdown-item" *ngIf="sub.plan === 'premium'" (click)="onDowngradeToPlan(sub, 'free')">
-                      <i class="fas fa-arrow-down"></i> Downgrade Free
-                    </button>
                     <div class="subs-dropdown-divider"></div>
                     <button class="subs-dropdown-item subs-item-warning"
                             *ngIf="sub.accountStatus === 'active'" (click)="onSuspendAccount(sub)">
@@ -491,7 +485,6 @@
                 <th>Propriétés utilisées</th>
                 <th>Limite</th>
                 <th>Taux d'utilisation</th>
-                <th class="col-actions">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -516,12 +509,6 @@
                     </div>
                   </div>
                   <small>{{ ((sub.usageRate || 0) * 100) | number:'1.0-0' }}%</small>
-                </td>
-                <td class="col-actions">
-                  <button class="subs-btn subs-btn-primary" style="padding:4px 10px;font-size:0.75rem"
-                          (click)="onForceUpgrade(sub)">
-                    <i class="fas fa-crown"></i> Upgrade
-                  </button>
                 </td>
               </tr>
             </tbody>

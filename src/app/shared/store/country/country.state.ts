@@ -69,37 +69,6 @@ export class CountryState{
     
     }
 
-    @Action(CountryAction.UpdateCountry)
-    updateCountry(ctx:StateContext<CountryStateModel>, {country,id}:CountryAction.UpdateCountry)
-    {
-        const state = ctx.getState();
-        ctx.patchState({
-            loadingCountry: true
-        })
-
-        return this._countrysService.updateCountry(country,id).pipe(
-            tap(
-                (result)=>{
-                    const data = [...state.countries]
-                    let index = data.findIndex((u)=>u._id==id);
-                    if(index>-1) data[index]=result.data;
-                    ctx.patchState({
-                        loadingCountry:false,
-                        countries:data
-                    })
-                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.COUNTRY_UPDATED_SUCCESS'), 'Ndewa360°');
-                }
-            ),
-            catchError((error) => {
-                ctx.patchState({
-                    loadingCountry: false
-                })
-                return throwError(error);
-                
-            })
-        )
-    }
-
     @Action(CountryAction.AddCity)
     updateCityCountry(ctx:StateContext<CountryStateModel>, {city,countryID}:CountryAction.AddCity)
     {

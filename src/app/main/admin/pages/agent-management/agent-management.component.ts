@@ -160,7 +160,7 @@ export class AgentManagementComponent implements OnInit {
     this.rejectionReason = '';
   }
 
-  openDocument(url: string): void { window.open(url, '_blank'); }
+  openDocument(url: string): void { window.open(url, '_blank', 'noopener,noreferrer'); }
 
   async refreshData(): Promise<void> {
     await Promise.all([this.loadPendingAgents(), this.loadApprovedAgents()]);

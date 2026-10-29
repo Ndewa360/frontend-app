@@ -19,6 +19,7 @@ import { LocationPaymentService } from 'src/app/shared/store/payment-location/lo
 import { environment } from 'src/environments/environment';
 import { RealtimeService } from 'src/app/core/realtime';
 import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, UpperCasePipe, SlicePipe, DatePipe } from '@angular/common';
+import { isAllowedRedirect } from 'src/app/shared/utils/safe-redirect';
 
 declare let Stripe: any;
 
@@ -310,7 +311,13 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
               'EXTERNAL_REF_PLACEHOLDER',
               encodeURIComponent(res.data.externalRef)
             );
-            window.location.href = finalUrl;
+            if (isAllowedRedirect(finalUrl)) {
+              window.location.href = finalUrl;
+            } else {
+              this.paymentError = 'Adresse de paiement non reconnue. Veuillez réessayer.';
+              this.paymentStatus = 'failed';
+              this.currentStep = 'result';
+            }
           } else {
             this.paymentError = 'Impossible d\'obtenir l\'URL de paiement Stripe.';
             this.paymentStatus = 'failed';

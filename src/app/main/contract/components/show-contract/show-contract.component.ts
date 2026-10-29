@@ -1,9 +1,10 @@
-import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { NgxPrintService, PrintOptions } from 'ngx-print';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { LocationPaymentModel, UserProfileState, UserProfileModel, LocataireModel, RoomModel, LocataireState, LocationPaymentState, RoomAction, RoomState, ContractState, LocationModel } from 'src/app/shared/store';
 import { UtilsString } from 'src/app/shared/utils';
@@ -28,7 +29,9 @@ import { FlexModule } from '@angular/flex-layout/flex';
     AppLoaderComponent
   ]
 })
-export class ShowContractComponent implements OnInit{
+export class ShowContractComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
   locationPayment:LocationPaymentModel | any=null;
   @Select(UserProfileState.selectStateUserProfile) connectedUser$:Observable<UserProfileModel>;
   @Select(ContractState.selectStateLoading) loadingPDF$:Observable<boolean>;
@@ -51,10 +54,15 @@ export class ShowContractComponent implements OnInit{
   ) { }
 
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit(): void {
     const contractLocataire$ = this._store.select(ContractState.selectStateContractByLocationId(this.data.location._id));
     
-    contractLocataire$.subscribe((result) => {
+    contractLocataire$.pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if(result){
       
         // const fileURL = URL.createObjectURL();
@@ -63,12 +71,12 @@ export class ShowContractComponent implements OnInit{
     });
 
     const locataireLoading$ = this._store.select(LocataireState.selectStateLocataire(this.data.location.locataire));
-    locataireLoading$.subscribe((result) => {
+    locataireLoading$.pipe(takeUntil(this.destroy$)).subscribe((result) => {
       this.locataire = result;
 
     });
 
-    combineLatest([contractLocataire$, locataireLoading$, this.loadingPDF$]).subscribe(([contractLocataire,locataireLoading,loadingPDF]) => {
+    combineLatest([contractLocataire$, locataireLoading$, this.loadingPDF$]).pipe(takeUntil(this.destroy$)).subscribe(([contractLocataire,locataireLoading,loadingPDF]) => {
       this.loading = loadingPDF && locataireLoading && contractLocataire;
       if(this.loading) {
         this.titlePage = `Contrat de ${locataireLoading.fullName}`;

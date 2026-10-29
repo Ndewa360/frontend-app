@@ -16,13 +16,6 @@ export namespace LocationAction
         constructor(public location:LocationModel, public id:string){}
     }
 
-    //Fetch  Location
-    export class FetchLocation
-    {
-        static readonly type = '[Location] Fectch Location'
-        constructor(public locationId:string){}
-    }
-
     export class ResetAllState
     {
         static readonly type = '[Location] Reset All State'

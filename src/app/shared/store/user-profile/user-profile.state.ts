@@ -19,6 +19,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { LanguageUrlService } from "../../services/language-url.service";
 import { LanguagePreservationService } from "../../services/language-preservation.service";
 import { PropertyManagerAction } from '../property-manager/property-manager.actions';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 export class UserProfileStateModel {
     userProfile: UserProfileModel;
@@ -581,7 +582,7 @@ export class UserProfileState {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `ndewa360-mes-donnees-${new Date().toISOString().split('T')[0]}.json`;
+                a.download = `ndewa360-mes-donnees-${toLocalIsoDate()}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);

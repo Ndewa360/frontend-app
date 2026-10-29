@@ -173,55 +173,6 @@ export class AdminRolesService {
   }
 
   /**
-   * Créer une permission personnalisée
-   */
-  createPermission(permissionData: any): Observable<AdminPermission> {
-    return this.http.post<ApiResultFormat<AdminPermission>>(`${this.apiUrl}/permissions`, permissionData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Mettre à jour une permission
-   */
-  updatePermission(permissionId: string, permissionData: any): Observable<AdminPermission> {
-    return this.http.put<ApiResultFormat<AdminPermission>>(`${this.apiUrl}/permissions/${permissionId}`, permissionData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Supprimer une permission
-   */
-  deletePermission(permissionId: string): Observable<void> {
-    return this.http.delete<ApiResultFormat<void>>(`${this.apiUrl}/permissions/${permissionId}`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Exporter les rôles et permissions
-   */
-  exportRoles(format: string = 'xlsx'): Observable<{ downloadUrl: string }> {
-    const params = new HttpParams().set('format', format);
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Importer des rôles
-   */
-  importRoles(file: File): Observable<{ imported: number, errors: any[] }> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    return this.http.post<ApiResultFormat<{ imported: number, errors: any[] }>>(`${this.apiUrl}/import`, formData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Synchroniser les permissions système
    */
   syncSystemPermissions(): Observable<{ created: number, updated: number }> {

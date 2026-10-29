@@ -15,6 +15,7 @@ import {
   RoomModel
 } from 'src/app/shared/store';
 import { NgIf, NgFor } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 export interface ContractTerminationModalData {
   location: LocationModel;
@@ -107,7 +108,7 @@ export class ModernContractTerminationModalComponent implements OnInit, OnDestro
   }
 
   private initializeForm(): void {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toLocalIsoDate();
     
     this.formGroup = this.formBuilder.group({
       terminationDate: [today, [Validators.required]],

@@ -27,17 +27,6 @@ export namespace AdminSubscriptionsAction {
     static readonly type = '[Admin Subscriptions] Clear Filters';
   }
 
-  // Subscription Management Actions
-  export class ForceUpgradeToPremium {
-    static readonly type = '[Admin Subscriptions] Force Upgrade To Premium';
-    constructor(public subscriptionId: string, public reason?: string) {}
-  }
-
-  export class ChangePlan {
-    static readonly type = '[Admin Subscriptions] Change Plan';
-    constructor(public subscriptionId: string, public targetPlan: string, public reason?: string) {}
-  }
-
   export class SuspendAccount {
     static readonly type = '[Admin Subscriptions] Suspend Account';
     constructor(public subscriptionId: string, public reason: string) {}
@@ -67,22 +56,6 @@ export namespace AdminSubscriptionsAction {
   export class ProcessUnpaidInvoices {
     static readonly type = '[Admin Subscriptions] Process Unpaid Invoices';
     constructor(public subscriptionId: string) {}
-  }
-
-  // Bulk Actions
-  export class BulkAction {
-    static readonly type = '[Admin Subscriptions] Bulk Action';
-    constructor(public action: BulkSubscriptionAction) {}
-  }
-
-  export class BulkUpgrade {
-    static readonly type = '[Admin Subscriptions] Bulk Upgrade';
-    constructor(public subscriptionIds: string[], public targetPlan: string, public reason?: string) {}
-  }
-
-  export class BulkSuspend {
-    static readonly type = '[Admin Subscriptions] Bulk Suspend';
-    constructor(public subscriptionIds: string[], public reason: string) {}
   }
 
   export class BulkReactivate {

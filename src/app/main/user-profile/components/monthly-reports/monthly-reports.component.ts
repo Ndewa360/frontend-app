@@ -55,7 +55,7 @@ export class MonthlyReportsComponent implements OnInit {
   }
 
   downloadPdf(report: MonthlyReportSummary): void {
-    if (report.pdfUrl) window.open(report.pdfUrl, '_blank');
+    if (report.pdfUrl) window.open(report.pdfUrl, '_blank', 'noopener,noreferrer');
   }
 
   navigateToDashboard(): void {

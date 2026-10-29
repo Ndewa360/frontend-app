@@ -219,29 +219,6 @@ export class LocationPaymentState{
 
    
 
-    @Action(LocationPaymentAction.FetchLocationPayment)
-    fetchLocationPayment(ctx:StateContext<LocationPaymentStateModel>,{locationPaymentId}:LocationPaymentAction.FetchLocationPayment)
-    {
-        const state = ctx.getState();
-        let index = state.locationPayments.findIndex((u)=>u._id==locationPaymentId);
-
-        if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingLocationPayment:true
-        })
-        return this._locationPaymentsService.getLocationPayment(locationPaymentId).pipe(
-            tap(
-                result => {
-                    ctx.patchState({
-                        loadingLocationPayment:false,
-                        locationPayments:[...state.locationPayments, result.data]
-                    })
-                }
-            )
-        )
-    }
-
     @Action([LocationPaymentAction.AddLocationPayment, LocationPaymentAction.CreateLocationPayment])
     addLocationPayment(ctx:StateContext<LocationPaymentStateModel>, action: LocationPaymentAction.AddLocationPayment | LocationPaymentAction.CreateLocationPayment)
     {

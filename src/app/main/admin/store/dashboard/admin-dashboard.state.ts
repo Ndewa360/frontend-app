@@ -211,19 +211,4 @@ export class AdminDashboardState {
     ]);
   }
 
-  @Action(AdminDashboardAction.ExportDashboardReport)
-  exportDashboardReport(ctx: StateContext<AdminDashboardStateModel>, action: AdminDashboardAction.ExportDashboardReport) {
-    return this.adminDashboardService.exportDashboardReport(action.format).pipe(
-      tap((result) => {
-        if (result?.downloadUrl) {
-          window.open(result.downloadUrl, '_blank');
-        }
-        ctx.dispatch(new AdminDashboardAction.ExportDashboardReportSuccess(result?.downloadUrl || ''));
-      }),
-      catchError(error => {
-        ctx.dispatch(new AdminDashboardAction.ExportDashboardReportFailure(error));
-        return throwError(error);
-      })
-    );
-  }
 }

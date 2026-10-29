@@ -151,44 +151,6 @@ export class AdminSubscriptionsState {
     });
   }
 
-  @Action(AdminSubscriptionsAction.ForceUpgradeToPremium)
-  forceUpgradeToPremium(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.ForceUpgradeToPremium) {
-    ctx.patchState({ loading: true });
-
-    return this.adminSubscriptionsService.forceUpgradeToPremium(action.subscriptionId, action.reason).pipe(
-      tap((result) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.success('Upgrade forcé vers Premium avec succès');
-        // Recharger les données
-        ctx.dispatch(new AdminSubscriptionsAction.LoadSubscriptions(ctx.getState().filters));
-      }),
-      catchError((error) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.error('Erreur lors de l\'upgrade forcé');
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminSubscriptionsAction.ChangePlan)
-  changePlan(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.ChangePlan) {
-    ctx.patchState({ loading: true });
-
-    return this.adminSubscriptionsService.changePlan(action.subscriptionId, action.targetPlan, action.reason).pipe(
-      tap((result) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.success(`Plan changé vers ${action.targetPlan} avec succès`);
-        // Recharger les données
-        ctx.dispatch(new AdminSubscriptionsAction.LoadSubscriptions(ctx.getState().filters));
-      }),
-      catchError((error) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.error('Erreur lors du changement de plan');
-        return throwError(error);
-      })
-    );
-  }
-
   @Action(AdminSubscriptionsAction.SuspendAccount)
   suspendAccount(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.SuspendAccount) {
     ctx.patchState({ loading: true });
@@ -240,46 +202,6 @@ export class AdminSubscriptionsState {
     );
   }
 
-  @Action(AdminSubscriptionsAction.BulkUpgrade)
-  bulkUpgrade(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.BulkUpgrade) {
-    ctx.patchState({ loading: true });
-
-    return this.adminSubscriptionsService.bulkUpgrade(action.subscriptionIds, action.targetPlan, action.reason).pipe(
-      tap((result) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.success(`${result.processed} comptes upgradés avec succès`);
-        // Recharger les données
-        ctx.dispatch(new AdminSubscriptionsAction.LoadSubscriptions(ctx.getState().filters));
-        ctx.dispatch(new AdminSubscriptionsAction.ClearSelection());
-      }),
-      catchError((error) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.error('Erreur lors de l\'upgrade en masse');
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminSubscriptionsAction.BulkSuspend)
-  bulkSuspend(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.BulkSuspend) {
-    ctx.patchState({ loading: true });
-
-    return this.adminSubscriptionsService.bulkSuspend(action.subscriptionIds, action.reason).pipe(
-      tap((result) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.success(`${result.processed} comptes suspendus avec succès`);
-        // Recharger les données
-        ctx.dispatch(new AdminSubscriptionsAction.LoadSubscriptions(ctx.getState().filters));
-        ctx.dispatch(new AdminSubscriptionsAction.ClearSelection());
-      }),
-      catchError((error) => {
-        ctx.patchState({ loading: false });
-        this.toastrService.error('Erreur lors de la suspension en masse');
-        return throwError(error);
-      })
-    );
-  }
-
   @Action(AdminSubscriptionsAction.SelectSubscription)
   selectSubscription(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.SelectSubscription) {
     const state = ctx.getState();
@@ -318,7 +240,7 @@ export class AdminSubscriptionsState {
     return this.adminSubscriptionsService.exportSubscriptions(action.filters, action.format).pipe(
       tap((result) => {
         // Ouvrir le lien de téléchargement
-        window.open(result.downloadUrl, '_blank');
+        window.open(result.downloadUrl, '_blank', 'noopener,noreferrer');
         this.toastrService.success('Export généré avec succès');
       }),
       catchError((error) => {

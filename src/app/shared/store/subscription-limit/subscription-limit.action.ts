@@ -8,10 +8,6 @@ export namespace SubscriptionLimitAction {
     static readonly type = '[SubscriptionLimit] Get Subscription Status';
   }
 
-  export class UpgradeToPremium {
-    static readonly type = '[SubscriptionLimit] Upgrade To Premium';
-  }
-
   export class ReactivateAccount {
     static readonly type = '[SubscriptionLimit] Reactivate Account';
   }

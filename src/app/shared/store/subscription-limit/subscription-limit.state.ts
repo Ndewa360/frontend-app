@@ -123,44 +123,6 @@ export class SubscriptionLimitState {
     );
   }
 
-  @Action(SubscriptionLimitAction.UpgradeToPremium)
-  upgradeToPremium(ctx: StateContext<SubscriptionLimitStateModel>) {
-    ctx.patchState({ loading: true, error: null });
-
-    return this.subscriptionLimitService.upgradeToPremium().pipe(
-      tap((response) => {
-        // Mettre a jour immediatement le store avec le nouveau plan
-        // sans attendre un second appel reseau
-        const current = ctx.getState().subscriptionStatus;
-        ctx.patchState({
-          loading: false,
-          subscriptionStatus: current ? {
-            ...current,
-            plan: 'premium',
-            accountStatus: 'active',
-          } : null,
-        });
-        this.toastrService.success(
-          this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_SUCCESS'),
-          'Ndewa360°'
-        );
-        // Recharger depuis le backend pour avoir les données fraîches
-        ctx.dispatch(new SubscriptionLimitAction.GetSubscriptionStatus());
-      }),
-      catchError((error) => {
-        ctx.patchState({
-          loading: false,
-          error: error.message || 'Erreur lors de l\'upgrade'
-        });
-        this.toastrService.error(
-          this.translateService.instant('NOTIFICATIONS.SUBSCRIPTION_UPGRADE_ERROR'),
-          'Ndewa360°'
-        );
-        return throwError(error);
-      })
-    );
-  }
-
   @Action(SubscriptionLimitAction.ReactivateAccount)
   reactivateAccount(ctx: StateContext<SubscriptionLimitStateModel>) {
     ctx.patchState({ loading: true, error: null });

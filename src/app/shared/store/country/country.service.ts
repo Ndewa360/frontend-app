@@ -27,14 +27,6 @@ export class CountryService
         return this._httpClient.post<ApiResultFormat<CountryModel>>(`${environment.apiUrl}/localisation/country`, country)
     }
 
-    /**
-     * Update country
-     */
-    updateCountry(country:CountryModel,id:string): Observable<ApiResultFormat<CountryModel>>
-    {
-        return this._httpClient.put<ApiResultFormat<CountryModel>>(`${environment.apiUrl}/localisation/country/${id}`, country)
-    }
-
     getCountry(countryId):Observable<ApiResultFormat<CountryModel>>
     {
         return this._httpClient.get<ApiResultFormat<CountryModel>>(`${environment.apiUrl}/localisation/country/${countryId}`)

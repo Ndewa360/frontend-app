@@ -40,12 +40,6 @@ export class LocationPaymentService
         return this._httpClient.put<ApiResultFormat<LocationPaymentModel>>(`${environment.apiUrl}/location-payment/${id}`, locationPayment)
     }
 
-    getLocationPayment(locationPaymentId):Observable<ApiResultFormat<LocationPaymentModel>>
-    {
-        return this._httpClient.get<ApiResultFormat<LocationPaymentModel>>(`${environment.apiUrl}/location-payment/${locationPaymentId}`)
-
-    }
-
 
     getLocationPayments(propertyId:string):Observable<ApiResultFormat<LocationPaymentModel[]>>
     {       

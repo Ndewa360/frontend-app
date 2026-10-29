@@ -263,18 +263,6 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  onCreateBackup(): void {
-    if (!confirm('Créer une nouvelle sauvegarde ?')) return;
-    this.store.dispatch(new AdminSettingsAction.BackupDatabase());
-    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_BACKUP_IN_PROGRESS'));
-  }
-
-  onClearCache(): void {
-    if (!confirm('Vider le cache système ?')) return;
-    this.store.dispatch(new AdminSettingsAction.ClearCache());
-    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_CACHE_CLEARING'));
-  }
-
   onToggleMaintenanceMode(): void {
     const currentMode = this.settingsForm.get('maintenanceMode')?.value;
     const message = currentMode ? 

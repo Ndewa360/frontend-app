@@ -2,7 +2,6 @@ import { Action, Selector, State, StateContext, createSelector } from "@ngxs/sto
 import { UserModel } from "./user.model";
 import { Injectable } from "@angular/core";
 import { UserAction } from "./user.actions";
-import { UserService } from "./user.service";
 // import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
@@ -27,7 +26,6 @@ export class UserStateModel {
 @Injectable()
 export class UserState{
     constructor(
-        private _usersService:UserService,
         private _toastrService:ToastrService,
         private _translateService: TranslateService
     ){}
@@ -62,37 +60,6 @@ export class UserState{
     
     }
 
-    @Action(UserAction.UpdateUser)
-    updateUser(ctx:StateContext<UserStateModel>, {user,id}:UserAction.UpdateUser)
-    {
-        const state = ctx.getState();
-        ctx.patchState({
-            loadingUser: true
-        })
-
-        return this._usersService.updateUser(user,id).pipe(
-            tap(
-                (result)=>{
-                    const data = [...state.users]
-                    let index = data.findIndex((u)=>u._id==id);
-                    if(index>-1) data[index]=result.data;
-                    ctx.patchState({
-                        loadingUser:false,
-                        users:data
-                    })
-                    // this._toastrService.success(`Profil utilisateur modifié avec success`, 'User');
-                }
-            ),
-            catchError((error) => {
-                ctx.patchState({
-                    loadingUser: false
-                })
-                return of(null);
-                
-            })
-        )
-    }
-
     
     @Action(UserAction.updateLoadingUserState)
     updateLoadingUserState(ctx:StateContext<UserStateModel>,{status}:UserAction.updateLoadingUserState)
@@ -107,33 +74,6 @@ export class UserState{
     }
 
    
-
-    @Action(UserAction.FetchUser)
-    fetchUser(ctx:StateContext<UserStateModel>,{userId}:UserAction.FetchUser)
-    {
-        const state = ctx.getState();
-        let index = state.users.findIndex((u)=>u._id==userId);
-
-        if(index>-1) return of(true);
-
-        ctx.patchState({
-            loadingUser:true
-        })
-        return this._usersService.getUser(userId).pipe(
-            tap(
-                result => {
-                    ctx.patchState({
-                        loadingUser:false,
-                        users:[...state.users,result.data]
-                    })
-                }
-            ),
-            catchError((error) => {
-                ctx.patchState({ loadingUser: false });
-                return of(null);
-            })
-        )
-    }
 
     @Action(UserAction.ResetAllState)
     resetAllState(ctx:StateContext<UserStateModel>)
@@ -155,68 +95,4 @@ export class UserState{
         })
     }
 
-    @Action(UserAction.FetchUsers)
-    fetchUsers(ctx:StateContext<UserStateModel>,{usersId}:UserAction.FetchUsers)
-    {
-        const state = ctx.getState();
-        let notFounds = [];
-        usersId.forEach((id)=>{
-            let index = state.users.findIndex((u)=>u._id==id);
-            if(index==-1) notFounds.push(id);
-        })
-        if(notFounds.length==0 && state.initLoadingState=="LOADED") return of(true);
-        
-        ctx.patchState({
-            loadingUser:true,
-            initLoadingState:"LOADING"
-        })
-        return this._usersService.getUsers(usersId.length>0?notFounds:[]).pipe(
-            tap(
-                result => {
-                    // `initLoadingState` devait passer à 'LOADED' : resté bloqué à
-                    // 'LOADING' en succès, il rendait les conditions de cache
-                    // (ci-dessus) toujours fausses et gelait LoadingAdminDataResolver.
-                    ctx.patchState({
-                        loadingUser:false,
-                        initLoadingState:'LOADED',
-                        users:[...result.data],
-                    })
-                }
-            ),
-            catchError((error) => {
-                ctx.patchState({ loadingUser: false, initLoadingState: 'NO_LOADED' });
-                return of(null);
-            })
-        )
-    }
-
-    @Action(UserAction.FetchAllUsers)
-    fetchAllUsers(ctx:StateContext<UserStateModel>)
-    {
-        const state = ctx.getState(); 
-        if(state.users.length>0 && state.initLoadingState=="LOADED") return of(true);
-        
-        ctx.patchState({
-            loadingUser:true,
-            initLoadingState:"LOADING"
-        })
-        return this._usersService.getAllUsers().pipe(
-            tap(
-                result => {
-                    // Idem : sans 'LOADED' ici, LoadingAdminDataResolver attendait
-                    // toujours son timeout(10000) → 10 s bloquées à chaque entrée
-                    // dans `/:lang/admin/*`.
-                    ctx.patchState({
-                        loadingUser:false,
-                        initLoadingState:'LOADED',
-                        users:[...result.data],
-                    })
-                }
-            ),
-            catchError((error) => {
-                ctx.patchState({ loadingUser: false, initLoadingState: 'NO_LOADED' });
-                return of(null);
-            })
-        )
-    }
 }

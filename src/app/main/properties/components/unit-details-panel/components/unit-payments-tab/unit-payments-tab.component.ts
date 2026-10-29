@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { UnitDetailsData, UnitDetailsService } from '../../../../services/unit-details.service';
 import { TranslatePipe } from '@ngx-translate/core';
 import { NgIf, NgFor } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 export interface PaymentAction {
   type: 'add' | 'view' | 'edit' | 'delete' | 'export' | 'receipt';
@@ -148,7 +149,7 @@ export class UnitPaymentsTabComponent {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `Historique_paiements_${this.unitData?.room?.code}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `Historique_paiements_${this.unitData?.room?.code}_${toLocalIsoDate()}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();

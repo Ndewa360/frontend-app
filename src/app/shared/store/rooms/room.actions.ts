@@ -38,13 +38,6 @@ export namespace RoomAction
         constructor(public fileUrl:string, public roomId:string){}
     }
 
-    //Fetch  Room profil
-    export class FetchRooms
-    {
-        static readonly type = '[Room] Fectch Rooms'
-        constructor(public roomsID:string[]=[]){}
-    }
-
     export class FetchRoomsByPropertyID
     {
         static readonly type = '[Room] Fectch Rooms By PropertyID'

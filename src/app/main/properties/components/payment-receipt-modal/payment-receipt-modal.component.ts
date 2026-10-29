@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { escapeHtml } from 'src/app/shared/utils/html-escape';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -278,20 +279,24 @@ export class PaymentReceiptModalComponent implements OnInit {
   }
 
   private generateReceiptHtml(): string {
-    const receiptNumber = this.getReceiptNumber();
-    const paymentDate = this.formatDate(this.data.payment.datePayment);
-    const billingDate = this.formatDate(new Date());
-    const amount = this.formatPrice(this.data.payment.locationPaymentPrice);
-    const tenantName = this.data.tenant?.fullName || 'N/A';
-    const tenantEmail = this.data.tenant?.email || '';
-    const tenantPhone = this.data.tenant?.phoneNumber || '';
-    const ownerName = this.data.owner?.name || 'Propriétaire';
-    const ownerEmail = this.data.owner?.email || '';
-    const ownerPhone = this.data.owner?.phoneNumber || '';
-    const roomCode = this.data.room?.code || 'N/A';
-    const periodLabel = this.getPeriodLabel();
-    const paymentType = this.getPaymentTypeLabel();
-    const tenantStatus = this.getTenantStatusLabel();
+    // Toute valeur insérée dans le HTML est échappée (saisies du propriétaire,
+    // de l'agent ou du locataire).
+    const receiptNumber = escapeHtml(this.getReceiptNumber());
+    const paymentDate = escapeHtml(this.formatDate(this.data.payment.datePayment));
+    const billingDate = escapeHtml(this.formatDate(new Date()));
+    const amount = escapeHtml(this.formatPrice(this.data.payment.locationPaymentPrice));
+    const tenantName = escapeHtml(this.data.tenant?.fullName || 'N/A');
+    const tenantEmail = escapeHtml(this.data.tenant?.email || '');
+    const tenantPhone = escapeHtml(this.data.tenant?.phoneNumber || '');
+    const ownerName = escapeHtml(this.data.owner?.name || 'Propriétaire');
+    const ownerEmail = escapeHtml(this.data.owner?.email || '');
+    const ownerPhone = escapeHtml(this.data.owner?.phoneNumber || '');
+    const propertyName = escapeHtml(this.data.propertyName || '');
+    const roomCode = escapeHtml(this.data.room?.code || 'N/A');
+    const periodLabel = escapeHtml(this.getPeriodLabel());
+    const paymentType = escapeHtml(this.getPaymentTypeLabel());
+    const tenantStatus = escapeHtml(this.getTenantStatusLabel());
+    const paymentMethod = escapeHtml(this.getPaymentMethodLabel());
 
     return `<!DOCTYPE html>
 <html lang="fr">
@@ -364,7 +369,7 @@ export class PaymentReceiptModalComponent implements OnInit {
         <p class="billing-info">${ownerName}</p>
         ${ownerEmail ? `<p class="billing-info">${ownerEmail}</p>` : ''}
         ${ownerPhone ? `<p class="billing-info">${ownerPhone}</p>` : ''}
-        ${this.data.propertyName ? `<p class="billing-info">${this.data.propertyName}</p>` : ''}
+        ${propertyName ? `<p class="billing-info">${propertyName}</p>` : ''}
       </div>
       <div class="billing-block">
         <h3 class="billing-title">FACTURÉ À</h3>
@@ -391,7 +396,7 @@ export class PaymentReceiptModalComponent implements OnInit {
         </tr>
         <tr>
           <td class="label">Mode de paiement</td>
-          <td class="value">${this.getPaymentMethodLabel()}</td>
+          <td class="value">${paymentMethod}</td>
         </tr>
         ${tenantStatus ? `<tr>
           <td class="label">Statut locataire</td>

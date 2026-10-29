@@ -505,24 +505,17 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
       || null;
   }
 
+  // Les coordonnées (agent ou propriétaire) ne viennent que de l'accès payé :
+  // la recherche publique ne les contient pas.
   getAgencyPhone(): string {
-    return this.unit?.property?.managedByAgent?.phoneNumber
-      || this.unit?.property?.managedByAgent?.agencyPhone
-      || '';
+    return this.ownerInfo?.owner?.phone || '';
   }
 
   getContactPhone(): string {
-    if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.phoneNumber
-        || this.unit?.property?.managedByAgent?.phone || '';
-    }
     return this.ownerInfo?.owner?.phone || '';
   }
 
   getContactEmail(): string {
-    if (this.isPropertyManagedByAgent()) {
-      return this.unit?.property?.managedByAgent?.email || this.ownerInfo?.owner?.email || '';
-    }
     return this.ownerInfo?.owner?.email || '';
   }
 

@@ -1,9 +1,10 @@
-import { Component, OnInit,ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location, NgIf } from '@angular/common';
 import { Store, Actions, ofActionCompleted, ofActionSuccessful,Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ProspectionState, ProspectionAction,UserProfileState,UserProfileModel } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
@@ -25,7 +26,9 @@ import { NgScrollbar } from 'ngx-scrollbar';
   standalone: true,
   imports: [NgScrollbar, FlexModule, AppLogoComponent, ButtonModule, IbmIconComponent, FormsModule, ReactiveFormsModule, InputModule, NgIf, LoadingModule, TranslatePipe]
 })
-export class SupportComponent implements OnInit {
+export class SupportComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
   waittingResponse = false;
   public formGroup: UntypedFormGroup;  
   @Select(ProspectionState.selectStateLoadingProspection) prospectionLoading:Observable<boolean>;
@@ -42,6 +45,11 @@ export class SupportComponent implements OnInit {
     private languageUrlService: LanguageUrlService
   ) { }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   ngOnInit(): void {
     this.formGroup = this.formBuilder.group({
       name: ['', [Validators.required]],
@@ -51,11 +59,11 @@ export class SupportComponent implements OnInit {
       message: ['', Validators.required]
     });
 
-    this._ngxsAction.pipe(ofActionCompleted(ProspectionAction.CreateNewProspection)).subscribe((value) => {
+    this._ngxsAction.pipe(ofActionCompleted(ProspectionAction.CreateNewProspection), takeUntil(this.destroy$)).subscribe((value) => {
       this.waittingResponse =false;
     });
 
-    this._ngxsAction.pipe(ofActionSuccessful(ProspectionAction.CreateNewProspection)).subscribe((value) => {
+    this._ngxsAction.pipe(ofActionSuccessful(ProspectionAction.CreateNewProspection), takeUntil(this.destroy$)).subscribe((value) => {
       this.formGroup.reset();
     });
     // this.userProfil$.subscribe((user)=>{if(user) this.routingLink="/app/welcome"})

@@ -20,6 +20,7 @@ import {
 } from 'src/app/shared/store';
 import { FormUtils } from 'src/app/shared/utils';
 import { NgIf, NgFor } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 export interface PaymentModalData {
   mode: 'create' | 'edit';
@@ -123,7 +124,7 @@ export class ModernPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   private initializeForm(): void {
-    const today = new Date().toISOString().split('T')[0];
+    const today = toLocalIsoDate();
     
     this.formGroup = this.formBuilder.group({
       paymentLocationType: [LocationPaymentType.LOCATION, [Validators.required]],

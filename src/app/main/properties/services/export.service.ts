@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 export interface ExportColumn {
   key: string;
@@ -188,7 +189,7 @@ export class ExportService {
    * Générer un nom de fichier intelligent
    */
   generateFileName(baseFileName: string, propertyName?: string, extension: string = ''): string {
-    const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = toLocalIsoDate();
 
     let fileName = baseFileName;
 

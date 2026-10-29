@@ -3,12 +3,6 @@ import { CountryModel } from "./country.model";
 
 export namespace CountryAction
 {
-    //Create
-    export class UpdateCountry
-    {
-        static readonly type = '[Country] Update Country';
-        constructor(public country:CountryModel, public id:string){}
-    }
 
     //Fetch  Country profil
     export class FetchCountry

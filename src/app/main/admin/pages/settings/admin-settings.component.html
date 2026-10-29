@@ -462,12 +462,6 @@
           </div>
           
           <div class="admin-form-actions">
-            <button type="button" class="admin-btn admin-btn-secondary" (click)="onCreateBackup()">
-              <i class="fas fa-save"></i> Créer une sauvegarde
-            </button>
-            <button type="button" class="admin-btn admin-btn-secondary" (click)="onClearCache()">
-              <i class="fas fa-broom"></i> Vider le cache
-            </button>
             <button type="button" class="admin-btn admin-btn-danger" (click)="onToggleMaintenanceMode()">
               <i class="fas fa-tools"></i>
               {{ settingsForm.get('maintenanceMode')?.value ? 'Désactiver' : 'Activer' }} la maintenance

@@ -112,7 +112,7 @@ export class GeneratePaymentLinkModalComponent implements OnInit {
 
   openLink(): void {
     if (this.generatedLink) {
-      window.open(this.generatedLink, '_blank');
+      window.open(this.generatedLink, '_blank', 'noopener,noreferrer');
     }
   }
 

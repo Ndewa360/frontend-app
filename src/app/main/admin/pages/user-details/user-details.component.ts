@@ -296,16 +296,6 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
 
   // ── Actions souscription ──────────────────────────────────────────────────
 
-  upgradeToPremium(): void {
-    if (!this.user?.subscription) return;
-    this.subscriptionsService.forceUpgradeToPremium(this.user.subscription._id, 'Upgrade administratif')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ACCOUNT_UPGRADED')); this.loadUserDetails(); },
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_UPGRADE_ERROR'))
-      });
-  }
-
   suspendAccount(): void {
     if (!this.user?.subscription) return;
     this.suspendReason = '';

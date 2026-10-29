@@ -27,14 +27,6 @@ export class CityService
         return this._httpClient.post<ApiResultFormat<CityModel>>(`${environment.apiUrl}/localisation/city`, city)
     }
 
-    /**
-     * Update city
-     */
-    updateCity(city:CityModel,id:string): Observable<ApiResultFormat<CityModel>>
-    {
-        return this._httpClient.put<ApiResultFormat<CityModel>>(`${environment.apiUrl}/localisation/city/${id}`, city)
-    }
-
     getCity(cityId):Observable<ApiResultFormat<CityModel>>
     {
         return this._httpClient.get<ApiResultFormat<CityModel>>(`${environment.apiUrl}/localisation/city/${cityId}`)

@@ -138,14 +138,6 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onForceUpgrade(subscription: any): void {
-    this.store.dispatch(new AdminSubscriptionsAction.ForceUpgradeToPremium(subscription._id));
-  }
-
-  onDowngradeToPlan(subscription: AdminUserSubscription, plan: string): void {
-    this.store.dispatch(new AdminSubscriptionsAction.ChangePlan(subscription._id, plan));
-  }
-
   onSuspendAccount(subscription: AdminUserSubscription): void {
     this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(subscription._id, 'Suspension administrative'));
   }

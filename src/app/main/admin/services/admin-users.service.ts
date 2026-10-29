@@ -169,38 +169,10 @@ export class AdminUsersService {
   }
 
   /**
-   * Activer/Désactiver un utilisateur
-   */
-  toggleUserStatus(userId: string, status: string): Observable<AdminUser> {
-    return this.http.patch<ApiResultFormat<AdminUser>>(`${this.apiUrl}/${userId}/status`, { status }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
    * Réinitialiser le mot de passe d'un utilisateur
    */
   resetPassword(userId: string, sendEmail: boolean = true): Observable<{ temporaryPassword?: string }> {
     return this.http.post<ApiResultFormat<{ temporaryPassword?: string }>>(`${this.apiUrl}/${userId}/reset-password`, { sendEmail }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Envoyer un email de vérification
-   */
-  sendVerificationEmail(userId: string): Observable<void> {
-    return this.http.post<ApiResultFormat<void>>(`${this.apiUrl}/${userId}/send-verification`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Obtenir l'historique des activités d'un utilisateur
-   */
-  getUserActivities(userId: string, limit: number = 50): Observable<any[]> {
-    const params = new HttpParams().set('limit', limit.toString());
-    return this.http.get<ApiResultFormat<any[]>>(`${this.apiUrl}/${userId}/activities`, { params }).pipe(
       map(response => response.data)
     );
   }

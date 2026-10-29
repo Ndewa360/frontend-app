@@ -14,6 +14,7 @@ import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-r
 import { AssignLocationModalService } from 'src/app/main/assign-location/services/assign-location-modal.service';
 import { GeneratePaymentLinkModalComponent } from '../generate-payment-link-modal/generate-payment-link-modal.component';
 import { NgIf, NgFor } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 interface Tab {
   label: string;
@@ -482,7 +483,7 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
     }
     // Fallback: créer une référence basée sur la date et le montant
     const date = new Date(payment.datePayment);
-    const dateStr = date.toISOString().split('T')[0].replace(/-/g, '');
+    const dateStr = toLocalIsoDate(date).replace(/-/g, '');
     const amount = payment.locationPaymentPrice || 0;
     return `PAY-${dateStr}-${amount}`;
   }

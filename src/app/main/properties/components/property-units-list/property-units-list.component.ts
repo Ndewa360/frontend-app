@@ -48,6 +48,7 @@ import { UnitDetailsPanelComponent } from '../unit-details-panel/unit-details-pa
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from 'carbon-components-angular';
 import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
 
 export interface UnitAction {
   type: 'view' | 'edit' | 'assign_tenant' | 'terminate_lease' | 'manage_media' | 'toggle_status' | 'edit_galery' | 'edit_tenant';
@@ -1276,7 +1277,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `Historique_paiements_${this.getSelectedRoomName()}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `Historique_paiements_${this.getSelectedRoomName()}_${toLocalIsoDate()}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
