@@ -87,26 +87,8 @@
         };
       }
 
-      // Intercepter Image requests (parfois utilisées pour la télémétrie)
-      const originalImage = window.Image;
-      window.Image = function() {
-        const img = new originalImage();
-        const originalSrc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
-
-        Object.defineProperty(img, 'src', {
-          set: function(value) {
-            if (typeof value === 'string' && value.includes('sp.tinymce.com')) {
-              return;
-            }
-            originalSrc.set.call(this, value);
-          },
-          get: function() {
-            return originalSrc.get.call(this);
-          }
-        });
-
-        return img;
-      };
+      // Le remplacement de window.Image a été retiré : il cassait
+      // `instanceof Image` et le chargement d'images de librairies tierces.
     })();
   </script>
 

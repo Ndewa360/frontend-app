@@ -1,8 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import {jsPDF} from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Observable } from 'rxjs';
 import { LocataireModel, LocataireState, RoomAction, RoomModel, RoomState, UserProfileModel, UserProfileState } from 'src/app/shared/store';
 import { LocationPaymentModel, LocationPaymentState } from 'src/app/shared/store/payment-location';

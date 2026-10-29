@@ -33,9 +33,6 @@
               "@ag-grid-community/core",
               "carbon-components",
               "carbon-components-angular",
-              "jspdf",
-              "html2canvas",
-              "random-avatar-generator",
               "ngx-toastr",
               "dayjs",
               "dayjs/locale/fr"
@@ -117,13 +114,20 @@
                 "bundleName": "theme-dark",
                 "inject": false
               },
-              "node_modules/@ag-grid-community/styles/ag-grid.css",
-              "node_modules/@ag-grid-community/styles/ag-theme-balham.css",
+              {
+                "input": "src/app/shared/styles/ag-grid.scss",
+                "bundleName": "ag-grid",
+                "inject": false
+              },
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/@youpez/styles/scss/theme/app.scss",
               "node_modules/ngx-toastr/toastr.css",
               "src/app/shared/styles/app.themes.scss",
-              "src/app/main/admin/styles/admin-design-system.scss"
+              {
+                "input": "src/app/main/admin/styles/admin-design-system.scss",
+                "bundleName": "admin",
+                "inject": false
+              }
             ],
             "scripts": []
           },
@@ -149,8 +153,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "5.5mb",
-                  "maximumError": "6.5mb"
+                  "maximumWarning": "3.2mb",
+                  "maximumError": "3.6mb"
                 },
                 {
                   "type": "anyComponentStyle",

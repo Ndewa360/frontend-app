@@ -22,7 +22,11 @@ export class AnonymousUserService {
   getVisitorId(): string {
     let id = localStorage.getItem(STORAGE_KEY);
     if (!id) {
-      id = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substring(2, 10);
+      // Identifiant non devinable : il sert de preuve d'achat pour l'accès premium.
+      const random = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID().replace(/-/g, '')
+        : Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+      id = 'visitor_' + Date.now() + '_' + random;
       localStorage.setItem(STORAGE_KEY, id);
     }
     return id;

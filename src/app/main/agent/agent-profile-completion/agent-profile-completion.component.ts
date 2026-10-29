@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngxs/store';
 import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
@@ -121,34 +121,24 @@ export class AgentProfileCompletionComponent implements OnInit {
       
       formData.append('agentDocumentType', documentTypeMap[documentType]);
 
-      const xhr = new XMLHttpRequest();
-      
-      xhr.upload.addEventListener('progress', (event) => {
-        if (event.lengthComputable) {
-          this.uploadProgress[documentType] = Math.round((event.loaded / event.total) * 100);
-        }
+      // HttpClient (et non XMLHttpRequest) pour passer par l'intercepteur qui
+      // ajoute le jeton : l'upload exige désormais une authentification.
+      this.http.post<any>(`${environment.apiUrl}/upload/post`, formData, {
+        reportProgress: true,
+        observe: 'events',
+      }).subscribe({
+        next: (event) => {
+          if (event.type === HttpEventType.UploadProgress && event.total) {
+            this.uploadProgress[documentType] = Math.round((event.loaded / event.total) * 100);
+          } else if (event.type === HttpEventType.Response) {
+            const response = event.body;
+            const fileUrl = response?.data?.fileUrl || response?.data?.generatedUrl || response?.data;
+            this.uploadedFiles[documentType] = fileUrl;
+            resolve(fileUrl);
+          }
+        },
+        error: () => reject(new Error('Upload failed')),
       });
-      
-      xhr.addEventListener('load', () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          const response = JSON.parse(xhr.responseText);
-          
-          // Vérifier la structure de la réponse
-          const fileUrl = response.data?.fileUrl || response.data?.generatedUrl || response.data;
-          this.uploadedFiles[documentType] = fileUrl;
-          
-          resolve(fileUrl);
-        } else {
-          reject(new Error('Upload failed'));
-        }
-      });
-      
-      xhr.addEventListener('error', () => {
-        reject(new Error('Upload error'));
-      });
-      
-      xhr.open('POST', `${environment.apiUrl}/upload/post`);
-      xhr.send(formData);
     });
   }
 
@@ -197,7 +187,7 @@ export class AgentProfileCompletionComponent implements OnInit {
         businessDescription: this.profileForm.value.businessDescription || '',
         verificationType: this.profileForm.value.verificationType,
         verificationNumber: this.profileForm.value.verificationNumber,
-        verificationDocumentUrl: this.uploadedFiles['verification'] || 'https://example.com/test.pdf',
+        verificationDocumentUrl: this.uploadedFiles['verification'] || '',
         professionalCardUrl: this.uploadedFiles['professional-card'] || '',
         businessLicenseUrl: this.uploadedFiles['business-license'] || '',
         businessLogoUrl: this.uploadedFiles['business-logo'] || ''

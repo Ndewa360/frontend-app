@@ -14,6 +14,7 @@ import { ErrorLogService } from "../services/error-log.service";
 import { LogoutFlagService } from "../services/logout-flag.service";
 import { isSilentHttpError } from "../http/http-error-context";
 import { AppLoadingPhaseService } from "../services/app-loading-phase.service";
+import { environment } from "src/environments/environment";
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
@@ -40,8 +41,16 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       return next.handle(req).pipe(catchError(() => of(null as any)));
     }
 
-    // Ignorer les requêtes vers des assets ou des ressources statiques
-    if (req.url.includes('.svg') || req.url.includes('.png') || req.url.includes('.jpg') || req.url.includes('.jpeg') || req.url.includes('.gif')) {
+    // Le jeton n'est envoyé qu'à l'API Ndewa360 : jamais aux assets, aux
+    // fichiers de traduction ni à un service tiers appelé avec HttpClient.
+    if (!this.isApiRequest(req.url)) {
+      return next.handle(req);
+    }
+
+    // Un en-tête Authorization explicite (lien de confirmation ou de
+    // réinitialisation reçu par email) ne doit pas être remplacé par le jeton
+    // de session de l'utilisateur connecté.
+    if (req.headers.has('Authorization')) {
       return next.handle(req);
     }
 
@@ -264,6 +273,11 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
     if (message) {
       this._toastrService.warning(message, "Ndewa360°");
     }
+  }
+
+  private isApiRequest(url: string): boolean {
+    const apiUrl = (environment.apiUrl || '').replace(/\/$/, '');
+    return !!apiUrl && (url === apiUrl || url.startsWith(`${apiUrl}/`));
   }
 
   private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {

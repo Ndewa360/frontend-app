@@ -4,6 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 
 import {SharedModule} from '../shared/shared.module';
+import { LazyStyleService } from '../shared/services/lazy-style.service';
 import {LayoutModule} from '../layout/layout.module';
 import {MainRoutingModule} from './main-routing.module';
 
@@ -39,4 +40,9 @@ ModuleRegistry.registerModules([
   ]
 })
 export class MainModule {
+	// Les grilles AG Grid ne servent que dans l'espace connecté : leur CSS
+	// n'est plus chargé sur les pages publiques.
+	constructor(lazyStyles: LazyStyleService) {
+		lazyStyles.load('ag-grid');
+	}
 }

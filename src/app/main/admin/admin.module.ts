@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgxsModule } from '@ngxs/store';
 import { SharedModule } from '../../shared/shared.module';
+import { LazyStyleService } from '../../shared/services/lazy-style.service';
 
 // ── Layout ───────────────────────────────────────────────────────────────────
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component';
@@ -66,4 +67,9 @@ import { AdminRoutingModule } from './admin-routing.module';
     AdminBreachService
   ]
 })
-export class AdminModule {}
+export class AdminModule {
+  // Design system admin chargé uniquement à l'entrée dans l'administration.
+  constructor(lazyStyles: LazyStyleService) {
+    lazyStyles.load('admin');
+  }
+}

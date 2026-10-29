@@ -1,0 +1,4 @@
+// Styles AG Grid : bundle séparé (inject: false), chargé par LazyStyleService
+// uniquement dans l'espace connecté, où les grilles sont utilisées.
+@import '@ag-grid-community/styles/ag-grid.css';
+@import '@ag-grid-community/styles/ag-theme-balham.css';

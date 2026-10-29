@@ -115,6 +115,7 @@ export function app(injectedDocument?: string): express.Express {
   // Le builder application esbuild imbrique sa sortie dans {outputPath}/browser
   const distFolder = join(process.cwd(), 'dist/app/browser');
   const document = resolveDocument(injectedDocument);
+  const publicOrigin = (process.env['APP_URL'] || 'https://ndewa-360.com').replace(/\/$/, '');
   const commonEngine = new CommonEngine({
     bootstrap: AppServerModule,
     enablePerformanceProfiler: process.env['SSR_PROFILE'] === '1',
@@ -220,7 +221,10 @@ export function app(injectedDocument?: string): express.Express {
         .render({
           bootstrap: AppServerModule,
           document,
-          url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
+          // Origine fixe : l'en-tête Host vient du client, et le HTML rendu est
+          // mis en cache par le CDN (s-maxage). Un Host forgé ne doit pas pouvoir
+          // influencer les URL absolues d'une page servie ensuite à tous.
+          url: `${publicOrigin}${req.originalUrl}`,
           publicPath: distFolder,
           inlineCriticalCss: false,
           providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]

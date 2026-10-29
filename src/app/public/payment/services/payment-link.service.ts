@@ -37,15 +37,4 @@ export class PaymentLinkService {
   getPaymentDetails(token: string): Observable<{ data: PaymentLinkDetails }> {
     return this.http.get<{ data: PaymentLinkDetails }>(`${this.api}/details/${token}`);
   }
-
-  // Route backend: POST /payment-link/confirm/:token
-  confirmPayment(token: string, paymentData: {
-    amount: number;
-    paymentType: 'LOCATION' | 'CAUTION';
-    paymentIntentId: string;
-    sessionId?: string;
-    userEmail?: string;
-  }): Observable<{ data: any }> {
-    return this.http.post<{ data: any }>(`${this.api}/confirm/${token}`, paymentData);
-  }
 }

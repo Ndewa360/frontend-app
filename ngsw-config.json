@@ -38,8 +38,13 @@
   ],
   "dataGroups": [
     {
-      "name": "api",
-      "urls": ["https://api.ndewa-360.com/**"],
+      "name": "api-public",
+      "urls": [
+        "https://api.ndewa-360.com/localisation/**",
+        "https://api.ndewa-360.com/search/**",
+        "https://api.ndewa-360.com/search-stats/popular**",
+        "https://api.ndewa-360.com/search-stats/top-cities**"
+      ],
       "cacheConfig": {
         "strategy": "freshness",
         "maxSize": 100,
