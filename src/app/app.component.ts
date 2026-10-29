@@ -8,7 +8,8 @@ import { LocalizationService } from './shared/services/localization/localization
 import { TranslationService } from './shared/services/localization/translation.service';
 import { AuthTokenState } from './shared/store/auth-token';
 import { interval, Subscription, Subject, of } from 'rxjs';
-import { LOCAL_LANGUAGE, UserProfileAction } from './shared/store';
+import { LOCAL_LANGUAGE, UserProfileAction, SubscriptionLimitAction } from './shared/store';
+import { RealtimeEvent, RealtimeService } from './core/realtime';
 import { Title, Meta } from '@angular/platform-browser';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { SettingsService } from 'src/@youpez';
@@ -77,6 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private healthCheck: HealthCheckService,
     private swUpdate: SwUpdate,
+    private realtime: RealtimeService,
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
 
@@ -176,6 +178,18 @@ export class AppComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.store.dispatch(new UserProfileAction.FetchUserProfile())
         .pipe(catchError(() => of(null))).subscribe();
+    });
+
+    // Abonnement payé (ou réactivé) : profil et limites rafraîchis sans
+    // attendre la vérification périodique de 10 minutes.
+    this.realtime.on(RealtimeEvent.SubscriptionUpdated).pipe(
+      takeUntil(this.destroy$),
+      debounceTime(500),
+    ).subscribe(() => {
+      this.store.dispatch([
+        new UserProfileAction.FetchUserProfile(),
+        new SubscriptionLimitAction.GetSubscriptionStatus(),
+      ]).pipe(catchError(() => of(null))).subscribe();
     });
 
     // Activité utilisateur

@@ -1,6 +1,12 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { map, filter, catchError, distinctUntilChanged } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { AuthTokenState } from '../store/auth-token';
+import { silentHttp } from '../http/http-error-context';
+import { RealtimeEvent, RealtimeService } from '../../core/realtime';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
 import { RoomState, LocationState, LocationPaymentState } from '../store';
@@ -10,7 +16,9 @@ import { LocationPaymentModel } from '../store/payment-location/location-payment
 
 export interface SmartNotification {
   id: string;
-  type: 'payment_overdue' | 'lease_expiring' | 'maintenance_due' | 'vacancy_alert' | 'revenue_milestone';
+  type: 'payment_overdue' | 'lease_expiring' | 'maintenance_due' | 'vacancy_alert' | 'revenue_milestone' | 'server';
+  /** `server` : notification persistée par le backend (lecture synchronisée). */
+  source?: 'local' | 'server';
   priority: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   message: string;
@@ -40,9 +48,73 @@ export class NotificationManagerService {
 
   constructor(
     private store: Store,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private http: HttpClient,
+    private realtime: RealtimeService,
+    @Inject(PLATFORM_ID) private platformId: object,
   ) {
     this.initializeNotificationSystem();
+    if (isPlatformBrowser(this.platformId)) {
+      this.initializeServerNotifications();
+    }
+  }
+
+  // ─── Notifications persistées par le backend ──────────────────────────────
+
+  private readonly api = `${environment.apiUrl}/notifications`;
+
+  /**
+   * Le backend enregistre les notifications (paiement reçu, retrait,
+   * abonnement…). Elles sont chargées à la connexion et ajoutées en direct
+   * via le temps réel ; auparavant le web ne les affichait jamais.
+   */
+  private initializeServerNotifications(): void {
+    this.store.select(AuthTokenState.selectStateUserIsLogin)
+      .pipe(distinctUntilChanged())
+      .subscribe((isLoggedIn) => {
+        if (isLoggedIn) {
+          this.loadServerNotifications();
+        } else {
+          this.notifications$.next(this.notifications$.value.filter(n => n.source !== 'server'));
+        }
+      });
+
+    this.realtime.on(RealtimeEvent.NotificationCreated).subscribe((n) => {
+      this.mergeServerNotifications([this.fromServer({ ...n, _id: n.id, isRead: false })], true);
+    });
+    this.realtime.on(RealtimeEvent.NotificationsChanged).subscribe(() => this.loadServerNotifications());
+  }
+
+  private loadServerNotifications(): void {
+    this.http.get<{ data?: { data?: any[] } }>(this.api, { params: { limit: 20 }, context: silentHttp() })
+      .pipe(catchError(() => of(null)))
+      .subscribe((res) => {
+        const items = (res?.data?.data || []).map((n) => this.fromServer(n));
+        const local = this.notifications$.value.filter(n => n.source !== 'server');
+        this.notifications$.next([...items, ...local].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()));
+      });
+  }
+
+  private mergeServerNotifications(items: SmartNotification[], showToast: boolean): void {
+    const current = this.notifications$.value;
+    const fresh = items.filter(i => !current.some(n => n.id === i.id));
+    if (fresh.length === 0) return;
+    this.notifications$.next([...fresh, ...current]);
+    if (showToast) fresh.forEach(n => this.showToastNotification(n));
+  }
+
+  private fromServer(n: any): SmartNotification {
+    return {
+      id: String(n._id ?? n.id),
+      source: 'server',
+      type: 'server',
+      priority: 'medium',
+      title: n.title,
+      message: n.message,
+      data: { serverType: n.type },
+      createdAt: n.createdAt ? new Date(n.createdAt) : new Date(),
+      isRead: !!n.isRead,
+    };
   }
 
   /**
@@ -259,18 +331,28 @@ export class NotificationManagerService {
    * Marque une notification comme lue
    */
   markAsRead(notificationId: string): void {
-    const notifications = this.notifications$.value.map(n => 
+    const target = this.notifications$.value.find(n => n.id === notificationId);
+    const notifications = this.notifications$.value.map(n =>
       n.id === notificationId ? { ...n, isRead: true } : n
     );
     this.notifications$.next(notifications);
+    if (target?.source === 'server' && !target.isRead) {
+      this.http.put(`${this.api}/${notificationId}/read`, {}, { context: silentHttp() })
+        .pipe(catchError(() => of(null))).subscribe();
+    }
   }
 
   /**
-   * Supprime une notification
+   * Supprime une notification (archivée côté serveur, donc récupérable).
    */
   removeNotification(notificationId: string): void {
+    const target = this.notifications$.value.find(n => n.id === notificationId);
     const notifications = this.notifications$.value.filter(n => n.id !== notificationId);
     this.notifications$.next(notifications);
+    if (target?.source === 'server') {
+      this.http.put(`${this.api}/${notificationId}/archive`, {}, { context: silentHttp() })
+        .pipe(catchError(() => of(null))).subscribe();
+    }
   }
 
   /**

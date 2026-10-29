@@ -17,6 +17,7 @@ import { PaymentLinkService, PaymentLinkDetails } from '../../services/payment-l
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { LocationPaymentService } from 'src/app/shared/store/payment-location/location-payment.service';
 import { environment } from 'src/environments/environment';
+import { RealtimeService } from 'src/app/core/realtime';
 import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, UpperCasePipe, SlicePipe, DatePipe } from '@angular/common';
 
 declare let Stripe: any;
@@ -82,7 +83,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     private paymentLinkService: PaymentLinkService,
     private anonymousUserService: AnonymousUserService,
     private locationPaymentService: LocationPaymentService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private realtime: RealtimeService,
   ) {
     this.amountForm = this.fb.group({
       amount: [null, [Validators.required, Validators.min(100), Validators.max(10000000)]]
@@ -364,19 +366,48 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   // ─── Polling avec backoff exponentiel (Fix #3 + #8) ──────────────────────
 
+  /**
+   * Applique un statut reçu (socket ou polling). Retourne vrai si le paiement
+   * est terminé. Idempotent : un statut final n'est appliqué qu'une fois.
+   */
+  private applyPaymentStatus(status: string): boolean {
+    if (this.paymentStatus === 'success' || this.paymentStatus === 'failed') return true;
+    if (status === 'SUCCESS') {
+      this.paymentStatus = 'success';
+      this.currentStep = 'result';
+      this.today = new Date(); // Fix #10 : date réelle du paiement
+      this.handlePostPaymentSuccess();
+      return true;
+    }
+    if (['FAILED', 'CANCELLED', 'EXPIRED'].includes(status)) {
+      this.paymentError = 'Le paiement a été refusé ou annulé.';
+      this.paymentStatus = 'failed';
+      this.currentStep = 'result';
+      return true;
+    }
+    return false;
+  }
+
   private startPolling(): void {
     this.pollingAttempts = 0;
     this.networkErrors = 0;
 
-    // Fix #3 : backoff exponentiel — délai croissant pour ne pas saturer une connexion faible
-    // Tentatives 1-4 : 5s | 5-8 : 8s | 9+ : 12s
+    // Temps réel : le serveur pousse le statut dès le callback de l'opérateur.
+    this.realtime.watchPayment(this.externalRef!)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((update) => this.applyPaymentStatus(update.status));
+
+    // Le polling reste nécessaire : chaque vérification interroge aussi
+    // l'opérateur côté serveur, au cas où son callback n'arriverait jamais.
+    // Il est ralenti quand le socket est connecté.
+    // Fix #3 : backoff exponentiel — Tentatives 1-4 : 5s | 5-8 : 8s | 9+ : 12s
     const getDelay = (attempt: number): number => {
-      if (attempt <= 4) return 5_000;
-      if (attempt <= 8) return 8_000;
-      return 12_000;
+      const base = attempt <= 4 ? 5_000 : attempt <= 8 ? 8_000 : 12_000;
+      return this.realtime.connected$.value ? base * 2 : base;
     };
 
     const poll = () => {
+      if (this.paymentStatus === 'success' || this.paymentStatus === 'failed') return;
       if (this.pollingAttempts >= this.MAX_POLLING) {
         this.paymentError = 'Délai dépassé. Vérifiez votre téléphone et réessayez.';
         this.paymentStatus = 'failed';
@@ -390,16 +421,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (res) => {
             this.networkErrors = 0;
-            if (res.data.status === 'SUCCESS') {
-              this.paymentStatus = 'success';
-              this.currentStep = 'result';
-              this.today = new Date(); // Fix #10 : date réelle du paiement
-              this.handlePostPaymentSuccess();
-            } else if (['FAILED', 'CANCELLED', 'EXPIRED'].includes(res.data.status)) {
-              this.paymentError = 'Le paiement a été refusé ou annulé.';
-              this.paymentStatus = 'failed';
-              this.currentStep = 'result';
-            } else {
+            if (!this.applyPaymentStatus(res.data.status)) {
               // Toujours PENDING — planifier le prochain tick avec backoff
               timer(getDelay(this.pollingAttempts))
                 .pipe(takeUntil(this.destroy$))

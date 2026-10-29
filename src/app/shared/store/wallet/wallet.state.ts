@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { tap, catchError, switchMap, takeUntil } from 'rxjs/operators';
-import { throwError, interval, Subject, forkJoin } from 'rxjs';
+import { State, Action, StateContext, Selector, NgxsOnInit } from '@ngxs/store';
+import { tap, catchError, switchMap, takeUntil, filter, debounceTime } from 'rxjs/operators';
+import { throwError, interval, Subject, forkJoin, merge, Subscription } from 'rxjs';
+import { RealtimeEvent, RealtimeService } from '../../../core/realtime';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { WalletAction } from './wallet.actions';
@@ -32,7 +33,7 @@ const MAX_POLLING_ATTEMPTS = 72;   // 6 minutes max (72 × 5s) — EasyTransact 
   },
 })
 @Injectable()
-export class WalletState implements OnDestroy {
+export class WalletState implements OnDestroy, NgxsOnInit {
   /**
    * Subject recréé à chaque nouveau polling pour éviter le problème du singleton
    * NGXS (ngOnDestroy jamais appelé sur un state root) : on ne complete() jamais
@@ -44,10 +45,28 @@ export class WalletState implements OnDestroy {
     private walletService: WalletHttpService,
     private toastr: ToastrService,
     private translate: TranslateService,
+    private realtime: RealtimeService,
   ) {}
 
   ngOnDestroy(): void {
     this.stopPolling$.next();
+    this.realtimeSub?.unsubscribe();
+  }
+
+  private realtimeSub?: Subscription;
+
+  /**
+   * Loyer reçu, dépôt, paiement d'abonnement : le solde affiché se met à jour
+   * sans rechargement, si le wallet a déjà été chargé dans cette session.
+   */
+  ngxsOnInit(ctx: StateContext<WalletStateModel>): void {
+    this.realtimeSub = this.realtime.on(RealtimeEvent.WalletUpdated)
+      .pipe(debounceTime(500))
+      .subscribe(() => {
+        if (ctx.getState().summary) {
+          ctx.dispatch(new WalletAction.LoadSummary());
+        }
+      });
   }
 
   @Selector() static summary(s: WalletStateModel): WalletSummary | null { return s.summary; }
@@ -209,7 +228,13 @@ export class WalletState implements OnDestroy {
 
     let attempts = 0;
 
-    return interval(POLLING_INTERVAL_MS).pipe(
+    // L'événement temps réel déclenche une vérification immédiate ; le polling
+    // reste en secours si le socket est indisponible.
+    const realtimeUpdate$ = this.realtime.on(RealtimeEvent.WalletWithdrawalUpdated).pipe(
+      filter((event) => event.withdrawalId === withdrawalId),
+    );
+
+    return merge(interval(POLLING_INTERVAL_MS), realtimeUpdate$).pipe(
       takeUntil(this.stopPolling$),
       switchMap(() => {
         attempts++;
