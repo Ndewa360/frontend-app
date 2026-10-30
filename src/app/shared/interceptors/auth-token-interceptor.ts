@@ -36,6 +36,13 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Cookies envoyés à l'API : le jeton de rafraîchissement du web est un
+    // cookie HttpOnly (posé à la connexion, lu par /user/auth/refresh, effacé
+    // à la déconnexion). Il n'est jamais lisible par le JavaScript de la page.
+    if (this.isApiRequest(req.url) && !req.withCredentials) {
+      req = req.clone({ withCredentials: true });
+    }
+
     // Logout volontaire en cours : laisser passer sans token ni gestion d'erreur 401
     if (LogoutFlagService.isLoggingOut()) {
       return next.handle(req).pipe(catchError(() => of(null as any)));
@@ -99,7 +106,9 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
    */
   private prepareRequestWithToken(req: HttpRequest<any>, token: any): HttpRequest<any> {
     if (req.url.includes('user/auth/refresh')) {
-      return this.addToken(req, token.refreshToken);
+      // Ancienne session (jeton encore stocké) : envoyé une dernière fois, le
+      // backend le remplace par le cookie. Sinon, le cookie suffit.
+      return token.refreshToken ? this.addToken(req, token.refreshToken) : req;
     } else if (token.accessToken) {
       return this.addToken(req, token.accessToken);
     }

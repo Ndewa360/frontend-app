@@ -31,7 +31,7 @@
     
     <div class="status-section">
       <span class="status-badge" [class]="'status-' + getStatusBadgeType(agentProfile.status)">
-        <i class="fas fa-check" *ngIf="agentProfile.status === AgentStatus.CERTIFIED"></i>
+        <i class="fas fa-check" *ngIf="agentProfile.status === AgentStatus.APPROVED"></i>
         <i class="fas fa-clock" *ngIf="agentProfile.status === AgentStatus.PENDING"></i>
         {{getStatusLabel(agentProfile.status)}}
       </span>

@@ -105,7 +105,9 @@ export class AuthTokenState {
         const expiration = this.getTokenExpiration(authToken);
         ctx.patchState({
             authToken,
-            refreshToken,
+            // Web : le jeton de rafraîchissement est un cookie HttpOnly et n'est
+            // plus renvoyé dans la réponse ; null efface un ancien jeton stocké.
+            refreshToken: refreshToken || null,
             tokenExpiration: expiration
         });
         return of(true);
@@ -155,7 +157,7 @@ export class AuthTokenState {
         const expiration = this.getTokenExpiration(accessToken);
         ctx.patchState({
             authToken: accessToken,
-            refreshToken,
+            refreshToken: refreshToken || null,
             tokenExpiration: expiration,
             refreshInProgress: false,
             lastRefreshAttempt: Date.now()

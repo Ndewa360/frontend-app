@@ -22,10 +22,10 @@ export class AgentService {
     getStatusLabel(status: AgentStatus): string {
         const labels = {
             [AgentStatus.PENDING]: 'En attente',
-            [AgentStatus.CERTIFIED]: 'Certifié',
-            [AgentStatus.PROBATION]: 'Période d\'essai',
-            [AgentStatus.SUSPENDED]: 'Suspendu',
-            [AgentStatus.TRUSTED]: 'Agent de confiance'
+            [AgentStatus.ADMIN_REVIEW]: 'En cours de vérification',
+            [AgentStatus.APPROVED]: 'Certifié',
+            [AgentStatus.REJECTED]: 'Refusé',
+            [AgentStatus.SUSPENDED]: 'Suspendu'
         };
         return labels[status] || status;
     }
@@ -33,10 +33,10 @@ export class AgentService {
     getStatusColor(status: AgentStatus): string {
         const colors = {
             [AgentStatus.PENDING]: 'warning',
-            [AgentStatus.CERTIFIED]: 'success',
-            [AgentStatus.PROBATION]: 'info',
-            [AgentStatus.SUSPENDED]: 'danger',
-            [AgentStatus.TRUSTED]: 'primary'
+            [AgentStatus.ADMIN_REVIEW]: 'info',
+            [AgentStatus.APPROVED]: 'success',
+            [AgentStatus.REJECTED]: 'danger',
+            [AgentStatus.SUSPENDED]: 'danger'
         };
         return colors[status] || 'secondary';
     }

@@ -1,9 +1,10 @@
+/** Statuts du profil agent, identiques au backend (AGENT_STATUS). */
 export enum AgentStatus {
-    PENDING = 'pending',
-    CERTIFIED = 'certified',
-    PROBATION = 'probation',
-    SUSPENDED = 'suspended',
-    TRUSTED = 'trusted'
+    PENDING = 'PENDING',
+    ADMIN_REVIEW = 'ADMIN_REVIEW',
+    APPROVED = 'APPROVED',
+    REJECTED = 'REJECTED',
+    SUSPENDED = 'SUSPENDED'
 }
 
 export enum AgentVerificationType {
