@@ -1,4 +1,6 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
+import { PropertyDetailsAction } from "../property-details/property-details.actions";
+import { propertyPayments } from "../property-details/property-details.model";
 import { LocationPaymentModel, LocationPaymentType } from "./location-payment.model";
 import { Injectable } from "@angular/core";
 import { LocationPaymentAction } from "./location-payment.actions";
@@ -79,6 +81,16 @@ export class LocationPaymentState{
             return null;
         })
     }
+    /** Écran du bien chargé (GET /property/:id/details) : paiements du bien remplacés. */
+    @Action(PropertyDetailsAction.Loaded)
+    propertyDetailsLoaded(ctx:StateContext<LocationPaymentStateModel>,{propertyId,details}:PropertyDetailsAction.Loaded)
+    {
+        const payments = propertyPayments(details);
+        const ids = new Set(payments.map((payment) => payment._id));
+        const others = ctx.getState().locationPayments.filter((payment) => payment.property != propertyId && !ids.has(payment._id));
+        ctx.patchState({ loadingLocationPayment:false, locationPayments:[...others, ...payments], initLoadingState:"LOADED" })
+    }
+
     @Action(LocationPaymentAction.ResetAllState)
     resetAllState(ctx:StateContext<LocationPaymentStateModel>)
     {

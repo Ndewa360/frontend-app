@@ -1,4 +1,5 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
+import { PropertyDetailsAction } from "../property-details/property-details.actions";
 import { RoomModel, RoomType } from "./room.model";
 import { Injectable } from "@angular/core";
 import { RoomAction } from "./room.actions";
@@ -105,6 +106,15 @@ export class RoomState{
     static selectStateNumberOfRoomByPropertyId(id)
     {
         return createSelector([RoomState],(state)=> state.rooms.filter((room)=>room.property==id).length);    
+    }
+
+    /** Écran du bien chargé (GET /property/:id/details) : unités du bien remplacées. */
+    @Action(PropertyDetailsAction.Loaded)
+    propertyDetailsLoaded(ctx:StateContext<RoomStateModel>,{propertyId,details}:PropertyDetailsAction.Loaded)
+    {
+        const ids = new Set(details.rooms.map((room) => room._id));
+        const others = ctx.getState().rooms.filter((room) => room.property != propertyId && !ids.has(room._id));
+        ctx.patchState({ loadingRoom:false, rooms:[...others, ...details.rooms], initLoadingState:"LOADED" })
     }
 
     @Action(RoomAction.SetRoom)

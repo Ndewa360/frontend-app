@@ -16,7 +16,8 @@ import {
   LocationAction,
   LocationState,
   LocationModel,
-  StatisticAction
+  StatisticAction,
+  PropertyDetailsAction
 } from 'src/app/shared/store';
 import { PropertyDataService, HistoryItem } from '../services/property-data.service';
 import { UnitAction, PropertyUnitsListComponent } from '../components/property-units-list/property-units-list.component';
@@ -126,9 +127,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.locations$ = this.store.select(LocationState.selectStateLocationByPropertyId(this.propertyId));
     this.history$ = this.propertyDataService.getPropertyHistory(this.propertyId);
     this.loadingStates$ = this.propertyDataService.getLoadingStates();
-
-    const currentYear = new Date().getFullYear();
-    this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, currentYear.toString()));
+    // Données chargées par PropertyDetailsResolver ; les statistiques sont
+    // chargées par l'onglet Finances, pour l'année qu'il affiche.
 
     this.updateTabCounts();
 
@@ -316,7 +316,7 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         if (result?.mediaUpdated)
-          this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+          this.store.dispatch(new PropertyDetailsAction.Fetch(this.propertyId));
       });
   }
 
@@ -436,9 +436,8 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   reloadPropertyData(): void {
     if (!this.propertyId) return;
     const currentYear = new Date().getFullYear();
-    this.store.dispatch(new PropertyAction.FetchPropertyForced(this.propertyId));
-    this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
-    this.store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.propertyId));
+    // Bien, unités, locataires, baux, paiements et historique en une requête
+    this.store.dispatch(new PropertyDetailsAction.Fetch(this.propertyId));
     this.store.dispatch(new StatisticAction.FetchStaticByPropertyIdAndYear(this.propertyId, currentYear.toString()));
   }
 

@@ -1,4 +1,5 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
+import { PropertyDetailsAction } from "../property-details/property-details.actions";
 import { LocataireModel } from "./locataire.model";
 import { Injectable } from "@angular/core";
 import { LocataireAction } from "./locataire.actions";
@@ -89,6 +90,15 @@ export class LocataireState{
             countLocataireForPropertyId:state.locataires.filter((location)=>location.property==propertyID).length,
             countAllLocataire:state.locataires.length
         }))
+    }
+
+    /** Écran du bien chargé (GET /property/:id/details) : tous les locataires du bien remplacés. */
+    @Action(PropertyDetailsAction.Loaded)
+    propertyDetailsLoaded(ctx:StateContext<LocataireStateModel>,{propertyId,details}:PropertyDetailsAction.Loaded)
+    {
+        const ids = new Set(details.locataires.map((locataire) => locataire._id));
+        const others = ctx.getState().locataires.filter((locataire) => locataire.property != propertyId && !ids.has(locataire._id));
+        ctx.patchState({ loadingLocataire:false, locataires:[...others, ...details.locataires], initLoadingState:"LOADED" })
     }
 
     @Action(LocataireAction.ResetAllState)

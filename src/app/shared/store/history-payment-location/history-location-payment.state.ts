@@ -1,4 +1,6 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
+import { PropertyDetailsAction } from "../property-details/property-details.actions";
+import { buildHistory } from "../property-details/property-details.model";
 import { Injectable } from "@angular/core";
 import { HistoryLocationPaymentAction } from "./history-location-payment.actions";
 import { HistoryLocationPaymentService } from "./history-location-payment.service";
@@ -76,6 +78,14 @@ export class HistoryLocationPaymentState{
     }   
 
    
+    /** Écran du bien chargé (GET /property/:id/details) : historique du bien reconstitué. */
+    @Action(PropertyDetailsAction.Loaded)
+    propertyDetailsLoaded(ctx:StateContext<HistoryLocationPaymentStateModel>,{propertyId,details}:PropertyDetailsAction.Loaded)
+    {
+        const others = ctx.getState().historyLocationPayments.filter((history) => history.property?._id !== propertyId);
+        ctx.patchState({ loadingHistoryLocationPayment:false, historyLocationPayments:[...others, ...buildHistory(details)], initLoadingState:"LOADED" })
+    }
+
     @Action(HistoryLocationPaymentAction.ResetAllState)
     resetAllState(ctx:StateContext<HistoryLocationPaymentStateModel>)
     {

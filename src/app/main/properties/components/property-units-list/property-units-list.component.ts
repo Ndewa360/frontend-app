@@ -20,7 +20,6 @@ import { takeUntil } from 'rxjs/operators';
 import {
   RoomModel,
   LocataireModel,
-  LocataireAction,
   PropertyModel,
   RoomState,
   RoomAction,
@@ -28,7 +27,7 @@ import {
   PropertyState,
   RoomType,
   HistoryLocationPaymentState,
-  HistoryLocationPaymentAction,
+  PropertyDetailsAction,
   LocationPaymentModel,
   HistoryLocationPaymentModel,
   LocationModel,
@@ -1061,7 +1060,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     }
 
     this.loadingPayments = true;
-    this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
+    // Historique chargé par PropertyDetailsResolver avec le reste de l'écran
 
     // S'abonner aux paiements
     this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments)
@@ -1286,12 +1285,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
 
   // Méthode pour forcer le rechargement des paiements (debug)
   forceReloadPayments(): void {
-    if (this.propertyId) {
-      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
-      setTimeout(() => {
-        this.updateRoomPayments();
-      }, 1000);
-    }
+    this.reloadPropertyDetails();
   }
 
   confirmAssignTenant(): void {
@@ -1427,12 +1421,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     this.closePaymentModal();
 
     // Recharger les données de paiement
-    if (this.propertyId) {
-      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
-      setTimeout(() => {
-        this.updateRoomPayments();
-      }, 1000);
-    }
+    this.reloadPropertyDetails();
   }
 
   /**
@@ -1451,21 +1440,18 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
    * Recharger les données après une assignation réussie
    */
   private reloadData(): void {
-    if (this.propertyId) {
-      // Recharger les chambres
-      this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
+    this.reloadPropertyDetails();
+  }
 
-      // Recharger les locataires
-      this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.propertyId));
-
-      // Recharger les paiements
-      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
-
-      // Mettre à jour les données après un délai
-      setTimeout(() => {
-        this.updateRoomPayments();
-      }, 1000);
-    }
+  /**
+   * Recharge tout l'écran du bien (unités, locataires, baux, paiements,
+   * historique) en une requête, puis les paiements de l'unité affichée.
+   */
+  private reloadPropertyDetails(): void {
+    if (!this.propertyId) return;
+    this.store.dispatch(new PropertyDetailsAction.Fetch(this.propertyId))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.updateRoomPayments());
   }
 
   /**

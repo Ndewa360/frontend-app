@@ -1,4 +1,6 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
+import { PropertyDetailsAction } from "../property-details/property-details.actions";
+import { activeLocations } from "../property-details/property-details.model";
 import { LocationModel } from "./location.model";
 import { Injectable } from "@angular/core";
 import { LocationAction } from "./location.actions";
@@ -87,6 +89,14 @@ export class LocationState{
     static selectStateCountLocationByPropertyId(propertyID)
     {
         return createSelector([LocationState],(state)=> state.locations.filter((location)=>location.property==propertyID).length)
+    }
+
+    /** Écran du bien chargé (GET /property/:id/details) : baux en cours du bien remplacés. */
+    @Action(PropertyDetailsAction.Loaded)
+    propertyDetailsLoaded(ctx:StateContext<LocationStateModel>,{propertyId,details}:PropertyDetailsAction.Loaded)
+    {
+        const others = ctx.getState().locations.filter((location) => location.property !== propertyId);
+        ctx.patchState({ loadingLocation:false, locations:[...others, ...activeLocations(details)], initLoadingState:'LOADED' })
     }
 
     @Action(LocationAction.UpdateLocation)

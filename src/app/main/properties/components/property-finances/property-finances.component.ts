@@ -88,7 +88,10 @@ export class PropertyFinancesComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['propertyId'] || changes['selectedYear']) {
+    const relevant = [changes['propertyId'], changes['selectedYear']].filter(Boolean);
+    // Premier rendu : ngOnInit (appelé juste après) charge déjà les données
+    if (relevant.length && relevant.every(change => change.firstChange)) return;
+    if (relevant.length) {
       if (this.propertyId) {
         // FIX #F7 : annuler la subscription précédente avant d'en créer une nouvelle
         this.subscriptionReset$.next();

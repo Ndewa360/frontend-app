@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState, HistoryLocationPaymentAction, LocataireAction, RoomAction } from 'src/app/shared/store';
+import { LocataireModel, RoomModel, LocationModel, LocationState, RoomState, LocationPaymentModel, LocationPaymentState, HistoryLocationPaymentState, PropertyDetailsAction } from 'src/app/shared/store';
 import { ModernPaymentModalComponent } from '../modern-payment-modal/modern-payment-modal.component';
 import { ModernDeletePaymentModalComponent } from '../modern-delete-payment-modal/modern-delete-payment-modal.component';
 import { PaymentReceiptModalComponent } from '../payment-receipt-modal/payment-receipt-modal.component';
@@ -451,21 +451,11 @@ export class TenantDetailsPanelComponent implements OnInit, OnDestroy, OnChanges
      * Recharger les données après une assignation réussie
      */
   private reloadData(): void {
-    if (this.propertyId) {
-      // Recharger les chambres
-      this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.propertyId));
-  
-      // Recharger les locataires
-      this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.propertyId));
-  
-      // Recharger les paiements
-      this.store.dispatch(new HistoryLocationPaymentAction.FetchHistoryLocationPaymentsByPropertyId(this.propertyId));
-  
-      // Mettre à jour les données après un délai
-      setTimeout(() => {
-        this.loadTenantPayments();
-      }, 1000);
-    }
+    if (!this.propertyId) return;
+    // Tout l'écran du bien en une requête, puis les paiements du locataire
+    this.store.dispatch(new PropertyDetailsAction.Fetch(this.propertyId))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.loadTenantPayments());
   }
     
   getUniquePaymentIdentifier(payment: LocationPaymentModel): string {

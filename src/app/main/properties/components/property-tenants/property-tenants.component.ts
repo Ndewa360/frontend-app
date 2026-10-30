@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges } from '@angular/core';
 import { LocataireModel, RoomModel, LocationModel, LocationState, LocataireState, HistoryLocationPaymentState, PropertyState, PropertyModel } from 'src/app/shared/store';
-import { LocationPaymentAction } from 'src/app/shared/store/payment-location';
 import { HistoryLocationPaymentAction } from 'src/app/shared/store/history-payment-location';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
@@ -68,11 +67,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     this.loadLocations();
     this.loadPropertyData();
     this.filterTenants();
-
-    // Charger les données de paiement pour cette propriété
-    if (this.propertyId) {
-      this.store.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(this.propertyId));
-    }
+    // Paiements du bien : chargés par PropertyDetailsResolver avec le reste de l'écran
   }
 
   /**
@@ -88,11 +83,6 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     this.filteredTenants = [...this.tenants];
     this.loadLocations();
     this.filterTenants();
-
-    // Charger les données de paiement si propertyId change
-    if (this.propertyId) {
-      this.store.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(this.propertyId));
-    }
   }
 
   private loadLocations(): void {

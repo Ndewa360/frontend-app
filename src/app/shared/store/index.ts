@@ -23,3 +23,5 @@ export * from "./subscription-payment"
 export * from "./premium-access"
 export * from "./wallet"
 export * from "./property-manager"
+
+export * from "./property-details"

@@ -5,7 +5,9 @@ import { PropertyAction } from "./property.actions";
 import { PropertyService } from "./property.service";
 // import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
-import { catchError, tap } from "rxjs/operators";
+import { catchError, switchMap, tap } from "rxjs/operators";
+import { PropertyDetailsAction } from "../property-details/property-details.actions";
+import { PropertyDetailsService } from "../property-details/property-details.service";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 import { TranslateService } from "@ngx-translate/core";
@@ -29,6 +31,7 @@ export class PropertyStateModel {
 export class PropertyState{
     constructor(
         private _propertysService:PropertyService,
+        private _propertyDetailsService:PropertyDetailsService,
         private _toastrService:ToastrService,
         private _translateService: TranslateService
     ){}
@@ -203,6 +206,33 @@ export class PropertyState{
         )
     }
 
+
+    /**
+     * GET /property/:id/details : une requête pour tout l'écran du bien. Les
+     * états concernés se mettent à jour sur PropertyDetailsAction.Loaded.
+     */
+    @Action(PropertyDetailsAction.Fetch)
+    fetchPropertyDetails(ctx:StateContext<PropertyStateModel>,{propertyId}:PropertyDetailsAction.Fetch)
+    {
+        ctx.patchState({ loadingProperty:true })
+        return this._propertyDetailsService.getPropertyDetails(propertyId).pipe(
+            switchMap(result => ctx.dispatch(new PropertyDetailsAction.Loaded(propertyId, result.data))),
+            catchError(() => {
+                ctx.patchState({ loadingProperty: false });
+                return of(null);
+            })
+        )
+    }
+
+    @Action(PropertyDetailsAction.Loaded)
+    propertyDetailsLoaded(ctx:StateContext<PropertyStateModel>,{propertyId,details}:PropertyDetailsAction.Loaded)
+    {
+        const others = ctx.getState().properties.filter(p => p._id !== propertyId);
+        ctx.patchState({
+            loadingProperty: false,
+            properties: [...others, details.property]
+        });
+    }
 
     @Action(PropertyAction.RemoveFile)
     removeRoomImageState(ctx:StateContext<PropertyStateModel>, {fileUrl,propertyID}:PropertyAction.RemoveFile) 
