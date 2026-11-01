@@ -8,7 +8,7 @@ const envVars: Record<string, string | undefined> =
 
 export const environment = {
 	// 🔒 SÉCURITÉ: Utiliser les variables d'environnement pour les URLs sensibles
-  apiUrl: envVars['API_URL'] || 'https://api.ndewa-360.com',
+  apiUrl: envVars['API_URL'] || 'http://localhost:3001',
 	url: envVars['APP_URL'] || 'http://localhost:4200',
 
 	production: false,

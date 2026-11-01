@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { silentHttp } from '../../http/http-error-context';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UserProfileModel } from './user-profile.model';
 import { HttpClient } from '@angular/common/http';
@@ -33,9 +34,12 @@ export class AuthService {
   }
 
   registerWithOnboarding(payload: any): Observable<ApiResultFormat<any>> {
+    // Message d'erreur affiché par l'état (SignupWithOnboarding) : sans ce
+    // contexte, l'intercepteur en affichait un second, identique.
     return this._httpClient.post<ApiResultFormat<any>>(
       `${environment.apiUrl}/user/auth/register-with-onboarding`,
-      payload
+      payload,
+      { context: silentHttp() }
     );
   }
 

@@ -53,6 +53,8 @@ export namespace UserProfileAction
             phoneNumber: string;
             userType?: string;
             businessName?: string;
+            businessAddress?: string;
+            businessDescription?: string;
             plan?: string;
             property?: {
                 name: string;

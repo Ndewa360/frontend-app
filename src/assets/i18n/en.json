@@ -5581,7 +5581,12 @@
       "NEXT": "Next",
       "SKIP": "Skip this step"
     },
+    "ACCOUNT_TYPE": {
+      "OWNER": "owner",
+      "AGENT": "agent"
+    },
     "ERRORS": {
+      "PROPERTY_NOT_CREATED": "Your account has been created, but your property could not be saved. Add it from “My properties”.",
       "LOAD_COUNTRIES": "Unable to load countries",
       "LOAD_CITIES": "Unable to load cities"
     },

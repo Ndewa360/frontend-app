@@ -48,6 +48,13 @@ export interface OnboardingData {
 
 const STORAGE_KEY = 'ndewa360_onboarding_data';
 
+/**
+ * Même règle que le backend (RegisterWithOnboardingDTO) : indicatif
+ * facultatif, avec ou sans espace, puis 8 à 14 chiffres séparés librement
+ * (« +237698295368 » et « 6 98 29 53 68 » étaient refusés).
+ */
+const PHONE_PATTERN = /^(\+\d{1,3}[\s.-]?)?\d(?:[\s.-]?\d){7,13}$/;
+
 @Component({
   selector: 'app-onboarding-stepper',
   templateUrl: './onboarding-stepper.component.html',
@@ -190,7 +197,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
     this.step4Form = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+\d{1,3}\s)?(\d{2,3}[\s.-]?){2,5}$/)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(PHONE_PATTERN)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       userType: [this.userType === 'agent' ? 'AGENT' : 'PROPERTY_OWNER'],
       acceptTerms: [false, Validators.requiredTrue]
@@ -227,7 +234,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
   private createTenantGroup(): UntypedFormGroup {
     return this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+\d{1,3}\s)?(\d{2,3}[\s.-]?){2,5}$/)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(PHONE_PATTERN)]],
       email: ['', Validators.email]
     });
   }
@@ -286,10 +293,11 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       });
   }
 
-  onCountryChange(countryId: string): void {
+  /** `keepCityId` : ville à conserver (reprise d'un onboarding interrompu). */
+  onCountryChange(countryId: string, keepCityId: string = ''): void {
     if (!countryId) return;
     this.cities = [];
-    this.step1Form.patchValue({ propertyCityId: '' });
+    this.step1Form.patchValue({ propertyCityId: keepCityId });
     this.loadingCities = true;
 
     this.http
@@ -376,7 +384,9 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
       if (data.step1) {
         this.step1Form.patchValue(data.step1);
         if (data.step1.propertyCountryId) {
-          this.onCountryChange(data.step1.propertyCountryId);
+          // Sans la ville en paramètre, le chargement des villes effaçait la
+          // ville restaurée : il fallait la ressaisir.
+          this.onCountryChange(data.step1.propertyCountryId, data.step1.propertyCityId || '');
         }
       }
 
@@ -483,7 +493,7 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
   private listenToActions(): void {
     this.actions$
       .pipe(ofActionSuccessful(UserProfileAction.SignupWithOnboarding), takeUntil(this.destroy$))
-      .subscribe(() => {
+      .subscribe(({ payload }: UserProfileAction.SignupWithOnboarding) => {
         this.isSubmitting = false;
         this.kundai.track('signup_completed', {
           method: 'onboarding',
@@ -493,6 +503,19 @@ export class OnboardingStepperComponent implements OnInit, OnDestroy {
         });
         this.clearStorage();
         const lang = this.languageUrlService.getCurrentLanguage();
+
+        if (this.userType === 'agent') {
+          // Un agent doit compléter son profil (pièces justificatives) avant
+          // validation, comme à la connexion. Les informations déjà saisies
+          // sont reprises sur cet écran.
+          this.router.navigate([`/${lang}/app/agent/complete-profile`], {
+            state: {
+              businessAddress: payload?.businessAddress || '',
+              businessDescription: payload?.businessDescription || '',
+            },
+          });
+          return;
+        }
         this.router.navigate([`/${lang}/app/properties/home`]);
       });
 

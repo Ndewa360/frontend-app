@@ -149,7 +149,12 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       const delayMs = this.retryDelay * Math.pow(2, retryCount);
       return timer(delayMs).pipe(
         switchMap(() => {
-          const retriedReq = originalRequest.clone({ setHeaders: { 'X-Retry-Request': 'true' } });
+          // `originalRequest` est la requête d'origine, sans le jeton : la
+          // rejouer telle quelle échouait toujours en 401 (« No auth token »).
+          // Le jeton courant (éventuellement renouvelé entre-temps) est ajouté.
+          const token = this._store.selectSnapshot(AuthTokenState.selectStateToken);
+          const authenticated = token ? this.prepareRequestWithToken(originalRequest, token) : originalRequest;
+          const retriedReq = authenticated.clone({ setHeaders: { 'X-Retry-Request': 'true' } });
           return next.handle(retriedReq);
         }),
         // L'échec de la tentative retentée ne repasse pas par le `catchError()`

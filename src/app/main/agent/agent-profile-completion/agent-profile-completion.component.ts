@@ -62,6 +62,15 @@ export class AgentProfileCompletionComponent implements OnInit {
     // Récupérer les données utilisateur depuis le store
     this.currentUser = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
     
+    // Adresse et description saisies à l'inscription (onboarding agent)
+    const fromOnboarding = (typeof history !== 'undefined' ? history.state : null) || {};
+    if (fromOnboarding.businessAddress || fromOnboarding.businessDescription) {
+      this.profileForm.patchValue({
+        businessAddress: fromOnboarding.businessAddress || '',
+        businessDescription: fromOnboarding.businessDescription || '',
+      });
+    }
+
     if (this.currentUser?.businessName) {
       this.profileForm.patchValue({
         businessName: this.currentUser.businessName

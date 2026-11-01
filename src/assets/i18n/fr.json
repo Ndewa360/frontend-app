@@ -5581,7 +5581,12 @@
       "NEXT": "Suivant",
       "SKIP": "Passer cette étape"
     },
+    "ACCOUNT_TYPE": {
+      "OWNER": "propri\u00e9taire",
+      "AGENT": "agent"
+    },
     "ERRORS": {
+      "PROPERTY_NOT_CREATED": "Votre compte est créé, mais votre bien n’a pas pu être enregistré. Ajoutez-le depuis « Mes biens ».",
       "LOAD_COUNTRIES": "Impossible de charger les pays",
       "LOAD_CITIES": "Impossible de charger les villes"
     },

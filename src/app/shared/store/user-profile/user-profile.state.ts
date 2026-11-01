@@ -195,10 +195,22 @@ export class UserProfileState {
                 ctx.dispatch(new AuthTokenAction.StartActivityMonitoring());
                 this.refreshTokenService.startActivityMonitoring();
 
+                const isAgent = payload?.userType === 'AGENT';
+                const accountType = this._translateService.instant(isAgent ? 'ONBOARDING.ACCOUNT_TYPE.AGENT' : 'ONBOARDING.ACCOUNT_TYPE.OWNER');
                 this._toastrService.success(
-                    this._translateService.instant('NOTIFICATIONS.ACCOUNT_CREATED_SUCCESS', { type: 'propriétaire' }),
+                    this._translateService.instant('NOTIFICATIONS.ACCOUNT_CREATED_SUCCESS', { type: accountType }),
                     'Ndewa360°'
                 );
+
+                // Bien demandé mais non créé (pays ou ville introuvable…) : le
+                // compte existe, l'utilisateur doit le savoir pour ajouter son bien.
+                if (data.onboarding?.propertyRequested && !data.onboarding?.propertyCreated) {
+                    this._toastrService.warning(
+                        this._translateService.instant('ONBOARDING.ERRORS.PROPERTY_NOT_CREATED'),
+                        'Ndewa360°',
+                        { timeOut: 10000 }
+                    );
+                }
             }),
             catchError((error) => {
                 const rawMessage = error?.error?.message || 'Erreur lors de la création du compte';
