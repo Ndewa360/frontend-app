@@ -1,4 +1,5 @@
-import { Component, ViewEncapsulation, ViewChild, ElementRef, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild, ElementRef, OnInit, OnDestroy, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { SettingsService } from 'src/@youpez/services/settings.service';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Store, Actions, ofActionSuccessful, ofActionCompleted, ofActionErrored, Select } from '@ngxs/store';
@@ -75,6 +76,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   constructor(
+    private settingsService: SettingsService,
       protected formBuilder: FormBuilder,
       private _store: Store,
       private _ngxsAction: Actions,
@@ -88,6 +90,12 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Initialiser le formulaire d'abord
     this.initializeForm();
+
+    // Aperçu immédiat du thème choisi (appliqué et mémorisé sur l'appareil ;
+    // enregistré sur le compte à la validation du formulaire).
+    this.formGroup.get('theme')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((theme) => this.settingsService.setThemePreference(theme));
     
     // Charger le profil utilisateur
     this._store.dispatch(new UserProfileAction.FetchUserProfile());
@@ -146,7 +154,7 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
       numberFormat: [this.userProfile?.numberFormat || 'fr-FR'],
 
       // Préférences d'affichage
-      theme: [this.userProfile?.theme || 'light'],
+      theme: [this.userProfile?.theme || 'light'],  // 'auto' | 'light' | 'dark'
       isEnglishTimeFormat: [Boolean(this.userProfile?.isEnglishTimeFormat)],
       
       // Codes pays pour les téléphones
@@ -456,6 +464,13 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   }
 
   // --- Signalement problème de sécurité ---
+  /** Ouverture demandée depuis le menu du profil (« Signaler un problème »). */
+  @HostListener('window:ndewa-open-report')
+  openReportForm(): void {
+    this.showReportForm = true;
+    setTimeout(() => (document.querySelector('#section-report textarea') as HTMLTextAreaElement | null)?.focus(), 350);
+  }
+
   submitReport(): void {
     if (this.reportDescription.trim().length < 20) {
       this.toastr.warning(this.translate.instant('USER_PROFILE.REPORT_DESCRIPTION_TOO_SHORT'), this.translate.instant('USER_PROFILE.REPORT'));

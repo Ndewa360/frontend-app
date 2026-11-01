@@ -5,6 +5,7 @@ import {Routes, RouterModule} from '@angular/router'
 import {LayoutComponent} from '../layout/default/layout.component'
 
 import {WelcomeComponent} from "./welcome/welcome.component"
+import { Error404Component } from './errors/error404/error404.component'
 import { AgentValidationGuard } from '../shared/guard/agent-validation-guard.service'
 import { SuspendedGuard } from '../shared/guard/suspended.guard'
 
@@ -100,9 +101,10 @@ const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        // Adresse inconnue : page 404 avec bouton de retour. La redirection
+        // silencieuse vers « Propriétés » masquait les liens cassés.
         path: '**',
-        redirectTo: 'properties/home',
-        pathMatch: 'full',
+        component: Error404Component,
       },
     ],
   },

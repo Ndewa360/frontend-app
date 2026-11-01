@@ -39,4 +39,10 @@ export namespace PropertyManagerAction {
   export class Reset {
     static readonly type = '[PropertyManager] Reset';
   }
+
+  /** Bien supprimé : retiré de l'espace « Biens que je gère » et de la liste des gérants. */
+  export class RemoveManagedProperty {
+    static readonly type = '[PropertyManager] Remove Managed Property';
+    constructor(public propertyId: string) {}
+  }
 }

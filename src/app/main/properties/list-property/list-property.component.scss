@@ -487,4 +487,7 @@ $manager-bg:  #f3f0ff;
   svg { width: 15px; height: 15px; }
 
   &:hover { background: #f5f5f5; border-color: #ccc; color: #333; }
+
+  &--danger { color: #dc2626; }
+  &--danger:hover { background: #fef2f2; border-color: #fca5a5; color: #b91c1c; }
 }

@@ -41,19 +41,6 @@ export class TeamComponent implements OnInit {
       // experience: '8+ ans'
     },
     {
-      id: 'kell-momo',
-      name: 'Kell Momo',
-      position: 'CMO',
-      image: 'assets/team/kell-momo.jpg',
-      socialLinks: {
-        linkedin: 'https://www.linkedin.com/in/kell-momo',
-        facebook: 'https://www.facebook.com/profile.php?id=100077568106642'
-        // twitter: 'https://twitter.com/kell_momo',
-        // instagram: 'https://instagram.com/kell.momo'
-      }
-      // experience: '10+ ans'
-    },
-    {
       id: 'konguep-elvira',
       name: 'Konguep Elvira',
       position: 'CFO',

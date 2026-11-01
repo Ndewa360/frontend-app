@@ -100,121 +100,77 @@
         </div>
       </div>
     </div>
+    <!-- Notifications : celles du serveur et les alertes calculées (NotificationManagerService) -->
     <div class="app-mini-sidebar__list__item" ngbDropdown container="body" *ngIf="userProfile$ | async">
-      <div class="app-mini-sidebar__list__item__pill" (click)="onFakeLoading()" placement="right" container="body"
+      <div class="app-mini-sidebar__list__item__pill relative" placement="right" container="body"
         [ngbTooltip]="'SIDEBAR.NOTIFICATIONS' | translate" ngbDropdownToggle>
         <youpez-ibm-icon iconName="notification" iconSize="24"></youpez-ibm-icon>
+        <span *ngIf="unreadCount > 0" class="mini-sidebar-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
       </div>
       <div ngbDropdownMenu class="relative">
         <div fxLayout="column">
-          <div class="app-list-header-alt" ngbDropdownItem>
+          <div class="app-list-header-alt">
             <div class="flex justify-between items-center">
               <div>{{ 'SIDEBAR.NOTIFICATIONS' | translate }}</div>
-              <div class="app-helper-text-01 app-color-danger">+ {{notifications.length}}</div>
+              <div class="app-helper-text-01 app-color-danger" *ngIf="unreadCount > 0">
+                {{ 'SIDEBAR.UNREAD_COUNT' | translate: { count: unreadCount } }}
+              </div>
             </div>
           </div>
           <div fxFlex>
-            <div class="relative" style="height: 220px;width: 300px">
+            <div class="relative" style="height: 260px;width: 320px">
               <div class="app-a-box app-scrollbar-fix">
                 <ng-scrollbar>
-                  <ng-container *ngIf="loading">
-                    <div class="p-4">
-                      <ibm-skeleton-text [lines]="12" [minLineWidth]="70" [maxLineWidth]="220">
-                      </ibm-skeleton-text>
-                    </div>
-                  </ng-container>
-                  <ng-container *ngIf="!loading">
-                    <div class="app-list app-list--hover app-list--no-border
-                    app-list--p-notifications app-list--select app-helper-text-01">
-                      <ng-container *ngFor="let item of notifications">
-                        <div class="app-list__item" ngbDropdownItem>
-                          <div class="app-list__item__prefix">
-                            <ng-container *ngIf="item.level === 'bug'">
-                              <ibm-tag type="red">bug</ibm-tag>
-                            </ng-container>
-                            <ng-container *ngIf="item.level === 'feature'">
-                              <ibm-tag type="blue">feature</ibm-tag>
-                            </ng-container>
-                            <ng-container *ngIf="item.level === 'accept'">
-                              <ibm-tag type="green">accept</ibm-tag>
-                            </ng-container>
-                            <ng-container *ngIf="item.level === 'default'">
-                              <ibm-tag type="cool-gray">info</ibm-tag>
-                            </ng-container>
-                          </div>
-                          <div class="app-list__item__content overflow-hidden">
-                            <div class="truncate">{{item.text}}</div>
-                          </div>
-                          <div class="app-list__item__suffix text-muted">
-                            <div>{{item.date}}</div>
-                          </div>
+                  <div *ngIf="notifications.length === 0" class="mini-sidebar-empty">
+                    <youpez-ibm-icon iconName="notification" iconSize="24"></youpez-ibm-icon>
+                    <p>{{ 'SIDEBAR.NO_NOTIFICATIONS' | translate }}</p>
+                  </div>
+                  <div *ngIf="notifications.length > 0"
+                       class="app-list app-list--hover app-list--no-border app-list--p-notifications app-list--select app-helper-text-01">
+                    <ng-container *ngFor="let item of notifications; trackBy: trackByNotification">
+                      <div class="app-list__item" ngbDropdownItem (click)="openNotification(item)">
+                        <div class="app-list__item__prefix">
+                          <span class="w-2 h-2 rounded-full inline-block"
+                                [ngClass]="item.isRead ? 'bg-transparent' : 'app-bg-primary'"></span>
                         </div>
-                      </ng-container>
-                    </div>
-                  </ng-container>
+                        <div class="app-list__item__content overflow-hidden">
+                          <div class="truncate" [class.font-semibold]="!item.isRead">{{ item.title }}</div>
+                          <div class="truncate app-label-01">{{ item.message }}</div>
+                        </div>
+                        <div class="app-list__item__suffix text-muted">
+                          <div>{{ item.createdAt | date:'dd/MM HH:mm' }}</div>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
                 </ng-scrollbar>
               </div>
             </div>
           </div>
-          <div class="app-list-footer-alt text-center app-helper-text-01 mb-2" ngbDropdownItem>
-            <a>{{ 'SIDEBAR.VIEW_ALL' | translate }}</a>
+          <div class="app-list-footer-alt text-center app-helper-text-01 mb-2" ngbDropdownItem
+               *ngIf="unreadCount > 0" (click)="markAllNotificationsAsRead()">
+            <a class="cursor-pointer">{{ 'SIDEBAR.MARK_ALL_READ' | translate }}</a>
           </div>
         </div>
       </div>
     </div>
+    <!-- Messages : aucune messagerie interne pour l'instant, état vide explicite -->
     <div class="app-mini-sidebar__list__item" ngbDropdown container="body" *ngIf="userProfile$ | async">
-      <div class="app-mini-sidebar__list__item__pill" (click)="onFakeLoading()" placement="right" container="body"
+      <div class="app-mini-sidebar__list__item__pill" placement="right" container="body"
         [ngbTooltip]="'SIDEBAR.MESSAGES' | translate" ngbDropdownToggle>
         <youpez-ibm-icon iconName="chat" iconSize="24"></youpez-ibm-icon>
       </div>
       <div ngbDropdownMenu class="relative">
         <div fxLayout="column">
-          <div class="app-list-header-alt" ngbDropdownItem>
-            <div class="flex justify-between items-center">
-              <div>{{ 'SIDEBAR.MESSAGES' | translate }}</div>
-              <div class="app-helper-text-01 app-color-success">+ {{messages.length}}</div>
-            </div>
+          <div class="app-list-header-alt">
+            <div>{{ 'SIDEBAR.MESSAGES' | translate }}</div>
           </div>
-          <div fxFlex>
-            <div class="relative" style="height: 220px;width: 300px">
-              <div class="app-a-box app-scrollbar-fix">
-                <ng-scrollbar>
-                  <ng-container *ngIf="loading">
-                    <div class="p-4">
-                      <ibm-skeleton-text [lines]="12" [minLineWidth]="70" [maxLineWidth]="220">
-                      </ibm-skeleton-text>
-                    </div>
-                  </ng-container>
-                  <ng-container *ngIf="!loading">
-                    <div class="app-list app-list--hover app-list--select app-list--p-messages">
-                      <ng-container *ngFor="let item of messages">
-                        <div class="app-list__item app-list__item--align-top" ngbDropdownItem>
-                          <div class="app-list__item__prefix mt-3">
-                            <img loading="lazy" [src]="item.avatar" class="w-8 h-8 rounded-full" />
-                          </div>
-                          <div class="app-list__item__content">
-                            <div class="overflow-hidden">
-                              <div class="flex items-center">
-                                <ng-container *ngIf="item.read === false">
-                                  <span class="w-2 h-2 app-bg-primary rounded-full inline-block mr-2"></span>
-                                </ng-container>
-
-                                <span class="app-productive-heading-01">{{item.name}}</span>
-                              </div>
-                              <div class="app-helper-text-01 truncate mb-1">{{item.text}}</div>
-                              <div class="app-label-01">{{item.date}}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </ng-container>
-                    </div>
-                  </ng-container>
-                </ng-scrollbar>
-              </div>
-            </div>
-          </div>
-          <div class="app-list-footer-alt text-center app-helper-text-01 mb-2" ngbDropdownItem>
-            <a>{{ 'SIDEBAR.VIEW_ALL' | translate }}</a>
+          <div class="mini-sidebar-empty" style="width: 320px">
+            <youpez-ibm-icon iconName="chat" iconSize="24"></youpez-ibm-icon>
+            <p>{{ 'SIDEBAR.NO_MESSAGES' | translate }}</p>
+            <button type="button" class="mini-sidebar-empty__action" (click)="navigateToSupport()">
+              {{ 'SIDEBAR.CONTACT_SUPPORT' | translate }}
+            </button>
           </div>
         </div>
       </div>

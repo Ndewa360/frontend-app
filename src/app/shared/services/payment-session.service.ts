@@ -67,7 +67,8 @@ export class PaymentSessionService {
       },
       error: (err) => {
         const message = err?.error?.message?.[0] || err?.message || 'Erreur lors de la création de la session de paiement';
-        this.router.navigate([`/${lang}/error/payment-error`], {
+        // Page d'erreur de paiement existante : /:lang/payment/error/:token
+        this.router.navigate([`/${lang}/payment/error/session`], {
           queryParams: { message }
         });
       }

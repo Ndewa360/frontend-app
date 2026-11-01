@@ -413,6 +413,13 @@ $primary-dark: rgb(184, 126, 9);
     color: #fff;
     &:hover { background: rgb(184, 126, 9); }
   }
+
+  &.btn-delete-compact {
+    background: #dc2626;
+    border-color: transparent;
+    color: #fff;
+    &:hover { background: #b91c1c; }
+  }
 }
 
 .btn-icon-badge {

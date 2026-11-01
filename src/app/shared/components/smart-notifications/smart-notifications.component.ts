@@ -2,7 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter, Inject, PLATFORM_ID } f
 import { isPlatformBrowser, NgIf, NgFor } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable, interval } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
+import { currentAppLanguage } from '../../services/localization/app-locale';
 
 import { BaseComponent } from '../../utils/base-component';
 import { NotificationManagerService, SmartNotification } from '../../services/notification-manager.service';
@@ -50,6 +51,21 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     super();
+  }
+
+  private currentLang(): string {
+    return currentAppLanguage();
+  }
+
+  /**
+   * Ouvre la page liée à une notification : préfixe de langue ajouté et
+   * fragment (#finances…) conservé. `router.navigate([route])` encodait le
+   * « # » et ne préfixait pas la langue : la page était introuvable.
+   */
+  private openRoute(route: string): void {
+    const lang = this.currentLang();
+    const url = route.startsWith(`/${lang}/`) ? route : `/${lang}${route.startsWith('/') ? '' : '/'}${route}`;
+    this.router.navigateByUrl(url);
   }
 
   ngOnInit(): void {
@@ -134,7 +150,7 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
 
     // Naviguer vers l'action si définie
     if (notification.actionRoute) {
-      this.router.navigate([notification.actionRoute]);
+      this.openRoute(notification.actionRoute);
       this.close();
     }
   }
@@ -143,7 +159,7 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
     event.stopPropagation();
     
     if (notification.actionRoute) {
-      this.router.navigate([notification.actionRoute]);
+      this.openRoute(notification.actionRoute);
       this.close();
     }
   }
@@ -176,7 +192,8 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
 
   openSettings(): void {
     // Ouvrir les paramètres de notification
-    this.router.navigate(['/app/profile/notifications']);
+    // Préférences de notification : onglet du profil.
+    this.router.navigate([`/${this.currentLang()}/app/profile`], { queryParams: { tab: 'notifications' } });
     this.close();
   }
 
@@ -186,7 +203,9 @@ export class SmartNotificationsComponent extends BaseComponent implements OnInit
   }
 
   viewAllNotifications(): void {
-    this.router.navigate(['/app/notifications']);
+    // Pas de page dédiée : le panneau affiche déjà toutes les notifications.
+    this.notificationManager.getNotifications().pipe(take(1))
+      .subscribe((items) => items.filter((n) => !n.isRead).forEach((n) => this.notificationManager.markAsRead(n.id)));
     this.close();
   }
 

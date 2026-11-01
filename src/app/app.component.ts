@@ -13,6 +13,8 @@ import { RealtimeEvent, RealtimeService } from './core/realtime';
 import { Title, Meta } from '@angular/platform-browser';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { SettingsService } from 'src/@youpez';
+import { readThemePreference } from 'src/@youpez/services/settings.service';
+import { UserProfileState } from './shared/store/user-profile/user-profile.state';
 import { TutorialsService } from './shared/services/tutorials/tutorials.service';
 import * as dayjs from 'dayjs';
 import 'dayjs/locale/fr';
@@ -94,6 +96,19 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     // Health check backend
     if (isPlatformBrowser(this.platformId)) this.healthCheck.start();
+
+    // Thème choisi dans le profil (enregistré sur le compte) : appliqué dès
+    // que le profil est connu, pour retrouver le même thème sur chaque appareil.
+    if (isPlatformBrowser(this.platformId)) {
+      this.store.select(UserProfileState.selectStateUserProfile).pipe(
+        takeUntil(this.destroy$),
+        filter((profile: any) => !!profile?.theme),
+      ).subscribe((profile: any) => {
+        if (profile.theme !== this.settingsService.getThemePreference()) {
+          this.settingsService.setThemePreference(profile.theme);
+        }
+      });
+    }
     // Traductions — langue extraite depuis l'URL (prioritaire) ou le navigateur
     this.translateService.setDefaultLang('fr');
     const lang = this.getLanguageFromUrl();
@@ -143,7 +158,10 @@ export class AppComponent implements OnInit, OnDestroy {
     // Query params (thème)
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(p => {
       try {
-        this.settingsService.setTheme(p['theme'] || getSessionStorage('--app-theme', 'light'));
+        // Thème : paramètre d'URL, sinon préférence mémorisée sur l'appareil
+        // (Automatique / Clair / Sombre), sinon clair.
+        if (p['theme']) this.settingsService.setTheme(p['theme']);
+        else this.settingsService.setThemePreference(readThemePreference() || getSessionStorage('--app-theme', 'light'));
         this.settingsService.setSideBar(p['sidebar'] || getSessionStorage('--app-theme-sidebar', 'default'));
         this.settingsService.setHeader(p['header'] || getSessionStorage('--app-theme-header', 'default'));
       } catch { console.warn('Paramètres de thème invalides'); }

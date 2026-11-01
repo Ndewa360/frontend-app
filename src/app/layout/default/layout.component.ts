@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit, Inject, PLATFORM_ID} from '@angular/core';
+import { SuspendedAccountBannerComponent } from '../../shared/components/suspended-account-banner/suspended-account-banner.component';
 import {takeUntil} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {defaultRouterTransition, MenuType} from '../../../@youpez';
@@ -31,7 +32,7 @@ import { ExtendedModule } from '@angular/flex-layout/extended';
     defaultRouterTransition
   ],
   standalone: true,
-  imports: [
+  imports: [SuspendedAccountBannerComponent, 
     ExtendedModule,
     EmailConfirmationBannerComponent,
     NavProgressBarComponent,

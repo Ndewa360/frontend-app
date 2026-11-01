@@ -14,7 +14,7 @@
           {{ 'SUPPORT.WELCOME.GLAD_YOU_HERE' | translate }}<br />
         </p>
         <p class="app-body-long-02" style="max-width: 370px;">
-          {{ 'SUPPORT.WELCOME.RECOMMENDATION' | translate }} <span class="font-bold">{{ 'SUPPORT.WELCOME.FOLLOW_TUTORIALS' | translate }}</span> {{ 'COMMON.AND' | translate }} <span class="font-bold">{{ 'SUPPORT.WELCOME.PUBLISH_FIRST_PROPERTY' | translate }}</span>.
+          {{ 'SUPPORT.WELCOME.RECOMMENDATION' | translate }}
         </p>
         <div class="mt-10 app-cards-layout-1">
           <div fxLayout="row wrap" fxLayoutGap="1px grid">
@@ -91,8 +91,7 @@
                   </div>
                 </div>
                 <div fxFlex>
-                  <!-- routerLink="/app/application/manual" -->
-                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile">
+                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile cursor-pointer" (click)="navigateToSupportPage('manual')">
                     <div class="app-card__content">
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
                         width="50px" height="50px" class="app-ibm-pictogram-stroke" x="0px" y="0px" viewBox="0 0 48 48"

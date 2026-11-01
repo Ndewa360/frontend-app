@@ -35,6 +35,11 @@ export class PropertyService
         return this._httpClient.put<ApiResultFormat<PropertyModel>>(`${environment.apiUrl}/property/${id}`, property)
     }
 
+    deleteProperty(propertyId:string): Observable<ApiResultFormat<null>>
+    {
+        return this._httpClient.delete<ApiResultFormat<null>>(`${environment.apiUrl}/property/${propertyId}`)
+    }
+
     getProperty(propertyId):Observable<ApiResultFormat<PropertyModel>>
     {
         return this._httpClient.get<ApiResultFormat<PropertyModel>>(`${environment.apiUrl}/property/${propertyId}`)

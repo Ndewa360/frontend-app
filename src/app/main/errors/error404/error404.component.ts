@@ -27,10 +27,10 @@ export class Error404Component implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Redirection automatique après 3 secondes
-    setTimeout(() => {
-      this.redirectToAppropriateHome();
-    }, 3000);
+    // Pas de redirection automatique : elle renvoyait vers « Propriétés » au
+    // bout de 3 secondes, ce qui masquait les liens cassés (l'utilisateur
+    // croyait que le lien menait aux propriétés). Le bouton « Retour à
+    // l'accueil » reste disponible.
   }
 
   /**

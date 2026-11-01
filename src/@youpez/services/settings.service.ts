@@ -25,7 +25,20 @@ const checkClass = (arr: any[], name: any) => {
 }
 
 const saveSessionStorage = (key: string, value: string) => {
-  return sessionStorage.setItem(key, value)
+  try { sessionStorage.setItem(key, value) } catch {}
+}
+
+/** Préférence de thème mémorisée sur l'appareil : 'auto' | 'light' | 'dark'. */
+export const THEME_PREFERENCE_KEY = 'ndewa-theme-preference'
+export type ThemePreference = 'auto' | 'light' | 'dark'
+
+export function readThemePreference(): ThemePreference | null {
+  try {
+    const value = localStorage.getItem(THEME_PREFERENCE_KEY)
+    return value === 'auto' || value === 'light' || value === 'dark' ? value : null
+  } catch {
+    return null
+  }
 }
 
 @Injectable({
@@ -41,7 +54,47 @@ export class SettingsService {
   public $theme = this.theme.asObservable()
   public themeChanged: EventEmitter<any> = new EventEmitter()
 
+  /** Préférence choisie (« Automatique » suit le réglage clair/sombre de l'appareil). */
+  private preference: ThemePreference = 'light'
+  private systemDarkQuery?: MediaQueryList
+  private readonly onSystemThemeChange = () => {
+    if (this.preference === 'auto') this.setTheme(this.resolvePreference('auto'))
+  }
+
   constructor(@Inject(DOCUMENT) private document: Document) {
+  }
+
+  /**
+   * Applique et mémorise une préférence de thème. Le thème était gardé pour
+   * la session seulement (perdu à la fermeture du navigateur) et le choix fait
+   * dans le profil n'était jamais appliqué.
+   */
+  public setThemePreference(preference: string | null | undefined) {
+    const pref: ThemePreference = preference === 'dark' || preference === 'auto' ? preference : 'light'
+    this.preference = pref
+    try { localStorage.setItem(THEME_PREFERENCE_KEY, pref) } catch {}
+    this.watchSystemTheme(pref === 'auto')
+    this.setTheme(this.resolvePreference(pref))
+  }
+
+  public getThemePreference(): ThemePreference {
+    return this.preference
+  }
+
+  private resolvePreference(pref: ThemePreference): 'light' | 'dark' {
+    if (pref !== 'auto') return pref
+    try {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    } catch {
+      return 'light'
+    }
+  }
+
+  private watchSystemTheme(enabled: boolean) {
+    if (typeof window === 'undefined' || !window.matchMedia) return
+    if (!this.systemDarkQuery) this.systemDarkQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    this.systemDarkQuery.removeEventListener('change', this.onSystemThemeChange)
+    if (enabled) this.systemDarkQuery.addEventListener('change', this.onSystemThemeChange)
   }
 
   public setTheme(name: any) {
@@ -52,6 +105,12 @@ export class SettingsService {
       this.loadTheme(name)
       this.emitThemeEvent('theme', name)
       saveSessionStorage('--app-theme', name)
+      // Choix explicite (panneau d'apparence) : mémorisé sur l'appareil, sauf
+      // quand il résulte de la préférence « Automatique ».
+      if (this.preference !== 'auto') {
+        this.preference = name === 'dark' ? 'dark' : 'light'
+        try { localStorage.setItem(THEME_PREFERENCE_KEY, this.preference) } catch {}
+      }
     }
     else {
       this.loadTheme('light')
@@ -142,6 +201,7 @@ export class SettingsService {
   private loadLightTheme() {
     this.registerEchartsThemes(getDarkEchartsTheme(), getLightEchartsTheme())
     this.removeTheme('app-theme--dark')
+    this.removeTheme('dark')
     this.setClass('app-theme--light')
     this.loadStyle('theme-light.css')
   }
@@ -150,6 +210,8 @@ export class SettingsService {
     this.registerEchartsThemes(getLightEchartsTheme(), getDarkEchartsTheme())
     this.removeTheme('app-theme--light')
     this.setClass('app-theme--dark')
+    // Classe attendue par Tailwind (darkMode: 'class') : active les variantes dark:.
+    this.setClass('dark')
     this.loadStyle('theme-dark.css')
   }
 

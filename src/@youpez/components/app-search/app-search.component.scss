@@ -107,3 +107,8 @@
   padding: 0;
   background-color: #fcb86d;
 }
+
+/* Résultat sélectionné (souris ou flèches du clavier) */
+.app-list__item--active {
+  background-color: rgba(204, 140, 10, 0.12);
+}

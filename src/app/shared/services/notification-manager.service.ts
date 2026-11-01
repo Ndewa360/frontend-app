@@ -173,7 +173,7 @@ export class NotificationManagerService {
           title: 'Paiement potentiellement en retard',
           message: `Aucun paiement reçu depuis 30 jours pour cette location`,
           actionLabel: 'Voir détails',
-          actionRoute: `/app/properties/${location.property}/payments`,
+          actionRoute: `/app/properties/details/${location.property}#finances`,
           data: { locationId: location._id, propertyId: location.property }
         });
       });
@@ -207,7 +207,7 @@ export class NotificationManagerService {
           title: 'Bail bientôt expiré',
           message: `Un bail expire dans ${daysUntilExpiry} jours`,
           actionLabel: 'Voir détails',
-          actionRoute: `/app/properties/${lease.property}/locations`,
+          actionRoute: `/app/properties/details/${lease.property}#tenants`,
           data: { leaseId: lease._id, locataireId: lease.locataire }
         });
       });
@@ -236,7 +236,7 @@ export class NotificationManagerService {
           title: 'Unité disponible',
           message: `L'unité ${room.code} est actuellement libre`,
           actionLabel: 'Voir détails',
-          actionRoute: `/app/properties/${room.property}/rooms`,
+          actionRoute: `/app/properties/details/${room.property}#units`,
           data: { roomId: room._id, propertyId: room.property }
         });
       });

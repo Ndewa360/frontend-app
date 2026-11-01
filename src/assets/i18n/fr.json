@@ -18,7 +18,12 @@
     "PROFILE": "Profil",
     "HOME": "Accueil",
     "SEARCH_SPACE": "Espace de recherche",
-    "LOGOUT": "Déconnexion"
+    "LOGOUT": "Déconnexion",
+    "UNREAD_COUNT": "{{count}} non lue(s)",
+    "NO_NOTIFICATIONS": "Aucune notification pour le moment.",
+    "MARK_ALL_READ": "Tout marquer comme lu",
+    "NO_MESSAGES": "Aucun message pour le moment.",
+    "CONTACT_SUPPORT": "Contacter le support"
   },
   "COMMON": {
     "SAVE": "Enregistrer",
@@ -55,7 +60,10 @@
     "OTHER_ALERTS": "autres alertes",
     "REFERENCE": "Référence",
     "ON": "sur",
-    "UNITS": "unités"
+    "UNITS": "unités",
+    "OFFLINE": "Hors ligne",
+    "ONLINE": "En ligne",
+    "SETTINGS": "Paramètres"
   },
   "AUTH": {
     "SIGN_IN_TITLE": "Connectez-vous",
@@ -126,7 +134,13 @@
       "SUCCESS_TITLE": "Compte activé avec succès !",
       "ERROR_TITLE": "Erreur lors de l'activation du compte",
       "ERROR_RETRY": "Actualisez la page pour réessayer"
-    }
+    },
+    "AUTH_REQUIRED": "Veuillez vous connecter pour accéder à cette page.",
+    "SESSION_CHECK_ERROR": "Impossible de vérifier votre session. Veuillez vous reconnecter.",
+    "SESSION_CRITICAL_INACTIVE": "Vous avez été déconnecté après une longue période d'inactivité.",
+    "SESSION_ERROR": "Un problème est survenu avec votre session. Veuillez vous reconnecter.",
+    "SESSION_EXPIRED": "Votre session a expiré. Veuillez vous reconnecter.",
+    "SESSION_INACTIVE": "Votre session est inactive. Veuillez vous reconnecter."
   },
   "AUTH_LAYOUT": {
     "WELCOME_TITLE_1": "Bienvenue sur Ndewa360°",
@@ -310,7 +324,16 @@
     "REGISTERED_ON": "Inscrit le",
     "USE_EXISTING_OR_CREATE": "Souhaitez-vous utiliser ce propriétaire existant ou créer un nouveau compte ?",
     "CREATE_NEW": "Créer un nouveau",
-    "USE_EXISTING": "Utiliser l'existant"
+    "USE_EXISTING": "Utiliser l'existant",
+    "DELETE": {
+      "TITLE": "Supprimer ce bien ?",
+      "CONFIRM": "Le bien « {{name}} » et ses unités seront supprimés.",
+      "WARNING": "Cette action est irréversible. Un bien ayant des locations en cours ne peut pas être supprimé : résiliez-les d'abord.",
+      "BUTTON": "Supprimer",
+      "IN_PROGRESS": "Suppression…",
+      "SUCCESS": "Bien supprimé.",
+      "ERROR": "Le bien n'a pas pu être supprimé."
+    }
   },
   "PROPERTY_TYPES": {
     "APARTMENT": "Appartement",
@@ -619,7 +642,8 @@
       "ENDED_CONTRACT": "Contrat terminé",
       "ALL_YEAR": "Toute l'année",
       "LAST_2_MONTHS": "2 derniers mois",
-      "CURRENT_MONTH": "Mois actuel"
+      "CURRENT_MONTH": "Mois actuel",
+      "AHEAD": "En avance"
     },
     "TABLE": {
       "TENANT": "Locataire",
@@ -819,7 +843,7 @@
       "DEFAULT": "Thème par défaut",
       "LIGHT": "Clair",
       "DARK": "Sombre",
-      "AUTO": "Automatique"
+      "AUTO": "Automatique (suit l'appareil)"
     }
   },
   "PROFILE": {
@@ -861,7 +885,8 @@
       "PRIVACY": "Mes données & Cookies",
       "PRIVACY_DESC": "Gérez vos préférences de cookies et exportez vos données personnelles",
       "DANGER": "Zone dangereuse",
-      "DANGER_DESC": "Ces actions sont irréversibles. Procédez avec prudence."
+      "DANGER_DESC": "Ces actions sont irréversibles. Procédez avec prudence.",
+      "REPORT": "Signaler un problème"
     },
     "PRIVACY": {
       "COOKIES_TITLE": "Cookies analytiques",
@@ -1201,7 +1226,9 @@
       "DELETING": "Suppression...",
       "CONFIRM_DELETE": "Supprimer définitivement",
       "SUCCESS": "Paiement supprimé avec succès",
-      "ERROR": "Erreur lors de la suppression du paiement"
+      "ERROR": "Erreur lors de la suppression du paiement",
+      "MESSAGE": "Voulez-vous vraiment supprimer ce paiement ?",
+      "WARNING": "Cette action est irréversible : les totaux et l'historique seront recalculés."
     },
     "CONTRACT_TERMINATION": {
       "TITLE": "Résilier le contrat",
@@ -1414,7 +1441,128 @@
     "PLATFORM_CONFIG_UPDATED": "Configuration mise à jour",
     "PLATFORM_CONFIG_UPDATE_ERROR": "Erreur lors de la mise à jour de la configuration",
     "PLATFORM_CONFIG_LOAD_ERROR": "Erreur lors du chargement de la configuration",
-    "UNEXPECTED_DELETE_ERROR": "Une erreur inattendue est survenue lors de la suppression"
+    "UNEXPECTED_DELETE_ERROR": "Une erreur inattendue est survenue lors de la suppression",
+    "ADMIN_ACCESS_DENIED": "Accès refusé : vous n'avez pas les droits nécessaires.",
+    "ADMIN_AGENT_APPROVED": "Agent approuvé.",
+    "ADMIN_AGENT_APPROVE_ERROR": "L'agent n'a pas pu être approuvé.",
+    "ADMIN_AGENT_REJECTED": "Demande de l'agent refusée.",
+    "ADMIN_AGENT_REJECT_ERROR": "La demande de l'agent n'a pas pu être refusée.",
+    "ADMIN_ASSIGN_ERROR": "L'attribution n'a pas pu être enregistrée.",
+    "ADMIN_BULK_ACTION_ERROR": "L'action groupée a échoué.",
+    "ADMIN_BULK_ACTION_SUCCESS": "Action groupée effectuée.",
+    "ADMIN_CANNOT_DELETE_SYSTEM_ROLE": "Un rôle système ne peut pas être supprimé.",
+    "ADMIN_CANNOT_DUPLICATE_SYSTEM_ROLE": "Un rôle système ne peut pas être dupliqué.",
+    "ADMIN_CANNOT_MODIFY_SYSTEM_ROLE": "Un rôle système ne peut pas être modifié.",
+    "ADMIN_CITY_ADDED": "Ville ajoutée.",
+    "ADMIN_CITY_DELETED": "Ville supprimée.",
+    "ADMIN_CITY_INFO": "Sélectionnez d'abord un pays pour gérer ses villes.",
+    "ADMIN_CITY_STATUS_CHANGE_ERROR": "Le statut de la ville n'a pas pu être modifié.",
+    "ADMIN_CITY_STATUS_UPDATED": "Statut de la ville mis à jour.",
+    "ADMIN_CITY_UPDATED": "Ville modifiée.",
+    "ADMIN_CONFIRM_ERROR": "La confirmation a échoué.",
+    "ADMIN_COUNTRY_ADDED": "Pays ajouté.",
+    "ADMIN_COUNTRY_DELETED": "Pays supprimé.",
+    "ADMIN_COUNTRY_STATUS_UPDATED": "Statut du pays mis à jour.",
+    "ADMIN_COUNTRY_UPDATED": "Pays modifié.",
+    "ADMIN_CREATE_ERROR": "La création a échoué.",
+    "ADMIN_CURRENCY_CREATED": "Devise ajoutée.",
+    "ADMIN_CURRENCY_DEFAULT_ERROR": "La devise par défaut n'a pas pu être définie.",
+    "ADMIN_CURRENCY_DEFAULT_SET": "Devise par défaut définie.",
+    "ADMIN_CURRENCY_DELETED": "Devise supprimée.",
+    "ADMIN_CURRENCY_STATUS_UPDATED": "Statut de la devise mis à jour.",
+    "ADMIN_CURRENCY_UPDATED": "Devise modifiée.",
+    "ADMIN_DATA_REFRESHED": "Données actualisées.",
+    "ADMIN_DELETE_ERROR": "La suppression a échoué.",
+    "ADMIN_DUPLICATE_ERROR": "La duplication a échoué.",
+    "ADMIN_EXPORT_ERROR": "L'export a échoué.",
+    "ADMIN_EXPORT_IN_PROGRESS": "Export en cours de préparation…",
+    "ADMIN_GEONAMES_SOON": "L'import depuis GeoNames sera bientôt disponible.",
+    "ADMIN_IMPORT_SOON": "L'import sera bientôt disponible.",
+    "ADMIN_LOAD_AGENTS_ERROR": "Impossible de charger les agents.",
+    "ADMIN_MARK_PAID_ERROR": "Le paiement n'a pas pu être marqué comme payé.",
+    "ADMIN_NO_CITIES_TO_EXPORT": "Aucune ville à exporter.",
+    "ADMIN_NO_COUNTRIES_TO_EXPORT": "Aucun pays à exporter.",
+    "ADMIN_NO_CURRENCIES_TO_EXPORT": "Aucune devise à exporter.",
+    "ADMIN_NO_PERMISSIONS_MATCH": "Aucune permission ne correspond à votre recherche.",
+    "ADMIN_NO_UNPAID_PERIOD": "Aucune période impayée pour cet utilisateur.",
+    "ADMIN_NO_USER_SPECIFIED": "Aucun utilisateur indiqué.",
+    "ADMIN_PAYMENT_CONFIRMED": "Paiement confirmé.",
+    "ADMIN_PAYMENT_CONFIRMED_BY_PROVIDER": "Paiement confirmé par l'opérateur.",
+    "ADMIN_PAYMENT_MARKED_PAID": "Paiement marqué comme payé.",
+    "ADMIN_PAYMENT_REMINDER_SENT": "Rappel de paiement envoyé.",
+    "ADMIN_PERMISSIONS_AUTO_GENERATED": "Permissions générées automatiquement.",
+    "ADMIN_PERMISSIONS_SAVED": "Permissions enregistrées.",
+    "ADMIN_REACTIVATE_ERROR": "Le compte n'a pas pu être réactivé.",
+    "ADMIN_REFRESH_ERROR": "L'actualisation a échoué.",
+    "ADMIN_REJECTION_REASON_REQUIRED": "Veuillez indiquer le motif du refus.",
+    "ADMIN_REMINDER_ERROR": "Le rappel n'a pas pu être envoyé.",
+    "ADMIN_RESET_EMAIL_SENT": "Email de réinitialisation envoyé.",
+    "ADMIN_RESET_ERROR": "La réinitialisation a échoué.",
+    "ADMIN_ROLES_UPDATED": "Rôles mis à jour.",
+    "ADMIN_ROLE_CREATED": "Rôle créé.",
+    "ADMIN_ROLE_DELETED": "Rôle supprimé.",
+    "ADMIN_ROLE_DUPLICATED": "Rôle dupliqué.",
+    "ADMIN_ROLE_UPDATED": "Rôle modifié.",
+    "ADMIN_SAVE_ERROR": "L'enregistrement a échoué.",
+    "ADMIN_SELECT_AT_LEAST_ONE": "Sélectionnez au moins un élément.",
+    "ADMIN_SERVER_ERROR": "Erreur du serveur. Veuillez réessayer.",
+    "ADMIN_STATUS_CHANGE_ERROR": "Le statut n'a pas pu être modifié.",
+    "ADMIN_STATUS_UPDATED": "Statut mis à jour.",
+    "ADMIN_SUBSCRIPTION_CANCELLED": "Abonnement annulé.",
+    "ADMIN_SUBSCRIPTION_CANCEL_ERROR": "L'abonnement n'a pas pu être annulé.",
+    "ADMIN_SUPPORT_EMAIL_REQUIRED": "L'adresse email du support est obligatoire.",
+    "ADMIN_SUSPEND_ERROR": "Le compte n'a pas pu être suspendu.",
+    "ADMIN_TEST_EMAIL_CONFIG_ERROR": "Configuration email invalide : l'email de test n'a pas pu être envoyé.",
+    "ADMIN_TEST_EMAIL_ERROR": "L'email de test n'a pas pu être envoyé.",
+    "ADMIN_TEST_EMAIL_SENT": "Email de test envoyé.",
+    "ADMIN_TX_DELETED": "Transaction supprimée.",
+    "ADMIN_UPDATE_ERROR": "La modification a échoué.",
+    "ADMIN_USER_CREATED": "Utilisateur créé.",
+    "ADMIN_USER_DELETED": "Utilisateur supprimé.",
+    "ADMIN_USER_NOT_FOUND": "Utilisateur introuvable.",
+    "ADMIN_USER_UPDATED": "Utilisateur modifié.",
+    "ADMIN_VERIFY_ERROR": "La vérification a échoué.",
+    "ASSIGNATION_CREATED_SUCCESS": "Locataire attribué à l'unité.",
+    "ASSIGNATION_ERROR": "L'attribution a échoué.",
+    "ASSIGNATION_SUCCESS": "Attribution effectuée.",
+    "CANNOT_DELETE_ASSIGNED_TENANT": "Ce locataire occupe une unité : résiliez d'abord son contrat avant de le supprimer.",
+    "CANNOT_DELETE_OCCUPIED_UNIT": "Cette unité est occupée : résiliez d'abord le contrat en cours avant de la supprimer.",
+    "CONFIRMATION_EXPIRED": "Le délai de confirmation de votre compte a expiré. Confirmez votre email pour vous connecter.",
+    "CONTRACT_OPEN_ERROR": "Impossible d'ouvrir le contrat.",
+    "CONTRACT_TEMPLATE_DEFAULT_SET_ERROR": "Le modèle n'a pas pu être défini par défaut.",
+    "CONTRACT_TEMPLATE_DEFAULT_SET_SUCCESS": "Modèle défini par défaut.",
+    "CONTRACT_TEMPLATE_STATUS_TOGGLED": "Statut du modèle mis à jour.",
+    "CONTRACT_TEMPLATE_STATUS_TOGGLE_ERROR": "Le statut du modèle n'a pas pu être modifié.",
+    "DATA_PREPARATION_ERROR": "Erreur lors de la préparation des données.",
+    "FORM_INVALID_TITLE": "Formulaire incomplet",
+    "FORM_VALIDATION_ERROR": "Veuillez corriger les champs signalés.",
+    "GOOGLE_NOT_CONFIGURED": "La connexion avec Google n'est pas disponible pour le moment.",
+    "INCOMPLETE_PAYMENT_DATA": "Les informations du paiement sont incomplètes.",
+    "INSUFFICIENT_PAYMENT_DATA": "Informations insuffisantes pour enregistrer le paiement.",
+    "MODAL_OPEN_ERROR": "Impossible d'ouvrir cette fenêtre.",
+    "NO_LOCATION_FOUND": "Aucun contrat de location trouvé.",
+    "NO_PAYMENT_DATA": "Aucune donnée de paiement.",
+    "PAYMENT_ADDED_SUCCESS": "Paiement ajouté.",
+    "PAYMENT_DATA_BUILD_ERROR": "Erreur lors de la préparation du paiement : ",
+    "PAYMENT_DATA_MISSING": "Informations du paiement introuvables.",
+    "PAYMENT_DATA_UNRECOGNIZED": "Format de paiement non reconnu.",
+    "PAYMENT_MODIFIED_SUCCESS": "Paiement modifié.",
+    "PAYMENT_UPDATE_ERROR": "Le paiement n'a pas pu être modifié.",
+    "PDF_GENERATION_ERROR": "Le document PDF n'a pas pu être généré.",
+    "PRINT_POPUP_ERROR": "La fenêtre d'impression a été bloquée par le navigateur. Autorisez les fenêtres pour ce site.",
+    "PROPERTY_NOT_FOUND": "Bien introuvable.",
+    "RECEIPT_DOWNLOADED_SUCCESS": "Reçu téléchargé.",
+    "RECEIPT_DOWNLOAD_ERROR": "Le reçu n'a pas pu être téléchargé.",
+    "SELECT_ROOM_AND_TENANT": "Sélectionnez une unité et un locataire.",
+    "TENANT_ADDED_SUCCESS": "Locataire ajouté.",
+    "TENANT_ASSIGNED_SUCCESS": "Locataire attribué.",
+    "TENANT_ASSIGN_ERROR": "Le locataire n'a pas pu être attribué.",
+    "TENANT_MODIFIED_SUCCESS": "Locataire modifié.",
+    "TOKEN_NOT_PROVIDED": "Lien invalide : le jeton est manquant.",
+    "TRANSACTION_DATA_MISSING": "Informations de la transaction manquantes.",
+    "UNIT_CREATED_SUCCESS": "Unité créée.",
+    "UNIT_MODIFIED_SUCCESS": "Unité modifiée.",
+    "UNIT_NOT_FOUND": "Unité introuvable."
   },
   "DEBUG": {
     "TOKEN_REFRESH_SUCCESS": "Test refresh token réussi !",
@@ -1527,7 +1675,8 @@
     "ACCOUNT_SUSPENDED_TITLE": "Compte suspendu — Accès restreint",
     "ACCOUNT_SUSPENDED_DETAIL": "Vous avez {{count}} facture(s) impayée(s) pour un total de {{amount}}. Réglez vos impayés pour retrouver un accès complet.",
     "DEPOSIT_WALLET": "Alimenter mon wallet",
-    "REACTIVATE_ACCOUNT": "Réactiver mon compte"
+    "REACTIVATE_ACCOUNT": "Réactiver mon compte",
+    "ACCOUNT_SUSPENDED_MESSAGE": "Votre compte est suspendu pour impayé. Il reste consultable en lecture seule ; réglez vos factures pour pouvoir à nouveau ajouter, modifier ou supprimer."
   },
   "ROOM_TYPES": {
     "ROOM": "Chambre",
@@ -1588,11 +1737,11 @@
   },
   "WELCOME": {
     "GREETING": "Bonjour {{name}}, bienvenue sur Ndewa360°",
-    "CONGRATULATIONS_MESSAGE": "Félicitations pour avoir commencé votre voyage avec la plateforme Ndewa360°. Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de bien immobiliers.",
+    "CONGRATULATIONS_MESSAGE": "Félicitations pour avoir commencé votre voyage avec la plateforme Ndewa360°. Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de biens immobiliers.",
     "GETTING_STARTED_GUIDE": "Guide de démarrage",
     "GUIDE_DESCRIPTION": "Découvrez la plateforme Ndewa360° en utilisant des guides d'utilisation & vidéos",
     "FAQ_TITLE": "FAQ",
-    "FAQ_DESCRIPTION": "Foire aux questions si vous ne trouvez pas de réponse",
+    "FAQ_DESCRIPTION": "Consultez la foire aux questions si vous ne trouvez pas de réponse",
     "DOCUMENTATION_TITLE": "Documentation",
     "DOCUMENTATION_DESCRIPTION": "Parcourir la documentation pour obtenir des réponses",
     "SUPPORT_TITLE": "Support",
@@ -1713,7 +1862,8 @@
           "STATUS": "Statut",
           "ALL_STATUS": "Tous les statuts",
           "RESET": "Réinitialiser"
-        }
+        },
+        "ALL_TYPES": "Tous les types"
       },
       "TABLE": {
         "NAME": "Nom",
@@ -2705,6 +2855,25 @@
       "SUBTITLE": "Automatisez votre gestion locative.",
       "CTA": "Demarrer mon onboarding",
       "CTA_SUB": "Gratuit - Aucune carte requise"
+    },
+    "MANAGE_SECTION": {
+      "TITLE": "Gérez vos biens en toute simplicité",
+      "SUBTITLE": "Ajoutez votre bien et suivez vos loyers, locataires et contrats depuis un seul espace.",
+      "ADD_PROPERTY_BUTTON": "Ajouter un bien"
+    },
+    "SEARCH_FORM": {
+      "LOCATION_LABEL": "Ville",
+      "LOCATION_PLACEHOLDER": "Choisissez une ville",
+      "PROPERTY_TYPE_LABEL": "Type de logement",
+      "PROPERTY_TYPE_PLACEHOLDER": "Choisissez un type",
+      "BUDGET_LABEL": "Budget maximum",
+      "BUDGET_PLACEHOLDER": "Ex : 75 000 FCFA",
+      "REQUIRED_FIELD": "Ce champ est obligatoire",
+      "SEARCH_BUTTON": "Rechercher"
+    },
+    "TABS": {
+      "RENT": "Louer",
+      "MANAGE": "Gérer"
     }
   },
   "SEARCH_MODULE": {
@@ -4000,7 +4169,8 @@
         "TENANT": "Locataire",
         "PAYMENTS": "Paiements",
         "CONTRACT": "Contrat",
-        "GALLERY": "Galerie"
+        "GALLERY": "Galerie",
+        "ACTIONS": "Actions"
       },
       "GENERAL_INFO": "Informations générales",
       "UNIT_CODE": "Code de l'unité",
@@ -4668,7 +4838,8 @@
       "PRIORITY_SUPPORT": "Support prioritaire",
       "ADVANCED_REPORTS": "Rapports avancés",
       "UPGRADE_TO_PREMIUM": "Voir les conditions",
-      "UPGRADING": "Upgrade en cours..."
+      "UPGRADING": "Upgrade en cours...",
+      "ACCOUNT_SUSPENDED": "Compte suspendu : réglez vos factures impayées pour le réactiver."
     },
     "INVOICES": {
       "TITLE": "Factures"
@@ -4751,7 +4922,8 @@
         "PAID": "Payée",
         "WAITING": "En attente de paiement",
         "UNPAID": "Impayée",
-        "UNKNOWN": "Statut inconnu"
+        "UNKNOWN": "Statut inconnu",
+        "FREE": "Gratuit"
       },
       "PERIOD_UNDEFINED": "Période non définie",
       "DAYS_SUFFIX": "jours"
@@ -4917,14 +5089,18 @@
       "WITHDRAWAL_FAILED_TITLE": "Échec",
       "WITHDRAWAL_CONFIRMED": "Retrait confirmé",
       "AGGREGATOR_ERROR": "Erreur agrégateur"
+    },
+    "SUBSCRIPTION": {
+      "PAYMENT_REMINDER_SENT": "Rappel de paiement envoyé.",
+      "SUSPENSION_REASON_REQUIRED": "Veuillez indiquer le motif de la suspension."
     }
   },
   "SUPPORT": {
     "WELCOME": {
       "TITLE": "Bienvenue sur le support de Ndewa360°",
       "CONGRATULATIONS": "Félicitations pour avoir commencé votre voyage avec la plateforme Ndewa360°.",
-      "GLAD_YOU_HERE": "Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de bien immobiliers.",
-      "RECOMMENDATION": "Nous vous recommandons de suivre les tutoriels et de publier votre premier bien.",
+      "GLAD_YOU_HERE": "Nous sommes ravis que vous soyez ici et nous avons hâte de vous aider à démarrer votre gestion de biens immobiliers.",
+      "RECOMMENDATION": "Nous vous recommandons de publier votre premier bien. Suivez les tutoriels pour savoir comment faire.",
       "FOLLOW_TUTORIALS": "suivre les tutoriels",
       "PUBLISH_FIRST_PROPERTY": "de publier votre premier bien",
       "GETTING_STARTED": {
@@ -4947,7 +5123,7 @@
       },
       "FAQ": {
         "TITLE": "FAQ",
-        "DESCRIPTION": "Foire aux questions si vous ne trouvez pas de réponse"
+        "DESCRIPTION": "Consultez la foire aux questions si vous ne trouvez pas de réponse"
       },
       "DOCUMENTATION": {
         "TITLE": "Documentation",
@@ -5227,7 +5403,7 @@
       "LOCATION": {
         "TITLE": "Localisation",
         "DESCRIPTION": "Notre siège",
-        "ADDRESS": "Douala, Cameroun"
+        "ADDRESS": "Bangangté, Cameroun"
       }
     },
     "FORM": {
@@ -5621,10 +5797,64 @@
     "RENT_ABOVE": "Loyers au-delà de {{min}}",
     "CONTACT_US": "Contactez-nous",
     "OCCUPATION_RULE": "Seuls les logements occupés comptent. Un logement occupé au moins {{days}} jours dans le mois compte pour tout le mois. Le palier est vérifié chaque mois.",
-    "GOLD_CONTACT": "Forfait Gold ou question sur votre tarif :"
+    "GOLD_CONTACT": "Forfait Gold ou question sur votre tarif :",
+    "WRITE_WITH_GMAIL": "Écrire avec Gmail",
+    "OPEN_MAIL_APP": "Ouvrir ma messagerie"
   },
   "PROPERTY_HISTORY": {
     "PAYMENT_DETAILS_TITLE": "Détails du paiement",
     "PAYMENT_DETAILS": "Paiement de {{amount}} - {{type}}"
+  },
+  "COOKIE_BANNER": {
+    "MESSAGE": "Nous utilisons des cookies analytiques (Google Analytics) pour améliorer notre service. Consultez notre",
+    "POLICY_LINK": "Politique de cookies",
+    "DECLINE": "Refuser",
+    "ACCEPT": "Accepter",
+    "PREFERENCES": "Préférences cookies"
+  },
+  "GEOGRAPHY": {
+    "CITY": {
+      "CREATE_ERROR": "La ville n'a pas pu être ajoutée.",
+      "CREATE_SUCCESS": "Ville « {{name}} » ajoutée.",
+      "LOAD_ERROR": "Impossible de charger les villes.",
+      "SELECT_COUNTRY_AND_CITY": "Sélectionnez un pays et une ville."
+    },
+    "COUNTRY": {
+      "CREATE_ERROR": "Le pays n'a pas pu être ajouté.",
+      "CREATE_SUCCESS": "Pays « {{name}} » ajouté.",
+      "DELETE_ERROR": "Le pays n'a pas pu être supprimé.",
+      "DELETE_SUCCESS": "Pays « {{name}} » supprimé.",
+      "LOAD_ERROR": "Impossible de charger les pays.",
+      "UPDATE_ERROR": "Le pays n'a pas pu être modifié.",
+      "UPDATE_SUCCESS": "Pays « {{name}} » modifié."
+    }
+  },
+  "GLOBAL_SEARCH": {
+    "PLACEHOLDER": "Rechercher un bien, une unité, un locataire ou une page…",
+    "RESULTS": "Résultats",
+    "SUGGESTIONS": "Accès rapide",
+    "NO_RESULTS": "Aucun résultat. Essayez un autre mot-clé.",
+    "OPEN_HINT": "Appuyez sur Entrée ou cliquez pour ouvrir la page.",
+    "GO_TO_PAGE": "Aller à la page",
+    "KINDS": {
+      "PAGE": "Page",
+      "PROPERTY": "Bien",
+      "UNIT": "Unité",
+      "TENANT": "Locataire"
+    },
+    "PAGES": {
+      "PROPERTIES": "Mes biens",
+      "BILLING": "Facturation et abonnement",
+      "INVOICES": "Mes factures",
+      "WALLET": "Portefeuille",
+      "CONTRACT_TEMPLATES": "Modèles de contrat",
+      "PROFILE": "Mon profil",
+      "SUPPORT": "Aide et support",
+      "PUBLIC_SEARCH": "Recherche de logements"
+    }
+  },
+  "SUSPENDED_BANNER": {
+    "MESSAGE": "Votre compte est suspendu pour impayé : il est en lecture seule. Vous pouvez consulter vos biens et télécharger vos documents, mais pas ajouter, modifier ni supprimer.",
+    "ACTION": "Régler mes factures"
   }
 }

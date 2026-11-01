@@ -13,7 +13,8 @@ import { SkeletonModule, TagModule } from 'carbon-components-angular';
 import { ExtendedModule } from '@angular/flex-layout/extended';
 import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
 import { NgbTooltip, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem } from '@ng-bootstrap/ng-bootstrap';
-import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { NgIf, NgClass, NgFor, AsyncPipe, DatePipe } from '@angular/common';
+import { NotificationManagerService, SmartNotification } from 'src/app/shared/services/notification-manager.service';
 import { AppLogoComponent } from '../../../../@youpez/components/app-logo/app-logo.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { FlexModule } from '@angular/flex-layout/flex';
@@ -23,7 +24,7 @@ import { FlexModule } from '@angular/flex-layout/flex';
   templateUrl: './layout-mini-sidebar.component.html',
   styleUrls: ['./layout-mini-sidebar.component.scss'],
   standalone: true,
-  imports: [FlexModule, NgScrollbar, RouterLink, AppLogoComponent, NgIf, NgbTooltip, IbmIconComponent, NgClass, ExtendedModule, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem, SkeletonModule, NgFor, TagModule, AsyncPipe, TranslatePipe]
+  imports: [FlexModule, NgScrollbar, RouterLink, AppLogoComponent, NgIf, NgbTooltip, IbmIconComponent, NgClass, ExtendedModule, NgbDropdown, NgbDropdownToggle, NgbDropdownMenu, NgbDropdownItem, SkeletonModule, NgFor, TagModule, AsyncPipe, DatePipe, TranslatePipe]
 })
 export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
 
@@ -36,23 +37,9 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
   currentRoute = '';
   private destroy$ = new Subject<void>();
 
-  public notifications = [
-    // {
-    //   level: 'bug',
-    //   text: 'Failed to get shared datastores in kubernetes cluster',
-    //   date: '20m',
-    // },
-   
-  ];
-  public messages = [
-    // {
-    //   avatar: 'assets/img/avatar/avatarinit.png',
-    //   name: 'John Belinda',
-    //   text: 'Cannot start service web: error while creating mount source path ',
-    //   date: '5 mins ago',
-    //   read: false,
-    // },
-  ];
+  /** Notifications réelles (serveur + alertes calculées), les plus récentes d'abord. */
+  public notifications: SmartNotification[] = [];
+  public unreadCount = 0;
 
   public loading: boolean = false;
   public loadingAdmin: boolean = false;
@@ -63,7 +50,8 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     private agentStatusService: AgentStatusService,
     private languageUrlService: LanguageUrlService,
     private languagePreservation: LanguagePreservationService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private notificationManager: NotificationManagerService,
   ) {
   }
 
@@ -98,6 +86,33 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
 
     // Initialiser la route courante
     this.currentRoute = this._router.url;
+
+    this.notificationManager.getNotifications()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((items) => {
+        this.notifications = [...(items || [])]
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 30);
+        this.unreadCount = (items || []).filter((n) => !n.isRead).length;
+      });
+  }
+
+  trackByNotification(_: number, item: SmartNotification): string {
+    return item.id;
+  }
+
+  /** Marque la notification comme lue et ouvre la page liée, s'il y en a une. */
+  openNotification(item: SmartNotification): void {
+    if (!item.isRead) this.notificationManager.markAsRead(item.id);
+    if (item.actionRoute) {
+      const lang = this.languageUrlService.getCurrentLanguage();
+      const route = item.actionRoute.startsWith(`/${lang}/`) ? item.actionRoute : `/${lang}${item.actionRoute.startsWith('/') ? '' : '/'}${item.actionRoute}`;
+      this._router.navigateByUrl(route);
+    }
+  }
+
+  markAllNotificationsAsRead(): void {
+    this.notifications.filter((n) => !n.isRead).forEach((n) => this.notificationManager.markAsRead(n.id));
   }
 
   /**
@@ -126,12 +141,7 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     this.itemClick.next(event);
   }
 
-  onFakeLoading() {
-    this.loading = true;
-    setTimeout(() => {
-      this.loading = false;
-    }, 500);
-  }
+
 
   logout()
   {
@@ -193,12 +203,13 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
 
   navigateToAbout(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this._router.navigate([`/${currentLang}/app/application/welcome`]);
+    this._router.navigate([`/${currentLang}/home/about`]);
   }
 
+  /** Grille des offres (les anciennes adresses /app/pricing/... n'existaient pas). */
   navigateToPricing(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this._router.navigate([`/${currentLang}/app/pricing/modern`]);
+    this._router.navigate([`/${currentLang}/app/facturation/plan/plan-list`]);
   }
 
   navigateToHome(): void {

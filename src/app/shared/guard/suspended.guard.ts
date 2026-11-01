@@ -15,14 +15,10 @@ export class SuspendedGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
-    const subscription = this.store.selectSnapshot(SouscriptionState.selectCurrentSubscription);
-    if (!subscription || subscription.accountStatus !== 'suspended') return true;
-
-    // Déjà sur une route autorisée — laisser passer
-    const isAllowed = BILLING_PATHS.some(p => state.url.includes(p));
-    if (isAllowed) return true;
-
-    const lang = this.languagePreservation.getCurrentOrPreservedLanguage();
-    return this.router.parseUrl(`/${lang}/app/facturation/plan/dashboard`);
+    // Compte suspendu pour impayé : lecture seule. Toutes les pages restent
+    // consultables (biens, unités, documents) ; les modifications sont
+    // refusées par le serveur et un bandeau invite à régulariser. L'ancienne
+    // redirection systématique vers la facturation bloquait toute consultation.
+    return true;
   }
 }

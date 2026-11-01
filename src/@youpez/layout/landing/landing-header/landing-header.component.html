@@ -1,6 +1,6 @@
 <nav class="bg-white border-gray-200 dark:bg-gray-900 shadow-md fixed w-full nav-header">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-      <a [routerLink]="['/' + getCurrentLanguage() + '/home']" class="flex items-center max-md:m-10 max-md:p-5">
+    <div class="nav-header__inner max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+      <a [routerLink]="['/' + getCurrentLanguage() + '/home']" class="nav-header__logo flex items-center" [attr.aria-label]="'HEADER.HOME' | translate">
           <youpez-logo class="cursor-pointer" type="white" logoWidth="75px"></youpez-logo>
       </a>
       <div class="header-profil-user block md:hidden" *ngIf="(isLogin$ | async)">
@@ -24,17 +24,17 @@
       </button>
       <!-- Menu desktop -->
       <div class="hidden w-full md:block md:w-auto">
-        <ul class="font-medium flex items-center flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white ">
+        <ul class="nav-links font-medium flex items-center flex-row">
           <li>
             <a [routerLink]="['/' + getCurrentLanguage() + '/home']" 
                routerLinkActive="active-nav-link"
                [routerLinkActiveOptions]="{exact: true}"
-               class="block py-2 px-3 text-gray-900 md:bg-transparent  md:p-0 dark:text-white md:dark:hover:bg-transparent">
+               class="nav-link">
               <span>{{ 'HEADER.HOME' | translate }}</span>
             </a>
           </li>
           <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/home/team']" routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{exact: false}" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+            <a [routerLink]="['/' + getCurrentLanguage() + '/home/team']" routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{exact: false}" class="nav-link">
               <span>{{ 'HEADER.TEAM' | translate }}</span>
             </a>
           </li>
@@ -42,15 +42,20 @@
             <a [routerLink]="['/' + getCurrentLanguage() + '/search/index']" 
                routerLinkActive="active-nav-link"
                [routerLinkActiveOptions]="{exact: false}"
-               class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+               class="nav-link">
               <span>{{ 'HEADER.SEARCH_PROPERTIES' | translate }}</span>
+            </a>
+          </li>
+          <li>
+            <a [routerLink]="['/' + getCurrentLanguage() + '/home']" fragment="tarifs" class="nav-link">
+              <span>{{ 'HEADER.PRICING' | translate }}</span>
             </a>
           </li>
           <li>
             <a [routerLink]="['/' + getCurrentLanguage() + '/home/contact']" 
                routerLinkActive="active-nav-link"
                [routerLinkActiveOptions]="{exact: false}"
-               class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+               class="nav-link">
               <span>{{ 'HEADER.CONTACT' | translate }}</span> 
             </a>
           </li>
@@ -59,7 +64,7 @@
                routerLinkActive="active-nav-link"
                [routerLinkActiveOptions]="{exact: false}"
                fragment="support" 
-               class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">
+               class="nav-link">
               <span>{{ 'HEADER.SUPPORT' | translate }}</span> 
             </a>
           </li>
@@ -88,90 +93,52 @@
         </ul>
       </div>
   
-      <!-- Mobile menu -->
-      <div *ngIf="isMenuOpen" class="md:hidden bg-orange-100 w-full md:w-auto mobile-menu transition-all">
-        <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-          <li>
-            <a href="#" class="block text-gray-900 py-2 px-3 md:bg-transparent  md:p-0 dark:text-white">{{ 'HEADER.HOME' | translate }}</a>
-          </li>
-          <li>
-            <a href="#" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">{{ 'HEADER.TEAM' | translate }}</a>
-          </li>
-          <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/search/index']" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">{{ 'HEADER.SEARCH_PROPERTIES' | translate }}</a>
-          </li>
-          <li>
-            <a href="#" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">{{ 'HEADER.PRICING' | translate }}</a>
-          </li>
-          <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/home/contact']" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">{{ 'HEADER.CONTACT' | translate }}</a>
-          </li>
-          <li>
-            <a [routerLink]="['/' + getCurrentLanguage() + '/support/welcome']" class="block py-2 px-3 text-gray-900 md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-white md:dark:hover:bg-transparent">{{ 'HEADER.SUPPORT' | translate }}</a>
-          </li>
-          <!-- <li [routerLink]="'/fundraising'">
-            <a class="block py-2 px-3 text-orange-600 font-semibold md:hover:bg-transparent md:border-0  md:p-0 dark:hover:text-orange-400 md:dark:hover:bg-transparent">💝 Nous Soutenir</a>
-          </li> -->
-          <li>
-            
-          </li>
-        </ul>
-        <!-- <ng-template #showHeaderBtnCxn> -->
-          <button type="button" *ngIf="!(isLogin$ | async)" [routerLink]="['/' + getCurrentLanguage() + '/auth/signin']" class="custom--btn--tertiary app-ibm-btn-full" ibmButton="tertiary" size="md">
-            {{ 'HEADER.SIGN_IN' | translate }}
-          </button>
-          <button type="button" *ngIf="!(isLogin$ | async)" (click)="scrollToProfiles()" class="custom-primary-button app-ibm-btn-full" ibmButton="primary" size="md">
-            {{ 'HEADER.SIGN_UP' | translate }}
-          </button>
-        <!-- </ng-template>       -->
-      </div>
-
       <!-- Menu mobile -->
       <div class="mobile-menu" [class.open]="isMenuOpen">
         <div class="mobile-menu-content">
           <!-- Header du menu mobile -->
           <div class="mobile-menu-header">
             <youpez-logo class="cursor-pointer"  logoWidth="60px"></youpez-logo>
-            <!-- <button (click)="toggleMenu()" class="mobile-menu-close">
+            <button type="button" (click)="toggleMenu()" class="mobile-menu-close" [attr.aria-label]="'HEADER.CLOSE_MENU' | translate">
               <i class="fas fa-times"></i>
-            </button> -->
+            </button>
           </div>
 
           <!-- Navigation mobile -->
           <nav class="mobile-nav">
             <ul class="mobile-nav-list">
               <li (click)="toggleMenu()">
-                <a [routerLink]="['/' + getCurrentLanguage() + '/home']"  routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{exact: false}" class="mobile-nav-link">
+                <a [routerLink]="['/' + getCurrentLanguage() + '/home']" routerLinkActive="active-nav-link" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link">
                   <i class="fas fa-home mr-2"></i>
                   <span>{{ 'HEADER.HOME' | translate }}</span>
                 </a>
               </li>
               <li (click)="toggleMenu()">
-                <a [routerLink]="['/' + getCurrentLanguage() + '/search/index']" class="mobile-nav-link">
+                <a [routerLink]="['/' + getCurrentLanguage() + '/search/index']" routerLinkActive="active-nav-link" class="mobile-nav-link">
                   <i class="fas fa-search mr-2"></i>
                   <span>{{ 'HEADER.SEARCH_PROPERTIES' | translate }}</span>
                 </a>
               </li>
               <li (click)="toggleMenu()">
-                <a [routerLink]="['/' + getCurrentLanguage() + '/home/team']" class="mobile-nav-link">
+                <a [routerLink]="['/' + getCurrentLanguage() + '/home/team']" routerLinkActive="active-nav-link" class="mobile-nav-link">
                   <i class="fas fa-users mr-2"></i>
                   <span>{{ 'HEADER.TEAM' | translate }}</span>
                 </a>
               </li>
               <li (click)="toggleMenu()">
-                <a href="#" class="mobile-nav-link">
+                <a [routerLink]="['/' + getCurrentLanguage() + '/home']" fragment="tarifs" class="mobile-nav-link">
                   <i class="fas fa-tag mr-2"></i>
                   <span>{{ 'HEADER.PRICING' | translate }}</span>
                 </a>
               </li>
               <li (click)="toggleMenu()">
-                <a [routerLink]="['/' + getCurrentLanguage() + '/home/contact']" class="mobile-nav-link">
+                <a [routerLink]="['/' + getCurrentLanguage() + '/home/contact']" routerLinkActive="active-nav-link" class="mobile-nav-link">
                   <i class="fas fa-envelope mr-2"></i>
                   <span>{{ 'HEADER.CONTACT' | translate }}</span>
                 </a>
               </li>
               <li (click)="toggleMenu()">
-                <a [routerLink]="['/' + getCurrentLanguage() + '/support/welcome']" class="mobile-nav-link">
+                <a [routerLink]="['/' + getCurrentLanguage() + '/support/welcome']" routerLinkActive="active-nav-link" class="mobile-nav-link">
                   <i class="fas fa-life-ring mr-2"></i>
                   <span>{{ 'HEADER.SUPPORT' | translate }}</span>
                 </a>

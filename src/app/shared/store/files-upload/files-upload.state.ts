@@ -13,6 +13,8 @@ import { RoomAction, RoomModel } from "../rooms";
 import { PropertyAction } from "../properties";
 
 import { ContentUploadRoomType } from "./files-upload.model";
+import { PropertyDetailsAction } from "../property-details/property-details.actions";
+import { refId } from "../property-details/property-refresh";
 
 export class UploadFilesStateModel {
     loadingUploadFiles:boolean
@@ -92,8 +94,17 @@ export class UploadFilesState{
 
                     if(result.data) 
                     {
-                        if(uploadFiles.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.SetRoom(result.data.data))
-                        else ctx.dispatch(new PropertyAction.SetProperty(result.data.data))
+                        const updated: any = result.data.data;
+                        if (updated?._id) {
+                            if(uploadFiles.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.SetRoom(updated))
+                            else ctx.dispatch(new PropertyAction.SetProperty(updated))
+                        }
+                        // Galerie et documents du bien rechargés depuis le serveur :
+                        // l'image ou le PDF apparaît sans actualiser la page.
+                        const propertyId = uploadFiles.contentRoomType==ContentUploadRoomType.FOR_ROOM
+                            ? refId(updated?.property)
+                            : (refId(updated) || refId((uploadFiles as any).contentID));
+                        if (propertyId) ctx.dispatch(new PropertyDetailsAction.Fetch(propertyId));
                         this._toastrService.success(this._translateService.instant('NOTIFICATIONS.FILE_UPLOAD_SUCCESS', { fileName: uploadFiles.file.name }), 'Ndewa360°');                                             
                     }
                     const data = [...ctx.getState().filesState]
@@ -136,6 +147,11 @@ export class UploadFilesState{
 
                     if(removedUploadFile.contentRoomType==ContentUploadRoomType.FOR_ROOM) ctx.dispatch(new RoomAction.RemoveImageRoom(removedUploadFile.fileUrl,removedUploadFile.contentID))
                     else ctx.dispatch(new PropertyAction.RemoveFile(removedUploadFile.fileUrl,removedUploadFile.contentID))
+                    const removedFrom: any = result?.data;
+                    const propertyId = removedUploadFile.contentRoomType==ContentUploadRoomType.FOR_ROOM
+                        ? refId(removedFrom?.property)
+                        : refId(removedUploadFile.contentID);
+                    if (propertyId) ctx.dispatch(new PropertyDetailsAction.Fetch(propertyId));
                     this._toastrService.success(this._translateService.instant('NOTIFICATIONS.FILE_REMOVED_SUCCESS', { fileName: removedUploadFile.fileUrl }), 'Ndewa360°');
                     
                     ctx.patchState({

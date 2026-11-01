@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
+import { currentAppLanguage } from '../../services/localization/app-locale';
 import {
   FREE_MAX_OCCUPIED_UNITS,
   FREE_MAX_PROPERTIES,
@@ -22,7 +24,7 @@ import {
   templateUrl: './pricing-tiers.component.html',
   styleUrls: ['./pricing-tiers.component.scss'],
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, TranslatePipe],
+  imports: [NgFor, NgIf, NgClass, RouterLink, TranslatePipe],
 })
 export class PricingTiersComponent {
   @Input() summary: PricingSummary | null = null;
@@ -49,5 +51,20 @@ export class PricingTiersComponent {
 
   get mailtoLink(): string {
     return `mailto:${this.contact.email}?subject=${encodeURIComponent('Offre Gold Ndewa360')}`;
+  }
+
+  /**
+   * Nouveau message Gmail pré-rempli, ouvert dans un nouvel onglet. Le lien
+   * `mailto:` seul n'ouvre rien quand aucun logiciel de messagerie n'est
+   * configuré sur l'appareil (cas fréquent sur ordinateur).
+   */
+  get gmailComposeLink(): string {
+    const params = new URLSearchParams({ view: 'cm', fs: '1', to: this.contact.email, su: 'Offre Gold Ndewa360' });
+    return `https://mail.google.com/mail/?${params.toString()}`;
+  }
+
+  /** Page de contact du site, dans la langue courante. */
+  get contactPageLink(): string[] {
+    return ['/', currentAppLanguage(), 'home', 'contact'];
   }
 }

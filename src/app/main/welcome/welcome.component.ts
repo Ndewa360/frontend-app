@@ -5,6 +5,7 @@ import { UserProfileModel, UserProfileState } from 'src/app/shared/store';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ListModule } from 'carbon-components-angular';
 import { RouterLink } from '@angular/router';
+import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
 import { FlexModule } from '@angular/flex-layout/flex';
@@ -38,7 +39,12 @@ export class WelcomeComponent implements OnInit {
     { key: 'ADMINISTRATION', durationKey: 'ADMINISTRATION' }
   ];
 
-  constructor() { }
+  /** Langue courante, pour des liens explicites (sans redirection intermédiaire). */
+  get lang(): string {
+    return this.languageUrlService.getCurrentLanguage() || 'fr';
+  }
+
+  constructor(private languageUrlService: LanguageUrlService) { }
 
   ngOnInit(): void {
   }

@@ -130,6 +130,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   isDetectingLocation = false;
   locationDetected = false;
   isFromUrl = false; // Indique si la localisation provient de l'URL
+  /** Vrai dès que l'utilisateur a choisi une ville (filtre, suggestion, URL) : la géolocalisation ne l'écrase plus. */
+  userChoseCity = false;
 
   // Loading states
   isLoading = false;
@@ -213,6 +215,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$)
       )
       .subscribe(formValues => {
+        // Ville changée dans le filtre : c'est désormais le choix de
+        // l'utilisateur (la géolocalisation ne doit plus l'écraser), et le
+        // titre comme l'indicateur de localisation affichent cette ville.
+        if ((formValues?.city || '') !== (this.currentFilters?.city || '')) {
+          this.userChoseCity = true;
+          this.syncLocationDisplayWithCity(formValues?.city || '');
+        }
+
         // Mettre à jour currentFilters ET smartFilters en une seule passe
         this.currentFilters = { ...this.currentFilters, ...formValues };
 
@@ -300,7 +310,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
     // Synchroniser l'affichage de géolocalisation avec la ville sélectionnée
     if (cityId) {
+      this.userChoseCity = true;
       this.syncLocationDisplayWithCity(cityId);
+    } else {
+      this.updateCurrentCityName('');
     }
 
     // Mettre à jour le formulaire SANS déclencher les événements pour éviter les boucles
@@ -490,9 +503,10 @@ export class SearchPageComponent implements OnInit, OnDestroy {
         this.userLocation = { city: selectedCity.fullName, country: 'Cameroun', region: '', latitude: 0, longitude: 0 };
         this.locationDetected = false;
         this.isFromUrl = true;
-        this.updateCurrentCityName(cityId);
-        this.cdr.markForCheck();
       }
+      // Le titre suit toujours la ville sélectionnée (« … logements trouvés – <ville> »).
+      this.updateCurrentCityName(cityId);
+      this.cdr.markForCheck();
     });
   }
 
@@ -586,6 +600,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   onSuggestionClick(suggestion: SearchSuggestion): void {
     if (suggestion.type === 'city') {
       // Mettre à jour le formulaire avec l'ID de la ville
+      this.userChoseCity = true;
       this.searchForm.patchValue({ city: suggestion.value._id }, { emitEvent: false });
       this.searchControl.setValue(suggestion.label);
       
@@ -607,6 +622,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     // (initFromUrlParams utilise take(1) donc ne se re-déclenche pas)
     const cityId = popularSearch.cityId;
     const filters = popularSearch.filters;
+    this.userChoseCity = true;
 
     // Mettre à jour currentFilters
     this.currentFilters = {
@@ -837,10 +853,16 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    */
   private searchByUserLocation(): void {
     if (!this.userLocation) return;
+    // La position arrive parfois après que l'utilisateur a choisi une ville :
+    // son choix prime, la recherche n'est pas relancée sur la ville détectée.
+    if (this.userChoseCity) return;
 
     // Utiliser le service de résolution pour convertir le nom en ID
     this.cityResolver.getCityIdByName(this.userLocation.city).subscribe(cityId => {
+      if (this.userChoseCity) return;
       const finalCityId = cityId || this.userLocation!.city;
+      this.updateCurrentCityName(cityId || '');
+      if (!cityId) this.currentCityName = this.userLocation!.city;
 
       this.currentFilters = {
         city: finalCityId,
@@ -872,6 +894,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Relance la détection de localisation
    */
   retryLocationDetection(): void {
+    // Demande explicite : la ville détectée remplace la sélection.
+    this.userChoseCity = false;
     this.detectUserLocation();
   }
 
@@ -879,6 +903,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Utilise Bangangté comme ville par défaut
    */
   useDefaultLocation(): void {
+    this.userChoseCity = false;
     this.userLocation = this.geolocationService.getDefaultLocation();
     this.locationDetected = false;
     this.searchByUserLocation();
@@ -905,6 +930,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.totalPages = 1;
     this.hasSearched = false;
     this.userLocation = null;
+    this.userChoseCity = false;
+    this.updateCurrentCityName('');
     this.mediasCache.clear();
     this.cdr.markForCheck();
     this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
@@ -961,7 +988,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   private updateCurrentCityName(cityId: string): void {
     if (!cityId) { this.currentCityName = this.translationService.instant('SEARCH_MODULE.FILTERS.ALL_CITIES'); return; }
-    this.cities$$.pipe(take(1)).subscribe(cities => {
+    // Attendre la liste des villes : lue trop tôt, elle était vide et le
+    // titre affichait « ville sélectionnée » ou l'ancienne ville.
+    this.cities$$.pipe(filter(cities => !!cities && cities.length > 0), take(1)).subscribe(cities => {
       const city = cities?.find(c => c._id === cityId);
       this.currentCityName = city ? city.fullName : this.translationService.instant('SEARCH_MODULE.FILTERS.SELECTED_CITY');
       this.cdr.markForCheck();

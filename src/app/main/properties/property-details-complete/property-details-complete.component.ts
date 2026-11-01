@@ -40,6 +40,7 @@ import { ExtendedModule } from '@angular/flex-layout/extended';
 import { ButtonModule } from 'carbon-components-angular/button';
 import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { IbmIconComponent } from '../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { DeletePropertyModalComponent } from '../components/delete-property-modal/delete-property-modal.component';
 
 interface Tab {
   id: string;
@@ -353,6 +354,18 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed()
       .pipe(takeUntil(this.destroy$))
       .subscribe(result => { if (result) this.reloadPropertyData(); });
+  }
+
+  /** Suppression avec confirmation, puis retour à la liste des biens. */
+  onDeleteProperty(): void {
+    const property = this.store.selectSnapshot(PropertyState.selectStateProperty(this.propertyId));
+    if (!property) return;
+    this.dialog.open(DeletePropertyModalComponent, { width: '100%', maxWidth: '520px', data: { property } })
+      .afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((deleted) => {
+        if (deleted) this.goBack();
+      });
   }
 
   goBack(): void {

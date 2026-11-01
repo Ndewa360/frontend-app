@@ -52,6 +52,15 @@ export class PropertyManagerState {
     return state.loadingManagers;
   }
 
+  @Action(PropertyManagerAction.RemoveManagedProperty)
+  removeManagedProperty(ctx: StateContext<PropertyManagerStateModel>, { propertyId }: PropertyManagerAction.RemoveManagedProperty) {
+    const state = ctx.getState();
+    ctx.patchState({
+      managedProperties: state.managedProperties.filter((item) => item.propertyId !== propertyId),
+      propertyManagers: state.propertyManagers.filter((a) => String(a.property?._id ?? a.property) !== propertyId),
+    });
+  }
+
   @Action(PropertyManagerAction.SetManagedProperties)
   setManagedProperties(ctx: StateContext<PropertyManagerStateModel>, { managedProperties }: PropertyManagerAction.SetManagedProperties) {
     ctx.patchState({ managedProperties });

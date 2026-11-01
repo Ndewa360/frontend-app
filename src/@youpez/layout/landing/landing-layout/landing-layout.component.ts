@@ -3,6 +3,8 @@ import { Router, NavigationEnd, RouterOutlet, RouterLink } from '@angular/router
 import { NgScrollbar } from 'ngx-scrollbar';
 import { filter, tap } from 'rxjs';
 import { NgIf } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
+import { currentAppLanguage } from 'src/app/shared/services/localization/app-locale';
 import { LandingFooterComponent } from '../landing-footer/landing-footer.component';
 import { LandingHeaderComponent } from '../landing-header/landing-header.component';
 import {
@@ -15,12 +17,16 @@ import {
   templateUrl: './landing-layout.component.html',
   styleUrls: ['./landing-layout.component.scss'],
   standalone: true,
-  imports: [LandingHeaderComponent, NgScrollbar, RouterOutlet, LandingFooterComponent, NgIf, RouterLink]
+  imports: [LandingHeaderComponent, NgScrollbar, RouterOutlet, LandingFooterComponent, NgIf, RouterLink, TranslatePipe]
 })
 export class LandingLayoutComponent implements OnInit, AfterViewInit{
 
   @ViewChild(NgScrollbar,  { static: true }) scrollable: NgScrollbar;
   cookieBannerVisible = false;
+
+  get lang(): string {
+    return currentAppLanguage();
+  }
 
   constructor(
     private router: Router,

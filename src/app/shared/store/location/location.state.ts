@@ -1,6 +1,7 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
 import { PropertyDetailsAction } from "../property-details/property-details.actions";
 import { activeLocations } from "../property-details/property-details.model";
+import { refId, refreshPropertyScreen } from "../property-details/property-refresh";
 import { LocationModel } from "./location.model";
 import { Injectable } from "@angular/core";
 import { LocationAction } from "./location.actions";
@@ -118,6 +119,7 @@ export class LocationState{
                         locations:data
                     })
                     this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_UPDATED_SUCCESS'), 'Ndewa360°');
+                    refreshPropertyScreen(ctx, result.data?.property);
                 }
             ),
             catchError((error) => {
@@ -230,16 +232,8 @@ export class LocationState{
                     ));
                 }
 
-                // Rafraîchir les données pour s'assurer de la synchronisation
-                setTimeout(() => {
-                    // Recharger les locations pour cette propriété
-                    if (result.data.property) {
-                        ctx.dispatch(new LocationAction.FetchLocationsByPropertyId(result.data.property));
-                    }
-
-                    // Recharger les statistiques de paiement
-                    ctx.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(result.data.property));
-                }, 1000);
+                // Rechargement complet de l'écran du bien (baux, paiements, totaux).
+                refreshPropertyScreen(ctx, result.data.property);
             }),
             catchError((error) => {
                 ctx.patchState({
@@ -257,24 +251,26 @@ export class LocationState{
         ctx.patchState({ loadingLocation: true })
         return this._locationsService.createAssignationWithAssistant(assignationConfig).pipe(
             tap(result => {
+                const location = result.data.location;
                 ctx.patchState({
                     loadingLocation: false,
-                    locations: [...state.locations, result.data.location]
+                    locations: [...ctx.getState().locations, location]
                 })
-                this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_ASSISTANT_SUCCESS'), 'Ndewa360°');
-                if (result.data.location) {
-                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.location.room, { isActiveForSouscription: true, isFree: false, locataire: result.data.location.locataire }))
-                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.location.locataire, result.data.location.room))
-                    // Correction #8 : invalider le cache en forçant le rechargement des locations
-                    // pour cette propriété (le cache FetchLocationsByPropertyId bloque sinon la MAJ)
-                    if (result.data.location.property) {
-                        ctx.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(result.data.location.property));
-                    }
+                // Le message de succès est affiché par l'écran appelant
+                // (il l'était deux fois).
+                if (location) {
+                    // Mise à jour immédiate de l'unité et du locataire…
+                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(refId(location.room), { isActiveForSouscription: true, isFree: false, locataire: refId(location.locataire) }))
+                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(refId(location.locataire), refId(location.room)))
+                    // …puis rechargement complet de l'écran du bien : bail, paiements
+                    // initiaux, totaux. Les paiements n'étaient jamais rechargés.
+                    refreshPropertyScreen(ctx, location.property);
                 }
             }),
             catchError((error) => {
                 ctx.patchState({ loadingLocation: false })
-                return of(null);
+                // L'erreur est transmise : l'écran affichait « succès » même en cas d'échec.
+                return throwError(() => error);
             })
         )
     }
@@ -296,16 +292,18 @@ export class LocationState{
                         loadingLocation:false,
                         locations:data
                     })
-                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.LOCATION_REMOVED_SUCCESS'), 'Ndewa360°');
-                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(result.data.room,{isActiveForSouscription:false,isFree:true,locataire:null}))
-                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(result.data.locataire,null))
+                    // Message de succès affiché par la fenêtre de résiliation.
+                    ctx.dispatch(new RoomAction.UpdateLocalRoomInfos(refId(result.data.room),{isActiveForSouscription:false,isFree:true,locataire:null}))
+                    ctx.dispatch(new LocataireAction.UpdateLocataireRoom(refId(result.data.locataire),null))
+                    // Statut du bail, de l'unité et historique rechargés aussitôt.
+                    refreshPropertyScreen(ctx, result.data.property);
                 }
             ),
             catchError((error)=>{
                 ctx.patchState({
                     loadingLocation: false
                 })
-                return of(null);
+                return throwError(() => error);
             })
         )
     }

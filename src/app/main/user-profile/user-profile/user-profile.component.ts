@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
+import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { UserProfileModel, UserProfileState, UserProfileAction } from 'src/app/shared/store';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -46,13 +47,15 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     { id: 'display', label: 'Affichage', labelKey: 'PROFILE.SECTIONS.DISPLAY', icon: 'view' },
     { id: 'agent', label: 'Agent', labelKey: 'PROFILE.SECTIONS.AGENT', icon: 'userAvatar' },
     { id: 'privacy', label: 'Mes données & Cookies', labelKey: 'PROFILE.SECTIONS.PRIVACY', icon: 'security' },
+    { id: 'report', label: 'Signaler un problème', labelKey: 'PROFILE.SECTIONS.REPORT', icon: 'warning' },
     { id: 'danger', label: 'Zone dangereuse', labelKey: 'PROFILE.SECTIONS.DANGER', icon: 'warning' }
   ];
 
   private destroy$ = new Subject<void>();
 
   constructor(
-    private _store: Store
+    private _store: Store,
+    private route: ActivatedRoute,
   ){}
 
   ngOnInit(): void {
@@ -69,6 +72,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       this.calculateSectionOffsets();
       this.setupIntersectionObserver();
       this.detectCurrentSection();
+      // Ouverture directe d'une section (?tab=report, ?tab=notifications…)
+      const tab = this.route.snapshot.queryParamMap.get('tab');
+      const target = tab === 'notifications' ? 'display' : tab;
+      if (target && this.profileSections.some((section) => section.id === target)) this.scrollToSection(target);
     }, 100);
   }
 
@@ -93,6 +100,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     // Marquer qu'on est en train de scroller programmatiquement
     this.isScrolling = true;
     this.activeSection = sectionId;
+
+    // « Signaler un problème » : ouvre aussi le formulaire de signalement.
+    if (sectionId === 'report') window.dispatchEvent(new Event('ndewa-open-report'));
 
     const element = document.getElementById(`section-${sectionId}`);
     if (element) {

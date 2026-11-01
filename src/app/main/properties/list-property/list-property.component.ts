@@ -10,6 +10,7 @@ import { AddPropertyComponent } from '../add-property/add-property.component';
 import { UpdatePropertyComponent } from '../update-property/update-property.component';
 import { PropertyAlert } from '../components/property-overview-card/property-overview-card.component';
 import { ModernTenantModalComponent } from '../components/modern-tenant-modal/modern-tenant-modal.component';
+import { DeletePropertyModalComponent } from '../components/delete-property-modal/delete-property-modal.component';
 import { PropertyNavigationService } from '../services/property-navigation.service';
 import { PropertiesTourService } from '../services/properties-tour.service';
 import { PropertyManagerState, ManagedPropertyItem, PropertyManagerAction } from 'src/app/shared/store/property-manager';
@@ -80,8 +81,8 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
     ]).pipe(
       takeUntil(this.destroy$)
     ).subscribe(([properties]) => {
-      if (!properties?.length) return;
-      this.totalProperties = properties.length;
+      // Liste vide (dernier bien supprimé) : les totaux repassent à zéro.
+      this.totalProperties = properties?.length || 0;
       this.recalculateAllMetrics(properties);
     });
 
@@ -215,9 +216,8 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
 
   onRecordPayment(property: PropertyModel): void {
     const lang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigate([`/${lang}/app/location-payment`, 'add'], {
-      queryParams: { propertyId: property._id }
-    });
+    // L'enregistrement d'un paiement se fait depuis la fiche du bien (onglet finances).
+    this.router.navigate([`/${lang}/app/properties/details`, property._id], { fragment: 'finances' });
   }
 
   onViewFinances(property: PropertyModel): void {
@@ -244,6 +244,15 @@ export class ListPropertyComponent implements OnInit, OnDestroy {
 
   onEditProperty(property: PropertyModel): void {
     this.updateProperty(property, new Event('click'));
+  }
+
+  /** Suppression avec confirmation ; la carte disparaît dès la réponse du serveur. */
+  onDeleteProperty(property: PropertyModel): void {
+    this.dialog.open(DeletePropertyModalComponent, {
+      width: '100%',
+      maxWidth: '520px',
+      data: { property },
+    });
   }
 
   onAddTenant(property: PropertyModel): void {

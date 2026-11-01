@@ -1,0 +1,104 @@
+// Thème sombre de l'application.
+//
+// Le thème sombre Carbon (theme-dark.css) ne couvrait que les composants
+// Carbon : les écrans, construits en grande partie avec Tailwind et des
+// styles de composants aux fonds blancs codés en dur, restaient clairs. Cette
+// couche globale, active seulement sous `html.app-theme--dark`, assombrit les
+// surfaces communes (fonds, cartes, textes, bordures, champs, tableaux,
+// fenêtres). Les sélecteurs commencent par `html` pour l'emporter sur les
+// styles des composants.
+
+$dark-bg: #121417;
+$dark-surface: #1c1f24;
+$dark-surface-2: #252930;
+$dark-border: #353a42;
+$dark-text: #e6e8eb;
+$dark-text-muted: #a3a9b3;
+
+html.app-theme--dark {
+  color-scheme: dark;
+
+  body {
+    background-color: $dark-bg;
+    color: $dark-text;
+  }
+
+  // ── Surfaces Tailwind ────────────────────────────────────────────────
+  .bg-white { background-color: $dark-surface !important; }
+  .bg-gray-50, .bg-slate-50, .bg-neutral-50 { background-color: $dark-bg !important; }
+  .bg-gray-100, .bg-slate-100 { background-color: $dark-surface-2 !important; }
+  .bg-gray-200 { background-color: $dark-border !important; }
+
+  .text-gray-900, .text-gray-800, .text-slate-900, .text-slate-800, .text-black { color: $dark-text !important; }
+  .text-gray-700, .text-gray-600, .text-slate-700, .text-slate-600 { color: #c4c9d1 !important; }
+  .text-gray-500, .text-gray-400 { color: $dark-text-muted !important; }
+
+  .border-gray-100, .border-gray-200, .border-gray-300, .border-slate-200 { border-color: $dark-border !important; }
+  .divide-gray-100 > * + *, .divide-gray-200 > * + * { border-color: $dark-border !important; }
+
+  .shadow, .shadow-sm, .shadow-md, .shadow-lg { --tw-shadow-color: rgba(0, 0, 0, 0.5); }
+
+  // ── Cartes, sections et panneaux de l'application ─────────────────────
+  .app-card,
+  .profile-section,
+  .lp-card,
+  .privacy-block,
+  .summary-card,
+  .results-header,
+  .ndewa-payment__card,
+  .modern-search-container .search-bar-minimal {
+    background-color: $dark-surface !important;
+    color: $dark-text;
+    border-color: $dark-border !important;
+  }
+
+  // ── Fenêtres (Angular Material, Carbon) ───────────────────────────────
+  .mat-mdc-dialog-container .mdc-dialog__surface,
+  .mat-mdc-dialog-surface,
+  .cds--modal-container {
+    background-color: $dark-surface !important;
+    color: $dark-text;
+  }
+
+  // ── Champs de formulaire ─────────────────────────────────────────────
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea,
+  .field-input {
+    background-color: $dark-surface-2 !important;
+    color: $dark-text !important;
+    border-color: $dark-border !important;
+
+    &::placeholder { color: $dark-text-muted !important; }
+  }
+
+  // ── Tableaux ─────────────────────────────────────────────────────────
+  table {
+    color: $dark-text;
+  }
+
+  thead, th {
+    background-color: $dark-surface-2 !important;
+    color: $dark-text !important;
+  }
+
+  td, th {
+    border-color: $dark-border !important;
+  }
+
+  tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  // ── Menus déroulants et listes ───────────────────────────────────────
+  .dropdown-menu,
+  [ngbdropdownmenu],
+  .app-list {
+    background-color: $dark-surface !important;
+    color: $dark-text;
+  }
+
+  a:not([class]) { color: #f5b43a; }
+
+  hr { border-color: $dark-border; }
+}

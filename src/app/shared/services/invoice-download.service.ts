@@ -85,21 +85,30 @@ export class InvoiceDownloadService {
 
   // ─── Générer le HTML et déclencher l'impression ───────────────────────────
   private printInvoice(invoice: InvoiceData): void {
+    // Cadre invisible plutôt qu'une nouvelle fenêtre : ouverte après une
+    // requête (donc hors du clic), la fenêtre était bloquée par le
+    // navigateur et le bouton « Facture » ne produisait rien.
     const html = this.buildInvoiceHtml(invoice);
-    const printWindow = window.open('', '_blank', 'width=900,height=700');
-    if (!printWindow) return;
+    const frame = document.createElement('iframe');
+    frame.setAttribute('aria-hidden', 'true');
+    frame.style.position = 'fixed';
+    frame.style.width = '0';
+    frame.style.height = '0';
+    frame.style.border = '0';
+    frame.style.right = '0';
+    frame.style.bottom = '0';
+    document.body.appendChild(frame);
 
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-
-    // Attendre le chargement complet avant d'imprimer
-    printWindow.onload = () => {
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 300);
+    const cleanup = () => setTimeout(() => frame.remove(), 1000);
+    frame.onload = () => {
+      try {
+        frame.contentWindow?.focus();
+        frame.contentWindow?.print();
+      } finally {
+        cleanup();
+      }
     };
+    frame.srcdoc = html;
   }
 
   // ─── Template HTML de la facture ─────────────────────────────────────────

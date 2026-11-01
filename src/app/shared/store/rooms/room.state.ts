@@ -1,4 +1,5 @@
 import { Action, Selector, State, StateContext, createSelector } from "@ngxs/store";
+import { refreshPropertyScreen } from "../property-details/property-refresh";
 import { PropertyDetailsAction } from "../property-details/property-details.actions";
 import { RoomModel, RoomType } from "./room.model";
 import { Injectable } from "@angular/core";
@@ -184,14 +185,16 @@ export class RoomState{
         return this._roomsService.updateRoom(room,id).pipe(
             tap(
                 (result)=>{
-                    const data = [...state.rooms]
+                    const data = [...ctx.getState().rooms]
                     let index = data.findIndex((u)=>u._id==id);
+                    const previous = index > -1 ? data[index] : null;
                     if(index>-1) data[index]=result.data;
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:data
                     })
                     this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ROOM_UPDATED_SUCCESS'), 'Ndewa360°');
+                    refreshPropertyScreen(ctx, result.data?.property || previous?.property);
 
                 }
             ),
@@ -276,10 +279,12 @@ export class RoomState{
         return this._roomsService.deleteRoom(roomId).pipe(
             tap(
                 result => {
-                    let roomState = [...state.rooms];
-                    ctx.dispatch(new PropertyAction.ChangePropertyRoomLength(roomState[index].property));
-                    roomState.splice(index, 1)
-                    this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ROOM_DELETED_SUCCESS'), 'Ndewa360°');
+                    let roomState = [...ctx.getState().rooms];
+                    const current = roomState.findIndex((u)=>u._id==roomId);
+                    const property = current > -1 ? roomState[current].property : null;
+                    if (property) ctx.dispatch(new PropertyAction.ChangePropertyRoomLength(property));
+                    if (current > -1) roomState.splice(current, 1)
+                    refreshPropertyScreen(ctx, property);
                     ctx.patchState({
                         loadingRoom:false,
                         rooms:roomState
@@ -402,8 +407,9 @@ export class RoomState{
                     this._toastrService.success(this._translateService.instant('NOTIFICATIONS.ROOM_CREATED_SUCCESS', { type: UtilsString.getStringOfRoomType(room.type) }), 'Ndewa360°');
                     ctx.patchState({
                         loadingRoom:false,
-                        rooms:[...state.rooms, result.data]
+                        rooms:[...ctx.getState().rooms, result.data]
                     })
+                    refreshPropertyScreen(ctx, propertyId);
                 }
             ),
             catchError((error) => {

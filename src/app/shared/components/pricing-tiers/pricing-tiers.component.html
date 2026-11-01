@@ -53,7 +53,7 @@
         <span>{{ 'PRICING.RENT_ABOVE' | translate: { min: fcfa(goldThreshold) } }}</span>
       </div>
       <div class="pt__row-price pt__row-price--contact">
-        <a [href]="mailtoLink">{{ 'PRICING.CONTACT_US' | translate }}</a>
+        <a [routerLink]="contactPageLink">{{ 'PRICING.CONTACT_US' | translate }}</a>
       </div>
     </div>
   </div>
@@ -62,7 +62,9 @@
 
   <div *ngIf="!compact" class="pt__contact">
     <span>{{ 'PRICING.GOLD_CONTACT' | translate }}</span>
-    <a [href]="mailtoLink" class="pt__contact-link">{{ contact.email }}</a>
+    <a [href]="gmailComposeLink" target="_blank" rel="noopener" class="pt__contact-link"
+       [title]="'PRICING.WRITE_WITH_GMAIL' | translate">{{ contact.email }}</a>
+    <a [href]="mailtoLink" class="pt__contact-link pt__contact-link--secondary">{{ 'PRICING.OPEN_MAIL_APP' | translate }}</a>
     <a [href]="contact.whatsappLink" target="_blank" rel="noopener" class="pt__contact-link pt__contact-link--wa">WhatsApp {{ contact.whatsapp }}</a>
   </div>
 </div>

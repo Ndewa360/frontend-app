@@ -8,6 +8,7 @@ import { of, throwError } from "rxjs";
 import { catchError, switchMap, tap } from "rxjs/operators";
 import { PropertyDetailsAction } from "../property-details/property-details.actions";
 import { PropertyDetailsService } from "../property-details/property-details.service";
+import { PropertyManagerAction } from "../property-manager/property-manager.actions";
 import { NotificationService } from "carbon-components-angular";
 import { ToastrService } from "ngx-toastr";
 import { TranslateService } from "@ngx-translate/core";
@@ -257,6 +258,29 @@ export class PropertyState{
         }
     }
 
+
+    /**
+     * Suppression d'un bien : sa carte disparaît aussitôt de l'espace
+     * Propriétés, ainsi que de l'espace Gérant (biens gérés) s'il y figure.
+     */
+    @Action(PropertyAction.DeleteProperty)
+    deleteProperty(ctx:StateContext<PropertyStateModel>, {propertyId}:PropertyAction.DeleteProperty)
+    {
+        ctx.patchState({ loadingProperty:true })
+        return this._propertysService.deleteProperty(propertyId).pipe(
+            tap(() => {
+                ctx.patchState({
+                    loadingProperty:false,
+                    properties: ctx.getState().properties.filter((p) => p._id !== propertyId)
+                });
+                ctx.dispatch(new PropertyManagerAction.RemoveManagedProperty(propertyId));
+            }),
+            catchError((error) => {
+                ctx.patchState({ loadingProperty:false });
+                return throwError(() => error);
+            })
+        )
+    }
 
     @Action(PropertyAction.CreateProperty)
     createProperty(ctx:StateContext<PropertyStateModel>,{property}:PropertyAction.CreateProperty)

@@ -73,6 +73,10 @@
           <button *ngIf="propertyId && propertyAccessService.isOwner(propertyId)" class="btn-icon-compact btn-edit-compact" (click)="onEditProperty()" title="{{ 'PROPERTY_DETAILS.ACTIONS.EDIT' | translate }}">
             <youpez-ibm-icon iconName="edit" iconSize="16"></youpez-ibm-icon>
           </button>
+          <button *ngIf="propertyId && propertyAccessService.isOwner(propertyId)" class="btn-icon-compact btn-delete-compact" (click)="onDeleteProperty()"
+                  title="{{ 'PROPERTIES.DELETE.BUTTON' | translate }}" [attr.aria-label]="'PROPERTIES.DELETE.BUTTON' | translate">
+            <i class="fas fa-trash-alt"></i>
+          </button>
         </div>
       </div>
 

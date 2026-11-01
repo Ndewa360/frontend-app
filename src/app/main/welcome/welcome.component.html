@@ -20,8 +20,7 @@
           <div fxLayout="row wrap" fxLayoutGap="1px grid">
             <div fxFlex="100%" fxFlex.gt-md="50%" class="card-color-white">
               <div fxFlex>
-                <!-- routerLink="/app/application/getting-started" -->
-                <div fxFlex routerLink="/support/getting-started" class="app-card app-card--m-0 app-card--select app-welcome-big-tile">
+                <div fxFlex [routerLink]="['/', lang, 'support', 'getting-started']" class="app-card app-card--m-0 app-card--select app-welcome-big-tile">
                   <div class="app-card__content">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       class="app-ibm-pictogram-stroke" version="1.1" width="100px" height="100px" id="Layer_1" x="0px"
@@ -53,8 +52,7 @@
             <div fxFlex="100%" fxFlex.gt-md="25%">
               <div fxFlex fxLayout="column" fxLayoutGap="1px">
                 <div fxFlex>
-                  <!-- routerLink="/app/application/faq" -->
-                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile" routerLink="/support/faq">
+                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile" [routerLink]="['/', lang, 'support', 'faq']">
                     <div class="app-card__content">
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                         class="app-ibm-pictogram-stroke" version="1.1" width="50px" height="50px" x="0px" y="0px"
@@ -76,8 +74,7 @@
                   </div>
                 </div>
                 <div fxFlex>
-                  <!-- routerLink="/app/application/manual" -->
-                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile">
+                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile cursor-pointer" [routerLink]="['/', lang, 'support', 'manual']">
                     <div class="app-card__content">
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
                         width="50px" height="50px" class="app-ibm-pictogram-stroke" x="0px" y="0px" viewBox="0 0 48 48"
@@ -100,8 +97,7 @@
             <div fxFlex="100%" fxFlex.gt-md="25%">
               <div fxFlex fxLayout="column" fxLayoutGap="1px">
                 <div fxFlex>
-                  <!-- routerLink="/app/application/support" -->
-                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile" routerLink="/support/support">
+                  <div fxFlex class="app-card app-card--m-0 app-card--select app-welcome-mini-tile" [routerLink]="['/', lang, 'support', 'support']">
                     <div class="app-card__content">
 
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
@@ -121,7 +117,7 @@
                   </div>
                 </div>
                 <div fxFlex>
-                  <div routerLink="/app/properties" fxFlex
+                  <div [routerLink]="['/', lang, 'app', 'properties', 'home']" fxFlex
                     class="app-card app-card--m-0 app-card--select app-welcome-mini-tile">
                     <div class="app-card__content">
                       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"

@@ -238,10 +238,12 @@
     </section>
 
     <!-- Composant de paramètres de localisation avancé -->
+    <div id="section-localization">
     <app-localization-settings
       [parentFormGroup]="formGroup"
       (formChange)="onLocalizationChange($event)">
     </app-localization-settings>
+    </div>
 
     <!-- Section Coordonnées affichées au client (réservée aux agents) -->
     <section id="section-agent" class="profile-section" *ngIf="isAgent()">
@@ -279,10 +281,10 @@
               id="theme"
               formControlName="theme"
               class="field-input">
-              <option value="">{{ 'SETTINGS.THEMES.DEFAULT' | translate }}</option>
+              <!-- Trois choix : « Par défaut » faisait doublon avec « Automatique ». -->
+              <option value="auto">{{ 'SETTINGS.THEMES.AUTO' | translate }}</option>
               <option value="light">{{ 'SETTINGS.THEMES.LIGHT' | translate }}</option>
               <option value="dark">{{ 'SETTINGS.THEMES.DARK' | translate }}</option>
-              <option value="auto">{{ 'SETTINGS.THEMES.AUTO' | translate }}</option>
             </select>
           </div>
 
@@ -352,7 +354,7 @@
         </div>
 
         <!-- Signalement problème de sécurité -->
-        <div class="privacy-block">
+        <div class="privacy-block" id="section-report">
           <h3 class="privacy-block__title">{{ 'PROFILE.PRIVACY.REPORT_TITLE' | translate }}</h3>
           <p class="privacy-block__desc">
             {{ 'PROFILE.PRIVACY.REPORT_DESC' | translate }}

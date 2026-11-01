@@ -15,6 +15,7 @@ import { RoomAction } from "../rooms";
 import { LocataireAction } from "../locataire";
 import { HistoryLocationPaymentAction } from "../history-payment-location";
 import { StatisticAction } from "../statistic-data";
+import { refreshPropertyScreen } from "../property-details/property-refresh";
 // import { RefreshHistoryLocationPaymentsByPropertyId }
 
 export class LocationPaymentStateModel {
@@ -139,8 +140,9 @@ export class LocationPaymentState{
         return this._locationPaymentsService.deleteLocationPayment(locationPaymentId).pipe(
             tap(
                 (result)=>{
-                    const data = [...state.locationPayments]
+                    const data = [...ctx.getState().locationPayments]
                     let index = data.findIndex((u)=>u._id==locationPaymentId);
+                    const deletedProperty = index > -1 ? data[index].property : null;
                     if(index>-1) data.splice(index,1);
                     ctx.patchState({
                         loadingLocationPayment:false,
@@ -154,11 +156,8 @@ export class LocationPaymentState{
                     } else {
                     }
 
-                    // Rafraîchissement des statistiques
-                    if (propertyID) {
-                        ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(propertyID, `${new Date().getFullYear()}`));
-                    } else {
-                    }
+                    // Liste, totaux et statistiques du bien rechargés aussitôt.
+                    refreshPropertyScreen(ctx, propertyID || deletedProperty);
                 }
             ),
             catchError((error) => {
@@ -183,8 +182,9 @@ export class LocationPaymentState{
         return this._locationPaymentsService.updateLocationPayment(locationPayment,id).pipe(
             tap(
                 (result)=>{
-                    const data = [...state.locationPayments]
+                    const data = [...ctx.getState().locationPayments]
                     let index = data.findIndex((u)=>u._id==id);
+                    const previousProperty = index > -1 ? data[index].property : null;
                     if(index>-1) data[index]=result.data;
                     ctx.patchState({
                         loadingLocationPayment:false,
@@ -198,12 +198,8 @@ export class LocationPaymentState{
                     } else {
                     }
 
-                    // Rafraîchissement des statistiques
-                    const propertyId = locationPayment.propertyId || locationPayment.property;
-                    if (propertyId) {
-                        ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`));
-                    } else {
-                    }
+                    // Liste, totaux et statistiques du bien rechargés aussitôt.
+                    refreshPropertyScreen(ctx, locationPayment.propertyId || locationPayment.property || result.data?.property || previousProperty);
                 }
             ),
             catchError((error) => {
@@ -243,23 +239,28 @@ export class LocationPaymentState{
         return this._locationPaymentsService.createLocationPayment(locationPayment).pipe(
             tap(
                 result => {
+                    // Le serveur renvoie soit le paiement créé, soit, quand le
+                    // montant est réparti entre caution et loyer, un récapitulatif
+                    // { totalAmount, paymentsCreated: [...] }. Ce récapitulatif
+                    // était ajouté tel quel à la liste : le paiement n'apparaissait
+                    // qu'après actualisation.
+                    const body: any = result.data;
+                    const created: LocationPaymentModel[] = Array.isArray(body?.paymentsCreated)
+                        ? body.paymentsCreated
+                        : (body ? [body] : []);
+                    const known = new Set(ctx.getState().locationPayments.map((p) => p._id));
                     ctx.patchState({
                         loadingLocationPayment:false,
-                        locationPayments:[...state.locationPayments, result.data]
+                        locationPayments:[...ctx.getState().locationPayments, ...created.filter((p) => !known.has(p._id))]
                     })
                     // Mise à jour de l'historique
                     const tenantId = locationPayment.locataireId || locationPayment.locataire;
                     if (tenantId) {
-                        ctx.dispatch(new HistoryLocationPaymentAction.AddHistoryLocationPaymentTransaction(tenantId, result.data));
-                    } else {
+                        created.forEach((payment) => ctx.dispatch(new HistoryLocationPaymentAction.AddHistoryLocationPaymentTransaction(tenantId, payment)));
                     }
 
-                    // Rafraîchissement des statistiques
-                    const propertyId = locationPayment.propertyId || locationPayment.property;
-                    if (propertyId) {
-                        ctx.dispatch(new StatisticAction.RefreshStaticLocataireDataByPropertyIdAndYear(propertyId, `${new Date().getFullYear()}`));
-                    } else {
-                    }
+                    // Liste, totaux et statistiques du bien rechargés aussitôt.
+                    refreshPropertyScreen(ctx, locationPayment.propertyId || locationPayment.property || created[0]?.property);
                     this._toastrService.success(this._translateService.instant('NOTIFICATIONS.PAYMENT_CREATED_SUCCESS'), 'Ndewa360°');
 
                 }
@@ -278,9 +279,9 @@ export class LocationPaymentState{
     @Action(LocationPaymentAction.FetchLocationPaymentsByPropertyId)
     fetchLocationPaymentsByPropertyId(ctx:StateContext<LocationPaymentStateModel>,{propertyId}:LocationPaymentAction.FetchLocationPaymentsByPropertyId)
     {
-        const state = ctx.getState();
-        if(state.locationPayments.findIndex((u)=>u.property==propertyId)>-1) return of(true);
-
+        // Rechargement systématique : la requête était ignorée dès qu'un paiement
+        // du bien était connu, si bien que les nouveaux paiements (paiements
+        // initiaux d'une attribution notamment) n'apparaissaient jamais.
         ctx.patchState({
             loadingLocationPayment:true,
             initLoadingState:"LOADING"
@@ -289,9 +290,10 @@ export class LocationPaymentState{
             tap(
                 result => {
                     //console.log("Fetch LocationPayments ",result)
+                    const others = ctx.getState().locationPayments.filter((u)=>u.property!=propertyId);
                     ctx.patchState({
                         loadingLocationPayment:false,
-                        locationPayments:[...state.locationPayments,...result.data],
+                        locationPayments:[...others,...result.data],
                         initLoadingState:"LOADED"
                     })
                 }

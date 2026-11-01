@@ -61,6 +61,13 @@ export namespace PropertyAction
         constructor(public property:any){}
     }
 
+    /** Supprime un bien (refusé par le serveur s'il a des locations en cours). */
+    export class DeleteProperty
+    {
+        static readonly type = '[Property] Delete Property'
+        constructor(public propertyId:string){}
+    }
+
     //Delete room
     export class ChangePropertyRoomLength
     {

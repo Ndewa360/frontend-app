@@ -144,12 +144,13 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   navigateToAbout(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigate([`/${currentLang}/app/application/welcome`]);
+    this.router.navigate([`/${currentLang}/home/about`]);
   }
 
   navigateToPricing(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigate([`/${currentLang}/app/pricing/modern`]);
+    // Grille des offres (les anciennes adresses /app/pricing/... n'existaient pas).
+    this.router.navigate([`/${currentLang}/app/facturation/plan/plan-list`]);
   }
 
   navigateToAdmin(): void {
@@ -186,7 +187,7 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   navigateToSettings(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this.router.navigate([`/${currentLang}/app/user/settings`]);
+    this.router.navigate([`/${currentLang}/app/profile`]);
   }
 
   navigateToLogin(): void {

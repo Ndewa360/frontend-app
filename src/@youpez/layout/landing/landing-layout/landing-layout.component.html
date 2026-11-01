@@ -11,18 +11,18 @@
   <div class="cookie-banner__content">
     <span class="cookie-banner__icon"><i class="fas fa-cookie-bite"></i></span>
     <p>
-      Nous utilisons des cookies analytiques (Google Analytics) pour améliorer notre service.
-      Consultez notre <a routerLink="/cookies">Politique de Cookies</a>.
+      {{ 'COOKIE_BANNER.MESSAGE' | translate }}
+      <a [routerLink]="['/', lang, 'home', 'cookies']">{{ 'COOKIE_BANNER.POLICY_LINK' | translate }}</a>.
     </p>
   </div>
   <div class="cookie-banner__actions">
-    <button class="cookie-btn cookie-btn--decline" (click)="declineCookies()">Refuser</button>
-    <button class="cookie-btn cookie-btn--accept" (click)="acceptCookies()">Accepter</button>
+    <button class="cookie-btn cookie-btn--decline" (click)="declineCookies()">{{ 'COOKIE_BANNER.DECLINE' | translate }}</button>
+    <button class="cookie-btn cookie-btn--accept" (click)="acceptCookies()">{{ 'COOKIE_BANNER.ACCEPT' | translate }}</button>
   </div>
 </div>
 
 <div class="cookie-banner cookie-banner--minimal" *ngIf="!cookieBannerVisible">
   <button class="cookie-btn cookie-btn--prefs" (click)="resetCookieChoice()">
-    <i class="fas fa-cookie-bite"></i> Préférences cookies
+    <i class="fas fa-cookie-bite"></i> {{ 'COOKIE_BANNER.PREFERENCES' | translate }}
   </button>
 </div>
