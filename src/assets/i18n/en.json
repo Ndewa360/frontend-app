@@ -1294,6 +1294,7 @@
     "INVALID_TOKEN": "Invalid token!",
     "GENERIC_ERROR_RETRY": "An error has occurred! Please try again later",
     "PROFILE_UPDATED_SUCCESS": "User profile updated successfully",
+    "ACCOUNT_DISABLED": "Your account has been suspended by the administration. Please contact support.",
     "SESSION_EXPIRED": "Session expired. Please log in again.",
     "LANGUAGE_UPDATED_SUCCESS": "Language updated successfully",
     "PROPERTY_UPDATED_SUCCESS": "Property updated successfully!",
@@ -5855,6 +5856,7 @@
   },
   "SUSPENDED_BANNER": {
     "MESSAGE": "Your account is suspended for non-payment and is read-only. You can view your properties and download your documents, but not add, edit or delete.",
+    "UNPAID": "{{count}} unpaid invoice(s): {{amount}} FCFA to pay.",
     "ACTION": "Pay my invoices"
   }
 }

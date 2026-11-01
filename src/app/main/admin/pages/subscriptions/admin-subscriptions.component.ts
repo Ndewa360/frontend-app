@@ -52,8 +52,8 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   statusOptions = [
     { value: '', label: 'Tous les statuts' },
     { value: 'active', label: 'Actif' },
-    { value: 'suspended', label: 'Suspendu' },
-    { value: 'disabled', label: 'Désactivé' }
+    { value: 'suspended', label: 'Suspendu (impayé)' },
+    { value: 'disabled', label: 'Suspendu par l’admin' }
   ];
 
   paymentStatusOptions = [
@@ -250,7 +250,7 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   getAccountStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      active: 'Actif', suspended: 'Suspendu', disabled: 'Désactivé'
+      active: 'Actif', suspended: 'Suspendu (impayé)', disabled: 'Suspendu par l’admin'
     };
     return map[status] || status;
   }

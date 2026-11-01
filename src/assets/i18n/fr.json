@@ -1294,6 +1294,7 @@
     "INVALID_TOKEN": "Token invalide !",
     "GENERIC_ERROR_RETRY": "Une erreur s'est produite ! Veuillez réessayer plus tard",
     "PROFILE_UPDATED_SUCCESS": "Profil utilisateur mis à jour avec succès",
+    "ACCOUNT_DISABLED": "Votre compte a été suspendu par l’administration. Contactez le support.",
     "SESSION_EXPIRED": "Session expirée. Veuillez vous reconnecter.",
     "LANGUAGE_UPDATED_SUCCESS": "Langue mise à jour avec succès",
     "PROPERTY_UPDATED_SUCCESS": "Propriété mise à jour avec succès !",
@@ -5855,6 +5856,7 @@
   },
   "SUSPENDED_BANNER": {
     "MESSAGE": "Votre compte est suspendu pour impayé : il est en lecture seule. Vous pouvez consulter vos biens et télécharger vos documents, mais pas ajouter, modifier ni supprimer.",
+    "UNPAID": "{{count}} facture(s) impayée(s) : {{amount}} FCFA à régler.",
     "ACTION": "Régler mes factures"
   }
 }

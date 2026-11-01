@@ -413,7 +413,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   getStatusLabel(status?: string): string {
-    const map: Record<string, string> = { active: 'Actif', suspended: 'Suspendu', disabled: 'Désactivé' };
+    const map: Record<string, string> = { active: 'Actif', suspended: 'Suspendu (impayé)', disabled: 'Suspendu par l’admin' };
     return map[status || ''] || 'Inconnu';
   }
 

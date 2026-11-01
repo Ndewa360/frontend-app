@@ -132,6 +132,13 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       return throwError(() => error);
     }
 
+    // Compte bloqué par l'administration : déconnexion immédiate (la
+    // suspension pour impayé, elle, reste en lecture seule et connectée).
+    if (this.isAccountDisabled(error) && !originalRequest.url.includes('user/auth/login')) {
+      this.forceLogoutWithRedirect(this.translate.instant('NOTIFICATIONS.ACCOUNT_DISABLED'));
+      return throwError(() => error);
+    }
+
     // Gestion spécifique des erreurs 401
     if (error.status === 401 && !originalRequest.url.includes('user/auth/refresh') && !originalRequest.url.includes('user/auth/login')) {
       return this.handle401Error(originalRequest, next);
@@ -243,6 +250,11 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(null);
 
+          if (this.isAccountDisabled(err)) {
+            this.forceLogoutWithRedirect(this.translate.instant('NOTIFICATIONS.ACCOUNT_DISABLED'));
+            return throwError(() => err);
+          }
+
           // Coupure réseau, délai dépassé ou erreur serveur pendant le
           // rafraîchissement : la session est conservée, seule la requête
           // échoue. Auparavant, l'utilisateur était déconnecté.
@@ -323,6 +335,10 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
     if (message) {
       this._toastrService.warning(message, "Ndewa360°");
     }
+  }
+
+  private isAccountDisabled(error: any): boolean {
+    return error?.status === 403 && error?.error?.code === 'ACCOUNT_DISABLED';
   }
 
   private isApiRequest(url: string): boolean {
@@ -442,6 +458,9 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       this._store.dispatch(new GlobalAction.SetConnexionInternetState(false));
       return;
     }
-    this._toastrService.error(this.sanitizeMessage(error?.error?.message), 'Ndewa360°');
+    const message = this.isAccountDisabled(error)
+      ? this.translate.instant('NOTIFICATIONS.ACCOUNT_DISABLED')
+      : this.sanitizeMessage(error?.error?.message);
+    this._toastrService.error(message, 'Ndewa360°');
   }
 }
