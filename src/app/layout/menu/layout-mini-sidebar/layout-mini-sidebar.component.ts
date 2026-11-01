@@ -18,6 +18,8 @@ import { NotificationManagerService, SmartNotification } from 'src/app/shared/se
 import { AppLogoComponent } from '../../../../@youpez/components/app-logo/app-logo.component';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { FlexModule } from '@angular/flex-layout/flex';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationDetailModalComponent } from 'src/app/shared/components/notification-detail-modal/notification-detail-modal.component';
 
 @Component({
   selector: 'app-layout-mini-sidebar',
@@ -52,6 +54,7 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     private languagePreservation: LanguagePreservationService,
     private translate: TranslateService,
     private notificationManager: NotificationManagerService,
+    private dialog: MatDialog,
   ) {
   }
 
@@ -101,14 +104,19 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
-  /** Marque la notification comme lue et ouvre la page liée, s'il y en a une. */
+  /**
+   * Ouvre le détail de la notification : message complet, contexte et actions
+   * (marquer comme lue, ouvrir la page liée, supprimer). Auparavant, un clic
+   * sur une notification sans page liée ne faisait rien.
+   */
   openNotification(item: SmartNotification): void {
-    if (!item.isRead) this.notificationManager.markAsRead(item.id);
-    if (item.actionRoute) {
-      const lang = this.languageUrlService.getCurrentLanguage();
-      const route = item.actionRoute.startsWith(`/${lang}/`) ? item.actionRoute : `/${lang}${item.actionRoute.startsWith('/') ? '' : '/'}${item.actionRoute}`;
-      this._router.navigateByUrl(route);
-    }
+    this.dialog.open(NotificationDetailModalComponent, {
+      data: item,
+      width: '520px',
+      maxWidth: '95vw',
+      autoFocus: false,
+      panelClass: 'notification-detail-dialog',
+    });
   }
 
   markAllNotificationsAsRead(): void {

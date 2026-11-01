@@ -104,17 +104,62 @@ export class NotificationManagerService {
   }
 
   private fromServer(n: any): SmartNotification {
+    const serverType: string = n.type || 'GENERAL';
+    const link = NotificationManagerService.linkFor(serverType, n);
     return {
       id: String(n._id ?? n.id),
       source: 'server',
       type: 'server',
-      priority: 'medium',
+      priority: NotificationManagerService.URGENT_TYPES.includes(serverType) ? 'high' : 'medium',
       title: n.title,
       message: n.message,
-      data: { serverType: n.type },
+      actionLabel: link?.labelKey,
+      actionRoute: link?.route,
+      // Contexte affiché dans le détail de la notification (sans requête supplémentaire).
+      data: {
+        serverType,
+        amount: n.amount || 0,
+        currency: n.currency || 'XAF',
+        propertyName: n.propertyName || '',
+        roomLabel: n.roomLabel || '',
+        locataireName: n.locataireName || '',
+        period: n.period || '',
+        paymentMethod: n.paymentMethod || '',
+        reference: n.reference || n.billingRef || n.docRef || '',
+        docUrl: n.docUrl || '',
+      },
       createdAt: n.createdAt ? new Date(n.createdAt) : new Date(),
       isRead: !!n.isRead,
     };
+  }
+
+  /** Types qui demandent une action rapide (impayé, suspension, échec). */
+  private static readonly URGENT_TYPES = ['ACCOUNT_SUSPENSION', 'PRE_SUSPENSION', 'SUBSCRIPTION_REMINDER', 'INSUFFICIENT_BALANCE', 'WITHDRAWAL_FAILED', 'RENT_REMINDER'];
+
+  /** Page de l'application liée à une notification du serveur (route sans la langue). */
+  private static linkFor(type: string, n: any): { route: string; labelKey: string } | null {
+    switch (type) {
+      case 'PAYMENT_RECEIVED':
+      case 'PAYMENT_RECEIPT':
+      case 'RENT_REMINDER':
+        return n.propertyId
+          ? { route: `/app/properties/details/${n.propertyId}`, labelKey: 'NOTIFICATION_DETAIL.ACTIONS.OPEN_PROPERTY' }
+          : { route: '/app/properties/home', labelKey: 'NOTIFICATION_DETAIL.ACTIONS.OPEN_PROPERTIES' };
+      case 'SUBSCRIPTION_REMINDER':
+      case 'ACCOUNT_SUSPENSION':
+      case 'PRE_SUSPENSION':
+        return { route: '/app/facturation/plan/facture', labelKey: 'NOTIFICATION_DETAIL.ACTIONS.PAY_INVOICES' };
+      case 'SUBSCRIPTION_PAYMENT':
+      case 'SUBSCRIPTION_TIER_CHANGED':
+        return { route: '/app/facturation/plan/dashboard', labelKey: 'NOTIFICATION_DETAIL.ACTIONS.OPEN_BILLING' };
+      case 'WALLET_DEPOSIT':
+      case 'WITHDRAWAL_CONFIRMED':
+      case 'WITHDRAWAL_FAILED':
+      case 'INSUFFICIENT_BALANCE':
+        return { route: '/app/portefeuille', labelKey: 'NOTIFICATION_DETAIL.ACTIONS.OPEN_WALLET' };
+      default:
+        return null;
+    }
   }
 
   /**

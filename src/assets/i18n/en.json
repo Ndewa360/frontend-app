@@ -5863,5 +5863,27 @@
     "MESSAGE": "Your account is suspended for non-payment and is read-only. You can view your properties and download your documents, but not add, edit or delete.",
     "UNPAID": "{{count}} unpaid invoice(s): {{amount}} FCFA to pay.",
     "ACTION": "Pay my invoices"
+  },
+  "NOTIFICATION_DETAIL": {
+    "READ": "Read",
+    "UNREAD": "Unread",
+    "AMOUNT": "Amount",
+    "PROPERTY": "Property",
+    "UNIT": "Unit",
+    "TENANT": "Tenant",
+    "PERIOD": "Period",
+    "PAYMENT_METHOD": "Payment method",
+    "REFERENCE": "Reference",
+    "DELETE": "Delete",
+    "MARK_AS_READ": "Mark as read",
+    "ACTIONS": {
+      "OPEN": "View",
+      "OPEN_PROPERTY": "View property",
+      "OPEN_PROPERTIES": "View my properties",
+      "PAY_INVOICES": "Pay my invoices",
+      "OPEN_BILLING": "View billing",
+      "OPEN_WALLET": "View wallet",
+      "OPEN_DOCUMENT": "Open document"
+    }
   }
 }

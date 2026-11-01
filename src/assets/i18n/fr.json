@@ -5863,5 +5863,27 @@
     "MESSAGE": "Votre compte est suspendu pour impayé : il est en lecture seule. Vous pouvez consulter vos biens et télécharger vos documents, mais pas ajouter, modifier ni supprimer.",
     "UNPAID": "{{count}} facture(s) impayée(s) : {{amount}} FCFA à régler.",
     "ACTION": "Régler mes factures"
+  },
+  "NOTIFICATION_DETAIL": {
+    "READ": "Lue",
+    "UNREAD": "Non lue",
+    "AMOUNT": "Montant",
+    "PROPERTY": "Bien",
+    "UNIT": "Unité",
+    "TENANT": "Locataire",
+    "PERIOD": "Période",
+    "PAYMENT_METHOD": "Moyen de paiement",
+    "REFERENCE": "Référence",
+    "DELETE": "Supprimer",
+    "MARK_AS_READ": "Marquer comme lue",
+    "ACTIONS": {
+      "OPEN": "Voir",
+      "OPEN_PROPERTY": "Voir le bien",
+      "OPEN_PROPERTIES": "Voir mes biens",
+      "PAY_INVOICES": "Régler mes factures",
+      "OPEN_BILLING": "Voir la facturation",
+      "OPEN_WALLET": "Voir le portefeuille",
+      "OPEN_DOCUMENT": "Ouvrir le document"
+    }
   }
 }
