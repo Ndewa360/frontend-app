@@ -1,0 +1,36 @@
+// Thème Angular Material de l'application.
+//
+// Remplace le thème préconstruit `pink-bluegrey.css` (89 Ko, styles de TOUS
+// les composants Material, chargés sur chaque page) par les mêmes couleurs
+// (sombre, primaire rose 700/500/900, accent bleu-gris A200/A100/A400),
+// appliquées uniquement aux composants réellement utilisés dans l'application.
+// Pour utiliser un nouveau composant Material, ajouter son mixin `*-theme`
+// ci-dessous.
+@use '@angular/material' as mat;
+
+$ndewa-primary: mat.define-palette(mat.$pink-palette, 700, 500, 900);
+$ndewa-accent: mat.define-palette(mat.$blue-grey-palette, A200, A100, A400);
+$ndewa-warn: mat.define-palette(mat.$red-palette);
+
+$ndewa-material-theme: mat.define-dark-theme((
+  color: (
+    primary: $ndewa-primary,
+    accent: $ndewa-accent,
+    warn: $ndewa-warn,
+  ),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+@include mat.core();
+@include mat.core-theme($ndewa-material-theme);
+@include mat.dialog-theme($ndewa-material-theme);
+@include mat.button-theme($ndewa-material-theme);
+@include mat.icon-button-theme($ndewa-material-theme);
+@include mat.icon-theme($ndewa-material-theme);
+@include mat.card-theme($ndewa-material-theme);
+@include mat.checkbox-theme($ndewa-material-theme);
+@include mat.form-field-theme($ndewa-material-theme);
+@include mat.input-theme($ndewa-material-theme);
+@include mat.select-theme($ndewa-material-theme);
+@include mat.progress-spinner-theme($ndewa-material-theme);

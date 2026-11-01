@@ -113,7 +113,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     }
 
     if (!this.token) {
-      this.pageError = 'Lien de paiement invalide ou expiré.';
+      this.pageError = this.t('PAYMENT_PAGE.ERRORS.INVALID_LINK');
       this.pageLoading = false;
       return;
     }
@@ -165,7 +165,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           this.applyPaymentDetailsConfig();
         },
         error: (err) => {
-          this.pageError = err.error?.message || 'Impossible de charger les détails du paiement.';
+          this.pageError = err.error?.message || this.t('PAYMENT_PAGE.ERRORS.LOAD_DETAILS');
           this.pageLoading = false;
         }
       });
@@ -182,7 +182,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       const payload = JSON.parse(new TextDecoder().decode(bytes));
       if (!payload.context) return null;
       if (payload.exp && payload.exp * 1000 < Date.now()) {
-        this.pageError = 'Ce lien de paiement a expiré.';
+        this.pageError = this.t('PAYMENT_PAGE.ERRORS.LINK_EXPIRED');
         this.pageLoading = false;
         return null;
       }
@@ -294,8 +294,9 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       currency: this.paymentDetails?.currency || 'XAF',
       description: this.paymentDetails?.description || 'Paiement Ndewa360°',
       userEmail: this.paymentDetails?.userEmail,
-      // successUrl avec placeholder CHECKOUT_SESSION_ID — externalRef ajouté après réponse backend
-      successUrl: `${base}/${this.token}?payment=success&session_id={CHECKOUT_SESSION_ID}&ext=EXTERNAL_REF_PLACEHOLDER`,
+      // Le serveur ajoute lui-même session_id et la référence de transaction
+      // (ext) à cette URL : le client ne connaît pas encore la référence.
+      successUrl: `${base}/${this.token}?payment=success`,
       cancelUrl: `${base}/${this.token}?payment=cancelled`,
       ...this.buildContextIds()
     };
@@ -306,26 +307,22 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
         next: async (res) => {
           this.externalRef = res.data.externalRef;
           if (res.data.redirectUrl) {
-            // Remplacer le placeholder par l'externalRef réel retourné par le backend
-            const finalUrl = res.data.redirectUrl.replace(
-              'EXTERNAL_REF_PLACEHOLDER',
-              encodeURIComponent(res.data.externalRef)
-            );
+            const finalUrl = res.data.redirectUrl;
             if (isAllowedRedirect(finalUrl)) {
               window.location.href = finalUrl;
             } else {
-              this.paymentError = 'Adresse de paiement non reconnue. Veuillez réessayer.';
+              this.paymentError = this.t('PAYMENT_PAGE.ERRORS.STRIPE_REDIRECT');
               this.paymentStatus = 'failed';
               this.currentStep = 'result';
             }
           } else {
-            this.paymentError = 'Impossible d\'obtenir l\'URL de paiement Stripe.';
+            this.paymentError = this.t('PAYMENT_PAGE.ERRORS.STRIPE_URL');
             this.paymentStatus = 'failed';
             this.currentStep = 'result';
           }
         },
         error: (err) => {
-          this.paymentError = err.error?.message || 'Erreur lors de la création de la session.';
+          this.paymentError = err.error?.message || this.t('PAYMENT_PAGE.ERRORS.SESSION_CREATE');
           this.paymentStatus = 'failed';
           this.currentStep = 'result';
         }
@@ -364,7 +361,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           this.startPolling();
         },
         error: (err) => {
-          this.paymentError = err.error?.message || 'Erreur lors de l\'initiation du paiement.';
+          this.paymentError = err.error?.message || this.t('PAYMENT_PAGE.ERRORS.INITIATE');
           this.paymentStatus = 'failed';
           this.currentStep = 'result';
         }
@@ -387,7 +384,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       return true;
     }
     if (['FAILED', 'CANCELLED', 'EXPIRED'].includes(status)) {
-      this.paymentError = 'Le paiement a été refusé ou annulé.';
+      this.paymentError = this.t('PAYMENT_PAGE.ERRORS.REFUSED');
       this.paymentStatus = 'failed';
       this.currentStep = 'result';
       return true;
@@ -395,14 +392,45 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  private startPolling(): void {
+  /**
+   * Fin d'attente sans réponse définitive : le paiement n'est PAS déclaré en
+   * échec. L'opérateur peut encore le confirmer (le serveur continue de
+   * vérifier pendant deux heures) ; afficher « échec » poussait le locataire
+   * à payer une seconde fois.
+   */
+  private markUnconfirmed(): void {
+    if (this.paymentStatus === 'success' || this.paymentStatus === 'failed') return;
+    this.paymentStatus = 'unconfirmed';
+    this.currentStep = 'result';
+  }
+
+  /** « Vérifier à nouveau » : relance l'attente sur la même transaction (aucun nouveau paiement). */
+  checkAgain(): void {
+    if (!this.externalRef) return;
+    this.paymentError = null;
+    this.paymentStatus = 'pending_confirmation';
+    this.currentStep = 'processing';
+    this.startPolling(false);
+  }
+
+  private realtimeWatched: string | null = null;
+
+  private startPolling(firstStart = true): void {
     this.pollingAttempts = 0;
     this.networkErrors = 0;
 
     // Temps réel : le serveur pousse le statut dès le callback de l'opérateur.
-    this.realtime.watchPayment(this.externalRef!)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((update) => this.applyPaymentStatus(update.status));
+    // L'abonnement reste actif après la fin de l'attente : une confirmation
+    // tardive met encore la page à jour.
+    if (this.realtimeWatched !== this.externalRef) {
+      this.realtimeWatched = this.externalRef;
+      this.realtime.watchPayment(this.externalRef!)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((update) => {
+          if (this.paymentStatus === 'unconfirmed') this.paymentStatus = 'pending_confirmation';
+          this.applyPaymentStatus(update.status);
+        });
+    }
 
     // Le polling reste nécessaire : chaque vérification interroge aussi
     // l'opérateur côté serveur, au cas où son callback n'arriverait jamais.
@@ -416,9 +444,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     const poll = () => {
       if (this.paymentStatus === 'success' || this.paymentStatus === 'failed') return;
       if (this.pollingAttempts >= this.MAX_POLLING) {
-        this.paymentError = 'Délai dépassé. Vérifiez votre téléphone et réessayez.';
-        this.paymentStatus = 'failed';
-        this.currentStep = 'result';
+        this.markUnconfirmed();
         return;
       }
 
@@ -439,9 +465,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           error: () => {
             this.networkErrors++;
             if (this.networkErrors >= this.MAX_NETWORK_ERRORS) {
-              this.paymentError = 'Connexion perdue. Vérifiez votre réseau et réessayez.';
-              this.paymentStatus = 'failed';
-              this.currentStep = 'result';
+              this.markUnconfirmed();
               return;
             }
             // Réessayer après un délai doublé en cas d'erreur réseau
@@ -452,8 +476,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
         });
     };
 
-    // Premier tick après 5s
-    timer(5_000).pipe(takeUntil(this.destroy$)).subscribe(() => poll());
+    // Premier tick après 5s (immédiat pour « Vérifier à nouveau »)
+    timer(firstStart ? 5_000 : 0).pipe(takeUntil(this.destroy$)).subscribe(() => poll());
   }
 
   // ─── Retour Stripe ────────────────────────────────────────────────────────
@@ -471,7 +495,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
     if (!extRef) {
       // Fallback : pas d'externalRef — impossible de vérifier le statut
-      this.paymentError = 'Référence de paiement manquante. Contactez le support si votre paiement a été débité.';
+      this.paymentError = this.t('PAYMENT_PAGE.ERRORS.MISSING_REF');
       this.paymentStatus = 'failed';
       this.currentStep = 'result';
       return;
@@ -497,9 +521,9 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           }
         },
         error: () => {
-          this.paymentError = 'Impossible de vérifier le statut du paiement.';
-          this.paymentStatus = 'failed';
-          this.currentStep = 'result';
+          // Statut invérifiable pour l'instant (réseau) : ce n'est pas un échec.
+          this.externalRef = extRef;
+          this.markUnconfirmed();
         }
       });
   }
@@ -591,7 +615,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           this.isDownloadingReceipt = false;
         },
         error: () => {
-          this.receiptError = 'Impossible de télécharger le reçu. Réessayez dans quelques instants.';
+          this.receiptError = this.t('PAYMENT_PAGE.ERRORS.RECEIPT_DOWNLOAD');
           this.isDownloadingReceipt = false;
         }
       });
@@ -627,6 +651,10 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       propertyId:    meta['propertyId']   || this.paymentDetails.property?._id,
       paymentLinkId: this.paymentDetails.token
     };
+  }
+
+  private t(key: string): string {
+    return this.translate.instant(key);
   }
 
   isI18nKey(value: string): boolean {

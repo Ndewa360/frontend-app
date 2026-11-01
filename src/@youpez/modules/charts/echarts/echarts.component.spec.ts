@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EchartsComponent } from './echarts.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('EchartsComponent', () => {
-  let component: EchartsComponent;
   let fixture: ComponentFixture<EchartsComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ EchartsComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(EchartsComponent, { standalone: true });
     fixture = TestBed.createComponent(EchartsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

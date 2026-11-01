@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppLayoutHorizontalComponent } from './app-layout-horizontal.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('AppLayoutHorizontalComponent', () => {
-  let component: AppLayoutHorizontalComponent;
   let fixture: ComponentFixture<AppLayoutHorizontalComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppLayoutHorizontalComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppLayoutHorizontalComponent, { standalone: true });
     fixture = TestBed.createComponent(AppLayoutHorizontalComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

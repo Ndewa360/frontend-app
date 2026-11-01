@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { saveAppLanguage } from './app-locale';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, BehaviorSubject, lastValueFrom } from 'rxjs';
 import { LocalizationService } from './localization.service';
@@ -291,7 +292,7 @@ export class TranslationService {
   private saveLanguageToLocalStorage(languageCode: string): void {
     try {
       if (languageCode && this.isLanguageSupported(languageCode)) {
-        localStorage.setItem('ndiye-preferred-language', languageCode);
+        saveAppLanguage(languageCode);
       }
     } catch (error) {
     }

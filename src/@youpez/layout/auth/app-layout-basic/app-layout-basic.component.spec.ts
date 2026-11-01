@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppLayoutBasicComponent } from './app-layout-basic.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('AppLayoutBasicComponent', () => {
-  let component: AppLayoutBasicComponent;
   let fixture: ComponentFixture<AppLayoutBasicComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppLayoutBasicComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppLayoutBasicComponent, { standalone: true });
     fixture = TestBed.createComponent(AppLayoutBasicComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

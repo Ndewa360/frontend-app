@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AuthConfirmationComponent } from './auth-confirmation.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('AuthConfirmationComponent', () => {
-  let component: AuthConfirmationComponent;
   let fixture: ComponentFixture<AuthConfirmationComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AuthConfirmationComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AuthConfirmationComponent, { standalone: true });
     fixture = TestBed.createComponent(AuthConfirmationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

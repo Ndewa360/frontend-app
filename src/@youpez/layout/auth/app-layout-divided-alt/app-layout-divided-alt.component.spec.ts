@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppLayoutDividedAltComponent } from './app-layout-divided-alt.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('AppLayoutDividedAltComponent', () => {
-  let component: AppLayoutDividedAltComponent;
   let fixture: ComponentFixture<AppLayoutDividedAltComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppLayoutDividedAltComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppLayoutDividedAltComponent, { standalone: true });
     fixture = TestBed.createComponent(AppLayoutDividedAltComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

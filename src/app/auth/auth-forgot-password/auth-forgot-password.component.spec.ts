@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AuthForgotPasswordComponent } from './auth-forgot-password.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('AuthForgotPasswordComponent', () => {
-  let component: AuthForgotPasswordComponent;
   let fixture: ComponentFixture<AuthForgotPasswordComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AuthForgotPasswordComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AuthForgotPasswordComponent, { standalone: true });
     fixture = TestBed.createComponent(AuthForgotPasswordComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

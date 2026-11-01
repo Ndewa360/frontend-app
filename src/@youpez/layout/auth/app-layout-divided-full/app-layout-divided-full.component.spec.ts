@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppLayoutDividedFullComponent } from './app-layout-divided-full.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('AppLayoutDividedFullComponent', () => {
-  let component: AppLayoutDividedFullComponent;
   let fixture: ComponentFixture<AppLayoutDividedFullComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppLayoutDividedFullComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppLayoutDividedFullComponent, { standalone: true });
     fixture = TestBed.createComponent(AppLayoutDividedFullComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

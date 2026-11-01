@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppSearchComponent } from './app-search.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('AppSearchComponent', () => {
-  let component: AppSearchComponent;
   let fixture: ComponentFixture<AppSearchComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppSearchComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppSearchComponent, { standalone: true });
     fixture = TestBed.createComponent(AppSearchComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

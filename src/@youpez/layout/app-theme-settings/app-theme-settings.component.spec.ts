@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppThemeSettingsComponent } from './app-theme-settings.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('AppThemeSettingsComponent', () => {
-  let component: AppThemeSettingsComponent;
   let fixture: ComponentFixture<AppThemeSettingsComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppThemeSettingsComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppThemeSettingsComponent, { standalone: true });
     fixture = TestBed.createComponent(AppThemeSettingsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

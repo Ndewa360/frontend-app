@@ -959,7 +959,12 @@
     "FORM_RESET": "Modifications annulées",
     "DELETE_SUCCESS": "Votre compte a été supprimé",
     "DELETE_ERROR": "Erreur lors de la suppression du compte",
-    "DELETE_CONFIRM_WORD": "SUPPRIMER"
+    "DELETE_CONFIRM_WORD": "SUPPRIMER",
+    "TOASTS": {
+      "ACCOUNT_DELETED": "Votre compte a été supprimé avec succès.",
+      "EXPORT_DOWNLOADED": "Export de vos données téléchargé.",
+      "EXPORT_FAILED": "Erreur lors de l'export des données."
+    }
   },
   "VALIDATION": {
     "REQUIRED": "Ce champ est obligatoire",
@@ -1233,7 +1238,7 @@
   "NOTIFICATIONS": {
     "SUCCESS": "Succès",
     "ERROR": "Erreur",
-    "GENERIC_ERROR": "Une erreur est survenue. Veuillez réessayer.",
+    "GENERIC_ERROR": "Une erreur s'est produite !",
     "WARNING": "Attention",
     "INFO": "Information",
     "TENANT_CREATED": "Locataire créé avec succès",
@@ -1259,7 +1264,6 @@
     "EMAIL_ACTIVATED_SUCCESS": "Email activé avec succès !",
     "ACCOUNT_NOT_FOUND": "Compte non trouvé !",
     "ACCOUNT_ALREADY_ACTIVATED": "Compte déjà activé !",
-    "GENERIC_ERROR": "Une erreur s'est produite !",
     "INVALID_TOKEN": "Token invalide !",
     "GENERIC_ERROR_RETRY": "Une erreur s'est produite ! Veuillez réessayer plus tard",
     "PROFILE_UPDATED_SUCCESS": "Profil utilisateur mis à jour avec succès",
@@ -2648,10 +2652,22 @@
       "CTA": "Commencer gratuitement",
       "CTA_NOTE": "Sans carte bancaire — configuration en 2 minutes",
       "POINTS": {
-        "DASHBOARD": { "TITLE": "Tableau de bord en temps réel", "DESC": "Visualisez qui a payé, les impayés et vos revenus du mois" },
-        "PAYMENT": { "TITLE": "Enregistrement d’un paiement", "DESC": "En 3 clics, un loyer est enregistré et le reçu envoyé par email" },
-        "CONTRACT": { "TITLE": "Génération de contrat PDF", "DESC": "Un contrat complet prêt à signer en quelques secondes" },
-        "ALERT": { "TITLE": "Alertes de relance automatiques", "DESC": "Le système relance vos locataires en retard à votre place" }
+        "DASHBOARD": {
+          "TITLE": "Tableau de bord en temps réel",
+          "DESC": "Visualisez qui a payé, les impayés et vos revenus du mois"
+        },
+        "PAYMENT": {
+          "TITLE": "Enregistrement d’un paiement",
+          "DESC": "En 3 clics, un loyer est enregistré et le reçu envoyé par email"
+        },
+        "CONTRACT": {
+          "TITLE": "Génération de contrat PDF",
+          "DESC": "Un contrat complet prêt à signer en quelques secondes"
+        },
+        "ALERT": {
+          "TITLE": "Alertes de relance automatiques",
+          "DESC": "Le système relance vos locataires en retard à votre place"
+        }
       }
     },
     "AGENT_DEMO": {
@@ -4879,6 +4895,28 @@
       "SETTINGS": "Paramètres système",
       "MONITORING": "Monitoring Système",
       "AGENTS": "Validation des agents"
+    },
+    "TOASTS": {
+      "INVALID_AMOUNT": "Montant invalide",
+      "AMOUNT_SAVE_FAILED": "Le montant n'a pas pu être enregistré.",
+      "SUBSCRIPTIONS_LOAD_FAILED": "Erreur lors du chargement des souscriptions",
+      "ACCOUNT_SUSPENDED": "Compte suspendu avec succès",
+      "ACCOUNT_SUSPEND_FAILED": "Erreur lors de la suspension du compte",
+      "ACCOUNT_REACTIVATED": "Compte réactivé avec succès",
+      "ACCOUNT_REACTIVATE_FAILED": "Erreur lors de la réactivation du compte",
+      "REMINDER_SENT": "Rappel de paiement envoyé avec succès",
+      "REMINDER_FAILED": "Erreur lors de l'envoi du rappel",
+      "EXPORT_DONE": "Export généré avec succès",
+      "EXPORT_FAILED": "Erreur lors de l'export",
+      "WITHDRAWAL_REQUESTED": "Demande de retrait créée — suivi du statut en cours",
+      "WITHDRAWAL_REF_CONFIRMED": "Retrait {{reference}} confirmé !",
+      "WITHDRAWAL_REF_FAILED": "Retrait {{reference}} échoué : {{reason}}",
+      "WITHDRAWAL_CONFIRMED_BY_AGGREGATOR": "Retrait confirmé par l'agrégateur",
+      "WITHDRAWAL_SUBMITTED": "Retrait soumis à l'agrégateur — en cours de traitement",
+      "WITHDRAWAL_FAILED": "Retrait échoué : {{reason}}",
+      "WITHDRAWAL_FAILED_TITLE": "Échec",
+      "WITHDRAWAL_CONFIRMED": "Retrait confirmé",
+      "AGGREGATOR_ERROR": "Erreur agrégateur"
     }
   },
   "SUPPORT": {
@@ -5518,7 +5556,10 @@
       "CANCELLED_TITLE": "Paiement annulé",
       "CANCELLED_MESSAGE": "Vous avez annulé le paiement. Aucun montant n'a été débité.",
       "RESTART_BUTTON": "Recommencer",
-      "SUPPORT_NOTE": "Besoin d'aide ? Contactez notre support."
+      "SUPPORT_NOTE": "Besoin d'aide ? Contactez notre support.",
+      "UNCONFIRMED_TITLE": "Paiement en attente de confirmation",
+      "UNCONFIRMED_MESSAGE": "Nous n'avons pas encore reçu la confirmation de l'opérateur. Ne relancez pas de nouveau paiement : si vous avez validé sur votre téléphone, il sera enregistré automatiquement dès sa confirmation. Vous pouvez vérifier à nouveau dans quelques instants.",
+      "CHECK_AGAIN_BUTTON": "Vérifier à nouveau"
     },
     "FOOTER": {
       "TERMS": "Conditions",
@@ -5530,6 +5571,18 @@
       "MTN_MONEY": "MTN Mobile Money",
       "CARD": "Carte bancaire",
       "EASY_TRANSACT": "Easy Transact"
+    },
+    "ERRORS": {
+      "INVALID_LINK": "Lien de paiement invalide ou expiré.",
+      "LOAD_DETAILS": "Impossible de charger les détails du paiement.",
+      "LINK_EXPIRED": "Ce lien de paiement a expiré.",
+      "STRIPE_REDIRECT": "Adresse de paiement non reconnue. Veuillez réessayer.",
+      "STRIPE_URL": "Impossible d'obtenir l'adresse de paiement par carte.",
+      "SESSION_CREATE": "Erreur lors de la création de la session de paiement.",
+      "INITIATE": "Erreur lors de l'initiation du paiement.",
+      "REFUSED": "Le paiement a été refusé ou annulé.",
+      "MISSING_REF": "Référence de paiement manquante. Contactez le support si votre paiement a été débité.",
+      "RECEIPT_DOWNLOAD": "Impossible de télécharger le reçu. Réessayez dans quelques instants."
     }
   },
   "LOADER": {
@@ -5569,5 +5622,9 @@
     "CONTACT_US": "Contactez-nous",
     "OCCUPATION_RULE": "Seuls les logements occupés comptent. Un logement occupé au moins {{days}} jours dans le mois compte pour tout le mois. Le palier est vérifié chaque mois.",
     "GOLD_CONTACT": "Forfait Gold ou question sur votre tarif :"
+  },
+  "PROPERTY_HISTORY": {
+    "PAYMENT_DETAILS_TITLE": "Détails du paiement",
+    "PAYMENT_DETAILS": "Paiement de {{amount}} - {{type}}"
   }
 }

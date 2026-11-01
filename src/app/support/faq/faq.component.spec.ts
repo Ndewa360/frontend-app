@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { FaqComponent } from './faq.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('FaqComponent', () => {
-  let component: FaqComponent;
   let fixture: ComponentFixture<FaqComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ FaqComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(FaqComponent, { standalone: true });
     fixture = TestBed.createComponent(FaqComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

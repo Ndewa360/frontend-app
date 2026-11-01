@@ -22,8 +22,14 @@ export class InitialLoadingDataResolver implements Resolve<any> {
           new UserProfileAction.FetchUserProfile(),
           new PropertyAction.FetchProperties(),
           new CountryAction.FetchCountries(),
-          new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(new Date().getFullYear()),
         ]);
+        // Le récapitulatif statistique annuel (moteur financier sur tous les
+        // biens) est le calcul le plus lourd : il est lancé en arrière-plan et
+        // n'empêche plus l'affichage de l'application. Les écrans qui
+        // l'utilisent affichent leur propre état de chargement.
+        this._store.dispatch(
+          new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(new Date().getFullYear())
+        );
 
         return combineLatest([
           this._store.select((s) => s.userprofile.initLoadingState).pipe(
@@ -33,14 +39,6 @@ export class InitialLoadingDataResolver implements Resolve<any> {
           this._store.select((s) => s.properties.initLoadingState).pipe(
             skipWhile((s) => s !== "LOADED"),
             catchError(() => of("LOADED"))
-          ),
-          this._store.select((s) => s.countries.initLoadingState).pipe(
-            skipWhile((s) => s !== "LOADED"),
-            catchError(() => of("LOADED"))
-          ),
-          this._store.select((s) => s.statistics.paymentRecapitulationLoading).pipe(
-            skipWhile((loading) => loading === true),
-            catchError(() => of(false))
           ),
         ]).pipe(
           // Sans timeout, un store resté à 'LOADING'/'NO_LOADED' (erreur HTTP sur

@@ -1,27 +1,16 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-
-import { UIShellModule } from 'carbon-components-angular';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './header/header.component';
+import { configureSmokeTest } from '../testing/component-smoke';
 
 describe('AppComponent', () => {
-	beforeEach(waitForAsync(() => {
-		TestBed.configureTestingModule({
-			declarations: [
-				AppComponent,
-				HeaderComponent
-			],
-			imports: [
-				RouterTestingModule,
-				UIShellModule
-			]
-		}).compileComponents();
-	}));
+  let fixture: ComponentFixture<AppComponent>;
 
-	it('should create the app', waitForAsync(() => {
-		const fixture = TestBed.createComponent(AppComponent);
-		const app = fixture.debugElement.componentInstance;
-		expect(app).toBeTruthy();
-	}));
+  beforeEach(async () => {
+    await configureSmokeTest(AppComponent, { standalone: false });
+    fixture = TestBed.createComponent(AppComponent);
+  });
+
+  it('should create', () => {
+    expect(fixture.componentInstance).toBeTruthy();
+  });
 });

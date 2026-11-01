@@ -399,9 +399,8 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
           this.showWithdrawalModal = false;
           if (w?.status === 'CONFIRMED') {
             this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_DONE'), 'Ndewa360°');
-            // this.toastr.success('Retrait effectué avec succès');
           } else if (w?.status === 'PROCESSING' || w?.status === 'PENDING') {
-            this.toastr.success('Demande de retrait créée — suivi du statut en cours');
+            this.toastr.success(this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_REQUESTED'));
             this.startWithdrawalPolling(w._id);
           } else {
             this.toastr.success(this.translate.instant('NOTIFICATIONS.PLATFORM_WITHDRAWAL_REQUEST_CREATED'), 'Ndewa360°');
@@ -427,12 +426,12 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (w) => {
             if (w.status === 'CONFIRMED') {
-              this.toastr.success(`Retrait ${w.reference} confirmé !`);
+              this.toastr.success(this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_REF_CONFIRMED', { reference: w.reference }));
               this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
               this.store.dispatch(new PlatformFinanceAction.LoadBalance());
               attempts = MAX_ATTEMPTS;
             } else if (w.status === 'FAILED') {
-              this.toastr.error(`Retrait ${w.reference} échoué : ${w.failureReason || 'Erreur agrégateur'}`);
+              this.toastr.error(this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_REF_FAILED', { reference: w.reference, reason: w.failureReason || this.translate.instant('ADMIN.TOASTS.AGGREGATOR_ERROR') }));
               this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
               attempts = MAX_ATTEMPTS;
             }
@@ -479,14 +478,14 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
           this.store.dispatch(new PlatformFinanceAction.LoadWithdrawals(this.wdPage, this.wdLimit));
           this.store.dispatch(new PlatformFinanceAction.LoadBalance());
           if (w?.status === 'CONFIRMED') {
-            this.toastr.success('Retrait confirmé par l\'agrégateur');
+            this.toastr.success(this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_CONFIRMED_BY_AGGREGATOR'));
           } else if (w?.status === 'PROCESSING') {
-            this.toastr.info('Retrait soumis à l\'agrégateur — en cours de traitement');
+            this.toastr.info(this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_SUBMITTED'));
             this.startWithdrawalPolling(w._id);
           } else if (w?.status === 'FAILED') {
-            this.toastr.error(`Retrait échoué : ${w.failureReason || 'Erreur agrégateur'}`, 'Échec');
+            this.toastr.error(this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_FAILED', { reason: w.failureReason || this.translate.instant('ADMIN.TOASTS.AGGREGATOR_ERROR') }), this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_FAILED_TITLE'));
           } else {
-            this.toastr.success('Retrait confirmé');
+            this.toastr.success(this.translate.instant('ADMIN.TOASTS.WITHDRAWAL_CONFIRMED'));
           }
         }
       });

@@ -12,3 +12,22 @@ class ResizeObserverMock {
 }
 
 window.ResizeObserver = ResizeObserverMock;
+
+/**
+ * jsdom ne fournit pas crypto.randomUUID (utilisé par l'analytics et les
+ * identifiants de corrélation) : on branche l'implémentation de Node.
+ */
+const testCrypto: any = (globalThis as any).crypto ?? {};
+if (!(globalThis as any).crypto) {
+	Object.defineProperty(globalThis, 'crypto', { value: testCrypto, configurable: true });
+}
+if (typeof testCrypto.randomUUID !== 'function') {
+	// Format UUID v4, suffisant pour des identifiants de test.
+	Object.defineProperty(testCrypto, 'randomUUID', {
+		configurable: true,
+		value: () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+			const r = (Math.random() * 16) | 0;
+			return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+		}),
+	});
+}

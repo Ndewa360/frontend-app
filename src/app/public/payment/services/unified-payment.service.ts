@@ -17,6 +17,8 @@ export type PaymentStatus =
   | 'idle'
   | 'processing'
   | 'pending_confirmation'
+  /** Attente terminée sans réponse définitive de l'opérateur (ni succès ni échec). */
+  | 'unconfirmed'
   | 'success'
   | 'failed'
   | 'cancelled';

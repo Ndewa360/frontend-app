@@ -959,7 +959,12 @@
     "FORM_RESET": "Changes cancelled",
     "DELETE_SUCCESS": "Your account has been deleted",
     "DELETE_ERROR": "Error deleting the account",
-    "DELETE_CONFIRM_WORD": "DELETE"
+    "DELETE_CONFIRM_WORD": "DELETE",
+    "TOASTS": {
+      "ACCOUNT_DELETED": "Your account has been deleted.",
+      "EXPORT_DOWNLOADED": "Your data export has been downloaded.",
+      "EXPORT_FAILED": "Error while exporting your data."
+    }
   },
   "VALIDATION": {
     "REQUIRED": "This field is required",
@@ -1233,7 +1238,7 @@
   "NOTIFICATIONS": {
     "SUCCESS": "Success",
     "ERROR": "Error",
-    "GENERIC_ERROR": "An error occurred. Please try again.",
+    "GENERIC_ERROR": "An error has occurred!",
     "WARNING": "Attention",
     "INFO": "Information",
     "TENANT_CREATED": "Tenant created successfully",
@@ -1259,7 +1264,6 @@
     "EMAIL_ACTIVATED_SUCCESS": "Email activated successfully!",
     "ACCOUNT_NOT_FOUND": "Account not found!",
     "ACCOUNT_ALREADY_ACTIVATED": "Account already activated!",
-    "GENERIC_ERROR": "An error has occurred!",
     "INVALID_TOKEN": "Invalid token!",
     "GENERIC_ERROR_RETRY": "An error has occurred! Please try again later",
     "PROFILE_UPDATED_SUCCESS": "User profile updated successfully",
@@ -2093,7 +2097,7 @@
         "TENANTS": "Tenants",
         "COLLECTED": "Collection rate",
         "REVENUES": "Monthly revenues",
-        "CONTRACT_BADGE": "Contract generated \u2714",
+        "CONTRACT_BADGE": "Contract generated ✔",
         "MOBILE_BADGE": "Mobile access 24/7"
       }
     },
@@ -2554,10 +2558,10 @@
         "TITLE": "Home seeker",
         "DESCRIPTION": "Explore verified listings.",
         "FEATURE_1": "Real and verified listings",
-        "FEATURE_2": "Free 360\u00b0 virtual tours",
+        "FEATURE_2": "Free 360° virtual tours",
         "FEATURE_3": "Owner contact: 1000 FCFA / 24 hours",
         "CTA": "Search a home",
-        "PAIN_HOOK": "You paid a broker for nothing \u2014 viewing fees collected, no home found."
+        "PAIN_HOOK": "You paid a broker for nothing — viewing fees collected, no home found."
       },
       "MANAGER": {
         "TITLE": "Property manager?",
@@ -2608,7 +2612,7 @@
     "AGENT_PROBLEM": {
       "LABEL": "The problem 90% of agents in Africa face",
       "TITLE": "You are serious. But nobody knows it yet.",
-      "SUBTITLE": "Without a verified professional profile and tracking tools, you manage your mandates in WhatsApp and clients don't trust you. It's not your fault \u2014 you just don't have the right tools.",
+      "SUBTITLE": "Without a verified professional profile and tracking tools, you manage your mandates in WhatsApp and clients don't trust you. It's not your fault — you just don't have the right tools.",
       "BRIDGE": "Ndewa360 gives you the credibility and tools you deserve.",
       "PAINS": {
         "NO_TOOLS": "You manage everything in WhatsApp or Excel. Zero professional tracking tool.",
@@ -2623,10 +2627,10 @@
       "SUBTITLE": "Agents who charge viewing fees with no guarantee, outdated listings, unreachable landlords... Finding a serious home takes weeks and costs money with no result.",
       "BRIDGE": "Ndewa360 connects you directly to the right homes, without middlemen.",
       "PAINS": {
-        "FAKE_ADS": "Outdated or invented listings \u2014 you travel for an apartment that has been taken for weeks.",
+        "FAKE_ADS": "Outdated or invented listings — you travel for an apartment that has been taken for weeks.",
         "NO_VISIT": "A broker charges you viewing fees. If it doesn't work out, they keep the money anyway.",
         "UNREACHABLE": "You pay an intermediary who disappears without finding you a home, or outright scams you.",
-        "WASTED_TIME": "Weeks of searching, dozens of calls, money spent \u2014 for nothing serious in the end."
+        "WASTED_TIME": "Weeks of searching, dozens of calls, money spent — for nothing serious in the end."
       }
     },
     "SEEKER_SECTION": {
@@ -2653,12 +2657,24 @@
       "DURATION": "2 min",
       "WHAT_YOU_SEE": "What you will see:",
       "CTA": "Get started for free",
-      "CTA_NOTE": "No credit card \u2014 setup in 2 minutes",
+      "CTA_NOTE": "No credit card — setup in 2 minutes",
       "POINTS": {
-        "DASHBOARD": { "TITLE": "Real-time dashboard", "DESC": "See who paid, overdue amounts and this month's revenue at a glance" },
-        "PAYMENT": { "TITLE": "Recording a payment", "DESC": "In 3 clicks, a rent is recorded and the receipt sent by email" },
-        "CONTRACT": { "TITLE": "PDF contract generation", "DESC": "A complete contract ready to sign in seconds" },
-        "ALERT": { "TITLE": "Automatic reminder alerts", "DESC": "The system follows up with late tenants on your behalf" }
+        "DASHBOARD": {
+          "TITLE": "Real-time dashboard",
+          "DESC": "See who paid, overdue amounts and this month's revenue at a glance"
+        },
+        "PAYMENT": {
+          "TITLE": "Recording a payment",
+          "DESC": "In 3 clicks, a rent is recorded and the receipt sent by email"
+        },
+        "CONTRACT": {
+          "TITLE": "PDF contract generation",
+          "DESC": "A complete contract ready to sign in seconds"
+        },
+        "ALERT": {
+          "TITLE": "Automatic reminder alerts",
+          "DESC": "The system follows up with late tenants on your behalf"
+        }
       }
     },
     "AGENT_DEMO": {
@@ -2672,7 +2688,7 @@
         "QUESTIONS": "Direct answers to all your questions",
         "SETUP": "Support for configuring your account"
       },
-      "SOCIAL_PROOF": "\u201cThanks to the demo, I understood in 20 minutes how to migrate all my mandates. The setup was very quick.\u201d \u2014 Real estate agent, Douala",
+      "SOCIAL_PROOF": "“Thanks to the demo, I understood in 20 minutes how to migrate all my mandates. The setup was very quick.” — Real estate agent, Douala",
       "MODAL_SUBTITLE": "Contact form.",
       "FIELD_NAME": "Full name",
       "FIELD_NAME_PLACEHOLDER": "John Doe",
@@ -4879,6 +4895,28 @@
       "SETTINGS": "System settings",
       "MONITORING": "System Monitoring",
       "AGENTS": "Agent validation"
+    },
+    "TOASTS": {
+      "INVALID_AMOUNT": "Invalid amount",
+      "AMOUNT_SAVE_FAILED": "The amount could not be saved.",
+      "SUBSCRIPTIONS_LOAD_FAILED": "Error while loading subscriptions",
+      "ACCOUNT_SUSPENDED": "Account suspended",
+      "ACCOUNT_SUSPEND_FAILED": "Error while suspending the account",
+      "ACCOUNT_REACTIVATED": "Account reactivated",
+      "ACCOUNT_REACTIVATE_FAILED": "Error while reactivating the account",
+      "REMINDER_SENT": "Payment reminder sent",
+      "REMINDER_FAILED": "Error while sending the reminder",
+      "EXPORT_DONE": "Export generated",
+      "EXPORT_FAILED": "Error during export",
+      "WITHDRAWAL_REQUESTED": "Withdrawal request created — tracking its status",
+      "WITHDRAWAL_REF_CONFIRMED": "Withdrawal {{reference}} confirmed!",
+      "WITHDRAWAL_REF_FAILED": "Withdrawal {{reference}} failed: {{reason}}",
+      "WITHDRAWAL_CONFIRMED_BY_AGGREGATOR": "Withdrawal confirmed by the aggregator",
+      "WITHDRAWAL_SUBMITTED": "Withdrawal submitted to the aggregator — processing",
+      "WITHDRAWAL_FAILED": "Withdrawal failed: {{reason}}",
+      "WITHDRAWAL_FAILED_TITLE": "Failed",
+      "WITHDRAWAL_CONFIRMED": "Withdrawal confirmed",
+      "AGGREGATOR_ERROR": "Aggregator error"
     }
   },
   "SUPPORT": {
@@ -5518,7 +5556,10 @@
       "CANCELLED_TITLE": "Payment cancelled",
       "CANCELLED_MESSAGE": "You cancelled the payment. No amount has been charged.",
       "RESTART_BUTTON": "Try again",
-      "SUPPORT_NOTE": "Need help? Contact our support."
+      "SUPPORT_NOTE": "Need help? Contact our support.",
+      "UNCONFIRMED_TITLE": "Payment awaiting confirmation",
+      "UNCONFIRMED_MESSAGE": "We have not received the operator's confirmation yet. Do not start a new payment: if you approved it on your phone, it will be recorded automatically once confirmed. You can check again in a few moments.",
+      "CHECK_AGAIN_BUTTON": "Check again"
     },
     "FOOTER": {
       "TERMS": "Terms",
@@ -5530,6 +5571,18 @@
       "MTN_MONEY": "MTN Mobile Money",
       "CARD": "Bank card",
       "EASY_TRANSACT": "Easy Transact"
+    },
+    "ERRORS": {
+      "INVALID_LINK": "Invalid or expired payment link.",
+      "LOAD_DETAILS": "Unable to load the payment details.",
+      "LINK_EXPIRED": "This payment link has expired.",
+      "STRIPE_REDIRECT": "Unrecognised payment address. Please try again.",
+      "STRIPE_URL": "Unable to get the card payment address.",
+      "SESSION_CREATE": "Error while creating the payment session.",
+      "INITIATE": "Error while starting the payment.",
+      "REFUSED": "The payment was declined or cancelled.",
+      "MISSING_REF": "Missing payment reference. Contact support if you were charged.",
+      "RECEIPT_DOWNLOAD": "Unable to download the receipt. Please try again shortly."
     }
   },
   "LOADER": {
@@ -5569,5 +5622,9 @@
     "CONTACT_US": "Contact us",
     "OCCUPATION_RULE": "Only occupied units count. A unit occupied at least {{days}} days in a month counts for the whole month. Your tier is checked every month.",
     "GOLD_CONTACT": "Gold plan or a question about your price:"
+  },
+  "PROPERTY_HISTORY": {
+    "PAYMENT_DETAILS_TITLE": "Payment details",
+    "PAYMENT_DETAILS": "Payment of {{amount}} - {{type}}"
   }
 }

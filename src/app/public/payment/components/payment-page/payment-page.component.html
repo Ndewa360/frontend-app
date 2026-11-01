@@ -436,6 +436,31 @@
           </div>
         </ng-container>
 
+        <!-- EN ATTENTE SANS CONFIRMATION : surtout pas « échec » -->
+        <ng-container *ngIf="paymentStatus === 'unconfirmed'">
+          <div class="ndewa-payment__result-icon ndewa-payment__result-icon--warning">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <h2 class="ndewa-payment__result-title ndewa-payment__result-title--warning">
+            {{ 'PAYMENT_PAGE.RESULT.UNCONFIRMED_TITLE' | translate }}
+          </h2>
+          <p class="ndewa-payment__result-message">
+            {{ 'PAYMENT_PAGE.RESULT.UNCONFIRMED_MESSAGE' | translate }}
+          </p>
+          <p *ngIf="externalRef" class="ndewa-payment__result-message">
+            {{ 'PAYMENT_PAGE.RESULT.RECEIPT_REF' | translate }} : <strong>{{ externalRef | slice:0:8 | uppercase }}</strong>
+          </p>
+          <div class="ndewa-payment__result-actions">
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--primary" (click)="checkAgain()">
+              <i class="fas fa-sync-alt"></i> {{ 'PAYMENT_PAGE.RESULT.CHECK_AGAIN_BUTTON' | translate }}
+            </button>
+            <button class="ndewa-payment__action-btn ndewa-payment__action-btn--secondary"
+                    (click)="redirectAfterCancel()">
+              <i class="fas fa-arrow-left"></i> {{ 'PAYMENT_PAGE.RESULT.BACK_BUTTON' | translate }}
+            </button>
+          </div>
+        </ng-container>
+
         <!-- ÉCHEC -->
         <ng-container *ngIf="paymentStatus === 'failed'">
           <div class="ndewa-payment__result-icon ndewa-payment__result-icon--error">

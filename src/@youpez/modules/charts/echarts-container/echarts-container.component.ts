@@ -33,7 +33,7 @@ export class EchartsContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.settingsSub.unsubscribe();
+    this.settingsSub?.unsubscribe();
   }
 
   refreshChart() {

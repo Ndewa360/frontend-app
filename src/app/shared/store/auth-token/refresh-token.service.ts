@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { BehaviorSubject, Observable, of, throwError, fromEvent, merge, timer, Subject } from 'rxjs';
-import { catchError, finalize, map, switchMap, tap, debounceTime, takeUntil } from 'rxjs/operators';
+import { catchError, filter, finalize, map, switchMap, take, tap, debounceTime, takeUntil } from 'rxjs/operators';
 import { ApiResultFormat } from '../global';
 import { environment } from 'src/environments/environment';
 import { AuthTokenAction } from './auth-token.actions';
@@ -41,8 +41,8 @@ export class RefreshTokenService {
   private initializeActivityBasedRefresh(): void {
     // Démarrer la surveillance d'activité avec une configuration personnalisée
     this.userActivityService.startMonitoring({
-      inactivityTimeout: 15 * 60 * 1000, // 15 minutes d'inactivité
-      criticalInactivityTimeout: 30 * 60 * 1000, // 30 minutes pour déconnexion forcée
+      inactivityTimeout: UserActivityService.INACTIVITY_TIMEOUT_MS,
+      criticalInactivityTimeout: UserActivityService.CRITICAL_INACTIVITY_TIMEOUT_MS,
       checkInterval: 60 * 1000, // Vérification chaque minute
       debounceTime: 1000 // 1 seconde de debounce
     });
@@ -68,7 +68,7 @@ export class RefreshTokenService {
     switch (state) {
       case UserActivityState.ACTIVE:
         // Utilisateur actif : vérifier si le token doit être rafraîchi
-        this.checkTokenExpiration().subscribe();
+        this.checkTokenExpiration().subscribe({ error: () => undefined });
         break;
 
       case UserActivityState.INACTIVE:
@@ -123,18 +123,21 @@ export class RefreshTokenService {
       return throwError(() => new Error('User critically inactive'));
     }
 
-    // Si un rafraîchissement est déjà en cours, retourner le subject
+    // Rafraîchissement déjà en cours : attendre le NOUVEAU jeton. Le
+    // BehaviorSubject émettait immédiatement l'ancienne valeur (ou null), et
+    // la requête était rejouée avec le jeton expiré.
     if (this.refreshInProgress) {
-      return this.refreshTokenSubject.asObservable();
+      return this.refreshTokenSubject.pipe(
+        filter((value): value is string => !!value),
+        take(1),
+      );
     }
 
-    // Si l'utilisateur est inactif, demander une reconnexion
-    if (this.userActivityService.isUserInactive()) {
-      this.handleInactiveUserRefresh();
-      return throwError(() => new Error('User inactive - reconnection required'));
-    }
+    // Une simple inactivité ne coupe plus la session : seule l'inactivité
+    // critique (contrôlée ci-dessus) déconnecte.
 
     this.refreshInProgress = true;
+    this.refreshTokenSubject.next(null);
 
     // Vérifier le token avant de l'envoyer
     const token = this.store.selectSnapshot(AuthTokenState.selectStateToken);
@@ -164,13 +167,11 @@ export class RefreshTokenService {
           this.refreshInProgress = false;
           this.refreshTokenSubject.next(null);
 
-          // Gestion des différents types d'erreurs
-          if (err.status === 401 || err.status === 403) {
+          // Seul un refus du serveur (401/403) met fin à la session. Une
+          // coupure réseau ou une erreur serveur passagère ne déconnecte plus
+          // l'utilisateur : la requête échoue, et il pourra réessayer.
+          if (RefreshTokenService.isSessionRejected(err)) {
             this.handleRefreshFailure('session_expired');
-          } else if (err.status === 0) {
-            this.handleRefreshFailure('connection_error');
-          } else {
-            this.handleRefreshFailure('refresh_error');
           }
 
           return throwError(() => err);
@@ -231,6 +232,11 @@ export class RefreshTokenService {
       extendedTimeOut: 5000,
       closeButton: true
     });
+  }
+
+  /** Vrai si l'échec signifie que la session n'est plus valide (et non un incident réseau). */
+  static isSessionRejected(err: any): boolean {
+    return err?.status === 401 || err?.status === 403 || err?.message === 'Invalid token response';
   }
 
   /**

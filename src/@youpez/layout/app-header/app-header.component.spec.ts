@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppHeaderComponent } from './app-header.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('AppHeaderComponent', () => {
-  let component: AppHeaderComponent;
   let fixture: ComponentFixture<AppHeaderComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppHeaderComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppHeaderComponent, { standalone: true });
     fixture = TestBed.createComponent(AppHeaderComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

@@ -726,7 +726,10 @@ export class PropertyHistoryComponent implements OnInit, OnDestroy, OnChanges {
 
     // Ici vous pouvez ouvrir un modal de détails ou naviguer vers une page de détails
     // Pour l'instant, on affiche juste les informations dans la console
-    this.toastr.info(`Paiement de ${this.formatPrice(payment.amount)} - ${this.getTypeLabel(payment.type)}`, 'Détails du paiement');
+    this.toastr.info(
+      this.translate.instant('PROPERTY_HISTORY.PAYMENT_DETAILS', { amount: this.formatPrice(payment.amount), type: this.getTypeLabel(payment.type) }),
+      this.translate.instant('PROPERTY_HISTORY.PAYMENT_DETAILS_TITLE')
+    );
   }
 
   /**

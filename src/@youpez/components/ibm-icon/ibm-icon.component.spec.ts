@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { IbmIconComponent } from './ibm-icon.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('IbmIconComponent', () => {
-  let component: IbmIconComponent;
   let fixture: ComponentFixture<IbmIconComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ IbmIconComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(IbmIconComponent, { standalone: true });
     fixture = TestBed.createComponent(IbmIconComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

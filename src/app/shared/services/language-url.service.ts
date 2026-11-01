@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { saveAppLanguage } from './localization/app-locale';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -59,7 +60,7 @@ export class LanguageUrlService {
     if (this.supportedLanguages.includes(lang)) {
       this.currentLanguage = lang;
       this.translate.use(lang);
-      localStorage.setItem('selectedLanguage', lang);
+      saveAppLanguage(lang);
     }
   }
 

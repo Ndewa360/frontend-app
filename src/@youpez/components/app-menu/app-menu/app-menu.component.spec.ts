@@ -1,25 +1,16 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppMenuComponent } from './app-menu.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('AppMenuComponent', () => {
-  let component: AppMenuComponent;
   let fixture: ComponentFixture<AppMenuComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AppMenuComponent ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
+  beforeEach(async () => {
+    await configureSmokeTest(AppMenuComponent, { standalone: true });
     fixture = TestBed.createComponent(AppMenuComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

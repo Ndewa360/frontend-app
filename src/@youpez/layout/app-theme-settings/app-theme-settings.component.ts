@@ -39,7 +39,7 @@ export class AppThemeSettingsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.settingsSub.unsubscribe();
+    this.settingsSub?.unsubscribe();
   }
 
   onSetSideBarTheme(name) {

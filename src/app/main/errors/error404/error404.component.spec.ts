@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { Error404Component } from './error404.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('Error404Component', () => {
-  let component: Error404Component;
   let fixture: ComponentFixture<Error404Component>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ Error404Component ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(Error404Component, { standalone: true });
     fixture = TestBed.createComponent(Error404Component);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

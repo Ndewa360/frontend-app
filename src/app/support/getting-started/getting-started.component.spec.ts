@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { GettingStartedComponent } from './getting-started.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('GettingStartedComponent', () => {
-  let component: GettingStartedComponent;
   let fixture: ComponentFixture<GettingStartedComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ GettingStartedComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(GettingStartedComponent, { standalone: true });
     fixture = TestBed.createComponent(GettingStartedComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

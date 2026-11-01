@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ListPropertyComponent } from './list-property.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('ListPropertyComponent', () => {
-  let component: ListPropertyComponent;
   let fixture: ComponentFixture<ListPropertyComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ ListPropertyComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(ListPropertyComponent, { standalone: true });
     fixture = TestBed.createComponent(ListPropertyComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

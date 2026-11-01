@@ -71,7 +71,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
   private saveCustomAmount(): void {
     const amount = this.customAmount === null || (this.customAmount as any) === '' ? null : Math.round(Number(this.customAmount));
     if (amount !== null && (!Number.isFinite(amount) || amount < 0)) {
-      this.toastr.warning('Montant invalide');
+      this.toastr.warning(this.translate.instant('ADMIN.TOASTS.INVALID_AMOUNT'));
       return;
     }
     this.savingAmount = true;
@@ -85,7 +85,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
       },
       error: () => {
         this.savingAmount = false;
-        this.toastr.error('Le montant n\'a pas pu être enregistré.');
+        this.toastr.error(this.translate.instant('ADMIN.TOASTS.AMOUNT_SAVE_FAILED'));
       }
     });
   }

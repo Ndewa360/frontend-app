@@ -111,7 +111,7 @@ export class AdminSubscriptionsState {
           loading: false,
           error: error.message || 'Erreur lors du chargement des souscriptions'
         });
-        this.toastrService.error('Erreur lors du chargement des souscriptions');
+        this.toastrService.error(this.translateService.instant('ADMIN.TOASTS.SUBSCRIPTIONS_LOAD_FAILED'));
         return throwError(error);
       })
     );
@@ -158,13 +158,13 @@ export class AdminSubscriptionsState {
     return this.adminSubscriptionsService.suspendAccount(action.subscriptionId, action.reason).pipe(
       tap((result) => {
         ctx.patchState({ loading: false });
-        this.toastrService.success('Compte suspendu avec succès');
+        this.toastrService.success(this.translateService.instant('ADMIN.TOASTS.ACCOUNT_SUSPENDED'));
         // Recharger les données
         ctx.dispatch(new AdminSubscriptionsAction.LoadSubscriptions(ctx.getState().filters));
       }),
       catchError((error) => {
         ctx.patchState({ loading: false });
-        this.toastrService.error('Erreur lors de la suspension du compte');
+        this.toastrService.error(this.translateService.instant('ADMIN.TOASTS.ACCOUNT_SUSPEND_FAILED'));
         return throwError(error);
       })
     );
@@ -177,13 +177,13 @@ export class AdminSubscriptionsState {
     return this.adminSubscriptionsService.reactivateAccount(action.subscriptionId).pipe(
       tap((result) => {
         ctx.patchState({ loading: false });
-        this.toastrService.success('Compte réactivé avec succès');
+        this.toastrService.success(this.translateService.instant('ADMIN.TOASTS.ACCOUNT_REACTIVATED'));
         // Recharger les données
         ctx.dispatch(new AdminSubscriptionsAction.LoadSubscriptions(ctx.getState().filters));
       }),
       catchError((error) => {
         ctx.patchState({ loading: false });
-        this.toastrService.error('Erreur lors de la réactivation du compte');
+        this.toastrService.error(this.translateService.instant('ADMIN.TOASTS.ACCOUNT_REACTIVATE_FAILED'));
         return throwError(error);
       })
     );
@@ -193,10 +193,10 @@ export class AdminSubscriptionsState {
   sendPaymentReminder(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.SendPaymentReminder) {
     return this.adminSubscriptionsService.sendPaymentReminder(action.subscriptionId).pipe(
       tap((result) => {
-        this.toastrService.success('Rappel de paiement envoyé avec succès');
+        this.toastrService.success(this.translateService.instant('ADMIN.TOASTS.REMINDER_SENT'));
       }),
       catchError((error) => {
-        this.toastrService.error('Erreur lors de l\'envoi du rappel');
+        this.toastrService.error(this.translateService.instant('ADMIN.TOASTS.REMINDER_FAILED'));
         return throwError(error);
       })
     );
@@ -241,10 +241,10 @@ export class AdminSubscriptionsState {
       tap((result) => {
         // Ouvrir le lien de téléchargement
         window.open(result.downloadUrl, '_blank', 'noopener,noreferrer');
-        this.toastrService.success('Export généré avec succès');
+        this.toastrService.success(this.translateService.instant('ADMIN.TOASTS.EXPORT_DONE'));
       }),
       catchError((error) => {
-        this.toastrService.error('Erreur lors de l\'export');
+        this.toastrService.error(this.translateService.instant('ADMIN.TOASTS.EXPORT_FAILED'));
         return throwError(error);
       })
     );

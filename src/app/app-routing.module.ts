@@ -6,20 +6,11 @@ import { SelectivePreloadingStrategy } from './shared/services/preloading/select
 
 import { LoadingAdminDataResolver } from './shared/resolvers/loading-admin-data';
 import { Error404Component } from './main/errors/error404/error404.component';
+import { currentAppLanguage } from './shared/services/localization/app-locale';
 
-/** Détecte la langue sauvegardée ou du navigateur — SSR-safe */
+/** Détecte la langue sauvegardée ou du navigateur — SSR-safe (même source que le format des dates). */
 function getBrowserLang(): string {
-  // SSR : localStorage et navigator ne sont pas disponibles côté serveur
-  if (typeof window === 'undefined') return 'fr';
-  try {
-    const saved = localStorage.getItem('selectedLanguage');
-    if (saved === 'fr' || saved === 'en') return saved;
-  } catch {}
-  try {
-    const browser = (navigator.language || '').split('-')[0].toLowerCase();
-    return browser === 'fr' ? 'fr' : 'en';
-  } catch {}
-  return 'fr';
+  return currentAppLanguage();
 }
 
 
@@ -32,7 +23,7 @@ const routes: Routes = [
 				path: 'app',
 				canActivate:[AuthGuard],
 				data:{
-					breadcrumb: 'Acceuil'
+					breadcrumb: 'Accueil'
 				},
 				resolve:{
 					"initialData":InitialLoadingDataResolver
@@ -72,7 +63,7 @@ const routes: Routes = [
 			{
 				path: 'admin',
 				data:{
-					breadcrumb: 'Acceuil',
+					breadcrumb: 'Accueil',
 					preload: false
 				},
 				resolve:{

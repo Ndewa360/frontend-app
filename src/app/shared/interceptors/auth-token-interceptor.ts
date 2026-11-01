@@ -4,7 +4,7 @@ import { AuthTokenAction, AuthTokenState, GlobalAction } from "../store";
 import { Store } from "@ngxs/store";
 import { catchError, filter, switchMap, take, timeout } from "rxjs/operators";
 import { Router } from "@angular/router";
-import { BehaviorSubject, Observable, of, throwError, timer } from "rxjs";
+import { BehaviorSubject, EMPTY, Observable, throwError, timer } from "rxjs";
 import { ToastrService } from "ngx-toastr";
 import { RefreshTokenService } from "../store/auth-token/refresh-token.service";
 import { UserActivityService } from "../store/auth-token/user-activity.service";
@@ -15,6 +15,9 @@ import { LogoutFlagService } from "../services/logout-flag.service";
 import { isSilentHttpError } from "../http/http-error-context";
 import { AppLoadingPhaseService } from "../services/app-loading-phase.service";
 import { environment } from "src/environments/environment";
+
+/** Marque une erreur provenant de la requête rejouée après rafraîchissement. */
+const REPLAY_ERROR = '__ndewaReplayError';
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
@@ -43,9 +46,11 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       req = req.clone({ withCredentials: true });
     }
 
-    // Logout volontaire en cours : laisser passer sans token ni gestion d'erreur 401
+    // Logout volontaire en cours : laisser passer sans token ni gestion d'erreur 401.
+    // En cas d'échec, EMPTY (complétion sans valeur) plutôt que `null` : les
+    // abonnés qui lisaient `res.data` plantaient sur une réponse nulle.
     if (LogoutFlagService.isLoggingOut()) {
-      return next.handle(req).pipe(catchError(() => of(null as any)));
+      return next.handle(req).pipe(catchError(() => EMPTY));
     }
 
     // Le jeton n'est envoyé qu'à l'API Ndewa360 : jamais aux assets, aux
@@ -132,8 +137,8 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       return this.handle401Error(originalRequest, next);
     }
 
-    // Retry pour erreurs réseau (status 0) ou serveur (5xx)
-    if (this.shouldRetry(error, retryCount)) {
+    // Retry pour erreurs réseau (status 0) ou serveur (5xx) — lectures uniquement
+    if (this.shouldRetry(error, retryCount, originalRequest)) {
       const delayMs = this.retryDelay * Math.pow(2, retryCount);
       return timer(delayMs).pipe(
         switchMap(() => {
@@ -186,10 +191,19 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
   }
 
   /**
-   * Détermine si une requête doit être retentée (exponentielle backoff)
+   * Détermine si une requête doit être retentée (exponentielle backoff).
+   *
+   * Seules les requêtes idempotentes (lecture) sont rejouées. Une requête
+   * POST/PUT/PATCH/DELETE en erreur 5xx ou réseau a pu être exécutée par le
+   * serveur alors que la réponse s'est perdue (passerelle en 502/504,
+   * coupure mobile) : la rejouer créait des doublons (paiement, locataire,
+   * attribution, initiation de paiement mobile money…).
    */
-  private shouldRetry(error: HttpErrorResponse, retryCount: number): boolean {
+  private shouldRetry(error: HttpErrorResponse, retryCount: number, request: HttpRequest<any>): boolean {
     if (error.status === 401 || error.status === 403) {
+      return false;
+    }
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method.toUpperCase())) {
       return false;
     }
     return (error.status === 0 || error.status >= 500) && retryCount < this.maxRetries;
@@ -219,11 +233,23 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
         switchMap((newToken: string) => {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(newToken);
-          return next.handle(this.addToken(request, newToken));
+          return this.replay(request, next, newToken);
         }),
         catchError((err) => {
+          // Échec de la requête rejouée (403 d'accès, 400, 500…) : ce n'est pas
+          // un échec de session, il ne doit jamais déconnecter.
+          if (err?.[REPLAY_ERROR]) return throwError(() => err.original);
+
           this.isRefreshing = false;
           this.refreshTokenSubject.next(null);
+
+          // Coupure réseau, délai dépassé ou erreur serveur pendant le
+          // rafraîchissement : la session est conservée, seule la requête
+          // échoue. Auparavant, l'utilisateur était déconnecté.
+          if (!RefreshTokenService.isSessionRejected(err) && !err.message?.includes('critically inactive')) {
+            this.reportFailure(err instanceof HttpErrorResponse ? err : new HttpErrorResponse({ status: 0, url: request.url }), request);
+            return throwError(() => err);
+          }
 
           if (err.message?.includes('User inactive')) {
             const inactiveMessage = this.translate.instant('NOTIFICATIONS.SESSION_EXPIRED');
@@ -248,21 +274,36 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
         filter(token => token !== null),
         take(1),
         timeout(15000),
-        switchMap(newToken => {
-          return next.handle(this.addToken(request, newToken));
-        }),
+        switchMap(newToken => this.replay(request, next, newToken)),
         catchError(error => {
-          // Si le timeout est atteint, forcer une déconnexion
+          if (error?.[REPLAY_ERROR]) return throwError(() => error.original);
+          // Attente du rafraîchissement trop longue (réseau lent) : la requête
+          // échoue mais la session est conservée.
           if (error.name === 'TimeoutError') {
             const timeoutMessage = this.translate.instant('NOTIFICATIONS.NETWORK_ERROR');
             const connectionTitle = `Ndewa360° - ${this.translate.instant('COMMON.WARNING')}`;
             this._toastrService.warning(timeoutMessage, connectionTitle, { timeOut: 10000, extendedTimeOut: 5000 });
+            return throwError(() => error);
           }
           this.forceLogoutWithRedirect();
           return throwError(() => error);
         })
       );
     }
+  }
+
+  /**
+   * Rejoue la requête avec le nouveau jeton. Ses erreurs sont signalées
+   * normalement puis marquées, pour que le traitement d'échec du
+   * rafraîchissement ne les confonde pas avec un refus de session.
+   */
+  private replay(request: HttpRequest<any>, next: HttpHandler, token: string): Observable<HttpEvent<any>> {
+    return next.handle(this.addToken(request, token)).pipe(
+      catchError((original: HttpErrorResponse) => {
+        this.reportFailure(original, request);
+        return throwError(() => ({ [REPLAY_ERROR]: true, original }));
+      })
+    );
   }
 
   ngOnDestroy(): void {

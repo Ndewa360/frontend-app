@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { AppLockScreenComponent } from './app-lock-screen.component';
+import { configureSmokeTest } from '../../../testing/component-smoke';
 
 describe('AppLockScreenComponent', () => {
-  let component: AppLockScreenComponent;
   let fixture: ComponentFixture<AppLockScreenComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ AppLockScreenComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(AppLockScreenComponent, { standalone: true });
     fixture = TestBed.createComponent(AppLockScreenComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

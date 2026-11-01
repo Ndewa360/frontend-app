@@ -564,7 +564,7 @@ export class UserProfileState {
                     userProfile: null,
                     lastError: null
                 });
-                this._toastrService.success('Votre compte a été supprimé avec succès.', 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('USER_PROFILE.TOASTS.ACCOUNT_DELETED'), 'Ndewa360°');
                 this._languagePreservation.redirectToLogin();
             }),
             catchError((error) => {
@@ -587,10 +587,10 @@ export class UserProfileState {
                 a.click();
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
-                this._toastrService.success('Export de vos données téléchargé.', 'Ndewa360°');
+                this._toastrService.success(this._translateService.instant('USER_PROFILE.TOASTS.EXPORT_DOWNLOADED'), 'Ndewa360°');
             }),
             catchError((error) => {
-                this._toastrService.error('Erreur lors de l\'export des données.', 'Ndewa360°');
+                this._toastrService.error(this._translateService.instant('USER_PROFILE.TOASTS.EXPORT_FAILED'), 'Ndewa360°');
                 return throwError(() => error);
             })
         );

@@ -1,25 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { NoDataComponent } from './no-data.component';
+import { configureSmokeTest } from '../../../../testing/component-smoke';
 
 describe('NoDataComponent', () => {
-  let component: NoDataComponent;
   let fixture: ComponentFixture<NoDataComponent>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ NoDataComponent ]
-    })
-    .compileComponents();
-  });
-
-  beforeEach(() => {
+    await configureSmokeTest(NoDataComponent, { standalone: true });
     fixture = TestBed.createComponent(NoDataComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

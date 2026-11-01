@@ -23,6 +23,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { CustomTranslateLoader } from './shared/services/localization/custom-translate-loader';
 import { GlobalErrorHandler } from './shared/services/global-error-handler.service';
 import { KundaiModule } from '@kundai/angular';
+import { DynamicLocaleId } from './shared/services/localization/app-locale';
 
 registerLocaleData(localeFr);
 registerLocaleData(localeEn);
@@ -32,16 +33,11 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 /**
- * Locale dynamique basée sur la langue sauvegardée (ndiye-preferred-language).
- * Utilisée pour le formatage des dates/nombres (DatePipe, DecimalPipe...).
+ * Locale des dates et nombres (DatePipe, DecimalPipe...) : suit la langue
+ * courante de l'interface (voir shared/services/localization/app-locale.ts).
  */
 export function getDynamicLocale(): string {
-  try {
-    const lang = localStorage.getItem('ndiye-preferred-language') || 'fr';
-    return lang === 'en' ? 'en-US' : 'fr-FR';
-  } catch {
-    return 'fr-FR';
-  }
+  return new DynamicLocaleId() as unknown as string;
 }
 
 @NgModule({

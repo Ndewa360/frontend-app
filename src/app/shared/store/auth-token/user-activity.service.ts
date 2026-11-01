@@ -32,9 +32,19 @@ export interface UserActivityStatus {
 })
 export class UserActivityService implements OnDestroy {
   private readonly destroy$ = new Subject<void>();
+  /**
+   * Inactivité : au bout de 30 min l'utilisateur est seulement marqué
+   * « inactif » (aucune conséquence sur la session) ; la déconnexion forcée
+   * n'intervient qu'après 2 h sans aucune activité. Auparavant, 15 min
+   * d'inactivité suffisaient à déconnecter au prochain rafraîchissement, et
+   * 30 min déconnectaient même un onglet laissé ouvert en arrière-plan.
+   */
+  static readonly INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000;
+  static readonly CRITICAL_INACTIVITY_TIMEOUT_MS = 2 * 60 * 60 * 1000;
+
   private readonly defaultConfig: UserActivityConfig = {
-    inactivityTimeout: 15 * 60 * 1000, // 15 minutes
-    criticalInactivityTimeout: 30 * 60 * 1000, // 30 minutes
+    inactivityTimeout: UserActivityService.INACTIVITY_TIMEOUT_MS,
+    criticalInactivityTimeout: UserActivityService.CRITICAL_INACTIVITY_TIMEOUT_MS,
     checkInterval: 60 * 1000, // 1 minute
     debounceTime: 1000 // 1 seconde
   };

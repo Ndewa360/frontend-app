@@ -172,7 +172,9 @@ export class CountryState{
     @Action(CountryAction.FetchCountries)
     fetchCountries(ctx:StateContext<CountryStateModel>)
     {
-        if(ctx.getState().initLoadingState=="LOADED") return of(true);
+        // Déjà chargés, ou chargement en cours (plusieurs résolveurs le
+        // demandent au même moment) : pas de seconde requête.
+        if(ctx.getState().initLoadingState=="LOADED" || ctx.getState().initLoadingState=="LOADING") return of(true);
         const state = ctx.getState();
         
         ctx.patchState({
@@ -192,7 +194,13 @@ export class CountryState{
                         countries:[...result.data],
                     })
                 }
-            )
+            ),
+            // En cas d'échec, l'indicateur de chargement ne doit pas rester
+            // affiché indéfiniment, et un prochain appel doit pouvoir réessayer.
+            catchError(() => {
+                ctx.patchState({ loadingCountry:false, initLoadingState:"NO_LOADED" });
+                return of(false);
+            })
         )
     }
 }
