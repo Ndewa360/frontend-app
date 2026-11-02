@@ -27,6 +27,7 @@ import { LocalizationSettingsComponent } from './localization-settings.component
 import { SelectModule } from 'carbon-components-angular';
 import { NgIf } from '@angular/common';
 import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
+import { WhatsappNotificationsToggleComponent } from './whatsapp-notifications-toggle.component';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
 
@@ -36,7 +37,7 @@ const COOKIE_KEY = 'ndewa_cookie_consent';
   styleUrls: ['./user-profile-infos.component.css', './phone-input.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, IbmIconComponent, NgIf, SelectModule, LocalizationSettingsComponent, AgentContactDisplaySettingsComponent, TranslatePipe]
+  imports: [FormsModule, ReactiveFormsModule, IbmIconComponent, NgIf, SelectModule, LocalizationSettingsComponent, AgentContactDisplaySettingsComponent, TranslatePipe, WhatsappNotificationsToggleComponent]
 })
 export class UserProfileInfosComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;

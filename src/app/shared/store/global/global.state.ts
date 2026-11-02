@@ -8,7 +8,6 @@ import { of } from "rxjs";
     name: "globals",
     defaults:{
         isLoading:false,
-        isConnectedToWhatsapp:false,
         notifications:[],
         hasInternetConnexion:true
     }
@@ -21,12 +20,6 @@ export class GlobalState{
     {
         ctx.patchState({isLoading:action.isLoading});
         return of(true)
-    }
-
-    @Selector()
-    static selectStateConnectedWhatsApp(state:GlobalModel)
-    {
-        return state.isConnectedToWhatsapp
     }
 
     @Selector()
@@ -60,12 +53,5 @@ export class GlobalState{
     loadDataConnectedAppStatus(ctx:StateContext<GlobalModel>,)
     {
         return ;
-    }
-
-    @Action(GlobalAction.ChangeWhatsAppConnectedStatus)
-    updateWhatsConnectedAppStatus(ctx:StateContext<GlobalModel>,{status}:GlobalAction.ChangeWhatsAppConnectedStatus)
-    {
-        ctx.patchState({isConnectedToWhatsapp:status});
-        return of(true);
     }
 }

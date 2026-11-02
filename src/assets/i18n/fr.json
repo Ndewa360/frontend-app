@@ -847,6 +847,13 @@
     }
   },
   "PROFILE": {
+    "WHATSAPP_NOTIFICATIONS": {
+      "LABEL": "Recevoir les notifications WhatsApp",
+      "HINT": "Reçus de loyer, résumé mensuel et factures d'abonnement impayées. Envoyés à votre numéro WhatsApp, sinon à votre téléphone. Vous pouvez aussi répondre STOP sur WhatsApp.",
+      "DISABLED": "Vous ne recevrez aucun message WhatsApp de Ndewa360 (emails et notifications de l'application inchangés).",
+      "ON": "Notifications WhatsApp activées",
+      "OFF": "Notifications WhatsApp désactivées"
+    },
     "TITLE": "Profil utilisateur",
     "SUBTITLE": "Gérez vos informations personnelles et préférences",
     "PERSONAL_INFO": "Informations personnelles",

@@ -847,6 +847,13 @@
     }
   },
   "PROFILE": {
+    "WHATSAPP_NOTIFICATIONS": {
+      "LABEL": "Receive WhatsApp notifications",
+      "HINT": "Rent receipts, monthly summary and unpaid subscription invoices. Sent to your WhatsApp number, otherwise to your phone. You can also reply STOP on WhatsApp.",
+      "DISABLED": "You will not receive any WhatsApp message from Ndewa360 (emails and app notifications unchanged).",
+      "ON": "WhatsApp notifications enabled",
+      "OFF": "WhatsApp notifications disabled"
+    },
     "TITLE": "User profile",
     "SUBTITLE": "Manage your personal information and preferences",
     "PERSONAL_INFO": "Personal information",

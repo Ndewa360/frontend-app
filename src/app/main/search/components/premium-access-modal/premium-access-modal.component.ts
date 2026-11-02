@@ -289,9 +289,15 @@ export class PremiumAccessModalComponent implements OnInit, OnDestroy {
     return '1 jour restant';
   }
 
+  /** Numéro WhatsApp du propriétaire, sinon son téléphone (le champ WhatsApp est souvent vide). */
+  get ownerWhatsapp(): string {
+    return this.ownerInfo?.owner?.whatsapp || this.ownerInfo?.owner?.phone || '';
+  }
+
   getWhatsAppLink(): string {
-    if (!this.ownerInfo?.owner.whatsapp) return '#';
-    const phone = this.ownerInfo.owner.whatsapp.replace(/\s+/g, '');
+    // wa.me n'accepte que des chiffres (sans « + » ni espaces).
+    const phone = this.ownerWhatsapp.replace(/\D/g, '');
+    if (!phone) return '#';
     const message = encodeURIComponent(
       this.translate.instant('SEARCH_MODULE.PREMIUM_MODAL.WHATSAPP_MESSAGE')
     );

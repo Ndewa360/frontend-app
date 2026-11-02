@@ -519,10 +519,11 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
     return this.ownerInfo?.owner?.email || '';
   }
 
-  getContactWhatsApp(): string { return this.getContactPhone(); }
+  /** Numéro WhatsApp du propriétaire, sinon son téléphone (même règle que l'accès premium). */
+  getContactWhatsApp(): string { return this.ownerInfo?.owner?.whatsapp || this.getContactPhone(); }
 
   getWhatsAppLink(): string {
-    return `https://wa.me/${this.getContactPhone().replace(/\D/g, '')}`;
+    return `https://wa.me/${this.getContactWhatsApp().replace(/\D/g, '')}`;
   }
 
   // ── Actions ──────────────────────────────────────────────────────────────

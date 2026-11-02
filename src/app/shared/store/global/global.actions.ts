@@ -21,12 +21,6 @@ export namespace GlobalAction
         constructor(public isLoading:boolean){}
     }
 
-    export class ChangeWhatsAppConnectedStatus
-    {
-        static readonly type = '[Global-WhatsApp-Status] Change WhatsApp Status';
-        constructor(public status:boolean){}
-    }
-
     export class StartLoadData
     {
         static readonly type = '[Global] Load data';
