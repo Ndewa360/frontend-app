@@ -188,8 +188,8 @@
           <div *ngIf="amountForm.get('amount')?.invalid && amountForm.get('amount')?.touched"
                class="ndewa-payment__field-error">
             <i class="fas fa-exclamation-circle"></i>
-            <span *ngIf="amountForm.get('amount')?.errors?.['min']">{{ 'PAYMENT_PAGE.DETAILS_STEP.ERROR_MIN' | translate }}</span>
-            <span *ngIf="amountForm.get('amount')?.errors?.['max']">{{ 'PAYMENT_PAGE.DETAILS_STEP.ERROR_MAX' | translate }}</span>
+            <span *ngIf="amountForm.get('amount')?.errors?.['min']">{{ 'PAYMENT_PAGE.DETAILS_STEP.ERROR_MIN' | translate:{ min: (selectedMethod === 'card' ? CARD_MIN : MOBILE_MIN) } }}</span>
+            <span *ngIf="amountForm.get('amount')?.errors?.['max']">{{ 'PAYMENT_PAGE.DETAILS_STEP.ERROR_MAX' | translate:{ max: ((selectedMethod === 'card' ? CARD_MAX : MOBILE_MAX) | number) } }}</span>
             <span *ngIf="amountForm.get('amount')?.errors?.['required']">{{ 'PAYMENT_PAGE.DETAILS_STEP.ERROR_REQUIRED' | translate }}</span>
           </div>
 

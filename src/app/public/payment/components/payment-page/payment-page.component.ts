@@ -1,7 +1,7 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -16,19 +16,16 @@ import {
 import { PaymentLinkService, PaymentLinkDetails } from '../../services/payment-link.service';
 import { AnonymousUserService } from 'src/app/shared/services/anonymous-user.service';
 import { LocationPaymentService } from 'src/app/shared/store/payment-location/location-payment.service';
-import { environment } from 'src/environments/environment';
 import { RealtimeService } from 'src/app/core/realtime';
-import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, UpperCasePipe, SlicePipe, DatePipe } from '@angular/common';
+import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, UpperCasePipe, SlicePipe, DatePipe, DecimalPipe } from '@angular/common';
 import { isAllowedRedirect } from 'src/app/shared/utils/safe-redirect';
-
-declare let Stripe: any;
 
 @Component({
   selector: 'app-payment-page',
   templateUrl: './payment-page.component.html',
   styleUrls: ['./payment-page.component.scss'],
   standalone: true,
-  imports: [NgIf, NgClass, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule, NgFor, UpperCasePipe, SlicePipe, DatePipe, TranslatePipe]
+  imports: [NgIf, NgClass, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule, NgFor, UpperCasePipe, SlicePipe, DatePipe, DecimalPipe, TranslatePipe]
 })
 export class PaymentPageComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -62,7 +59,14 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   /** Date d'expiration de la demande Mobile Money */
   expiresAt: string | null = null;
 
-  quickAmounts = [25000, 50000, 75000, 100000, 150000, 200000];
+  /** Montants proposés (selon le contexte : loyer mensuel, dépôt…). */
+  quickAmounts: number[] = [];
+
+  /** Limites de l'agrégateur Mobile Money (identiques au serveur). */
+  readonly MOBILE_MIN = 500;
+  readonly MOBILE_MAX = 500_000;
+  readonly CARD_MIN = 100;
+  readonly CARD_MAX = 10_000_000;
 
   /** État du téléchargement du reçu (RENT uniquement) */
   isDownloadingReceipt = false;
@@ -71,10 +75,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   /** Fix #10 : mis à jour au moment réel du succès, pas à l'instanciation */
   today = new Date();
-
-  private stripe: any;
-  /** Fix #5 : Stripe chargé en lazy — seulement si l'utilisateur choisit la carte */
-  private stripeLoaded = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -88,11 +88,11 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     private realtime: RealtimeService,
   ) {
     this.amountForm = this.fb.group({
-      amount: [null, [Validators.required, Validators.min(100), Validators.max(10000000)]]
+      amount: [null, [Validators.required, Validators.min(this.MOBILE_MIN), Validators.max(this.MOBILE_MAX)]]
     });
     this.mobileForm = this.fb.group({
-      // Accepte : 6XXXXXXXX | 6XX XX XX XX | +2376XXXXXXXX | 00237 6XXXXXXXX
-      phone: ['', [Validators.required, Validators.pattern(/^(\+237|00237)?\s?6[0-9\s]{8,11}$/)]]
+      // Numéro camerounais du bon opérateur (MTN : 67X, 68X, 650-654 ; Orange : 69X, 655-659, 66X).
+      phone: ['', [Validators.required, (control: AbstractControl) => this.phoneValidator(control)]]
     });
   }
 
@@ -103,6 +103,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     const qp = this.route.snapshot.queryParams;
     if (qp['payment'] === 'success' && qp['session_id']) {
       this.handleStripeReturn(qp['session_id']);
+      return;
+    }
+    if (qp['payment'] === 'cancelled' && this.token === 'stripe-return') {
+      this.paymentStatus = 'cancelled';
+      this.currentStep = 'result';
+      this.pageLoading = false;
       return;
     }
     if (qp['payment'] === 'cancelled') {
@@ -118,7 +124,6 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Fix #5 : Stripe NON chargé ici — chargé en lazy dans selectMethod() si carte choisie
     this.loadPaymentDetails();
   }
 
@@ -129,33 +134,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
 
   // ─── Chargement des détails ────────────────────────────────────────────────
 
-  /** Fix #5 : charge le SDK Stripe (~300KB) seulement si l'utilisateur choisit la carte */
-  private loadStripe(): void {
-    if (this.stripeLoaded) return;
-    this.stripeLoaded = true;
-    if ((window as any).Stripe) {
-      if (environment.stripePublicKey) this.stripe = (window as any).Stripe(environment.stripePublicKey);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://js.stripe.com/v3/';
-    script.onload = () => {
-      if (environment.stripePublicKey) this.stripe = (window as any).Stripe(environment.stripePublicKey);
-    };
-    document.head.appendChild(script);
-  }
-
+  /**
+   * Détails du paiement, toujours vérifiés par le serveur (signature et
+   * expiration d'une session, lien de loyer actif). La page ne décode plus le
+   * jeton elle-même : un jeton modifié (montant, redirections) était accepté.
+   */
   loadPaymentDetails(): void {
-    // Essayer d'abord de décoder comme un token JWT de session (sans appel réseau)
-    const sessionPayload = this.decodeSessionToken(this.token);
-    if (sessionPayload) {
-      this.paymentDetails = sessionPayload;
-      this.pageLoading = false;
-      this.applyPaymentDetailsConfig();
-      return;
-    }
-
-    // Fallback : lien de paiement persistant (appel backend GET /payment-link/details/:token)
     this.paymentLinkService.getPaymentDetails(this.token)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -165,31 +149,13 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           this.applyPaymentDetailsConfig();
         },
         error: (err) => {
-          this.pageError = err.error?.message || this.t('PAYMENT_PAGE.ERRORS.LOAD_DETAILS');
+          const status = err?.status;
+          this.pageError = status === 401 || status === 404
+            ? this.t('PAYMENT_PAGE.ERRORS.LINK_EXPIRED')
+            : this.serverMessage(err) || this.t('PAYMENT_PAGE.ERRORS.LOAD_DETAILS');
           this.pageLoading = false;
         }
       });
-  }
-
-  private decodeSessionToken(token: string): PaymentLinkDetails | null {
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) return null;
-      const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-      const padded = base64 + '=='.slice(0, (4 - base64.length % 4) % 4);
-      // Fix #7 : TextDecoder au lieu de escape() déprécié — compatible tous navigateurs mobiles
-      const bytes = Uint8Array.from(atob(padded), c => c.charCodeAt(0));
-      const payload = JSON.parse(new TextDecoder().decode(bytes));
-      if (!payload.context) return null;
-      if (payload.exp && payload.exp * 1000 < Date.now()) {
-        this.pageError = this.t('PAYMENT_PAGE.ERRORS.LINK_EXPIRED');
-        this.pageLoading = false;
-        return null;
-      }
-      return { ...payload, usageCount: 0 } as PaymentLinkDetails;
-    } catch {
-      return null;
-    }
   }
 
   private applyPaymentDetailsConfig(): void {
@@ -200,9 +166,16 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     } else if (this.paymentDetails.amount) {
       this.amountForm.patchValue({ amount: this.paymentDetails.amount });
     }
-    if (this.context === 'PREMIUM_ACCESS') {
-      this.quickAmounts = [];
-    }
+    this.quickAmounts = this.buildQuickAmounts();
+  }
+
+  /** Raccourcis de montant adaptés : multiples du loyer, paliers de dépôt ; aucun pour un montant fixé. */
+  private buildQuickAmounts(): number[] {
+    const base = Number(this.paymentDetails?.amount) || 0;
+    const within = (values: number[]) => values.filter((v) => v >= this.MOBILE_MIN && v <= this.MOBILE_MAX);
+    if (this.context === 'RENT' && base > 0) return within([base, base * 2, base * 3]);
+    if (this.context === 'WALLET_DEPOSIT') return within([5_000, 10_000, 25_000, 50_000, 100_000]);
+    return [];
   }
 
   // ─── Getters contexte ─────────────────────────────────────────────────────
@@ -244,9 +217,14 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   // ─── Navigation étapes ────────────────────────────────────────────────────
 
   selectMethod(method: PaymentMethod): void {
-    // Fix #5 : charger Stripe en lazy seulement si l'utilisateur choisit la carte
-    if (method === 'card') this.loadStripe();
     this.selectedMethod = method;
+    // Limites de montant du moyen choisi (Mobile Money : 500 à 500 000 FCFA).
+    const amount = this.amountForm.get('amount');
+    amount?.setValidators(method === 'card'
+      ? [Validators.required, Validators.min(this.CARD_MIN), Validators.max(this.CARD_MAX)]
+      : [Validators.required, Validators.min(this.MOBILE_MIN), Validators.max(this.MOBILE_MAX)]);
+    amount?.updateValueAndValidity();
+    this.mobileForm.get('phone')?.updateValueAndValidity();
     this.currentStep = 'details';
     this.paymentError = null;
   }
@@ -322,7 +300,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           }
         },
         error: (err) => {
-          this.paymentError = err.error?.message || this.t('PAYMENT_PAGE.ERRORS.SESSION_CREATE');
+          this.paymentError = this.serverMessage(err) || this.t('PAYMENT_PAGE.ERRORS.SESSION_CREATE');
           this.paymentStatus = 'failed';
           this.currentStep = 'result';
         }
@@ -361,7 +339,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
           this.startPolling();
         },
         error: (err) => {
-          this.paymentError = err.error?.message || this.t('PAYMENT_PAGE.ERRORS.INITIATE');
+          this.paymentError = this.serverMessage(err) || this.t('PAYMENT_PAGE.ERRORS.INITIATE');
           this.paymentStatus = 'failed';
           this.currentStep = 'result';
         }
@@ -490,8 +468,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     // ext = externalRef de notre transaction, toujours présent depuis la correction Bug #6
     const extRef = this.route.snapshot.queryParams['ext'] || null;
 
-    this.loadStripe();
-    this.loadPaymentDetails();
+    // Page de retour générique (paiement lancé depuis le mobile) : pas de détails à charger.
+    if (this.token !== 'stripe-return') this.loadPaymentDetails();
 
     if (!extRef) {
       // Fallback : pas d'externalRef — impossible de vérifier le statut
@@ -552,7 +530,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   }
 
   private autoRedirectAfterPremiumSuccess(): void {
-    const path = this.paymentDetails?.successRedirectPath;
+    const path = this.internalPath(this.paymentDetails?.successRedirectPath);
     if (path) {
       // Délai court pour que l'utilisateur voie l'écran de succès (1.5s)
       timer(1500).pipe(takeUntil(this.destroy$)).subscribe(() => {
@@ -562,7 +540,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   }
 
   redirectAfterSuccess(): void {
-    const path = this.paymentDetails?.successRedirectPath;
+    const path = this.internalPath(this.paymentDetails?.successRedirectPath);
     if (path) {
       window.location.href = path;
     } else {
@@ -571,7 +549,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   }
 
   redirectAfterCancel(): void {
-    const path = this.paymentDetails?.cancelRedirectPath;
+    const path = this.internalPath(this.paymentDetails?.cancelRedirectPath);
     if (path) {
       window.location.href = path;
     } else {
@@ -627,30 +605,44 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     if (!this.paymentDetails) return {};
     const meta = this.paymentDetails.metadata || {};
 
+    if (this.context === 'RENT') {
+      // Bail, logement, locataire et bien sont lus par le serveur dans le lien.
+      return { paymentLinkId: this.paymentDetails.token };
+    }
+    // Session signée : le serveur vérifie que le paiement lui correspond.
+    const session: Partial<InitiatePaymentDto> = { sessionToken: this.token };
     if (this.context === 'PREMIUM_ACCESS') {
       return {
-        visitorId: meta['visitorId'] || this.paymentDetails.userId,
-        // ownerId DOIT être transmis pour que PremiumAccessPaymentHandler puisse créer l'accès
-        ownerId: meta['ownerId'] || ''
+        ...session,
+        visitorId: meta['visitorId'] || undefined,
+        ownerId: meta['ownerId'] || undefined
       };
     }
     if (this.context === 'SUBSCRIPTION') {
       return {
+        ...session,
         periodId:       meta['periodId']       || this.paymentDetails.reference,
         subscriptionId: meta['subscriptionId']
       };
     }
-    if (this.context === 'WALLET_DEPOSIT') {
-      return {};
-    }
-    // RENT
-    return {
-      locationId:    meta['locationId']   || this.paymentDetails.location?._id,
-      locataireId:   meta['locataireId']  || this.paymentDetails.locataire?._id,
-      roomId:        meta['roomId']       || this.paymentDetails.room?._id,
-      propertyId:    meta['propertyId']   || this.paymentDetails.property?._id,
-      paymentLinkId: this.paymentDetails.token
-    };
+    return session;
+  }
+
+  /** Chemin interne sûr (« /fr/… »), ou null : jamais d'URL externe ni de « javascript: ». */
+  private internalPath(path?: string | null): string | null {
+    if (!path || !path.startsWith('/') || path.startsWith('//') || /[\\\u0000-\u001f]/.test(path)) return null;
+    return isAllowedRedirect(path) ? path : null;
+  }
+
+  /** Numéro camerounais du bon opérateur pour le moyen choisi. */
+  private phoneValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    return this.paymentService.isValidPhoneFor(control.value, this.selectedMethod) ? null : { phone: true };
+  }
+
+  private serverMessage(err: any): string | null {
+    const message = err?.error?.message;
+    return Array.isArray(message) ? message[0] : message || null;
   }
 
   private t(key: string): string {
@@ -682,7 +674,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   }
 
   formatAmount(amount: number): string {
-    return this.paymentService.formatAmount(amount);
+    return this.paymentService.formatAmount(amount, 'XAF', this.translate.currentLang);
   }
 
   getMethodLabel(method: PaymentMethod): string {

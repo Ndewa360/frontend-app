@@ -33,6 +33,8 @@ export interface InitiatePaymentDto {
   description?: string;
   userEmail?: string;
   paymentLinkId?: string;
+  /** Session de paiement signée : le serveur vérifie que le paiement lui correspond. */
+  sessionToken?: string;
   // Contexte RENT
   locationId?: string;
   locataireId?: string;
@@ -54,6 +56,8 @@ export interface InitiatePaymentResponse {
   externalRef: string;
   status: 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'EXPIRED';
   redirectUrl?: string;
+  /** Réponse de l'opérateur incertaine ou demande déjà en cours : suivre le statut, ne pas relancer. */
+  pendingVerification?: boolean;
 }
 
 export interface CheckPaymentResponse {
@@ -153,8 +157,8 @@ export class UnifiedPaymentService {
     return map[method];
   }
 
-  formatAmount(amount: number, currency = 'XAF'): string {
-    return new Intl.NumberFormat('fr-FR', {
+  formatAmount(amount: number, currency = 'XAF', lang = 'fr'): string {
+    return new Intl.NumberFormat(lang === 'en' ? 'en-US' : 'fr-FR', {
       style: 'currency',
       currency,
       minimumFractionDigits: 0,
@@ -163,6 +167,20 @@ export class UnifiedPaymentService {
 
   validatePhone(phone: string): boolean {
     return /^(\+237)?6[0-9]{8}$/.test(phone.replace(/\s/g, ''));
+  }
+
+  /**
+   * Numéro camerounais valide pour le moyen choisi (mêmes règles que le serveur) :
+   * Orange : 69X, 655-659, 66X ; MTN : 67X, 68X, 650-654.
+   */
+  isValidPhoneFor(phone: string, method: PaymentMethod | null): boolean {
+    let digits = String(phone || '').replace(/[\s\-.()]/g, '');
+    if (digits.startsWith('+237')) digits = digits.slice(4);
+    else if (digits.startsWith('00237')) digits = digits.slice(5);
+    if (!/^6\d{8}$/.test(digits)) return false;
+    if (method === 'orange_money') return /^6(9\d|5[5-9]|6\d)\d{6}$/.test(digits);
+    if (method === 'mtn_money') return /^6(7\d|8\d|5[0-4])\d{6}$/.test(digits);
+    return true;
   }
 
   normalizePhone(phone: string): string {
