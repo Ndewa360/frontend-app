@@ -39,12 +39,6 @@ export interface DashboardStats {
     cities: number;
     currencies: number;
   };
-  coupons: {
-    total: number;
-    active: number;
-    totalUsages: number;
-    totalDiscount: number;
-  };
   systemHealth: {
     status: string;
     uptime: number;
@@ -55,7 +49,10 @@ export interface DashboardStats {
 
 export interface SystemHealth {
   status: 'healthy' | 'warning' | 'critical';
-  score: number;
+  score?: number;
+  /** Base MongoDB joignable (ping). */
+  database?: 'up' | 'down';
+  databaseLatencyMs?: number | null;
   uptime: number;
   uptimeFormatted?: string;
   memory?: {
@@ -66,9 +63,10 @@ export interface SystemHealth {
   };
   nodeVersion?: string;
   platform?: string;
-  services: ServiceHealth[];
-  alerts: SystemAlert[];
-  lastCheck: Date;
+  services?: ServiceHealth[];
+  alerts?: SystemAlert[];
+  lastCheck?: Date;
+  timestamp?: Date;
 }
 
 export interface ServiceHealth {
@@ -91,11 +89,17 @@ export interface SystemAlert {
   actionRequired?: boolean;
 }
 
+/** Action d'un administrateur, issue du journal d'audit. */
 export interface RecentActivity {
   id: string;
+  /** success | error */
   type: string;
+  title?: string;
+  /** Clé de l'action (ADMIN.AUDIT.ACTIONS.<clé>), OTHER si inconnue. */
+  actionKey?: string;
   description: string;
   user: string;
+  target?: string;
   userName?: string;
   timestamp: Date;
   hasError?: boolean;

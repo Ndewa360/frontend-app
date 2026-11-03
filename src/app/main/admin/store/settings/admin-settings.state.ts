@@ -185,7 +185,7 @@ export class AdminSettingsState {
 
   @Action(AdminSettingsAction.TestEmailConfiguration)
   testEmailConfiguration(ctx: StateContext<AdminSettingsStateModel>, action: AdminSettingsAction.TestEmailConfiguration) {
-    return this.adminSettingsService.testEmailConfiguration(action.testEmail).pipe(
+    return this.adminSettingsService.testEmailConfiguration().pipe(
       catchError(error => throwError(error))
     );
   }

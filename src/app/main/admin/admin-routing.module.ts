@@ -62,12 +62,27 @@ const routes: Routes = [
       {
         path: 'platform-finance',
         loadComponent: () => import('./pages/platform-finance/platform-finance.component').then(m => m.PlatformFinanceComponent),
-        data: { title: 'Super Wallet Plateforme', breadcrumb: 'Wallet Plateforme' }
+        data: { title: 'ADMIN.PAGE_TITLES.PLATFORM_FINANCE', breadcrumb: 'ADMIN.BREADCRUMBS.PLATFORM_FINANCE' }
       },
       {
         path: 'breach',
         loadComponent: () => import('./pages/breach/admin-breach.component').then(m => m.AdminBreachComponent),
-        data: { title: 'Violations de données', breadcrumb: 'Violations de données' }
+        data: { title: 'ADMIN.PAGE_TITLES.BREACH', breadcrumb: 'ADMIN.BREADCRUMBS.BREACH' }
+      },
+      {
+        path: 'audit',
+        loadComponent: () => import('./pages/audit/admin-audit.component').then(m => m.AdminAuditComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.AUDIT', breadcrumb: 'ADMIN.BREADCRUMBS.AUDIT' }
+      },
+      {
+        path: 'errors',
+        loadComponent: () => import('./pages/errors/admin-errors.component').then(m => m.AdminErrorsComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.ERRORS', breadcrumb: 'ADMIN.BREADCRUMBS.ERRORS' }
+      },
+      {
+        path: 'premium-sales',
+        loadComponent: () => import('./pages/premium-sales/admin-premium-sales.component').then(m => m.AdminPremiumSalesComponent),
+        data: { title: 'ADMIN.PAGE_TITLES.PREMIUM_SALES', breadcrumb: 'ADMIN.BREADCRUMBS.PREMIUM_SALES' }
       },
       {
         path: '**',

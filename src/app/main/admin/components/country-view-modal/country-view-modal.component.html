@@ -6,14 +6,14 @@
     <div class="header-content">
       <div class="country-header">
         <div class="country-flag">
-          <img loading="lazy" [src]="data.country.flag" [alt]="data.country.name + ' flag'" *ngIf="data.country.flag">
+          <img loading="lazy" [src]="data.country.flag" [alt]="data.country.name + ('ADMIN.COUNTRY_VIEW.FLAG' | translate)" *ngIf="data.country.flag">
           <div class="flag-placeholder" *ngIf="!data.country.flag">
             <i class="fas fa-flag"></i>
           </div>
         </div>
         <div class="country-title">
           <h2 class="country-name">{{ data.country.name }}</h2>
-          <p class="country-subtitle">{{ data.country.code }} • {{ data.country.currency || 'Aucune devise' }}</p>
+          <p class="country-subtitle">{{ data.country.code }} • {{ data.country.currency || ('ADMIN.COUNTRY_VIEW.AUCUNE_DEVISE' | translate) }}</p>
         </div>
         <div class="country-status">
           <span class="status-badge" [class]="getStatusClass()">
@@ -40,8 +40,8 @@
           </div>
           <div class="stat-content">
             <div class="stat-number">{{ stats.totalCities }}</div>
-            <div class="stat-label">Villes</div>
-            <div class="stat-detail">{{ stats.activeCities }} actives</div>
+            <div class="stat-label">{{ 'ADMIN.COUNTRY_VIEW.VILLES' | translate }}</div>
+            <div class="stat-detail">{{ 'ADMIN.COUNTRY_VIEW.ACTIVES' | translate:{ p0: (stats.activeCities) } }}</div>
           </div>
         </div>
         
@@ -50,9 +50,9 @@
             <i class="fas fa-users"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-number">{{ stats.totalUsers }}</div>
-            <div class="stat-label">Utilisateurs</div>
-            <div class="stat-detail">{{ stats.activeUsers }} actifs</div>
+            <div class="stat-number">{{ stats.properties }}</div>
+            <div class="stat-label">{{ 'ADMIN.COUNTRY_VIEW.BIENS' | translate }}</div>
+            <div class="stat-detail">{{ 'ADMIN.COUNTRY_VIEW.SITUES_DANS_CE_PAYS' | translate }}</div>
           </div>
         </div>
       </div>
@@ -62,32 +62,32 @@
     <div class="details-section">
       <h3 class="section-title">
         <i class="fas fa-info-circle mr-2"></i>
-        Informations détaillées
+        {{ 'ADMIN.COUNTRY_VIEW.INFORMATIONS_DETAILLEES' | translate }}
       </h3>
       
       <div class="details-grid">
         <!-- Informations géographiques -->
         <div class="detail-group">
-          <h4 class="group-title">Géographie</h4>
+          <h4 class="group-title">{{ 'ADMIN.COUNTRY_VIEW.GEOGRAPHIE' | translate }}</h4>
           <div class="detail-items">
             <div class="detail-item">
-              <span class="detail-label">Continent</span>
-              <span class="detail-value">{{ data.country.continent || 'Non disponible' }}</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.CONTINENT' | translate }}</span>
+              <span class="detail-value">{{ data.country.continent || ('ADMIN.COUNTRY_VIEW.NON_DISPONIBLE' | translate) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Région</span>
-              <span class="detail-value">{{ data.country.region || 'Non disponible' }}</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.REGION' | translate }}</span>
+              <span class="detail-value">{{ data.country.region || ('ADMIN.COUNTRY_VIEW.NON_DISPONIBLE' | translate) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Sous-région</span>
-              <span class="detail-value">{{ data.country.subregion || 'Non disponible' }}</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.SOUS_REGION' | translate }}</span>
+              <span class="detail-value">{{ data.country.subregion || ('ADMIN.COUNTRY_VIEW.NON_DISPONIBLE' | translate) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Capitale</span>
-              <span class="detail-value">{{ data.country.capital || 'Non disponible' }}</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.CAPITALE' | translate }}</span>
+              <span class="detail-value">{{ data.country.capital || ('ADMIN.COUNTRY_VIEW.NON_DISPONIBLE' | translate) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Coordonnées</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.COORDONNEES' | translate }}</span>
               <span class="detail-value">{{ getFormattedCoordinates() }}</span>
             </div>
           </div>
@@ -95,41 +95,41 @@
 
         <!-- Informations démographiques -->
         <div class="detail-group">
-          <h4 class="group-title">Démographie</h4>
+          <h4 class="group-title">{{ 'ADMIN.COUNTRY_VIEW.DEMOGRAPHIE' | translate }}</h4>
           <div class="detail-items">
             <div class="detail-item">
-              <span class="detail-label">Population</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.POPULATION' | translate }}</span>
               <span class="detail-value">{{ getFormattedPopulation() }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Superficie</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.SUPERFICIE' | translate }}</span>
               <span class="detail-value">{{ getFormattedArea() }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Langues</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.LANGUES' | translate }}</span>
               <span class="detail-value">{{ getFormattedLanguages() }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Fuseau horaire</span>
-              <span class="detail-value">{{ data.country.timezone || 'Non disponible' }}</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.FUSEAU_HORAIRE' | translate }}</span>
+              <span class="detail-value">{{ data.country.timezone || ('ADMIN.COUNTRY_VIEW.NON_DISPONIBLE' | translate) }}</span>
             </div>
           </div>
         </div>
 
         <!-- Informations système -->
         <div class="detail-group">
-          <h4 class="group-title">Système</h4>
+          <h4 class="group-title">{{ 'ADMIN.COUNTRY_VIEW.SYSTEME' | translate }}</h4>
           <div class="detail-items">
             <div class="detail-item">
-              <span class="detail-label">Code téléphone</span>
-              <span class="detail-value">{{ data.country.phoneCode || 'Non disponible' }}</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.CODE_TELEPHONE' | translate }}</span>
+              <span class="detail-value">{{ data.country.phoneCode || ('ADMIN.COUNTRY_VIEW.NON_DISPONIBLE' | translate) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Créé le</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.CREE_LE' | translate }}</span>
               <span class="detail-value">{{ getFormattedCreatedAt() }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Modifié le</span>
+              <span class="detail-label">{{ 'ADMIN.COUNTRY_VIEW.MODIFIE_LE' | translate }}</span>
               <span class="detail-value">{{ getFormattedUpdatedAt() }}</span>
             </div>
           </div>
@@ -141,7 +141,7 @@
     <div class="cities-section" *ngIf="cities.length > 0">
       <h3 class="section-title">
         <i class="fas fa-city mr-2"></i>
-        Villes associées ({{ cities.length }})
+        {{ 'ADMIN.COUNTRY_VIEW.VILLES_ASSOCIEES' | translate:{ p0: (cities.length) } }}
       </h3>
       
       <div class="cities-list">
@@ -154,7 +154,7 @@
             <div class="city-details">
               <span class="city-code">{{ city._id.slice(-6) }}</span>
               <span class="city-status" [class]="city.isActive ? 'active' : 'inactive'">
-                {{ city.isActive ? 'Active' : 'Inactive' }}
+                {{ city.isActive ? ('ADMIN.COUNTRY_VIEW.ACTIVE' | translate) : ('ADMIN.COUNTRY_VIEW.INACTIVE' | translate) }}
               </span>
             </div>
           </div>
@@ -167,8 +167,8 @@
       <div class="empty-icon">
         <i class="fas fa-city"></i>
       </div>
-      <h4>Aucune ville</h4>
-      <p>Ce pays n'a pas encore de villes configurées.</p>
+      <h4>{{ 'ADMIN.COUNTRY_VIEW.AUCUNE_VILLE' | translate }}</h4>
+      <p>{{ 'ADMIN.COUNTRY_VIEW.CE_PAYS_N_A_PAS' | translate }}</p>
     </div>
 
     <!-- État de chargement -->
@@ -176,7 +176,7 @@
       <div class="loading-spinner">
         <i class="fas fa-spinner fa-spin"></i>
       </div>
-      <p>Chargement des détails...</p>
+      <p>{{ 'ADMIN.COUNTRY_VIEW.CHARGEMENT_DES_DETAILS' | translate }}</p>
     </div>
 
   </div>
@@ -184,7 +184,7 @@
   <!-- Actions -->
   <div class="modal-actions">
     <button class="action-btn secondary" (click)="onClose()">
-      Fermer
+      {{ 'ADMIN.COUNTRY_VIEW.FERMER' | translate }}
     </button>
   </div>
 </div>

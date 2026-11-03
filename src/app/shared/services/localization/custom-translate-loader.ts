@@ -11,9 +11,13 @@ export class CustomTranslateLoader implements TranslateLoader {
       this.http.get(`./assets/i18n/${lang}.json`),
       this.http.get(`./assets/i18n/${lang}-legal.json`).pipe(
         catchError(() => of({}))
+      ),
+      // Espace d'administration : clé ADMIN complète (fusion superficielle).
+      this.http.get(`./assets/i18n/${lang}-admin.json`).pipe(
+        catchError(() => of({}))
       )
     ]).pipe(
-      map(([base, legal]) => ({ ...base, ...legal }))
+      map(([base, legal, admin]) => ({ ...base, ...legal, ...admin }))
     );
   }
 }

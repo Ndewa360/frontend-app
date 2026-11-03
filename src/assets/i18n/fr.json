@@ -5027,82 +5027,6 @@
       "HIDDEN": "Masquée"
     }
   },
-  "ADMIN": {
-    "TITLE": "Administration",
-    "NAVIGATION": "Navigation",
-    "MENU": {
-      "DASHBOARD": "Tableau de bord",
-      "USERS": "Utilisateurs",
-      "SUBSCRIPTIONS": "Souscriptions",
-      "ROLES_PERMISSIONS": "Rôles & Permissions",
-      "GEOGRAPHY": "Géographie",
-      "PAYMENTS": "Paiements",
-      "SETTINGS": "Paramètres",
-      "MONITORING": "Monitoring",
-      "AGENTS": "Agents"
-    },
-    "DESCRIPTIONS": {
-      "DASHBOARD": "Vue d'ensemble du système",
-      "USERS": "Gestion des utilisateurs",
-      "SUBSCRIPTIONS": "Abonnements et paiements des utilisateurs",
-      "ROLES_PERMISSIONS": "Gestion des rôles et permissions",
-      "GEOGRAPHY": "Pays, villes et devises",
-      "PAYMENTS": "Gestion des paiements et souscriptions",
-      "SETTINGS": "Configuration du système",
-      "MONITORING": "Surveillance et monitoring du système",
-      "AGENTS": "Validation des agents"
-    },
-    "BREADCRUMBS": {
-      "DASHBOARD": "Dashboard",
-      "USERS": "Utilisateurs",
-      "USER_DETAILS": "Détails utilisateur",
-      "SUBSCRIPTIONS": "Souscriptions",
-      "ROLES": "Rôles",
-      "GEOGRAPHY": "Géographie",
-      "PAYMENTS": "Paiements",
-      "SETTINGS": "Paramètres",
-      "MONITORING": "Monitoring",
-      "AGENTS": "Agents"
-    },
-    "PAGE_TITLES": {
-      "DASHBOARD": "Tableau de bord",
-      "USERS": "Gestion des utilisateurs",
-      "USER_DETAILS": "Détails utilisateur",
-      "SUBSCRIPTIONS": "Gestion des souscriptions",
-      "ROLES": "Rôles et permissions",
-      "GEOGRAPHY": "Gestion géographique",
-      "PAYMENTS": "Gestion des paiements",
-      "SETTINGS": "Paramètres système",
-      "MONITORING": "Monitoring Système",
-      "AGENTS": "Validation des agents"
-    },
-    "TOASTS": {
-      "INVALID_AMOUNT": "Montant invalide",
-      "AMOUNT_SAVE_FAILED": "Le montant n'a pas pu être enregistré.",
-      "SUBSCRIPTIONS_LOAD_FAILED": "Erreur lors du chargement des souscriptions",
-      "ACCOUNT_SUSPENDED": "Compte suspendu avec succès",
-      "ACCOUNT_SUSPEND_FAILED": "Erreur lors de la suspension du compte",
-      "ACCOUNT_REACTIVATED": "Compte réactivé avec succès",
-      "ACCOUNT_REACTIVATE_FAILED": "Erreur lors de la réactivation du compte",
-      "REMINDER_SENT": "Rappel de paiement envoyé avec succès",
-      "REMINDER_FAILED": "Erreur lors de l'envoi du rappel",
-      "EXPORT_DONE": "Export généré avec succès",
-      "EXPORT_FAILED": "Erreur lors de l'export",
-      "WITHDRAWAL_REQUESTED": "Demande de retrait créée — suivi du statut en cours",
-      "WITHDRAWAL_REF_CONFIRMED": "Retrait {{reference}} confirmé !",
-      "WITHDRAWAL_REF_FAILED": "Retrait {{reference}} échoué : {{reason}}",
-      "WITHDRAWAL_CONFIRMED_BY_AGGREGATOR": "Retrait confirmé par l'agrégateur",
-      "WITHDRAWAL_SUBMITTED": "Retrait soumis à l'agrégateur — en cours de traitement",
-      "WITHDRAWAL_FAILED": "Retrait échoué : {{reason}}",
-      "WITHDRAWAL_FAILED_TITLE": "Échec",
-      "WITHDRAWAL_CONFIRMED": "Retrait confirmé",
-      "AGGREGATOR_ERROR": "Erreur agrégateur"
-    },
-    "SUBSCRIPTION": {
-      "PAYMENT_REMINDER_SENT": "Rappel de paiement envoyé.",
-      "SUSPENSION_REASON_REQUIRED": "Veuillez indiquer le motif de la suspension."
-    }
-  },
   "SUPPORT": {
     "WELCOME": {
       "TITLE": "Bienvenue sur le support de Ndewa360°",
@@ -5589,7 +5513,7 @@
       "SKIP": "Passer cette étape"
     },
     "ACCOUNT_TYPE": {
-      "OWNER": "propri\u00e9taire",
+      "OWNER": "propriétaire",
       "AGENT": "agent"
     },
     "ERRORS": {

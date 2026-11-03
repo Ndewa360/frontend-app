@@ -7,12 +7,12 @@
       <div class="step-indicator">
         <div class="step" [class.active]="currentStep === 'country'" [class.completed]="currentStep === 'city'">
           <div class="step-number">1</div>
-          <div class="step-label">Pays</div>
+          <div class="step-label">{{ 'ADMIN.CITY_SELECT.PAYS' | translate }}</div>
         </div>
         <div class="step-connector" [class.active]="currentStep === 'city'"></div>
         <div class="step" [class.active]="currentStep === 'city'">
           <div class="step-number">2</div>
-          <div class="step-label">Ville</div>
+          <div class="step-label">{{ 'ADMIN.CITY_SELECT.VILLE' | translate }}</div>
         </div>
       </div>
       <button class="close-btn" (click)="onCancel()" [disabled]="isLoading$ | async">
@@ -29,10 +29,10 @@
       <div class="step-header">
         <h2 class="step-title">
           <i class="fas fa-flag mr-3"></i>
-          Sélectionnez un pays
+          {{ 'ADMIN.CITY_SELECT.SELECTIONNEZ_UN_PAYS' | translate }}
         </h2>
         <p class="step-description">
-          Choisissez le pays pour lequel vous souhaitez ajouter une ville
+          {{ 'ADMIN.CITY_SELECT.CHOISISSEZ_LE_PAYS_POUR_LEQUEL' | translate }}
         </p>
       </div>
 
@@ -43,7 +43,7 @@
           <input 
             type="text" 
             class="search-input"
-            placeholder="Rechercher un pays..."
+            [placeholder]="'ADMIN.CITY_SELECT.RECHERCHER_UN_PAYS' | translate"
             [formControl]="countrySearchControl">
         </div>
       </div>
@@ -67,7 +67,7 @@
             <div class="country-stats">
               <span class="stat-item">
                 <i class="fas fa-city"></i>
-                {{ country.cityCount || 0 }} villes
+                {{ 'ADMIN.CITY_SELECT.VILLES' | translate:{ p0: (country.cityCount || 0) } }}
               </span>
             </div>
           </div>
@@ -82,8 +82,8 @@
         <div class="empty-icon">
           <i class="fas fa-search"></i>
         </div>
-        <h3>Aucun pays trouvé</h3>
-        <p>Essayez de modifier votre recherche</p>
+        <h3>{{ 'ADMIN.CITY_SELECT.AUCUN_PAYS_TROUVE' | translate }}</h3>
+        <p>{{ 'ADMIN.CITY_SELECT.ESSAYEZ_DE_MODIFIER_VOTRE_RECHERCHE' | translate }}</p>
       </div>
     </div>
 
@@ -92,10 +92,10 @@
       <div class="step-header">
         <h2 class="step-title">
           <i class="fas fa-city mr-3"></i>
-          Sélectionnez une ville
+          {{ 'ADMIN.CITY_SELECT.SELECTIONNEZ_UNE_VILLE' | translate }}
         </h2>
         <p class="step-description">
-          Choisissez une ville de <strong>{{ selectedCountry?.name }}</strong> depuis Geonames
+          {{ 'ADMIN.CITY_SELECT.CHOISISSEZ_UNE_VILLE_DE' | translate }} <strong>{{ selectedCountry?.name }}</strong> {{ 'ADMIN.CITY_SELECT.DEPUIS_GEONAMES' | translate }}
         </p>
       </div>
 
@@ -106,12 +106,12 @@
           <input 
             type="text" 
             class="search-input"
-            placeholder="Rechercher une ville, un village..."
+            [placeholder]="'ADMIN.CITY_SELECT.RECHERCHER_UNE_VILLE_UN_VILLAGE' | translate"
             [formControl]="citySearchControl">
           <i class="fas fa-spinner fa-spin search-icon-right" *ngIf="isLoading$ | async"></i>
         </div>
         <div class="search-hint" *ngIf="totalCount > 0">
-          <span>{{ cities.length }} / {{ totalCount }} résultat(s)</span>
+          <span>{{ 'ADMIN.CITY_SELECT.RESULTAT_S' | translate:{ p0: (cities.length), p1: (totalCount) } }}</span>
         </div>
       </div>
 
@@ -120,7 +120,7 @@
         <div class="loading-spinner">
           <i class="fas fa-spinner fa-spin"></i>
         </div>
-        <p>Chargement des villes depuis Geonames...</p>
+        <p>{{ 'ADMIN.CITY_SELECT.CHARGEMENT_DES_VILLES_DEPUIS_GEONAMES' | translate }}</p>
       </div>
 
       <!-- Liste des villes -->
@@ -138,8 +138,8 @@
             <div class="city-info">
               <h3 class="city-name">{{ city.name }}</h3>
               <p class="city-details">
-                {{ city.region || 'Région inconnue' }}
-                <span class="capital-badge" *ngIf="city.isCapital">Capitale</span>
+                {{ city.region || ('ADMIN.CITY_SELECT.REGION_INCONNUE' | translate) }}
+                <span class="capital-badge" *ngIf="city.isCapital">{{ 'ADMIN.CITY_SELECT.CAPITALE' | translate }}</span>
               </p>
             </div>
           </div>
@@ -150,7 +150,7 @@
             </div>
             <div class="stat-item" *ngIf="city.elevation">
               <i class="fas fa-mountain"></i>
-              <span>{{ city.elevation }}m</span>
+              <span>{{ 'ADMIN.CITY_SELECT.M' | translate:{ p0: (city.elevation) } }}</span>
             </div>
           </div>
           <div class="selection-indicator" *ngIf="isCitySelected(city)">
@@ -163,7 +163,7 @@
           <button class="load-more-btn" (click)="loadMore()" [disabled]="isLoadingMore$ | async">
             <i class="fas fa-spinner fa-spin mr-2" *ngIf="isLoadingMore$ | async"></i>
             <i class="fas fa-chevron-down mr-2" *ngIf="!(isLoadingMore$ | async)"></i>
-            Charger plus ({{ totalCount - cities.length }} restants)
+            {{ 'ADMIN.CITY_SELECT.CHARGER_PLUS_RESTANTS' | translate:{ p0: (totalCount - cities.length) } }}
           </button>
         </div>
       </div>
@@ -173,9 +173,9 @@
         <div class="empty-icon">
           <i class="fas fa-city"></i>
         </div>
-        <h3>Aucune ville trouvée</h3>
-        <p *ngIf="(citySearchControl.value || '').trim()">Essayez un autre terme de recherche</p>
-        <p *ngIf="!(citySearchControl.value || '').trim()">Tapez le nom d'une ville pour rechercher</p>
+        <h3>{{ 'ADMIN.CITY_SELECT.AUCUNE_VILLE_TROUVEE' | translate }}</h3>
+        <p *ngIf="(citySearchControl.value || '').trim()">{{ 'ADMIN.CITY_SELECT.ESSAYEZ_UN_AUTRE_TERME_DE' | translate }}</p>
+        <p *ngIf="!(citySearchControl.value || '').trim()">{{ 'ADMIN.CITY_SELECT.TAPEZ_LE_NOM_D_UNE' | translate }}</p>
       </div>
     </div>
 
@@ -190,7 +190,7 @@
       (click)="onBack()"
       [disabled]="isLoading$ | async">
       <i class="fas fa-arrow-left mr-2"></i>
-      Retour
+      {{ 'ADMIN.CITY_SELECT.RETOUR' | translate }}
     </button>
 
     <!-- Bouton annuler -->
@@ -198,7 +198,7 @@
       class="action-btn secondary"
       (click)="onCancel()"
       [disabled]="isLoading$ | async">
-      Annuler
+      {{ 'ADMIN.CITY_SELECT.ANNULER' | translate }}
     </button>
 
     <!-- Bouton confirmer (visible seulement à l'étape ville) -->

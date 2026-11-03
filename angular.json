@@ -124,6 +124,7 @@
               "node_modules/ngx-toastr/toastr.css",
               "src/app/shared/styles/app.themes.scss",
               "src/app/shared/styles/dark-theme.scss",
+              "src/app/main/admin/styles/admin-theme.scss",
               {
                 "input": "src/app/main/admin/styles/admin-design-system.scss",
                 "bundleName": "admin",

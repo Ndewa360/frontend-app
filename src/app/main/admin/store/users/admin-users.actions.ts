@@ -152,7 +152,7 @@ export namespace AdminUsersAction {
   // Export Users
   export class ExportUsers {
     static readonly type = '[Admin Users] Export Users';
-    constructor(public filters?: any, public format: string = 'xlsx') {}
+    constructor(public filters?: any) {}
   }
 
   // Reset Password

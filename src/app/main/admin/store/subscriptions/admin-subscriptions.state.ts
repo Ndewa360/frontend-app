@@ -13,6 +13,7 @@ import { AdminSubscriptionsStateModel, AdminUserSubscription, SubscriptionStats,
 
 // Services
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
+import { downloadCsv } from '../../utils/csv-download';
 
 @State<AdminSubscriptionsStateModel>({
   name: 'adminSubscriptions',
@@ -237,11 +238,14 @@ export class AdminSubscriptionsState {
 
   @Action(AdminSubscriptionsAction.ExportSubscriptions)
   exportSubscriptions(ctx: StateContext<AdminSubscriptionsStateModel>, action: AdminSubscriptionsAction.ExportSubscriptions) {
-    return this.adminSubscriptionsService.exportSubscriptions(action.filters, action.format).pipe(
-      tap((result) => {
-        // Ouvrir le lien de téléchargement
-        window.open(result.downloadUrl, '_blank', 'noopener,noreferrer');
-        this.toastrService.success(this.translateService.instant('ADMIN.TOASTS.EXPORT_DONE'));
+    return this.adminSubscriptionsService.exportSubscriptions(action.filters).pipe(
+      tap((file) => {
+        if (!file?.recordCount) {
+          this.toastrService.info(this.translateService.instant('ADMIN.SUBSCRIPTIONS.TS.EXPORT_EMPTY'));
+          return;
+        }
+        downloadCsv(file);
+        this.toastrService.success(this.translateService.instant('ADMIN.SUBSCRIPTIONS.TS.EXPORT_DONE', { count: file.recordCount }));
       }),
       catchError((error) => {
         this.toastrService.error(this.translateService.instant('ADMIN.TOASTS.EXPORT_FAILED'));

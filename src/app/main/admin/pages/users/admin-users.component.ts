@@ -6,7 +6,10 @@ import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
+import { tierLabel } from '../../../../shared/pricing/pricing-grid';
+import { isSuperAdmin } from '../../utils/admin-roles';
 import { LanguageUrlService } from 'src/app/shared/services/language-url.service';
 import { AdminUsersAction } from '../../store/users/admin-users.actions';
 import { AdminUsersState } from '../../store/users/admin-users.state';
@@ -22,7 +25,7 @@ import { NgIf, NgFor, AsyncPipe, DecimalPipe, DatePipe } from '@angular/common';
   styleUrls: ['./admin-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, DatePipe]
+  imports: [NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, DatePipe, TranslateModule]
 })
 export class AdminUsersComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -59,17 +62,8 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   availableRoles: any[] = [];
   viewMode: 'list' | 'grid' = 'grid';
 
-  // Table headers
-  tableHeaders = [
-    { key: 'select',    label: '',                    sortable: false },
-    { key: 'user',      label: 'Utilisateur',         sortable: true  },
-    { key: 'email',     label: 'Email',               sortable: true  },
-    { key: 'roles',     label: 'Rôles',               sortable: false },
-    { key: 'status',    label: 'Statut',              sortable: true  },
-    { key: 'lastLogin', label: 'Dernière connexion',  sortable: true  },
-    { key: 'createdAt', label: 'Créé le',             sortable: true  },
-    { key: 'actions',   label: 'Actions',             sortable: false }
-  ];
+  /** Création, suppression et rôles : réservés au super-admin (le serveur refuse sinon). */
+  superAdmin = false;
 
   userForm: FormGroup;
 
@@ -94,6 +88,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.superAdmin = isSuperAdmin(this.store.selectSnapshot(UserProfileState.selectStateUserProfile));
     this.loadData();
     this.loadAvailableRoles();
   }
@@ -241,7 +236,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_USER_UPDATED')); this.onCloseModal(); },
-          error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_UPDATE_ERROR'))
+          error: (e) => this.toastr.error(this.serverMessage(e) || this.translate.instant('NOTIFICATIONS.ADMIN_UPDATE_ERROR'))
         });
     } else {
       const createData: any = {
@@ -253,7 +248,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_USER_CREATED')); this.onCloseModal(); },
-          error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_CREATE_ERROR'))
+          error: (e) => this.toastr.error(this.serverMessage(e) || this.translate.instant('NOTIFICATIONS.ADMIN_CREATE_ERROR'))
         });
     }
   }
@@ -284,7 +279,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ROLES_UPDATED')); this.onCancelAssignRole(); },
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_ASSIGN_ERROR'))
+        error: (e) => this.toastr.error(this.serverMessage(e) || this.translate.instant('NOTIFICATIONS.ADMIN_ASSIGN_ERROR'))
       });
   }
 
@@ -309,7 +304,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next:  () => this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_USER_DELETED')),
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_DELETE_ERROR'))
+        error: (e) => this.toastr.error(this.serverMessage(e) || this.translate.instant('NOTIFICATIONS.ADMIN_DELETE_ERROR'))
       });
   }
 
@@ -322,7 +317,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     const newStatus = user.status === 'active' ? 'inactive' : 'active';
     this.store.dispatch(new AdminUsersAction.UpdateUser(user._id, { status: newStatus }))
       .pipe(takeUntil(this.destroy$))
-      .subscribe({ error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('COMMON.ERROR')) });
+      .subscribe({ error: (e) => this.toastr.error(this.serverMessage(e) || this.translate.instant('COMMON.ERROR')) });
   }
 
   // Ouvre le modal de confirmation reset password (remplace window.confirm)
@@ -340,7 +335,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next:  () => this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_RESET_EMAIL_SENT')),
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_RESET_ERROR'))
+        error: (e) => this.toastr.error(this.serverMessage(e) || this.translate.instant('NOTIFICATIONS.ADMIN_RESET_ERROR'))
       });
   }
 
@@ -358,7 +353,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_BULK_ACTION_SUCCESS')); this.selectedUsers = []; },
-        error: (e) => this.toastr.error(e?.error?.message || this.translate.instant('NOTIFICATIONS.ADMIN_BULK_ACTION_ERROR'))
+        error: (e) => this.toastr.error(this.serverMessage(e) || this.translate.instant('NOTIFICATIONS.ADMIN_BULK_ACTION_ERROR'))
       });
   }
 
@@ -367,13 +362,9 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     this.store.dispatch(new AdminUsersAction.ExportUsers(filters))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next:  () => this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_EXPORT_IN_PROGRESS')),
+        next:  () => this.toastr.success(this.translate.instant('ADMIN.COMMON.EXPORT_DONE')),
         error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_EXPORT_ERROR'))
       });
-  }
-
-  onImportUsers(): void {
-    this.toastr.info(this.translate.instant('NOTIFICATIONS.ADMIN_IMPORT_SOON'));
   }
 
   onRefreshData(): void {
@@ -411,14 +402,32 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   }
 
   getStatusLabel(status: string): string {
-    const map: Record<string, string> = {
-      active: 'Actif', inactive: 'Inactif', suspended: 'Suspendu', banned: 'Banni', pending: 'En attente'
-    };
-    return map[status] || status;
+    const known = ['active', 'inactive', 'suspended', 'banned', 'pending'];
+    return known.includes(status) ? this.translate.instant(`ADMIN.USERS.STATUS.${status}`) : (status || '—');
   }
 
   getToggleStatusLabel(user: AdminUser): string {
-    return user.status === 'active' ? 'Désactiver' : 'Activer';
+    return this.translate.instant(user.status === 'active' ? 'ADMIN.USERS.DEACTIVATE' : 'ADMIN.USERS.ACTIVATE');
+  }
+
+  /** Palier de la grille (Gratuit, Pro 1-4, Gold) de l'abonnement en cours. */
+  tier(user: AdminUser): string {
+    if (!user.subscription) return this.translate.instant('ADMIN.USERS.NO_SUBSCRIPTION');
+    return tierLabel(user.subscription.currentTier, user.subscription.plan, this.translate.currentLang);
+  }
+
+  isPaid(user: AdminUser): boolean {
+    return !!user.subscription && user.subscription.plan === 'premium';
+  }
+
+  formatAmount(amount?: number | null): string {
+    return `${new Intl.NumberFormat(this.translate.currentLang === 'en' ? 'en-US' : 'fr-FR').format(amount || 0)} FCFA`;
+  }
+
+  /** Message d'erreur du serveur (tableau ou texte). */
+  private serverMessage(error: any): string {
+    const message = error?.error?.message;
+    return Array.isArray(message) ? message[0] : message;
   }
 
   getInitials(name: string): string {
@@ -439,7 +448,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   getPaginationInfo(pagination: any): string {
     const start = (pagination.page - 1) * pagination.limit + 1;
     const end   = Math.min(pagination.page * pagination.limit, pagination.total);
-    return `${start}-${end} sur ${pagination.total} utilisateurs`;
+    return this.translate.instant('ADMIN.USERS.RANGE', { start, end, total: pagination.total });
   }
 
   getDisplayRange(pagination: any): { start: number; end: number } {

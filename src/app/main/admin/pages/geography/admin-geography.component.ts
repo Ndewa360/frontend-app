@@ -5,7 +5,7 @@ import { take, takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
 import { AdminGeographyState } from '../../store/geography/admin-geography.state';
@@ -28,7 +28,7 @@ import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
   styleUrls: ['./admin-geography.component.scss', '../../styles/admin-design-system.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [NgIf, FormsModule, SelectModule, NgFor, CityDeleteModalComponent, AsyncPipe, DecimalPipe]
+  imports: [TranslateModule, NgIf, FormsModule, SelectModule, NgFor, CityDeleteModalComponent, AsyncPipe, DecimalPipe]
 })
 export class AdminGeographyComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -204,11 +204,11 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     this.countries$.pipe(take(1)).subscribe((countries: AdminCountry[]) => {
       if (!countries?.length) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_NO_COUNTRIES_TO_EXPORT')); return; }
       const columns: ExportColumn[] = [
-        { key: 'name', label: 'Nom du pays' },
-        { key: 'code', label: 'Code' },
-        { key: 'currency', label: 'Devise' },
-        { key: 'cityCount', label: 'Villes' },
-        { key: 'isActive', label: 'Statut', formatter: (v) => v ? 'Actif' : 'Inactif' }
+        { key: 'name', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.COUNTRY_NAME') },
+        { key: 'code', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.CODE') },
+        { key: 'currency', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.CURRENCY') },
+        { key: 'cityCount', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.CITIES') },
+        { key: 'isActive', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.STATUS'), formatter: (v) => this.translate.instant(v ? 'ADMIN.GEOGRAPHY.TS.ACTIVE' : 'ADMIN.GEOGRAPHY.TS.INACTIVE') }
       ];
       this.exportService.exportToExcel({ filename: 'Pays', sheetName: 'Pays', columns, data: countries });
     });
@@ -291,9 +291,9 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     this.cities$.pipe(take(1)).subscribe((cities: AdminCity[]) => {
       if (!cities?.length) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_NO_CITIES_TO_EXPORT')); return; }
       const columns: ExportColumn[] = [
-        { key: 'name', label: 'Ville' },
-        { key: 'country', label: 'Pays', formatter: (v) => v?.name || 'N/A' },
-        { key: 'isActive', label: 'Statut', formatter: (v) => v ? 'Actif' : 'Inactif' }
+        { key: 'name', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.CITY') },
+        { key: 'country', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.COUNTRY'), formatter: (v) => v?.name || '—' },
+        { key: 'isActive', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.STATUS'), formatter: (v) => this.translate.instant(v ? 'ADMIN.GEOGRAPHY.TS.ACTIVE' : 'ADMIN.GEOGRAPHY.TS.INACTIVE') }
       ];
       this.exportService.exportToExcel({ filename: 'Villes', sheetName: 'Villes', columns, data: cities });
     });
@@ -428,12 +428,12 @@ export class AdminGeographyComponent implements OnInit, OnDestroy {
     this.currencies$.pipe(take(1)).subscribe((currencies: AdminCurrency[]) => {
       if (!currencies?.length) { this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_NO_CURRENCIES_TO_EXPORT')); return; }
       const columns: ExportColumn[] = [
-        { key: 'name', label: 'Nom' },
-        { key: 'code', label: 'Code' },
-        { key: 'symbol', label: 'Symbole' },
-        { key: 'exchangeRate', label: 'Taux' },
-        { key: 'isDefault', label: 'Par défaut', formatter: (v) => v ? 'Oui' : 'Non' },
-        { key: 'isActive', label: 'Statut', formatter: (v) => v ? 'Actif' : 'Inactif' }
+        { key: 'name', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.NAME') },
+        { key: 'code', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.CODE') },
+        { key: 'symbol', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.SYMBOL') },
+        { key: 'exchangeRate', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.RATE') },
+        { key: 'isDefault', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.DEFAULT'), formatter: (v) => this.translate.instant(v ? 'ADMIN.COMMON.YES' : 'ADMIN.COMMON.NO') },
+        { key: 'isActive', label: this.translate.instant('ADMIN.GEOGRAPHY.TS.STATUS'), formatter: (v) => this.translate.instant(v ? 'ADMIN.GEOGRAPHY.TS.ACTIVE' : 'ADMIN.GEOGRAPHY.TS.INACTIVE') }
       ];
       this.exportService.exportToExcel({ filename: 'Devises', sheetName: 'Devises', columns, data: currencies });
     });

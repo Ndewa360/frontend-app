@@ -11,6 +11,7 @@ import { AdminUsersAction } from './admin-users.actions';
 
 // Services
 import { AdminUsersService } from '../../services/admin-users.service';
+import { downloadCsv } from '../../utils/csv-download';
 
 @State<AdminUsersStateModel>({
   name: 'adminUsers',
@@ -381,12 +382,8 @@ export class AdminUsersState {
 
   @Action(AdminUsersAction.ExportUsers)
   exportUsers(ctx: StateContext<AdminUsersStateModel>, action: AdminUsersAction.ExportUsers) {
-    return this.adminUsersService.exportUsers(action.filters, action.format).pipe(
-      tap((result) => {
-        if (result?.downloadUrl) {
-          window.open(result.downloadUrl, '_blank', 'noopener,noreferrer');
-        }
-      }),
+    return this.adminUsersService.exportUsers(action.filters).pipe(
+      tap((file) => downloadCsv(file)),
       catchError(error => throwError(error))
     );
   }

@@ -16,14 +16,14 @@ $city-hover: #f59e0b;
 :host {
   display: block;
   height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--adm-surface);
   overflow: hidden;
 }
 
 // Container principal - Style identique aux propriétés
 .geography-admin-page {
   height: 100vh;
-  background-color: #ffffff;
+  background-color: var(--adm-surface);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -32,15 +32,15 @@ $city-hover: #f59e0b;
 
 // Header principal - Style identique aux propriétés
 .main-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--adm-bg);
+  border-bottom: 1px solid var(--adm-border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
 
   .header-content {
     .header-info {
       h1 {
-        color: #161616;
+        color: var(--adm-text);
         font-weight: 700;
         background: linear-gradient(135deg, rgb(204, 140, 10), #fadc4d);
         -webkit-background-clip: text;
@@ -49,7 +49,7 @@ $city-hover: #f59e0b;
       }
 
       p {
-        color: #525252;
+        color: var(--adm-text-2);
         font-weight: 400;
       }
     }
@@ -58,13 +58,13 @@ $city-hover: #f59e0b;
 
 // Section métriques - Style moderne
 .metrics-section {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--adm-surface);
+  border-bottom: 1px solid var(--adm-border);
   flex-shrink: 0;
 
   .metric-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
+    background: var(--adm-surface);
+    border: 1px solid var(--adm-border);
     border-radius: 8px;
     padding: 1.5rem;
     transition: all 0.2s ease;
@@ -78,22 +78,22 @@ $city-hover: #f59e0b;
 
     &.countries {
       border-left: 4px solid #3b82f6;
-      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+      background: linear-gradient(135deg, var(--adm-surface) 0%, var(--adm-info-soft) 100%);
     }
 
     &.cities {
       border-left: 4px solid #10b981;
-      background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+      background: linear-gradient(135deg, var(--adm-surface) 0%, var(--adm-success-soft) 100%);
     }
 
     &.currencies {
       border-left: 4px solid #f59e0b;
-      background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+      background: linear-gradient(135deg, var(--adm-surface) 0%, var(--adm-warning-soft) 100%);
     }
 
     &.users {
       border-left: 4px solid $primary-color;
-      background: linear-gradient(135deg, #ffffff 0%, $primary-light 100%);
+      background: linear-gradient(135deg, var(--adm-surface) 0%, $primary-light 100%);
     }
 
     .metric-icon {
@@ -128,14 +128,14 @@ $city-hover: #f59e0b;
       .metric-value {
         font-size: 2rem;
         font-weight: 700;
-        color: #161616;
+        color: var(--adm-text);
         line-height: 1;
         margin-bottom: 0.5rem;
       }
 
       .metric-label {
         font-size: 0.875rem;
-        color: #525252;
+        color: var(--adm-text-2);
         font-weight: 500;
       }
     }
@@ -144,12 +144,12 @@ $city-hover: #f59e0b;
 
 // Navigation par onglets - Style EXACT des détails de propriété
 .tabs-navigation {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--adm-surface);
+  border-bottom: 1px solid var(--adm-border);
   flex-shrink: 0;
 
   nav {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--adm-border);
   }
 
   .property-tab-button {
@@ -157,7 +157,7 @@ $city-hover: #f59e0b;
     padding: 1rem 1.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #525252;
+    color: var(--adm-text-2);
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
@@ -166,14 +166,14 @@ $city-hover: #f59e0b;
     white-space: nowrap;
 
     &:hover {
-      color: #161616;
-      background-color: #f4f4f4;
+      color: var(--adm-text);
+      background-color: var(--adm-surface-2);
     }
 
     &.active {
       color: $primary-color;
       border-bottom-color: $primary-color;
-      background-color: #ffffff;
+      background-color: var(--adm-surface);
       font-weight: 600;
 
       &::after {
@@ -189,8 +189,8 @@ $city-hover: #f59e0b;
     }
 
     .tab-count {
-      background-color: #f4f4f4;
-      color: #525252;
+      background-color: var(--adm-surface-2);
+      color: var(--adm-text-2);
       padding: 0.25rem 0.5rem;
       border-radius: 12px;
       font-size: 0.75rem;
@@ -210,7 +210,7 @@ $city-hover: #f59e0b;
 .tab-content {
   flex: 1;
   overflow-y: auto;
-  background-color: #f8f9fa;
+  background-color: var(--adm-bg);
 
   // Animations d'entrée
   > div {
@@ -305,18 +305,18 @@ $city-hover: #f59e0b;
   display: inline-flex;
   align-items: center;
   padding: 0.625rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--adm-border-strong);
   font-size: 0.875rem;
   font-weight: 500;
   border-radius: 0.75rem;
-  color: #374151;
-  background: white;
+  color: var(--adm-text-2);
+  background: var(--adm-surface);
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
   cursor: pointer;
 
   &:hover {
-    background: #f9fafb;
+    background: var(--adm-bg);
     border-color: $primary-color;
     color: $primary-color;
     transform: translateY(-1px);
@@ -350,7 +350,7 @@ $city-hover: #f59e0b;
     display: block;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--adm-text-2);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -360,10 +360,10 @@ $city-hover: #f59e0b;
     display: block;
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--adm-border-strong);
     border-radius: 0.5rem;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    background: white;
+    background: var(--adm-surface);
     font-size: 0.875rem;
     transition: all 0.2s ease;
 
@@ -386,17 +386,17 @@ $city-hover: #f59e0b;
     justify-content: center;
     align-items: center;
     padding: 0.625rem 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--adm-border-strong);
     font-size: 0.875rem;
     font-weight: 500;
     border-radius: 0.5rem;
-    color: #374151;
-    background: white;
+    color: var(--adm-text-2);
+    background: var(--adm-surface);
     transition: all 0.2s ease;
     cursor: pointer;
 
     &:hover {
-      background: #f9fafb;
+      background: var(--adm-bg);
     }
   }
 
@@ -432,17 +432,17 @@ $city-hover: #f59e0b;
   text-align: left;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #6b7280;
+  color: var(--adm-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: #f9fafb;
+  background: var(--adm-bg);
 
   &.sortable {
     cursor: pointer;
     transition: background-color 0.2s ease;
 
     &:hover {
-      background: #f3f4f6;
+      background: var(--adm-surface-2);
     }
 
     .sort-icon {
@@ -466,7 +466,7 @@ $city-hover: #f59e0b;
   transition: all 0.2s ease;
 
   &:hover {
-    background: #f9fafb;
+    background: var(--adm-bg);
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
@@ -488,12 +488,12 @@ $city-hover: #f59e0b;
 .country-info {
   .country-name {
     font-weight: 600;
-    color: #111827;
+    color: var(--adm-text);
   }
 
   .country-code {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--adm-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -515,7 +515,7 @@ $city-hover: #f59e0b;
 .currency-info {
   .currency-code {
     font-weight: 500;
-    color: #111827;
+    color: var(--adm-text);
   }
 }
 
@@ -526,12 +526,12 @@ $city-hover: #f59e0b;
     display: block;
     font-size: 1.125rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--adm-text);
   }
 
   .count-label {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--adm-text-muted);
   }
 }
 
@@ -579,7 +579,7 @@ $city-hover: #f59e0b;
         width: 1.25rem;
         left: 0.125rem;
         bottom: 0.125rem;
-        background: white;
+        background: var(--adm-surface);
         border-radius: 50%;
         transition: all 0.3s ease;
       }
@@ -595,7 +595,7 @@ $city-hover: #f59e0b;
     }
 
     &.inactive {
-      color: #6b7280;
+      color: var(--adm-text-muted);
     }
   }
 }
@@ -627,8 +627,8 @@ $city-hover: #f59e0b;
       color: #2563eb;
 
       &:hover {
-        background: #dbeafe;
-        color: #1d4ed8;
+        background: var(--adm-info-soft);
+        color: var(--adm-info);
       }
     }
 
@@ -636,8 +636,8 @@ $city-hover: #f59e0b;
       color: #d97706;
 
       &:hover {
-        background: #fef3c7;
-        color: #b45309;
+        background: var(--adm-warning-soft);
+        color: var(--adm-warning);
       }
     }
 
@@ -645,17 +645,17 @@ $city-hover: #f59e0b;
       color: #dc2626;
 
       &:hover {
-        background: #fee2e2;
-        color: #b91c1c;
+        background: var(--adm-danger-soft);
+        color: var(--adm-danger);
       }
     }
 
     &.menu {
-      color: #6b7280;
+      color: var(--adm-text-muted);
 
       &:hover {
-        background: #f3f4f6;
-        color: #374151;
+        background: var(--adm-surface-2);
+        color: var(--adm-text-2);
       }
     }
   }
@@ -669,15 +669,15 @@ $city-hover: #f59e0b;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9ca3af;
+  color: var(--adm-text-faint);
   border: none;
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    color: #6b7280;
-    background: #f3f4f6;
+    color: var(--adm-text-muted);
+    background: var(--adm-surface-2);
   }
 
   &.active {
@@ -694,15 +694,15 @@ $city-hover: #f59e0b;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #9ca3af;
+  color: var(--adm-text-faint);
   border: none;
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    color: #6b7280;
-    background: #f3f4f6;
+    color: var(--adm-text-muted);
+    background: var(--adm-surface-2);
   }
 
   &:disabled {
@@ -713,7 +713,7 @@ $city-hover: #f59e0b;
 
 .pagination-info {
   font-size: 0.875rem;
-  color: #374151;
+  color: var(--adm-text-2);
   font-weight: 500;
 }
 
@@ -734,18 +734,18 @@ $city-hover: #f59e0b;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--adm-border);
 
     .header-title {
       h1 {
         font-size: 1.75rem;
         font-weight: 600;
-        color: #161616;
+        color: var(--adm-text);
         margin: 0;
       }
 
       p {
-        color: #525252;
+        color: var(--adm-text-2);
         margin: 0.5rem 0 0 0;
         font-size: 0.875rem;
       }
@@ -825,8 +825,8 @@ $city-hover: #f59e0b;
 // ========================================
 
 .content-navigation {
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--adm-surface);
+  border-bottom: 1px solid var(--adm-border);
   margin-bottom: 1.5rem;
 
   .nav-tabs {
@@ -845,19 +845,19 @@ $city-hover: #f59e0b;
       border-bottom: 2px solid transparent;
       cursor: pointer;
       transition: all 0.2s ease;
-      color: #525252;
+      color: var(--adm-text-2);
       font-size: 0.875rem;
       font-weight: 400;
 
       &:hover {
-        background: #f4f4f4;
-        color: #161616;
+        background: var(--adm-surface-2);
+        color: var(--adm-text);
       }
 
       &.active {
         color: var(--geography-primary);
         border-bottom-color: var(--geography-primary);
-        background: white;
+        background: var(--adm-surface);
       }
 
       .tab-icon {
@@ -875,7 +875,7 @@ $city-hover: #f59e0b;
 
         .tab-count {
           font-size: 0.75rem;
-          color: #8d8d8d;
+          color: var(--adm-text-faint);
         }
       }
     }
@@ -887,8 +887,8 @@ $city-hover: #f59e0b;
 // ========================================
 
 .data-table-container {
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 0;
 
   .table-wrapper {
@@ -900,14 +900,14 @@ $city-hover: #f59e0b;
       font-size: 0.875rem;
 
       .table-header {
-        background: #f4f4f4;
+        background: var(--adm-surface-2);
 
         th {
           padding: 1rem;
           text-align: left;
           font-weight: 600;
-          color: #161616;
-          border-bottom: 1px solid #e0e0e0;
+          color: var(--adm-text);
+          border-bottom: 1px solid var(--adm-border);
           white-space: nowrap;
 
           &.sortable {
@@ -931,17 +931,17 @@ $city-hover: #f59e0b;
           transition: background-color 0.2s ease;
 
           &:hover {
-            background: #f4f4f4;
+            background: var(--adm-surface-2);
           }
 
           &:not(:last-child) {
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--adm-border);
           }
 
           td {
             padding: 1rem;
             vertical-align: middle;
-            color: #161616;
+            color: var(--adm-text);
           }
         }
       }
@@ -979,13 +979,13 @@ $city-hover: #f59e0b;
     .country-details {
       .country-name {
         font-weight: 600;
-        color: #161616;
+        color: var(--adm-text);
         margin-bottom: 0.125rem;
       }
 
       .country-code-small {
         font-size: 0.75rem;
-        color: #8d8d8d;
+        color: var(--adm-text-faint);
         text-transform: uppercase;
       }
     }
@@ -1003,8 +1003,8 @@ $city-hover: #f59e0b;
   letter-spacing: 0.05em;
 
   &.secondary {
-    background: #f4f4f4;
-    color: #161616;
+    background: var(--adm-surface-2);
+    color: var(--adm-text);
   }
 }
 
@@ -1043,7 +1043,7 @@ $city-hover: #f59e0b;
         left: 2px;
         width: 20px;
         height: 20px;
-        background: white;
+        background: var(--adm-surface);
         border-radius: 50%;
         transition: transform 0.2s ease;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -1068,8 +1068,8 @@ $city-hover: #f59e0b;
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.875rem;
-    background: #f4f4f4;
-    color: #161616;
+    background: var(--adm-surface-2);
+    color: var(--adm-text);
 
     &:hover {
       background: #e8e8e8;
@@ -1089,8 +1089,8 @@ $city-hover: #f59e0b;
 .empty-state {
   padding: 3rem 1.5rem;
   text-align: center;
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
 
   .empty-state-content {
     max-width: 400px;
@@ -1099,13 +1099,13 @@ $city-hover: #f59e0b;
     .empty-state-icon {
       width: 80px;
       height: 80px;
-      background: #f4f4f4;
+      background: var(--adm-surface-2);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 1.5rem;
-      color: #8d8d8d;
+      color: var(--adm-text-faint);
       font-size: 2rem;
     }
 
@@ -1113,13 +1113,13 @@ $city-hover: #f59e0b;
       margin: 0 0 1rem 0;
       font-size: 1.25rem;
       font-weight: 600;
-      color: #161616;
+      color: var(--adm-text);
     }
 
     .empty-state-message {
       margin: 0 0 2rem 0;
       font-size: 0.875rem;
-      color: #525252;
+      color: var(--adm-text-2);
       line-height: 1.6;
     }
   }
@@ -1131,8 +1131,8 @@ $city-hover: #f59e0b;
 
 .filters-panel {
   padding: 1rem;
-  background: #f4f4f4;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--adm-surface-2);
+  border-bottom: 1px solid var(--adm-border);
 
   .filters-content {
     display: flex;
@@ -1148,7 +1148,7 @@ $city-hover: #f59e0b;
       .filter-label {
         font-size: 0.75rem;
         font-weight: 600;
-        color: #161616;
+        color: var(--adm-text);
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
@@ -1158,8 +1158,8 @@ $city-hover: #f59e0b;
         border: 1px solid #8d8d8d;
         border-radius: 0;
         font-size: 0.875rem;
-        color: #161616;
-        background: white;
+        color: var(--adm-text);
+        background: var(--adm-surface);
         min-width: 120px;
 
         &:focus {
@@ -1187,8 +1187,8 @@ $city-hover: #f59e0b;
         transition: all 0.2s ease;
 
         &.reset {
-          background: #f4f4f4;
-          color: #161616;
+          background: var(--adm-surface-2);
+          color: var(--adm-text);
 
           &:hover {
             background: #e8e8e8;
@@ -1259,8 +1259,8 @@ $city-hover: #f59e0b;
 // ========================================
 
 .city-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -1292,8 +1292,8 @@ $city-hover: #f59e0b;
 
 .city-card-header {
   padding: 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+  border-bottom: 1px solid var(--adm-border);
+  background: linear-gradient(135deg, var(--adm-surface) 0%, var(--adm-bg) 100%);
 }
 
 .city-icon-container {
@@ -1309,8 +1309,8 @@ $city-hover: #f59e0b;
   justify-content: center;
   font-size: 1.5rem;
   transition: all 0.3s ease;
-  background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-  color: #6b7280;
+  background: linear-gradient(135deg, var(--adm-surface-3), #d1d5db);
+  color: var(--adm-text-muted);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   &.active {
@@ -1336,7 +1336,7 @@ $city-hover: #f59e0b;
 .city-name {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--adm-text);
   margin-bottom: 0.5rem;
   transition: color 0.3s ease;
 
@@ -1349,7 +1349,7 @@ $city-hover: #f59e0b;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #6b7280;
+  color: var(--adm-text-muted);
   font-size: 0.875rem;
   font-weight: 500;
 
@@ -1369,12 +1369,12 @@ $city-hover: #f59e0b;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: #fef2f2;
+  background: var(--adm-danger-soft);
   color: #dc2626;
   border: 1px solid #fecaca;
 
   &.active {
-    background: #f0fdf4;
+    background: var(--adm-success-soft);
     color: #16a34a;
     border-color: #bbf7d0;
   }
@@ -1410,7 +1410,7 @@ $city-hover: #f59e0b;
   transition: all 0.3s ease;
 
   &.users {
-    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    background: linear-gradient(135deg, var(--adm-info-soft), var(--adm-info-soft));
     border: 1px solid #bfdbfe;
 
     .stat-icon {
@@ -1419,16 +1419,16 @@ $city-hover: #f59e0b;
     }
 
     .stat-number {
-      color: #1e40af;
+      color: var(--adm-info);
     }
 
     .stat-label {
-      color: #3730a3;
+      color: var(--adm-info);
     }
   }
 
   &.properties {
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    background: linear-gradient(135deg, var(--adm-warning-soft), var(--adm-warning-soft));
     border: 1px solid #fcd34d;
 
     .stat-icon {
@@ -1441,7 +1441,7 @@ $city-hover: #f59e0b;
     }
 
     .stat-label {
-      color: #92400e;
+      color: var(--adm-warning);
     }
   }
 
@@ -1482,8 +1482,8 @@ $city-hover: #f59e0b;
 
 .city-actions {
   padding: 1.5rem;
-  background: #f9fafb;
-  border-top: 1px solid #f3f4f6;
+  background: var(--adm-bg);
+  border-top: 1px solid var(--adm-border);
 }
 
 .actions-content {
@@ -1501,7 +1501,7 @@ $city-hover: #f59e0b;
 .toggle-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--adm-text-2);
 }
 
 .modern-toggle {
@@ -1523,7 +1523,7 @@ $city-hover: #f59e0b;
     left: 2px;
     width: 20px;
     height: 20px;
-    background: #ffffff;
+    background: var(--adm-surface);
     border-radius: 10px;
     transition: transform 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -1537,7 +1537,7 @@ $city-hover: #f59e0b;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: #ffffff;
+    background: var(--adm-surface);
   }
 }
 
@@ -1558,8 +1558,8 @@ $city-hover: #f59e0b;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: #ffffff;
-  color: #6b7280;
+  background: var(--adm-surface);
+  color: var(--adm-text-muted);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   &:hover {
@@ -1568,7 +1568,7 @@ $city-hover: #f59e0b;
   }
 
   &.view-btn:hover {
-    background: #eff6ff;
+    background: var(--adm-info-soft);
     color: #2563eb;
   }
 
@@ -1578,7 +1578,7 @@ $city-hover: #f59e0b;
   }
 
   &.delete-btn:hover {
-    background: #fef2f2;
+    background: var(--adm-danger-soft);
     color: #dc2626;
   }
 }

@@ -5,70 +5,84 @@
     <div class="breach-header-left">
       <i class="fas fa-shield-virus breach-header-icon"></i>
       <div>
-        <h1 class="breach-title">Violations de données</h1>
-        <p class="breach-subtitle">Registre des incidents — Conformité RGPD / Loi n°2024/017</p>
+        <h1 class="breach-title">{{ 'ADMIN.BREACH.VIOLATIONS_DE_DONNEES' | translate }}</h1>
+        <p class="breach-subtitle">{{ 'ADMIN.BREACH.REGISTRE_DES_INCIDENTS_CONFORMITE_RGPD' | translate }}</p>
       </div>
     </div>
     <button class="btn-declare" (click)="showDeclareForm = !showDeclareForm; showUpdatePanel = false">
-      <i class="fas fa-plus"></i> Déclarer un incident
+      <i class="fas fa-plus"></i> {{ 'ADMIN.BREACH.DECLARER_UN_INCIDENT' | translate }}
     </button>
   </div>
 
+  <!-- Alerte 72 h : autorité à notifier -->
+  <ng-container *ngIf="pendingNotification$ | async as pending">
+    <div class="breach-alert" *ngIf="pending.length > 0" role="alert"
+         [class.breach-alert--overdue]="isOverdue(pending[0].notificationDeadline)">
+      <i class="fas fa-bell"></i>
+      <div>
+        <strong>{{ 'ADMIN.BREACH.INCIDENT_S_A_NOTIFIER_A' | translate:{ p0: (pending.length) } }}</strong>
+        <span *ngIf="isOverdue(pending[0].notificationDeadline)"> {{ 'ADMIN.BREACH.LE_DELAI_LEGAL_DE_72' | translate }}</span>
+        <span *ngIf="!isOverdue(pending[0].notificationDeadline)"> {{ 'ADMIN.BREACH.LE_PLUS_URGENT_EXPIRE_DANS' | translate:{ p0: (hoursLeft(pending[0].notificationDeadline)), p1: (pending[0].notificationDeadline | date:'dd/MM/yyyy HH:mm') } }}</span>
+      </div>
+      <button class="btn-alert" type="button" (click)="selectIncident(pending[0])">{{ 'ADMIN.BREACH.OUVRIR' | translate }}</button>
+    </div>
+  </ng-container>
+
   <!-- Formulaire déclaration -->
   <div class="breach-form-panel" *ngIf="showDeclareForm">
-    <h2 class="panel-title"><i class="fas fa-exclamation-triangle"></i> Nouvel incident</h2>
+    <h2 class="panel-title"><i class="fas fa-exclamation-triangle"></i> {{ 'ADMIN.BREACH.NOUVEL_INCIDENT' | translate }}</h2>
     <div class="form-grid">
       <div class="form-group">
-        <label>Type d'incident</label>
+        <label>{{ 'ADMIN.BREACH.TYPE_D_INCIDENT' | translate }}</label>
         <select [(ngModel)]="form.type">
-          <option value="">-- Sélectionner --</option>
-          <option *ngFor="let t of types trackBy: trackByFn" [value]="t.value">{{ t.label }}</option>
+          <option value="">{{ 'ADMIN.BREACH.SELECTIONNER' | translate }}</option>
+          <option *ngFor="let t of types trackBy: trackByFn" [value]="t.value">{{ t.label | translate }}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>Sévérité</label>
+        <label>{{ 'ADMIN.BREACH.SEVERITE' | translate }}</label>
         <select [(ngModel)]="form.severity">
-          <option value="">-- Sélectionner --</option>
-          <option *ngFor="let s of severities trackBy: trackByFn" [value]="s.value">{{ s.label }}</option>
+          <option value="">{{ 'ADMIN.BREACH.SELECTIONNER' | translate }}</option>
+          <option *ngFor="let s of severities trackBy: trackByFn" [value]="s.value">{{ s.label | translate }}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>Nombre d'utilisateurs affectés</label>
+        <label>{{ 'ADMIN.BREACH.NOMBRE_D_UTILISATEURS_AFFECTES' | translate }}</label>
         <input type="number" [(ngModel)]="form.affectedUsersCount" min="0" />
       </div>
       <div class="form-group">
-        <label>Date de détection</label>
+        <label>{{ 'ADMIN.BREACH.DATE_DE_DETECTION' | translate }}</label>
         <input type="datetime-local" [(ngModel)]="form.detectedAt" />
       </div>
       <div class="form-group form-group--full">
-        <label>Types de données affectées <span class="hint">(séparés par des virgules)</span></label>
-        <input type="text" [(ngModel)]="dataTypesInput" placeholder="email, téléphone, paiement..." />
+        <label>{{ 'ADMIN.BREACH.TYPES_DE_DONNEES_AFFECTEES' | translate }} <span class="hint">{{ 'ADMIN.BREACH.SEPARES_PAR_DES_VIRGULES' | translate }}</span></label>
+        <input type="text" [(ngModel)]="dataTypesInput" [placeholder]="'ADMIN.BREACH.EMAIL_TELEPHONE_PAIEMENT' | translate" />
       </div>
       <div class="form-group form-group--full">
-        <label>Description de l'incident</label>
-        <textarea [(ngModel)]="form.description" rows="4" placeholder="Décrivez l'incident en détail..."></textarea>
+        <label>{{ 'ADMIN.BREACH.DESCRIPTION_DE_L_INCIDENT' | translate }}</label>
+        <textarea [(ngModel)]="form.description" rows="4" [placeholder]="'ADMIN.BREACH.DECRIVEZ_L_INCIDENT_EN_DETAIL' | translate"></textarea>
       </div>
     </div>
     <div class="form-actions">
-      <button class="btn-cancel" (click)="showDeclareForm = false">Annuler</button>
+      <button class="btn-cancel" (click)="showDeclareForm = false">{{ 'ADMIN.BREACH.ANNULER' | translate }}</button>
       <button class="btn-submit" (click)="submitDeclare()"
               [disabled]="!form.type || !form.severity || !form.description || (saving$ | async)">
         <i class="fas fa-paper-plane"></i>
-        {{ (saving$ | async) ? 'Envoi...' : 'Déclarer et notifier le DPO' }}
+        {{ (saving$ | async) ? ('ADMIN.BREACH.ENVOI' | translate) : ('ADMIN.BREACH.DECLARER_ET_NOTIFIER_LE_DPO' | translate) }}
       </button>
     </div>
     <div class="form-notice">
       <i class="fas fa-info-circle"></i>
-      La déclaration déclenche automatiquement un email d'alerte vers le DPO et démarre le compte à rebours de 72h.
+      {{ 'ADMIN.BREACH.LA_DECLARATION_DECLENCHE_AUTOMATIQUEMENT_UN' | translate }}
     </div>
   </div>
 
   <!-- Filtres -->
   <div class="breach-filters">
-    <label>Filtrer par statut :</label>
+    <label>{{ 'ADMIN.BREACH.FILTRER_PAR_STATUT' | translate }}</label>
     <select [(ngModel)]="filterStatus" (change)="load()">
-      <option value="">Tous</option>
-      <option *ngFor="let s of statuses trackBy: trackByFn" [value]="s.value">{{ s.label }}</option>
+      <option value="">{{ 'ADMIN.BREACH.TOUS' | translate }}</option>
+      <option *ngFor="let s of statuses trackBy: trackByFn" [value]="s.value">{{ s.label | translate }}</option>
     </select>
     <button class="btn-refresh" (click)="load()"><i class="fas fa-sync-alt"></i></button>
   </div>
@@ -79,43 +93,44 @@
     <!-- Liste des incidents -->
     <div class="breach-list" [class.breach-list--narrow]="showUpdatePanel">
       <div *ngIf="loading$ | async" class="breach-loading">
-        <i class="fas fa-spinner fa-spin"></i> Chargement...
+        <i class="fas fa-spinner fa-spin"></i> {{ 'ADMIN.BREACH.CHARGEMENT' | translate }}
       </div>
 
       <ng-container *ngIf="!(loading$ | async)">
         <div *ngIf="(incidents$ | async)?.length === 0" class="breach-empty">
           <i class="fas fa-check-circle"></i>
-          <p>Aucun incident enregistré.</p>
+          <p>{{ 'ADMIN.BREACH.AUCUN_INCIDENT_ENREGISTRE' | translate }}</p>
         </div>
 
         <div *ngFor="let incident of incidents$ | async trackBy: trackByFn"
              class="incident-card"
              [class.incident-card--selected]="(selected$ | async)?._id === incident._id"
-             [class.incident-card--overdue]="isOverdue(incident.notificationDeadline) && incident.status !== 'resolved'"
+             [class.incident-card--overdue]="isOverdue(incident.notificationDeadline) && needsNotification(incident)"
              (click)="selectIncident(incident)">
 
           <div class="incident-card-header">
             <span class="severity-badge" [style.background]="severityColor(incident.severity)">
-              {{ severityLabel(incident.severity) }}
+              {{ severityLabel(incident.severity) | translate }}
             </span>
-            <span class="incident-type">{{ typeLabel(incident.type) }}</span>
+            <span class="incident-type">{{ typeLabel(incident.type) | translate }}</span>
             <span class="incident-status" [attr.data-status]="incident.status">
-              {{ statusLabel(incident.status) }}
+              {{ statusLabel(incident.status) | translate }}
             </span>
           </div>
 
           <p class="incident-desc">{{ incident.description }}</p>
 
           <div class="incident-meta">
-            <span><i class="fas fa-users"></i> {{ incident.affectedUsersCount }} utilisateur(s)</span>
+            <span><i class="fas fa-users"></i> {{ 'ADMIN.BREACH.UTILISATEUR_S' | translate:{ p0: (incident.affectedUsersCount) } }}</span>
             <span><i class="fas fa-calendar"></i> {{ incident.detectedAt | date:'dd/MM/yyyy HH:mm' }}</span>
-            <span class="deadline" [class.deadline--overdue]="isOverdue(incident.notificationDeadline) && incident.status !== 'resolved'">
+            <span class="deadline" [class.deadline--overdue]="isOverdue(incident.notificationDeadline) && needsNotification(incident)" [class.deadline--urgent]="isUrgent(incident)">
               <i class="fas fa-clock"></i>
-              <ng-container *ngIf="incident.status !== 'resolved'">
-                <ng-container *ngIf="isOverdue(incident.notificationDeadline)">⚠️ Délai 72h dépassé</ng-container>
-                <ng-container *ngIf="!isOverdue(incident.notificationDeadline)">{{ hoursLeft(incident.notificationDeadline) }}h restantes</ng-container>
+              <ng-container *ngIf="needsNotification(incident)">
+                <ng-container *ngIf="isOverdue(incident.notificationDeadline)">{{ 'ADMIN.BREACH.DELAI_DE_72_H_DEPASSE' | translate }}</ng-container>
+                <ng-container *ngIf="!isOverdue(incident.notificationDeadline)">{{ 'ADMIN.BREACH.H_POUR_NOTIFIER' | translate:{ p0: (hoursLeft(incident.notificationDeadline)) } }}</ng-container>
               </ng-container>
-              <ng-container *ngIf="incident.status === 'resolved'">Résolu</ng-container>
+              <ng-container *ngIf="!needsNotification(incident) && incident.status !== 'resolved'">{{ 'ADMIN.BREACH.AUTORITE_NOTIFIEE' | translate }}</ng-container>
+              <ng-container *ngIf="incident.status === 'resolved'">{{ 'ADMIN.BREACH.RESOLU' | translate }}</ng-container>
             </span>
           </div>
 
@@ -129,47 +144,47 @@
     <!-- Panneau de mise à jour -->
     <div class="breach-detail" *ngIf="showUpdatePanel && (selected$ | async) as incident">
       <div class="detail-header">
-        <h3>Mettre à jour l'incident</h3>
+        <h3>{{ 'ADMIN.BREACH.METTRE_A_JOUR_L_INCIDENT' | translate }}</h3>
         <button class="btn-close" (click)="closeDetail()"><i class="fas fa-times"></i></button>
       </div>
 
       <div class="detail-info">
-        <div class="detail-row"><strong>Type :</strong> {{ typeLabel(incident.type) }}</div>
-        <div class="detail-row"><strong>Sévérité :</strong>
-          <span class="severity-badge" [style.background]="severityColor(incident.severity)">{{ severityLabel(incident.severity) }}</span>
+        <div class="detail-row"><strong>{{ 'ADMIN.BREACH.TYPE' | translate }}</strong> {{ typeLabel(incident.type) | translate }}</div>
+        <div class="detail-row"><strong>{{ 'ADMIN.BREACH.SEVERITE_2' | translate }}</strong>
+          <span class="severity-badge" [style.background]="severityColor(incident.severity)">{{ severityLabel(incident.severity) | translate }}</span>
         </div>
-        <div class="detail-row"><strong>Détecté le :</strong> {{ incident.detectedAt | date:'dd/MM/yyyy HH:mm' }}</div>
-        <div class="detail-row"><strong>Deadline 72h :</strong>
+        <div class="detail-row"><strong>{{ 'ADMIN.BREACH.DETECTE_LE' | translate }}</strong> {{ incident.detectedAt | date:'dd/MM/yyyy HH:mm' }}</div>
+        <div class="detail-row"><strong>{{ 'ADMIN.BREACH.DEADLINE_72H' | translate }}</strong>
           <span [class.text-danger]="isOverdue(incident.notificationDeadline)">
             {{ incident.notificationDeadline | date:'dd/MM/yyyy HH:mm' }}
           </span>
         </div>
-        <div class="detail-row"><strong>Description :</strong> {{ incident.description }}</div>
-        <div class="detail-row" *ngIf="incident.resolutionNotes"><strong>Notes :</strong> {{ incident.resolutionNotes }}</div>
+        <div class="detail-row"><strong>{{ 'ADMIN.BREACH.DESCRIPTION' | translate }}</strong> {{ incident.description }}</div>
+        <div class="detail-row" *ngIf="incident.resolutionNotes"><strong>{{ 'ADMIN.BREACH.NOTES' | translate }}</strong> {{ incident.resolutionNotes }}</div>
         <div class="detail-row" *ngIf="incident.authorityNotifiedAt">
-          <strong>Autorité notifiée le :</strong> {{ incident.authorityNotifiedAt | date:'dd/MM/yyyy HH:mm' }}
+          <strong>{{ 'ADMIN.BREACH.AUTORITE_NOTIFIEE_LE' | translate }}</strong> {{ incident.authorityNotifiedAt | date:'dd/MM/yyyy HH:mm' }}
         </div>
       </div>
 
       <div class="detail-form">
         <div class="form-group">
-          <label>Nouveau statut</label>
+          <label>{{ 'ADMIN.BREACH.NOUVEAU_STATUT' | translate }}</label>
           <select [(ngModel)]="updateForm.status">
-            <option *ngFor="let s of statuses trackBy: trackByFn" [value]="s.value">{{ s.label }}</option>
+            <option *ngFor="let s of statuses trackBy: trackByFn" [value]="s.value">{{ s.label | translate }}</option>
           </select>
         </div>
         <div class="form-group" *ngIf="updateForm.status === 'notified'">
-          <label>Date de notification de l'autorité</label>
+          <label>{{ 'ADMIN.BREACH.DATE_DE_NOTIFICATION_DE_L' | translate }}</label>
           <input type="datetime-local" [(ngModel)]="updateForm.authorityNotifiedAt" />
         </div>
         <div class="form-group" *ngIf="updateForm.status === 'resolved'">
-          <label>Notes de résolution</label>
-          <textarea [(ngModel)]="updateForm.resolutionNotes" rows="3" placeholder="Décrivez les mesures prises..."></textarea>
+          <label>{{ 'ADMIN.BREACH.NOTES_DE_RESOLUTION' | translate }}</label>
+          <textarea [(ngModel)]="updateForm.resolutionNotes" rows="3" [placeholder]="'ADMIN.BREACH.DECRIVEZ_LES_MESURES_PRISES' | translate"></textarea>
         </div>
         <button class="btn-submit" (click)="submitUpdate(incident._id)"
                 [disabled]="!updateForm.status || (saving$ | async)">
           <i class="fas fa-save"></i>
-          {{ (saving$ | async) ? 'Enregistrement...' : 'Enregistrer' }}
+          {{ (saving$ | async) ? ('ADMIN.BREACH.ENREGISTREMENT' | translate) : ('ADMIN.BREACH.ENREGISTRER' | translate) }}
         </button>
       </div>
     </div>

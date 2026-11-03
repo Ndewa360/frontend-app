@@ -3,17 +3,17 @@
   <!-- Header -->
   <div class="admin-roles-header">
     <div class="admin-roles-title">
-      <h2>Rôles et permissions</h2>
-      <p class="admin-roles-subtitle">Gérer les rôles utilisateurs et leurs permissions</p>
+      <h2>{{ 'ADMIN.ROLES.ROLES_ET_PERMISSIONS' | translate }}</h2>
+      <p class="admin-roles-subtitle">{{ 'ADMIN.ROLES.GERER_LES_ROLES_UTILISATEURS_ET' | translate }}</p>
     </div>
     <div class="admin-roles-actions">
       <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()">
         <i class="fas fa-sync-alt"></i>
-        Actualiser
+        {{ 'ADMIN.ROLES.ACTUALISER' | translate }}
       </button>
-      <button class="admin-btn admin-btn-primary" (click)="onCreateRole()">
+      <button *ngIf="superAdmin" class="admin-btn admin-btn-primary" (click)="onCreateRole()">
         <i class="fas fa-plus"></i>
-        Nouveau rôle
+        {{ 'ADMIN.ROLES.NOUVEAU_ROLE' | translate }}
       </button>
     </div>
   </div>
@@ -30,7 +30,7 @@
       </div>
       <div class="admin-stat-content">
         <h3>{{ stats.totalRoles | number }}</h3>
-        <p>Total rôles</p>
+        <p>{{ 'ADMIN.ROLES.TOTAL_ROLES' | translate }}</p>
       </div>
     </div>
     <div class="admin-stat-card">
@@ -41,7 +41,7 @@
       </div>
       <div class="admin-stat-content">
         <h3>{{ stats.activeRoles | number }}</h3>
-        <p>Rôles actifs</p>
+        <p>{{ 'ADMIN.ROLES.ROLES_ACTIFS' | translate }}</p>
       </div>
     </div>
     <div class="admin-stat-card">
@@ -52,7 +52,7 @@
       </div>
       <div class="admin-stat-content">
         <h3>{{ stats.totalPermissions | number }}</h3>
-        <p>Permissions</p>
+        <p>{{ 'ADMIN.ROLES.PERMISSIONS' | translate }}</p>
       </div>
     </div>
     <div class="admin-stat-card">
@@ -64,7 +64,7 @@
       </div>
       <div class="admin-stat-content">
         <h3>{{ stats.customRoles | number }}</h3>
-        <p>Rôles personnalisés</p>
+        <p>{{ 'ADMIN.ROLES.ROLES_PERSONNALISES' | translate }}</p>
       </div>
     </div>
   </div>
@@ -76,19 +76,19 @@
         class="admin-tab-btn"
         [class.active]="selectedTab === 'roles'"
         (click)="onTabChange('roles')">
-        Rôles
+        {{ 'ADMIN.ROLES.ROLES' | translate }}
       </button>
       <button
         class="admin-tab-btn"
         [class.active]="selectedTab === 'matrix'"
         (click)="onTabChange('matrix')">
-        Matrice des permissions
+        {{ 'ADMIN.ROLES.MATRICE_DES_PERMISSIONS' | translate }}
       </button>
       <button
         class="admin-tab-btn"
         [class.active]="selectedTab === 'permissions'"
         (click)="onTabChange('permissions')">
-        Permissions
+        {{ 'ADMIN.ROLES.PERMISSIONS' | translate }}
       </button>
 
     </div>
@@ -102,25 +102,25 @@
           <div class="ar-filters-left">
             <div class="ar-search-box">
               <i class="fas fa-search"></i>
-              <input type="text" [(ngModel)]="roleSearchQuery" placeholder="Rechercher un rôle..." class="ar-search-input">
+              <input type="text" [(ngModel)]="roleSearchQuery" [placeholder]="'ADMIN.ROLES.RECHERCHER_UN_ROLE' | translate" class="ar-search-input">
             </div>
             <select [(ngModel)]="roleStatusFilter" class="ar-filter-select">
-              <option value="">Tous les statuts</option>
-              <option value="active">Actifs</option>
-              <option value="inactive">Inactifs</option>
+              <option value="">{{ 'ADMIN.ROLES.TOUS_LES_STATUTS' | translate }}</option>
+              <option value="active">{{ 'ADMIN.ROLES.ACTIFS' | translate }}</option>
+              <option value="inactive">{{ 'ADMIN.ROLES.INACTIFS' | translate }}</option>
             </select>
             <select [(ngModel)]="roleTypeFilter" class="ar-filter-select">
-              <option value="">Tous les types</option>
-              <option value="system">Système</option>
-              <option value="custom">Personnalisés</option>
+              <option value="">{{ 'ADMIN.ROLES.TOUS_LES_TYPES' | translate }}</option>
+              <option value="system">{{ 'ADMIN.ROLES.SYSTEME' | translate }}</option>
+              <option value="custom">{{ 'ADMIN.ROLES.PERSONNALISES' | translate }}</option>
             </select>
           </div>
           <div class="ar-filters-right">
             <span class="ar-results-count" *ngIf="roles$ | async as roles">
-              {{ getFilteredRoles(roles).length }} rôle(s)
+              {{ 'ADMIN.ROLES.ROLE_S' | translate:{ p0: (getFilteredRoles(roles).length) } }}
             </span>
             <button *ngIf="hasActiveRoleFilters()" class="ar-clear-filters" (click)="onClearRoleFilters()">
-              <i class="fas fa-times"></i> Effacer
+              <i class="fas fa-times"></i> {{ 'ADMIN.ROLES.EFFACER' | translate }}
             </button>
           </div>
         </div>
@@ -130,11 +130,11 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Rôle</th>
-              <th>Description</th>
-              <th>Permissions</th>
-              <th>Statut</th>
-              <th>Actions</th>
+              <th>{{ 'ADMIN.ROLES.ROLE' | translate }}</th>
+              <th>{{ 'ADMIN.ROLES.DESCRIPTION' | translate }}</th>
+              <th>{{ 'ADMIN.ROLES.PERMISSIONS' | translate }}</th>
+              <th>{{ 'ADMIN.ROLES.STATUT' | translate }}</th>
+              <th>{{ 'ADMIN.ROLES.ACTIONS' | translate }}</th>
             </tr>
           </thead>
 
@@ -145,17 +145,17 @@
                   <div class="admin-role-color" [style.background-color]="role.color"></div>
                   <div class="admin-role-details">
                     <span class="admin-role-name">{{ role.name }}</span>
-                    <span *ngIf="role.isSystemRole" class="admin-system-tag">Système</span>
+                    <span *ngIf="role.isSystemRole" class="admin-system-tag">{{ 'ADMIN.ROLES.SYSTEME' | translate }}</span>
                   </div>
                 </div>
               </td>
 
               <td>
-                <span class="admin-role-description">{{ role.description || 'Aucune description' }}</span>
+                <span class="admin-role-description">{{ role.description || ('ADMIN.ROLES.AUCUNE_DESCRIPTION' | translate) }}</span>
               </td>
 
               <td>
-                <span class="admin-permissions-count">{{ role.permissions.length }} permission(s)</span>
+                <span class="admin-permissions-count">{{ 'ADMIN.ROLES.PERMISSION_S' | translate:{ p0: (role.permissions.length) } }}</span>
               </td>
 
               <td>
@@ -168,22 +168,22 @@
 
               <td>
                 <div class="ar-actions-menu">
-                  <button class="ar-menu-trigger" (click)="toggleRoleMenu(role._id, $event)">
+                  <button *ngIf="superAdmin" class="ar-menu-trigger" (click)="toggleRoleMenu(role._id, $event)" [attr.aria-label]="'ADMIN.COMMON.ACTIONS' | translate">
                     <i class="fas fa-ellipsis-v"></i>
                   </button>
                   <div class="ar-menu-dropdown" *ngIf="openMenuId === role._id">
                     <button (click)="onEditRole(role)">
-                      <i class="fas fa-edit"></i> Modifier
+                      <i class="fas fa-edit"></i> {{ 'ADMIN.ROLES.MODIFIER' | translate }}
                     </button>
                     <button (click)="onDuplicateRole(role)" [disabled]="role.isSystemRole">
-                      <i class="fas fa-copy"></i> Dupliquer
+                      <i class="fas fa-copy"></i> {{ 'ADMIN.ROLES.DUPLIQUER' | translate }}
                     </button>
                     <button (click)="onToggleRoleStatus(role)" [disabled]="role.isSystemRole">
                       <i [class]="!role.isDisabled ? 'fas fa-ban' : 'fas fa-check-circle'"></i>
-                      {{ !role.isDisabled ? 'Désactiver' : 'Activer' }}
+                      {{ !role.isDisabled ? ('ADMIN.ROLES.DESACTIVER' | translate) : ('ADMIN.ROLES.ACTIVER' | translate) }}
                     </button>
                     <button (click)="onDeleteRole(role)" class="ar-danger-option" [disabled]="role.isSystemRole">
-                      <i class="fas fa-trash"></i> Supprimer
+                      <i class="fas fa-trash"></i> {{ 'ADMIN.ROLES.SUPPRIMER' | translate }}
                     </button>
                   </div>
                 </div>
@@ -195,7 +195,7 @@
           <!-- Loading State -->
           <div *ngIf="isLoading$ | async" class="flex flex-col items-center justify-center py-12">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600"></div>
-            <p class="mt-4 text-sm text-gray-500">Chargement des rôles...</p>
+            <p class="mt-4 text-sm text-gray-500">{{ 'ADMIN.ROLES.CHARGEMENT_DES_ROLES' | translate }}</p>
           </div>
 
           <!-- Empty State -->
@@ -203,10 +203,10 @@
             <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun rôle trouvé</h3>
-            <p class="text-sm text-gray-500 mb-4">Commencez par créer votre premier rôle personnalisé.</p>
-            <button class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-md hover:bg-yellow-700" (click)="onCreateRole()">
-              Créer un rôle
+            <h3 class="text-lg font-medium text-gray-900 mb-2">{{ 'ADMIN.ROLES.AUCUN_ROLE_TROUVE' | translate }}</h3>
+            <p class="text-sm text-gray-500 mb-4">{{ 'ADMIN.ROLES.COMMENCEZ_PAR_CREER_VOTRE_PREMIER' | translate }}</p>
+            <button *ngIf="superAdmin" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-yellow-600 border border-transparent rounded-md hover:bg-yellow-700" (click)="onCreateRole()">
+              {{ 'ADMIN.ROLES.CREER_UN_ROLE' | translate }}
             </button>
           </div>
           </ng-container>
@@ -222,11 +222,10 @@
           <div class="matrix-header-left">
             <h4 class="matrix-title">
               <i class="fas fa-th"></i>
-              Matrice des permissions
+              {{ 'ADMIN.ROLES.MATRICE_DES_PERMISSIONS' | translate }}
             </h4>
             <span class="matrix-subtitle">
-              {{ matrix.roles?.length || 0 }} roles &bull;
-              {{ getFilteredPermissions(matrix.permissions).length }} permissions
+              {{ 'ADMIN.ROLES.ROLES_BULL_PERMISSIONS' | translate:{ p0: (matrix.roles?.length || 0), p1: (getFilteredPermissions(matrix.permissions).length) } }}
             </span>
           </div>
           <div class="matrix-header-right">
@@ -234,10 +233,10 @@
               <div class="admin-search-input-group" style="max-width:220px">
                 <i class="fas fa-search admin-search-icon"></i>
                 <input type="text" class="admin-search-input" [(ngModel)]="permissionSearchTerm"
-                  placeholder="Rechercher..." [disabled]="isEditMode">
+                  [placeholder]="'ADMIN.ROLES.RECHERCHER' | translate" [disabled]="isEditMode">
               </div>
               <select class="admin-filter-select" [(ngModel)]="selectedModule" [disabled]="isEditMode">
-                <option value="">Tous les modules</option>
+                <option value="">{{ 'ADMIN.ROLES.TOUS_LES_MODULES' | translate }}</option>
                 <option *ngFor="let mod of getUniqueModules(matrix.permissions)" [value]="mod">
                   {{ mod | titlecase }}
                 </option>
@@ -246,19 +245,19 @@
             <ng-container *ngIf="!isEditMode">
               <button class="admin-btn admin-btn-secondary admin-btn-sm" (click)="onRefreshMatrix()" [disabled]="matrixLoading">
                 <i [class]="matrixLoading ? 'fas fa-spinner fa-spin' : 'fas fa-sync-alt'"></i>
-                Actualiser
+                {{ 'ADMIN.ROLES.ACTUALISER' | translate }}
               </button>
-              <button class="admin-btn admin-btn-sm matrix-edit-btn-off" (click)="onEnterEditMode(matrix)">
-                <i class="fas fa-pencil-alt"></i> Modifier
+              <button *ngIf="superAdmin" class="admin-btn admin-btn-sm matrix-edit-btn-off" (click)="onEnterEditMode(matrix)">
+                <i class="fas fa-pencil-alt"></i> {{ 'ADMIN.ROLES.MODIFIER' | translate }}
               </button>
             </ng-container>
             <ng-container *ngIf="isEditMode">
               <button class="admin-btn admin-btn-secondary admin-btn-sm" (click)="onCancelEdit()" [disabled]="isSaving">
-                <i class="fas fa-times"></i> Annuler
+                <i class="fas fa-times"></i> {{ 'ADMIN.ROLES.ANNULER' | translate }}
               </button>
               <button class="admin-btn admin-btn-sm matrix-edit-btn-on" (click)="onSaveMatrix(matrix)" [disabled]="isSaving || !matrixDirty">
                 <i [class]="isSaving ? 'fas fa-spinner fa-spin' : 'fas fa-save'"></i>
-                {{ isSaving ? 'Sauvegarde...' : 'Sauvegarder' }}
+                {{ isSaving ? ('ADMIN.ROLES.SAUVEGARDE' | translate) : ('ADMIN.ROLES.SAUVEGARDER' | translate) }}
               </button>
             </ng-container>
           </div>
@@ -267,7 +266,7 @@
         <!-- Edit mode banner -->
         <div class="matrix-edit-banner" *ngIf="isEditMode">
           <i class="fas fa-pencil-alt"></i>
-          Mode édition — cochez/décochez les cases puis cliquez sur <strong>Sauvegarder</strong>
+          {{ 'ADMIN.ROLES.MODE_EDITION_COCHEZ_DECOCHEZ_LES' | translate }} <strong>{{ 'ADMIN.ROLES.SAUVEGARDER' | translate }}</strong>
         </div>
 
         <!-- Table -->
@@ -275,12 +274,12 @@
           <table class="matrix-table">
             <thead>
               <tr>
-                <th class="matrix-perm-col"><span>Permission</span></th>
+                <th class="matrix-perm-col"><span>{{ 'ADMIN.ROLES.PERMISSION' | translate }}</span></th>
                 <th *ngFor="let role of matrix.roles" class="matrix-role-col">
                   <div class="matrix-role-header">
                     <div class="matrix-role-dot" [style.background]="role.color || '#6c757d'"></div>
                     <span class="matrix-role-name" [title]="role.name">{{ role.name }}</span>
-                    <span class="matrix-system-badge" *ngIf="role.isSystemRole">sys</span>
+                    <span class="matrix-system-badge" *ngIf="role.isSystemRole">{{ 'ADMIN.ROLES.SYSTEME' | translate }}</span>
                   </div>
                 </th>
               </tr>
@@ -309,7 +308,7 @@
                       [class.is-system]="role.isSystemRole"
                       [class.is-checked]="isPermissionGranted(matrix, role._id, perm._id)"
                       [class.is-readonly]="!isEditMode || role.isSystemRole"
-                      [title]="role.isSystemRole ? 'Rôle système non modifiable' : (!isEditMode ? 'Cliquez sur Modifier pour éditer' : '')">
+                      [title]="role.isSystemRole ? ('ADMIN.ROLES.ROLE_SYSTEME_NON_MODIFIABLE' | translate) : (!isEditMode ? ('ADMIN.ROLES.CLIQUEZ_SUR_MODIFIER_POUR_EDITER' | translate) : '')">
                       <input
                         type="checkbox"
                         class="matrix-checkbox"
@@ -329,7 +328,7 @@
         <ng-template #matrixLoadingTpl>
           <div class="matrix-loading">
             <div class="admin-spinner" style="width:32px;height:32px;border-width:3px;margin:0 auto 1rem"></div>
-            <p>Chargement de la matrice...</p>
+            <p>{{ 'ADMIN.ROLES.CHARGEMENT_DE_LA_MATRICE' | translate }}</p>
           </div>
         </ng-template>
 
@@ -347,25 +346,25 @@
                     <i class="fas fa-shield-alt"></i>
                   </div>
                   <div class="title-text">
-                    <h3 class="permissions-title">Gestion des Permissions</h3>
-                    <p class="permissions-subtitle">Contrôlez l'accès aux fonctionnalités de l'application</p>
+                    <h3 class="permissions-title">{{ 'ADMIN.ROLES.GESTION_DES_PERMISSIONS' | translate }}</h3>
+                    <p class="permissions-subtitle">{{ 'ADMIN.ROLES.CONTROLEZ_L_ACCES_AUX_FONCTIONNALITES' | translate }}</p>
                   </div>
                 </div>
                 <div class="stats-badges">
                   <div class="stat-badge total-badge">
                     <i class="fas fa-list"></i>
                     <span class="stat-number">{{ getTotalPermissionsCount() }}</span>
-                    <span class="stat-label">Total</span>
+                    <span class="stat-label">{{ 'ADMIN.ROLES.TOTAL' | translate }}</span>
                   </div>
                   <div class="stat-badge system-badge">
                     <i class="fas fa-cog"></i>
                     <span class="stat-number">{{ getSystemPermissionsCount() }}</span>
-                    <span class="stat-label">Système</span>
+                    <span class="stat-label">{{ 'ADMIN.ROLES.SYSTEME' | translate }}</span>
                   </div>
                   <div class="stat-badge custom-badge">
                     <i class="fas fa-user-cog"></i>
                     <span class="stat-number">{{ getCustomPermissionsCount() }}</span>
-                    <span class="stat-label">Custom</span>
+                    <span class="stat-label">{{ 'ADMIN.ROLES.CUSTOM' | translate }}</span>
                   </div>
                 </div>
               </div>
@@ -375,10 +374,10 @@
                 <button class="btn-modern btn-refresh"
                         (click)="onRefreshPermissions()"
                         [disabled]="isRefreshing"
-                        title="Actualiser">
+                        [title]="'ADMIN.ROLES.ACTUALISER' | translate">
                   <div class="btn-content">
                     <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i>
-                    <span class="btn-text">Actualiser</span>
+                    <span class="btn-text">{{ 'ADMIN.ROLES.ACTUALISER' | translate }}</span>
                   </div>
                 </button>
               </div>
@@ -390,41 +389,41 @@
         <div class="permissions-filters-bar">
           <div class="filters-left">
             <div class="filter-group">
-              <label>Rechercher :</label>
+              <label>{{ 'ADMIN.ROLES.RECHERCHER_2' | translate }}</label>
               <div class="search-box">
                 <i class="fas fa-search"></i>
                 <input
                   type="text"
                   [(ngModel)]="permissionSearchQuery"
                   (input)="onPermissionSearch()"
-                  placeholder="Nom, description, module..."
+                  [placeholder]="'ADMIN.ROLES.NOM_DESCRIPTION_MODULE' | translate"
                   class="search-input">
               </div>
             </div>
             <div class="filter-group">
-              <label>Module :</label>
+              <label>{{ 'ADMIN.ROLES.MODULE' | translate }}</label>
               <select [(ngModel)]="selectedPermissionModule" (change)="onPermissionModuleFilter()" class="filter-select">
-                <option value="">Tous</option>
+                <option value="">{{ 'ADMIN.ROLES.TOUS' | translate }}</option>
                 <option *ngFor="let module of getPermissionModules()" [value]="module">
                   {{ module | titlecase }}
                 </option>
               </select>
             </div>
             <div class="filter-group">
-              <label>Type :</label>
+              <label>{{ 'ADMIN.ROLES.TYPE' | translate }}</label>
               <select [(ngModel)]="selectedPermissionType" (change)="onPermissionTypeFilter()" class="filter-select">
-                <option value="">Tous</option>
-                <option value="system">Système</option>
-                <option value="custom">Personnalisées</option>
+                <option value="">{{ 'ADMIN.ROLES.TOUS' | translate }}</option>
+                <option value="system">{{ 'ADMIN.ROLES.SYSTEME' | translate }}</option>
+                <option value="custom">{{ 'ADMIN.ROLES.PERSONNALISEES' | translate }}</option>
               </select>
             </div>
           </div>
           <div class="filters-right">
             <div class="results-info">
-              <span class="results-count">{{ filteredPermissions.length }} résultat(s)</span>
+              <span class="results-count">{{ 'ADMIN.ROLES.RESULTAT_S' | translate:{ p0: (filteredPermissions.length) } }}</span>
               <button *ngIf="hasActiveFilters()" class="clear-filters" (click)="onClearFilters()">
                 <i class="fas fa-times"></i>
-                Effacer
+                {{ 'ADMIN.ROLES.EFFACER' | translate }}
               </button>
             </div>
           </div>
@@ -439,37 +438,37 @@
                 <th class="col-name">
                   <div class="th-content">
                     <i class="fas fa-shield-alt"></i>
-                    Nom de la Permission
+                    {{ 'ADMIN.ROLES.NOM_DE_LA_PERMISSION' | translate }}
                   </div>
                 </th>
                 <th class="col-module">
                   <div class="th-content">
                     <i class="fas fa-folder"></i>
-                    Module
+                    {{ 'ADMIN.ROLES.MODULE_2' | translate }}
                   </div>
                 </th>
                 <th class="col-description">
                   <div class="th-content">
                     <i class="fas fa-info-circle"></i>
-                    Description
+                    {{ 'ADMIN.ROLES.DESCRIPTION' | translate }}
                   </div>
                 </th>
                 <th class="col-type">
                   <div class="th-content">
                     <i class="fas fa-tag"></i>
-                    Type
+                    {{ 'ADMIN.ROLES.TYPE_2' | translate }}
                   </div>
                 </th>
                 <th class="col-status">
                   <div class="th-content">
                     <i class="fas fa-circle"></i>
-                    Statut
+                    {{ 'ADMIN.ROLES.STATUT' | translate }}
                   </div>
                 </th>
               <th class="col-actions">
                   <div class="th-content">
                     <i class="fas fa-cog"></i>
-                    Actions
+                    {{ 'ADMIN.ROLES.ACTIONS' | translate }}
                   </div>
                 </th>
               </tr>
@@ -502,7 +501,7 @@
                 <!-- Description -->
                 <td class="col-description">
                   <div class="description-cell">
-                    <span class="description-text">{{ permission.description || 'Aucune description' }}</span>
+                    <span class="description-text">{{ permission.description || ('ADMIN.ROLES.AUCUNE_DESCRIPTION' | translate) }}</span>
                   </div>
                 </td>
 
@@ -511,11 +510,11 @@
                   <div class="type-cell">
                     <span class="type-badge system-badge" *ngIf="isSystemPermission(permission)">
                       <i class="fas fa-cog"></i>
-                      Système
+                      {{ 'ADMIN.ROLES.SYSTEME' | translate }}
                     </span>
                     <span class="type-badge custom-badge" *ngIf="!isSystemPermission(permission)">
                       <i class="fas fa-user-cog"></i>
-                      Personnalisée
+                      {{ 'ADMIN.ROLES.PERSONNALISEE' | translate }}
                     </span>
                   </div>
                 </td>
@@ -525,11 +524,11 @@
                   <div class="status-cell">
                     <span class="status-badge active-status" *ngIf="!permission.isDisabled">
                       <i class="fas fa-check-circle"></i>
-                      Active
+                      {{ 'ADMIN.ROLES.ACTIVE' | translate }}
                     </span>
                     <span class="status-badge disabled-status" *ngIf="permission.isDisabled">
                       <i class="fas fa-times-circle"></i>
-                      Désactivée
+                      {{ 'ADMIN.ROLES.DESACTIVEE' | translate }}
                     </span>
                   </div>
                 </td>
@@ -538,10 +537,10 @@
                 <td class="col-actions">
                   <div class="actions-cell">
                     <span class="type-badge system-badge" *ngIf="isSystemPermission(permission)" style="font-size:0.7rem">
-                      <i class="fas fa-lock"></i> Système
+                      <i class="fas fa-lock"></i> {{ 'ADMIN.ROLES.SYSTEME' | translate }}
                     </span>
-                    <span *ngIf="!isSystemPermission(permission)" style="font-size:0.75rem;color:#6f6f6f">
-                      <i class="fas fa-user-cog"></i> Custom
+                    <span *ngIf="!isSystemPermission(permission)" style="font-size:0.75rem;color:var(--adm-text-muted)">
+                      <i class="fas fa-user-cog"></i> {{ 'ADMIN.ROLES.CUSTOM' | translate }}
                     </span>
                   </div>
                 </td>
@@ -553,11 +552,11 @@
           <div *ngIf="filteredPerms.length === 0" class="empty-state-standard">
             <div class="empty-content">
               <i class="fas fa-shield-alt empty-icon"></i>
-              <h4>Aucune permission trouvée</h4>
+              <h4>{{ 'ADMIN.ROLES.AUCUNE_PERMISSION_TROUVEE' | translate }}</h4>
               <p>{{ getEmptyStateMessage() }}</p>
               <button *ngIf="hasActiveFilters()" class="btn btn-primary" (click)="onClearFilters()">
                 <i class="fas fa-times"></i>
-                Effacer les filtres
+                {{ 'ADMIN.ROLES.EFFACER_LES_FILTRES' | translate }}
               </button>
             </div>
           </div>
@@ -569,7 +568,7 @@
           <div class="loading-state-standard">
             <div class="loading-content">
               <div class="loading-spinner"></div>
-              <p>Chargement des permissions...</p>
+              <p>{{ 'ADMIN.ROLES.CHARGEMENT_DES_PERMISSIONS' | translate }}</p>
             </div>
           </div>
         </ng-template>
@@ -582,35 +581,35 @@
 <div class="ar-modal-overlay" *ngIf="showCreateModal" (click)="onCloseModal()">
   <div class="ar-modal ar-modal-lg" (click)="$event.stopPropagation()">
     <div class="ar-modal-header">
-      <h3><i class="fas fa-plus"></i> Nouveau rôle</h3>
+      <h3><i class="fas fa-plus"></i> {{ 'ADMIN.ROLES.NOUVEAU_ROLE' | translate }}</h3>
       <button class="ar-modal-close" (click)="onCloseModal()"><i class="fas fa-times"></i></button>
     </div>
     <div class="ar-modal-content">
       <form [formGroup]="roleForm" (ngSubmit)="onSubmitRole()">
         <div class="admin-form-grid">
           <div class="admin-form-group">
-            <label>Nom technique *</label>
-            <input type="text" class="admin-form-input" formControlName="name" placeholder="ex: manager">
-            <small class="admin-form-hint">Minuscules, sans espaces</small>
+            <label>{{ 'ADMIN.ROLES.NOM_TECHNIQUE' | translate }}</label>
+            <input type="text" class="admin-form-input" formControlName="name" [placeholder]="'ADMIN.ROLES.EX_MANAGER' | translate">
+            <small class="admin-form-hint">{{ 'ADMIN.ROLES.MINUSCULES_SANS_ESPACES' | translate }}</small>
           </div>
           <div class="admin-form-group">
-            <label>Niveau</label>
-            <input type="number" class="admin-form-input" formControlName="level" placeholder="ex: 10" min="0">
-            <small class="admin-form-hint">Priorité du rôle (optionnel)</small>
+            <label>{{ 'ADMIN.ROLES.NIVEAU' | translate }}</label>
+            <input type="number" class="admin-form-input" formControlName="level" [placeholder]="'ADMIN.ROLES.EX_10' | translate" min="0">
+            <small class="admin-form-hint">{{ 'ADMIN.ROLES.PRIORITE_DU_ROLE_OPTIONNEL' | translate }}</small>
           </div>
           <div class="admin-form-group" style="grid-column: 1 / -1">
-            <label>Description</label>
-            <textarea class="admin-form-input" formControlName="description" rows="2" placeholder="Description du rôle"></textarea>
+            <label>{{ 'ADMIN.ROLES.DESCRIPTION' | translate }}</label>
+            <textarea class="admin-form-input" formControlName="description" rows="2" [placeholder]="'ADMIN.ROLES.DESCRIPTION_DU_ROLE' | translate"></textarea>
           </div>
           <div class="admin-form-group">
-            <label>Couleur</label>
+            <label>{{ 'ADMIN.ROLES.COULEUR' | translate }}</label>
             <input type="color" class="admin-form-input" formControlName="color" style="height: 40px; padding: 2px;">
           </div>
         </div>
         <div class="admin-form-actions">
-          <button type="button" class="ar-btn ar-btn-secondary" (click)="onCloseModal()">Annuler</button>
+          <button type="button" class="ar-btn ar-btn-secondary" (click)="onCloseModal()">{{ 'ADMIN.ROLES.ANNULER' | translate }}</button>
           <button type="submit" class="ar-btn ar-btn-primary" [disabled]="roleForm.invalid">
-            <i class="fas fa-save"></i> Créer le rôle
+            <i class="fas fa-save"></i> {{ 'ADMIN.ROLES.CREER_LE_ROLE' | translate }}
           </button>
         </div>
       </form>
@@ -622,33 +621,33 @@
 <div class="ar-modal-overlay" *ngIf="showEditModal" (click)="onCloseModal()">
   <div class="ar-modal ar-modal-lg" (click)="$event.stopPropagation()">
     <div class="ar-modal-header">
-      <h3><i class="fas fa-edit"></i> Modifier le rôle</h3>
+      <h3><i class="fas fa-edit"></i> {{ 'ADMIN.ROLES.MODIFIER_LE_ROLE' | translate }}</h3>
       <button class="ar-modal-close" (click)="onCloseModal()"><i class="fas fa-times"></i></button>
     </div>
     <div class="ar-modal-content">
       <form [formGroup]="roleForm" (ngSubmit)="onSubmitRole()">
         <div class="admin-form-grid">
           <div class="admin-form-group">
-            <label>Nom technique</label>
+            <label>{{ 'ADMIN.ROLES.NOM_TECHNIQUE_2' | translate }}</label>
             <input type="text" class="admin-form-input" formControlName="name" [readonly]="selectedRole?.isSystemRole">
           </div>
           <div class="admin-form-group">
-            <label>Niveau</label>
-            <input type="number" class="admin-form-input" formControlName="level" placeholder="ex: 10" min="0">
+            <label>{{ 'ADMIN.ROLES.NIVEAU' | translate }}</label>
+            <input type="number" class="admin-form-input" formControlName="level" [placeholder]="'ADMIN.ROLES.EX_10' | translate" min="0">
           </div>
           <div class="admin-form-group" style="grid-column: 1 / -1">
-            <label>Description</label>
+            <label>{{ 'ADMIN.ROLES.DESCRIPTION' | translate }}</label>
             <textarea class="admin-form-input" formControlName="description" rows="2"></textarea>
           </div>
           <div class="admin-form-group">
-            <label>Couleur</label>
+            <label>{{ 'ADMIN.ROLES.COULEUR' | translate }}</label>
             <input type="color" class="admin-form-input" formControlName="color" style="height: 40px; padding: 2px;">
           </div>
         </div>
         <div class="admin-form-actions">
-          <button type="button" class="ar-btn ar-btn-secondary" (click)="onCloseModal()">Annuler</button>
+          <button type="button" class="ar-btn ar-btn-secondary" (click)="onCloseModal()">{{ 'ADMIN.ROLES.ANNULER' | translate }}</button>
           <button type="submit" class="ar-btn ar-btn-primary" [disabled]="roleForm.invalid">
-            <i class="fas fa-save"></i> Enregistrer
+            <i class="fas fa-save"></i> {{ 'ADMIN.ROLES.ENREGISTRER' | translate }}
           </button>
         </div>
       </form>
@@ -660,17 +659,17 @@
 <div class="ar-modal-overlay" *ngIf="showDeleteRoleModal" (click)="cancelRoleAction()">
   <div class="ar-modal" (click)="$event.stopPropagation()">
     <div class="ar-modal-header">
-      <h3><i class="fas fa-trash"></i> Supprimer le rôle</h3>
+      <h3><i class="fas fa-trash"></i> {{ 'ADMIN.ROLES.SUPPRIMER_LE_ROLE' | translate }}</h3>
       <button class="ar-modal-close" (click)="cancelRoleAction()"><i class="fas fa-times"></i></button>
     </div>
     <div class="ar-modal-body">
-      <p>Supprimer définitivement le rôle <strong>"{{ roleToAction?.name }}"</strong> ?</p>
-      <p class="ar-warning-text"><i class="fas fa-exclamation-triangle"></i> Cette action est irréversible. Les utilisateurs avec ce rôle le perdront.</p>
+      <p>{{ 'ADMIN.ROLES.SUPPRIMER_DEFINITIVEMENT_LE_ROLE' | translate }} <strong>"{{ roleToAction?.name }}"</strong> ?</p>
+      <p class="ar-warning-text"><i class="fas fa-exclamation-triangle"></i> {{ 'ADMIN.ROLES.CETTE_ACTION_EST_IRREVERSIBLE_LES' | translate }}</p>
     </div>
     <div class="ar-modal-footer">
-      <button class="ar-btn ar-btn-secondary" (click)="cancelRoleAction()">Annuler</button>
+      <button class="ar-btn ar-btn-secondary" (click)="cancelRoleAction()">{{ 'ADMIN.ROLES.ANNULER' | translate }}</button>
       <button class="ar-btn ar-btn-danger" (click)="confirmDeleteRole()">
-        <i class="fas fa-trash"></i> Supprimer
+        <i class="fas fa-trash"></i> {{ 'ADMIN.ROLES.SUPPRIMER' | translate }}
       </button>
     </div>
   </div>
@@ -681,17 +680,17 @@
   <div class="ar-modal" (click)="$event.stopPropagation()">
     <div class="ar-modal-header">
       <h3><i [class]="!roleToAction?.isDisabled ? 'fas fa-ban' : 'fas fa-check-circle'"></i>
-        {{ !roleToAction?.isDisabled ? 'Désactiver' : 'Activer' }} le rôle
+        {{ 'ADMIN.ROLES.LE_ROLE' | translate:{ p0: (!roleToAction?.isDisabled ? ('ADMIN.ROLES.DESACTIVER' | translate) : ('ADMIN.ROLES.ACTIVER' | translate)) } }}
       </h3>
       <button class="ar-modal-close" (click)="cancelRoleAction()"><i class="fas fa-times"></i></button>
     </div>
     <div class="ar-modal-body">
-      <p>{{ !roleToAction?.isDisabled ? 'Désactiver' : 'Activer' }} le rôle <strong>"{{ roleToAction?.name }}"</strong> ?</p>
+      <p>{{ 'ADMIN.ROLES.LE_ROLE' | translate:{ p0: (!roleToAction?.isDisabled ? ('ADMIN.ROLES.DESACTIVER' | translate) : ('ADMIN.ROLES.ACTIVER' | translate)) } }} <strong>"{{ roleToAction?.name }}"</strong> ?</p>
     </div>
     <div class="ar-modal-footer">
-      <button class="ar-btn ar-btn-secondary" (click)="cancelRoleAction()">Annuler</button>
+      <button class="ar-btn ar-btn-secondary" (click)="cancelRoleAction()">{{ 'ADMIN.ROLES.ANNULER' | translate }}</button>
       <button class="ar-btn ar-btn-warning" (click)="confirmToggleStatus()">
-        <i class="fas fa-toggle-on"></i> Confirmer
+        <i class="fas fa-toggle-on"></i> {{ 'ADMIN.ROLES.CONFIRMER' | translate }}
       </button>
     </div>
   </div>
@@ -701,17 +700,17 @@
 <div class="ar-modal-overlay" *ngIf="showDuplicateRoleModal" (click)="cancelRoleAction()">
   <div class="ar-modal" (click)="$event.stopPropagation()">
     <div class="ar-modal-header">
-      <h3><i class="fas fa-copy"></i> Dupliquer le rôle</h3>
+      <h3><i class="fas fa-copy"></i> {{ 'ADMIN.ROLES.DUPLIQUER_LE_ROLE' | translate }}</h3>
       <button class="ar-modal-close" (click)="cancelRoleAction()"><i class="fas fa-times"></i></button>
     </div>
     <div class="ar-modal-body">
-      <label class="admin-form-label">Nom du nouveau rôle *</label>
-      <input type="text" class="admin-form-input" [(ngModel)]="duplicateRoleName" placeholder="ex: manager_copy" style="width:100%;margin-top:8px">
+      <label class="admin-form-label">{{ 'ADMIN.ROLES.NOM_DU_NOUVEAU_ROLE' | translate }}</label>
+      <input type="text" class="admin-form-input" [(ngModel)]="duplicateRoleName" [placeholder]="'ADMIN.ROLES.EX_MANAGER_COPY' | translate" style="width:100%;margin-top:8px">
     </div>
     <div class="ar-modal-footer">
-      <button class="ar-btn ar-btn-secondary" (click)="cancelRoleAction()">Annuler</button>
+      <button class="ar-btn ar-btn-secondary" (click)="cancelRoleAction()">{{ 'ADMIN.ROLES.ANNULER' | translate }}</button>
       <button class="ar-btn ar-btn-primary" (click)="confirmDuplicateRole()" [disabled]="!duplicateRoleName.trim()">
-        <i class="fas fa-copy"></i> Dupliquer
+        <i class="fas fa-copy"></i> {{ 'ADMIN.ROLES.DUPLIQUER' | translate }}
       </button>
     </div>
   </div>

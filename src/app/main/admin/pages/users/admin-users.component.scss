@@ -605,7 +605,7 @@ $ndiye-dark: #161616;
 
         &.status-inactive {
           background: rgba($ndiye-medium, 0.1);
-          color: $ndiye-medium;
+          color: var(--adm-text-muted);
         }
 
         &.status-suspended {
@@ -981,7 +981,7 @@ $ndiye-dark: #161616;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      background: white;
+      background: var(--adm-surface);
       transition: all 0.15s;
 
       i {
@@ -1018,7 +1018,7 @@ $ndiye-dark: #161616;
   backdrop-filter: blur(2px);
 
   .admin-modal {
-    background: var(--theme-appCardBg, #ffffff);
+    background: var(--theme-appCardBg, var(--adm-surface));
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
     overflow: hidden;
@@ -1051,7 +1051,7 @@ $ndiye-dark: #161616;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        color: $ndiye-medium;
+        color: var(--adm-text-muted);
         transition: all 0.2s;
         &:hover { background: rgba($ndiye-danger, 0.1); color: $ndiye-danger; }
       }
@@ -1086,7 +1086,7 @@ $ndiye-dark: #161616;
   padding: 9px 12px;
   border: 1px solid var(--theme-appBorderColor);
   border-radius: 6px;
-  background: var(--theme-appUIForegroundBg, #fff);
+  background: var(--theme-appUIForegroundBg, var(--adm-surface));
   color: var(--theme-appText);
   font-size: 0.875rem;
   box-sizing: border-box;
@@ -1099,10 +1099,111 @@ $ndiye-dark: #161616;
   }
 
   &[readonly] { background: rgba($ndiye-primary, 0.03); cursor: not-allowed; }
-  &::placeholder { color: $ndiye-medium; }
+  &::placeholder { color: var(--adm-text-muted); }
 }
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Palier, dernière connexion, boutons accessibles, formulaire ─────────────
+button.admin-user-info,
+button.admin-user-card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  &:focus-visible { outline: 2px solid var(--adm-primary); outline-offset: 2px; border-radius: 6px; }
+}
+
+button.admin-user-card-info { align-items: center; text-align: center; }
+
+.admin-user-card-meta,
+.admin-user-card-details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.admin-user-tier {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 110px;
+  small { color: var(--adm-text-muted); font-size: 12px; }
+}
+
+.admin-user-login {
+  display: flex;
+  flex-direction: column;
+  min-width: 130px;
+  font-size: 13px;
+  color: var(--adm-text-2);
+  .admin-user-login-label { font-size: 11px; color: var(--adm-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+}
+
+.assign-role-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; }
+
+button.assign-role-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  background: var(--adm-surface);
+  color: var(--adm-text);
+  font: inherit;
+  cursor: pointer;
+  &.selected { border-color: var(--adm-primary); background: var(--adm-primary-soft); }
+  .assign-role-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--adm-border-strong);
+    border-radius: 4px;
+    color: var(--adm-primary);
+  }
+}
+
+.assign-role-count { margin-top: 10px !important; font-size: 13px; color: var(--adm-text-muted) !important; }
+
+.adm-user-form {
+  max-width: 580px !important;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--adm-border-strong);
+      border-radius: 8px;
+      background: var(--adm-surface);
+      color: var(--adm-text);
+    }
+  }
+  &__full { grid-column: 1 / -1; }
+  &__error { color: var(--adm-danger); font-size: 12px; }
+}
+
+@media (max-width: 768px) {
+  .adm-user-form__grid { grid-template-columns: 1fr; }
+  .admin-user-tier, .admin-user-login { min-width: 0; }
 }

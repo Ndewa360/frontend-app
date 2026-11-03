@@ -30,7 +30,10 @@ function loadTranslations(lang) {
     process.exit(1);
   }
   try {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
+    const main = JSON.parse(fs.readFileSync(file, 'utf8'));
+    // Espace d'administration (<lang>-admin.json) : même contrôle FR/EN.
+    const adminFile = path.join(I18N_DIR, `${lang}-admin.json`);
+    return fs.existsSync(adminFile) ? { ...main, ...JSON.parse(fs.readFileSync(adminFile, 'utf8')) } : main;
   } catch (e) {
     console.error(`❌ JSON invalide dans ${lang}.json: ${e.message}`);
     process.exit(1);

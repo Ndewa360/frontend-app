@@ -9,7 +9,7 @@ $error-color: #dc2626;
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
-  background: white;
+  background: var(--adm-surface);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -19,8 +19,8 @@ $error-color: #dc2626;
 
 // En-tête du modal
 .modal-header {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, var(--adm-bg) 0%, var(--adm-surface-3) 100%);
+  border-bottom: 1px solid var(--adm-border);
   padding: 2rem;
   flex-shrink: 0;
 
@@ -51,13 +51,13 @@ $error-color: #dc2626;
           margin: 0 0 0.25rem 0;
           font-size: 1.5rem;
           font-weight: 700;
-          color: #111827;
+          color: var(--adm-text);
         }
 
         .modal-subtitle {
           margin: 0;
           font-size: 0.875rem;
-          color: #6b7280;
+          color: var(--adm-text-muted);
           font-weight: 500;
         }
       }
@@ -68,8 +68,8 @@ $error-color: #dc2626;
       height: 40px;
       border: none;
       border-radius: 8px;
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--adm-surface-2);
+      color: var(--adm-text-muted);
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
@@ -77,8 +77,8 @@ $error-color: #dc2626;
       justify-content: center;
 
       &:hover {
-        background: #e5e7eb;
-        color: #374151;
+        background: var(--adm-surface-3);
+        color: var(--adm-text-2);
       }
 
       &:disabled {
@@ -107,11 +107,11 @@ $error-color: #dc2626;
       margin: 0 0 1.5rem 0;
       font-size: 1.125rem;
       font-weight: 600;
-      color: #111827;
+      color: var(--adm-text);
       display: flex;
       align-items: center;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid #f3f4f6;
+      border-bottom: 2px solid var(--adm-border);
     }
   }
 
@@ -133,7 +133,7 @@ $error-color: #dc2626;
       margin-bottom: 0.5rem;
       font-size: 0.875rem;
       font-weight: 600;
-      color: #374151;
+      color: var(--adm-text-2);
 
       .required {
         color: $error-color;
@@ -145,10 +145,10 @@ $error-color: #dc2626;
     .form-select {
       width: 100%;
       padding: 0.75rem 1rem;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--adm-border-strong);
       border-radius: 8px;
       font-size: 0.875rem;
-      background: white;
+      background: var(--adm-surface);
       transition: all 0.2s ease;
 
       &:focus {
@@ -163,12 +163,12 @@ $error-color: #dc2626;
       }
 
       &::placeholder {
-        color: #9ca3af;
+        color: var(--adm-text-faint);
       }
 
       &:disabled {
-        background: #f9fafb;
-        color: #6b7280;
+        background: var(--adm-bg);
+        color: var(--adm-text-muted);
         cursor: not-allowed;
       }
     }
@@ -196,13 +196,13 @@ $error-color: #dc2626;
       gap: 1rem;
       cursor: pointer;
       padding: 1rem;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      background: var(--adm-bg);
+      border: 1px solid var(--adm-border);
       border-radius: 8px;
       transition: all 0.2s ease;
 
       &:hover {
-        background: #f3f4f6;
+        background: var(--adm-surface-2);
         border-color: $primary-color;
       }
 
@@ -233,7 +233,7 @@ $error-color: #dc2626;
           left: 2px;
           width: 20px;
           height: 20px;
-          background: white;
+          background: var(--adm-surface);
           border-radius: 50%;
           transition: transform 0.3s ease;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -243,14 +243,14 @@ $error-color: #dc2626;
       .toggle-label {
         font-size: 1rem;
         font-weight: 600;
-        color: #111827;
+        color: var(--adm-text);
       }
     }
 
     .toggle-description {
       margin: 0.75rem 0 0 0;
       font-size: 0.875rem;
-      color: #6b7280;
+      color: var(--adm-text-muted);
       line-height: 1.5;
     }
   }
@@ -258,8 +258,8 @@ $error-color: #dc2626;
 
 // Actions du modal
 .modal-actions {
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  background: var(--adm-bg);
+  border-top: 1px solid var(--adm-border);
   padding: 1.5rem 2rem;
   display: flex;
   justify-content: flex-end;
@@ -284,12 +284,12 @@ $error-color: #dc2626;
     }
 
     &.secondary {
-      background: white;
-      color: #374151;
-      border: 1px solid #d1d5db;
+      background: var(--adm-surface);
+      color: var(--adm-text-2);
+      border: 1px solid var(--adm-border-strong);
 
       &:hover:not(:disabled) {
-        background: #f9fafb;
+        background: var(--adm-bg);
         border-color: #9ca3af;
       }
     }

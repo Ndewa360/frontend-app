@@ -1,72 +1,79 @@
-import { trackByFn } from '../../../../shared/utils/track-by.util';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AsyncPipe, DecimalPipe, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Store } from '@ngxs/store';
-import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
 
-// Actions
 import { AdminSettingsAction } from '../../store/settings/admin-settings.actions';
-
-// States
 import { AdminSettingsState } from '../../store/settings/admin-settings.state';
+import { AdminSettingsService, EffectiveConfiguration } from '../../services/admin-settings.service';
+import { UserProfileState } from '../../../../shared/store/user-profile/user-profile.state';
+import { LanguageUrlService } from '../../../../shared/services/language-url.service';
+import { trackByFn } from '../../../../shared/utils/track-by.util';
+import { isSuperAdmin } from '../../utils/admin-roles';
 
-// Models
-import { AdminSettings } from '../../store/settings/admin-settings.model';
+type SectionKey = 'general' | 'email' | 'payment' | 'security' | 'notifications' | 'integrations';
 
-// Services
-import { AdminSettingsService } from '../../services/admin-settings.service';
-import { SelectModule } from 'carbon-components-angular';
-import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
+/** Ligne affichée : libellé traduit et valeur (texte, booléen « configuré » ou liste). */
+interface ConfigRow {
+  labelKey: string;
+  value: string | number | boolean | string[] | null;
+  kind?: 'status' | 'list' | 'text';
+}
 
+/**
+ * Configuration effective du serveur, en lecture seule.
+ *
+ * Les anciens réglages (général, e-mail, paiement, sécurité, maintenance)
+ * étaient enregistrés en base sans être lus par l'application : les modifier
+ * n'avait aucun effet. Cette page affiche ce que le serveur utilise
+ * réellement (variables d'environnement), sans aucun secret.
+ */
 @Component({
   selector: 'app-admin-settings',
   templateUrl: './admin-settings.component.html',
   styleUrls: ['./admin-settings.component.scss'],
   standalone: true,
-  imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, SelectModule, AsyncPipe, DecimalPipe]
+  imports: [NgIf, NgFor, NgClass, NgSwitch, NgSwitchCase, NgSwitchDefault, AsyncPipe, DecimalPipe, RouterLink, TranslateModule],
 })
 export class AdminSettingsComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
-
   private destroy$ = new Subject<void>();
 
-  // Observables
-  settings$ = this.store.select(AdminSettingsState.selectSettings);
   systemInfo$ = this.store.select(AdminSettingsState.selectSystemInfo);
-  isLoading$ = this.store.select(AdminSettingsState.selectIsLoading);
 
-  // Component state
-  selectedTab = 'general';
-  settingsForm: FormGroup;
-  hasUnsavedChanges = false;
-
-  // Settings sections
-  settingsSections = [
-    { key: 'general', label: 'Général', icon: 'settings' },
-    { key: 'email', label: 'Email', icon: 'email' },
-    { key: 'payment', label: 'Paiements', icon: 'currency-dollar' },
-    { key: 'security', label: 'Sécurité', icon: 'security' },
-    { key: 'notifications', label: 'Notifications', icon: 'notification' },
-    { key: 'maintenance', label: 'Maintenance', icon: 'tools' },
-    { key: 'integrations', label: 'Intégrations', icon: 'connect' }
+  readonly sections: Array<{ key: SectionKey; icon: string }> = [
+    { key: 'general', icon: 'fa-sliders-h' },
+    { key: 'email', icon: 'fa-envelope' },
+    { key: 'payment', icon: 'fa-credit-card' },
+    { key: 'security', icon: 'fa-shield-alt' },
+    { key: 'notifications', icon: 'fa-bell' },
+    { key: 'integrations', icon: 'fa-plug' },
   ];
+
+  selectedSection: SectionKey = 'general';
+  config: EffectiveConfiguration | null = null;
+  loading = false;
+  loadError = false;
+  superAdmin = false;
+
+  testingEmail = false;
+  testEmailResult: { success: boolean; message: string } | null = null;
 
   constructor(
     private store: Store,
-    private formBuilder: FormBuilder,
     private settingsService: AdminSettingsService,
     private toastr: ToastrService,
-    private translate: TranslateService
-  ) {
-    this.initializeForm();
-  }
+    private translate: TranslateService,
+    private languageUrl: LanguageUrlService,
+  ) {}
 
   ngOnInit(): void {
-    this.loadData();
-    this.setupFormSubscription();
+    this.superAdmin = isSuperAdmin(this.store.selectSnapshot(UserProfileState.selectStateUserProfile));
+    this.load();
   }
 
   ngOnDestroy(): void {
@@ -74,308 +81,107 @@ export class AdminSettingsComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  private loadData(): void {
-    this.store.dispatch([
-      new AdminSettingsAction.LoadSettings(),
-      new AdminSettingsAction.LoadSystemInfo()
-    ]);
+  get financeRoute(): string {
+    return `/${this.languageUrl.getCurrentLanguage()}/admin/platform-finance`;
   }
 
-  private initializeForm(): void {
-    this.settingsForm = this.formBuilder.group({
-      // General settings
-      appName: ['', Validators.required],
-      appDescription: [''],
-      supportEmail: ['', [Validators.required, Validators.email]],
-      supportPhone: [''],
-      defaultLanguage: ['fr'],
-      defaultTimezone: ['Africa/Douala'],
-      defaultCurrency: ['XAF'],
-      maintenanceMode: [false],
-      registrationEnabled: [true],
-      emailVerificationRequired: [true],
-      
-      // Email settings
-      emailProvider: ['smtp'],
-      smtpHost: [''],
-      smtpPort: [587],
-      smtpSecure: [true],
-      smtpUser: [''],
-      smtpPassword: [''],
-      fromEmail: ['', Validators.email],
-      fromName: [''],
-      
-      // Payment settings
-      stripeEnabled: [false],
-      stripePublicKey: [''],
-      stripeSecretKey: [''],
-      paypalEnabled: [false],
-      paypalClientId: [''],
-      paypalClientSecret: [''],
-      mobileMoneyEnabled: [false],
-      
-      // Security settings
-      passwordMinLength: [8, [Validators.min(6), Validators.max(32)]],
-      passwordRequireUppercase: [true],
-      passwordRequireLowercase: [true],
-      passwordRequireNumbers: [true],
-      passwordRequireSymbols: [false],
-      sessionTimeout: [3600],
-      maxLoginAttempts: [5],
-      lockoutDuration: [900],
-      twoFactorRequired: [false],
-      
-      // Notification settings
-      emailNotificationsEnabled: [true],
-      smsNotificationsEnabled: [false],
-      pushNotificationsEnabled: [false],
-      
-      // Maintenance settings
-      backupsEnabled: [true],
-      backupFrequency: ['daily'],
-      backupRetention: [30]
+  load(): void {
+    this.loading = true;
+    this.loadError = false;
+    this.settingsService.getEffectiveConfiguration().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (config) => { this.config = config; this.loading = false; },
+      error: () => { this.loading = false; this.loadError = true; },
     });
+    // Informations système : réservées au super-admin côté serveur.
+    if (this.superAdmin) this.store.dispatch(new AdminSettingsAction.LoadSystemInfo());
   }
 
-  private setupFormSubscription(): void {
-    this.settingsForm.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.hasUnsavedChanges = this.settingsForm.dirty;
-      });
-
-    // Load settings into form when available
-    this.settings$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(settings => {
-        if (settings) {
-          this.populateForm(settings);
-        }
-      });
+  select(section: SectionKey): void {
+    this.selectedSection = section;
   }
 
-  private populateForm(settings: AdminSettings): void {
-    this.settingsForm.patchValue({
-      // General — utiliser les vrais champs du backend
-      appName:                  settings.general?.appName,
-      appDescription:           settings.general?.appDescription,
-      supportEmail:             settings.general?.contactEmail || settings.general?.supportEmail,
-      supportPhone:             settings.general?.companyPhone || '',
-      defaultLanguage:          settings.general?.defaultLanguage,
-      defaultTimezone:          settings.general?.defaultTimezone,
-      defaultCurrency:          settings.general?.defaultCurrency,
-      maintenanceMode:          settings.general?.maintenanceMode || (settings as any).maintenance?.isMaintenanceMode || false,
-      registrationEnabled:      settings.general?.registrationEnabled ?? true,
-      emailVerificationRequired: settings.general?.emailVerificationRequired ?? true,
-
-      // Email
-      emailProvider: settings.email?.provider,
-      smtpHost:      (settings.email as any)?.smtp?.host || settings.email?.smtpHost,
-      smtpPort:      (settings.email as any)?.smtp?.port || settings.email?.smtpPort,
-      smtpSecure:    (settings.email as any)?.smtp?.secure || settings.email?.smtpSecure,
-      smtpUser:      (settings.email as any)?.smtp?.username || settings.email?.smtpUser,
-      fromEmail:     settings.email?.fromEmail,
-      fromName:      settings.email?.fromName,
-
-      // Payment — backend utilise isEnabled pas enabled
-      stripeEnabled:     settings.payment?.providers?.stripe?.enabled ?? (settings.payment as any)?.stripe?.isEnabled ?? false,
-      stripePublicKey:   settings.payment?.providers?.stripe?.publicKey ?? (settings.payment as any)?.stripe?.publicKey ?? '',
-      paypalEnabled:     settings.payment?.providers?.paypal?.enabled ?? (settings.payment as any)?.paypal?.isEnabled ?? false,
-      paypalClientId:    settings.payment?.providers?.paypal?.clientId ?? (settings.payment as any)?.paypal?.clientId ?? '',
-      mobileMoneyEnabled: settings.payment?.providers?.mobileMoney?.enabled ?? false,
-
-      // Security
-      passwordMinLength:        settings.security?.passwordMinLength,
-      passwordRequireUppercase: settings.security?.passwordRequireUppercase,
-      passwordRequireLowercase: settings.security?.passwordRequireLowercase,
-      passwordRequireNumbers:   settings.security?.passwordRequireNumbers,
-      passwordRequireSymbols:   settings.security?.passwordRequireSymbols,
-      sessionTimeout:           settings.security?.sessionTimeout ?? (settings.security as any)?.sessionTimeout,
-      maxLoginAttempts:         settings.security?.maxLoginAttempts ?? (settings.security as any)?.maxLoginAttempts,
-      lockoutDuration:          settings.security?.lockoutDuration ?? (settings.security as any)?.lockoutDuration,
-      twoFactorRequired:        settings.security?.twoFactorRequired ?? false,
-
-      // Notifications
-      emailNotificationsEnabled: settings.notifications?.email?.enabled ?? true,
-      smsNotificationsEnabled:   settings.notifications?.sms?.enabled ?? false,
-      pushNotificationsEnabled:  settings.notifications?.push?.enabled ?? false,
-
-      // Maintenance
-      backupsEnabled:    settings.maintenance?.backups?.enabled ?? true,
-      backupFrequency:   settings.maintenance?.backups?.frequency ?? 'daily',
-      backupRetention:   settings.maintenance?.backups?.retention ?? 30
-    });
-
-    this.settingsForm.markAsPristine();
-    this.hasUnsavedChanges = false;
-  }
-
-  onTabChange(tab: string): void {
-    if (this.hasUnsavedChanges) {
-      if (confirm('Vous avez des modifications non sauvegardées. Voulez-vous continuer ?')) {
-        this.selectedTab = tab;
-        this.hasUnsavedChanges = false;
-        this.settingsForm.markAsPristine();
-      }
-    } else {
-      this.selectedTab = tab;
+  rows(section: SectionKey): ConfigRow[] {
+    const c = this.config;
+    if (!c) return [];
+    switch (section) {
+      case 'general':
+        return [
+          { labelKey: 'APP_NAME', value: c.general.appName },
+          { labelKey: 'APP_VERSION', value: c.general.appVersion },
+          { labelKey: 'ENVIRONMENT', value: c.general.environment },
+          { labelKey: 'TIMEZONE', value: c.general.timezone },
+          { labelKey: 'FRONTEND_URL', value: c.general.frontendUrl },
+          { labelKey: 'CRONS', value: c.general.cronsEnabled, kind: 'status' },
+          { labelKey: 'API_DOCS', value: c.general.apiDocsEnabled, kind: 'status' },
+        ];
+      case 'email':
+        return [
+          { labelKey: 'EMAIL_PROVIDER', value: c.email.provider },
+          { labelKey: 'EMAIL_CONFIGURED', value: c.email.configured, kind: 'status' },
+          { labelKey: 'EMAIL_DOMAIN', value: c.email.domain },
+          { labelKey: 'EMAIL_SENDER_NAME', value: c.email.senderName },
+          { labelKey: 'EMAIL_NO_REPLY', value: c.email.noReplySender },
+          { labelKey: 'EMAIL_CONTACT', value: c.email.contactSender },
+          { labelKey: 'EMAIL_DPO', value: c.email.dpoEmail },
+        ];
+      case 'payment':
+        return [{ labelKey: 'MOBILE_MONEY_AGGREGATOR', value: c.payment.mobileMoneyAggregator }];
+      case 'security':
+        return [
+          { labelKey: 'ACCESS_TOKEN_TTL', value: c.security.accessTokenTtl },
+          { labelKey: 'REFRESH_TTL_WEB', value: c.security.refreshTokenTtlWeb },
+          { labelKey: 'REFRESH_TTL_MOBILE', value: c.security.refreshTokenTtlMobile },
+          { labelKey: 'WEB_INACTIVITY', value: this.translate.instant('ADMIN.SETTINGS.VALUES.TWO_HOURS') },
+          { labelKey: 'RATE_LIMIT', value: this.rateLimit(c) },
+          { labelKey: 'ENCRYPTION', value: c.security.encryptionConfigured, kind: 'status' },
+          { labelKey: 'GOOGLE_SIGN_IN', value: c.security.googleSignInConfigured, kind: 'status' },
+          { labelKey: 'ALLOWED_ORIGINS', value: c.security.allowedOrigins, kind: 'list' },
+        ];
+      case 'notifications':
+        return [
+          { labelKey: 'PUSH', value: c.notifications.pushConfigured, kind: 'status' },
+          { labelKey: 'WHATSAPP', value: c.notifications.whatsappConfigured, kind: 'status' },
+          { labelKey: 'WHATSAPP_WEBHOOK', value: c.notifications.whatsappWebhookSecured, kind: 'status' },
+          { labelKey: 'WHATSAPP_API_VERSION', value: c.notifications.whatsappApiVersion },
+        ];
+      case 'integrations':
+        return [
+          { labelKey: 'STORAGE', value: c.integrations.storageConfigured, kind: 'status' },
+          { labelKey: 'STORAGE_BUCKET', value: c.integrations.storageBucket },
+          { labelKey: 'REDIS', value: c.integrations.redisConfigured, kind: 'status' },
+          { labelKey: 'GEONAMES', value: c.integrations.geonamesConfigured, kind: 'status' },
+          { labelKey: 'TRACING', value: c.integrations.tracingConfigured, kind: 'status' },
+        ];
     }
   }
 
-  onSaveSettings(): void {
-    if (this.settingsForm.valid) {
-      const formValue = this.settingsForm.value;
-      const settingsData = this.buildSettingsData(formValue);
-      // Envoyer uniquement la section active
-      const sectionData: any = {};
-      sectionData[this.selectedTab] = settingsData[this.selectedTab];
-      this.store.dispatch(new AdminSettingsAction.UpdateSettings(sectionData));
-      this.hasUnsavedChanges = false;
-      this.settingsForm.markAsPristine();
-    }
+  private rateLimit(c: EffectiveConfiguration): string | null {
+    const { rateLimitMax, rateLimitWindowMs } = c.security;
+    if (!rateLimitMax || !rateLimitWindowMs) return null;
+    return this.translate.instant('ADMIN.SETTINGS.VALUES.RATE_LIMIT', { max: rateLimitMax, seconds: Math.round(rateLimitWindowMs / 1000) });
   }
 
-  onResetForm(): void {
-    if (confirm('Êtes-vous sûr de vouloir annuler toutes les modifications ?')) {
-      this.settingsForm.reset();
-      this.loadData();
-      this.hasUnsavedChanges = false;
-    }
+  isList(row: ConfigRow): string[] {
+    return Array.isArray(row.value) ? row.value : [];
   }
 
-  onTestEmailConfiguration(): void {
-    const testEmail = this.settingsForm.get('supportEmail')?.value;
-    if (!testEmail) {
-      this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_SUPPORT_EMAIL_REQUIRED'));
-      return;
-    }
-    this.settingsService.testEmailConfiguration(testEmail)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (result) => {
-          if (result.success) {
-            this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_TEST_EMAIL_SENT'));
-          } else {
-            this.toastr.error(result.message || this.translate.instant('NOTIFICATIONS.ADMIN_TEST_EMAIL_ERROR'));
-          }
-        },
-        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_TEST_EMAIL_CONFIG_ERROR'))
-      });
-  }
-
-  onToggleMaintenanceMode(): void {
-    const currentMode = this.settingsForm.get('maintenanceMode')?.value;
-    const message = currentMode ? 
-      'Désactiver le mode maintenance ?' : 
-      'Activer le mode maintenance ? Les utilisateurs ne pourront plus accéder à l\'application.';
-    
-    if (confirm(message)) {
-      this.settingsForm.patchValue({ maintenanceMode: !currentMode });
-      this.onSaveSettings();
-    }
-  }
-
-  onRefreshData(): void {
-    this.store.dispatch(new AdminSettingsAction.RefreshData());
-  }
-
-  private buildSettingsData(formValue: any): Partial<AdminSettings> {
-    return {
-      general: {
-        appName: formValue.appName,
-        appDescription: formValue.appDescription,
-        supportEmail: formValue.supportEmail,
-        supportPhone: formValue.supportPhone,
-        defaultLanguage: formValue.defaultLanguage,
-        defaultTimezone: formValue.defaultTimezone,
-        defaultCurrency: formValue.defaultCurrency,
-        maintenanceMode: formValue.maintenanceMode,
-        registrationEnabled: formValue.registrationEnabled,
-        emailVerificationRequired: formValue.emailVerificationRequired
-      } as any,
-      email: {
-        provider: formValue.emailProvider,
-        smtpHost: formValue.smtpHost,
-        smtpPort: formValue.smtpPort,
-        smtpSecure: formValue.smtpSecure,
-        smtpUser: formValue.smtpUser,
-        fromEmail: formValue.fromEmail,
-        fromName: formValue.fromName
-      } as any,
-      payment: {
-        providers: {
-          stripe: {
-            enabled: formValue.stripeEnabled,
-            publicKey: formValue.stripePublicKey,
-            secretKey: formValue.stripeSecretKey,
-            webhookSecret: ''
-          },
-          paypal: {
-            enabled: formValue.paypalEnabled,
-            clientId: formValue.paypalClientId,
-            clientSecret: formValue.paypalClientSecret,
-            sandbox: true
-          },
-          mobileMoney: {
-            enabled: formValue.mobileMoneyEnabled,
-            orangeMoneyApiKey: '',
-            mtnMomoApiKey: ''
-          }
-        },
-        defaultCurrency: 'XAF',
-        supportedCurrencies: ['XAF'],
-        taxRate: 0,
-        freeTrialDays: 0,
-        subscriptionPlans: []
+  /** Envoie un vrai e-mail de test à l'adresse de l'administrateur connecté. */
+  onTestEmail(): void {
+    if (this.testingEmail) return;
+    this.testingEmail = true;
+    this.testEmailResult = null;
+    this.settingsService.testEmailConfiguration().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (result) => {
+        this.testingEmail = false;
+        this.testEmailResult = result;
+        if (result.success) this.toastr.success(result.message);
+        else this.toastr.error(result.message);
       },
-      security: {
-        passwordMinLength: formValue.passwordMinLength,
-        passwordRequireUppercase: formValue.passwordRequireUppercase,
-        passwordRequireLowercase: formValue.passwordRequireLowercase,
-        passwordRequireNumbers: formValue.passwordRequireNumbers,
-        passwordRequireSymbols: formValue.passwordRequireSymbols,
-        sessionTimeout: formValue.sessionTimeout,
-        maxLoginAttempts: formValue.maxLoginAttempts,
-        lockoutDuration: formValue.lockoutDuration,
-        twoFactorRequired: formValue.twoFactorRequired,
-        ipWhitelist: [],
-        corsOrigins: [],
-        rateLimiting: { enabled: true, windowMs: 60000, maxRequests: 100 }
+      error: () => {
+        this.testingEmail = false;
+        this.testEmailResult = { success: false, message: this.translate.instant('ADMIN.SETTINGS.TEST_EMAIL_ERROR') };
+        this.toastr.error(this.testEmailResult.message);
       },
-      maintenance: {
-        maintenanceMode: formValue.maintenanceMode,
-        maintenanceMessage: '',
-        allowedIPs: [],
-        scheduledMaintenance: { enabled: false, startTime: null, endTime: null, message: '' },
-        backups: {
-          enabled: formValue.backupsEnabled,
-          frequency: formValue.backupFrequency,
-          retention: formValue.backupRetention,
-          location: 'local'
-        }
-      }
-    } as Partial<AdminSettings>;
-  }
-
-  // Toggle method for settings
-  toggleSetting(settingName: string): void {
-    const currentValue = this.settingsForm.get(settingName)?.value;
-    this.settingsForm.patchValue({
-      [settingName]: !currentValue
     });
-    this.hasUnsavedChanges = true;
-  }
-
-  // Get section icon SVG
-  getSectionIcon(iconName: string): string {
-    const icons: { [key: string]: string } = {
-      'settings': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>',
-      'mail': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>',
-      'credit-card': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>',
-      'shield-check': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>',
-      'database': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>',
-      'bell': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>'
-    };
-    return icons[iconName] || icons['settings'];
   }
 }

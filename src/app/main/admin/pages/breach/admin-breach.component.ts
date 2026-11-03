@@ -1,8 +1,9 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { TranslateModule } from '@ngx-translate/core';
+import { Observable, Subject, interval } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { AdminBreachState } from '../../store/breach/admin-breach.state';
 import { AdminBreachAction } from '../../store/breach/admin-breach.actions';
 import { BreachIncident, CreateBreachDto } from '../../services/admin-breach.service';
@@ -15,7 +16,7 @@ import { NgIf, NgFor, AsyncPipe, DatePipe } from '@angular/common';
   templateUrl: './admin-breach.component.html',
   styleUrls: ['./admin-breach.component.scss'],
   standalone: true,
-  imports: [
+  imports: [TranslateModule, 
     NgIf,
     FormsModule,
     SelectModule,
@@ -33,6 +34,12 @@ export class AdminBreachComponent implements OnInit, OnDestroy {
   @Select(AdminBreachState.loading)   loading$: Observable<boolean>;
   @Select(AdminBreachState.saving)    saving$: Observable<boolean>;
   @Select(AdminBreachState.selected)  selected$: Observable<BreachIncident | null>;
+
+  /** Heure courante, rafraîchie chaque minute pour le compte à rebours des 72 h. */
+  now = Date.now();
+
+  /** Incidents dont l'autorité n'est pas encore notifiée, du plus urgent au moins urgent. */
+  pendingNotification$: Observable<BreachIncident[]>;
 
   filterStatus = '';
   showDeclareForm = false;
@@ -53,32 +60,38 @@ export class AdminBreachComponent implements OnInit, OnDestroy {
   updateForm = { status: '', resolutionNotes: '', authorityNotifiedAt: '' };
 
   readonly types = [
-    { value: 'unauthorized_access', label: 'Accès non autorisé' },
-    { value: 'data_leak',           label: 'Fuite de données' },
-    { value: 'bulk_export',         label: 'Export massif suspect' },
-    { value: 'ransomware',          label: 'Ransomware' },
-    { value: 'accidental_exposure', label: 'Exposition accidentelle' },
-    { value: 'other',               label: 'Autre' }
+    { value: 'unauthorized_access', label: 'ADMIN.BREACH.TYPES.unauthorized_access' },
+    { value: 'data_leak',           label: 'ADMIN.BREACH.TYPES.data_leak' },
+    { value: 'bulk_export',         label: 'ADMIN.BREACH.TYPES.bulk_export' },
+    { value: 'ransomware',          label: 'ADMIN.BREACH.TYPES.ransomware' },
+    { value: 'accidental_exposure', label: 'ADMIN.BREACH.TYPES.accidental_exposure' },
+    { value: 'other',               label: 'ADMIN.BREACH.TYPES.other' }
   ];
 
   readonly severities = [
-    { value: 'low',      label: 'Faible',    color: '#22c55e' },
-    { value: 'medium',   label: 'Moyen',     color: '#f59e0b' },
-    { value: 'high',     label: 'Élevé',     color: '#f97316' },
-    { value: 'critical', label: 'Critique',  color: '#ef4444' }
+    { value: 'low',      label: 'ADMIN.BREACH.SEVERITIES.low',    color: '#22c55e' },
+    { value: 'medium',   label: 'ADMIN.BREACH.SEVERITIES.medium',     color: '#f59e0b' },
+    { value: 'high',     label: 'ADMIN.BREACH.SEVERITIES.high',     color: '#f97316' },
+    { value: 'critical', label: 'ADMIN.BREACH.SEVERITIES.critical',  color: '#ef4444' }
   ];
 
   readonly statuses = [
-    { value: 'detected',      label: 'Détecté' },
-    { value: 'investigating', label: 'En investigation' },
-    { value: 'notified',      label: 'Autorité notifiée' },
-    { value: 'resolved',      label: 'Résolu' }
+    { value: 'detected',      label: 'ADMIN.BREACH.STATUSES.detected' },
+    { value: 'investigating', label: 'ADMIN.BREACH.STATUSES.investigating' },
+    { value: 'notified',      label: 'ADMIN.BREACH.STATUSES.notified' },
+    { value: 'resolved',      label: 'ADMIN.BREACH.STATUSES.resolved' }
   ];
 
   constructor(private store: Store) {}
 
   ngOnInit(): void {
     this.load();
+    interval(60_000).pipe(takeUntil(this.destroy$)).subscribe(() => this.now = Date.now());
+    this.pendingNotification$ = this.incidents$.pipe(
+      map(list => (list || [])
+        .filter(i => this.needsNotification(i))
+        .sort((a, b) => new Date(a.notificationDeadline).getTime() - new Date(b.notificationDeadline).getTime()))
+    );
   }
 
   ngOnDestroy(): void {
@@ -118,12 +131,23 @@ export class AdminBreachComponent implements OnInit, OnDestroy {
     this.showUpdatePanel = false;
   }
 
+  /** Heures restantes avant la limite de notification (arrondi inférieur, jamais négatif). */
   hoursLeft(deadline: string): number {
-    return Math.round((new Date(deadline).getTime() - Date.now()) / 3600000);
+    return Math.max(0, Math.floor((new Date(deadline).getTime() - this.now) / 3600000));
   }
 
   isOverdue(deadline: string): boolean {
-    return new Date(deadline) < new Date();
+    return new Date(deadline).getTime() < this.now;
+  }
+
+  /** L'autorité doit encore être notifiée : ni notifié ni résolu, et pas de date de notification. */
+  needsNotification(incident: BreachIncident): boolean {
+    return !incident.authorityNotifiedAt && incident.status !== 'notified' && incident.status !== 'resolved';
+  }
+
+  /** Moins de 24 h avant la limite. */
+  isUrgent(incident: BreachIncident): boolean {
+    return this.needsNotification(incident) && !this.isOverdue(incident.notificationDeadline) && this.hoursLeft(incident.notificationDeadline) < 24;
   }
 
   severityColor(severity: string): string {

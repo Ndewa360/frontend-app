@@ -19,7 +19,7 @@
       </div>
 
       <!-- Currency selector -->
-      <div class="admin-header-currency" title="Devise d'affichage">
+      <div class="admin-header-currency" [title]="'ADMIN.LAYOUT.DISPLAY_CURRENCY' | translate">
         <i class="fas fa-coins"></i>
         <select class="admin-currency-select" [ngModel]="selectedCurrency" (ngModelChange)="onCurrencyChange($event)">
           <option *ngFor="let c of currencies trackBy: trackByFn" [value]="c">{{ currencyLabels[c] }}</option>
@@ -32,7 +32,7 @@
           {{ getInitials(user) }}
         </div>
         <span class="admin-user-name">{{ getUserFullName(user) }}</span>
-        <button class="admin-btn-logout" (click)="onLogout()" title="Se déconnecter">
+        <button class="admin-btn-logout" (click)="onLogout()" [title]="'ADMIN.LAYOUT.LOGOUT' | translate" [attr.aria-label]="'ADMIN.LAYOUT.LOGOUT' | translate">
           <i class="fas fa-sign-out-alt"></i>
         </button>
       </div>
@@ -66,6 +66,7 @@
               <a [routerLink]="item.route"
                  class="admin-nav-link"
                  [class.active]="isActiveRoute(item.id)"
+                 [attr.aria-current]="isActiveRoute(item.id) ? 'page' : null"
                  [title]="item.description || item.label">
                 <i [class]="'fas fa-' + item.icon + ' admin-nav-icon'"></i>
                 <span class="admin-nav-label">{{ item.label }}</span>

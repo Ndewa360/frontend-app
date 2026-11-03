@@ -16,6 +16,7 @@ import {
 
 // Shared Models
 import { ApiResultFormat } from '../../../shared/store/global/api-result-format.model';
+import { CsvExport } from '../utils/csv-download';
 
 @Injectable({
   providedIn: 'root'
@@ -180,34 +181,12 @@ export class AdminUsersService {
   /**
    * Exporter les utilisateurs
    */
-  exportUsers(filters: AdminUserFilters = {}, format: string = 'xlsx'): Observable<{ downloadUrl: string }> {
-    let params = new HttpParams().set('format', format);
-    
-    // Ajouter les filtres aux paramètres
-    Object.keys(filters).forEach(key => {
-      const value = filters[key];
-      if (value !== undefined && value !== null && value !== '') {
-        if (value instanceof Date) {
-          params = params.set(key, value.toISOString());
-        } else {
-          params = params.set(key, value.toString());
-        }
-      }
-    });
-
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
-      map(response => response.data)
+  exportUsers(filters: AdminUserFilters = {}): Observable<CsvExport> {
+    // Le backend lit les filtres dans le corps et renvoie le CSV complet.
+    const body = Object.fromEntries(
+      Object.entries(filters || {}).filter(([, v]) => v !== undefined && v !== null && v !== '')
     );
-  }
-
-  /**
-   * Importer des utilisateurs
-   */
-  importUsers(file: File): Observable<{ imported: number, errors: any[] }> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    return this.http.post<ApiResultFormat<{ imported: number, errors: any[] }>>(`${this.apiUrl}/import`, formData).pipe(
+    return this.http.post<ApiResultFormat<CsvExport>>(`${this.apiUrl}/export`, body).pipe(
       map(response => response.data)
     );
   }

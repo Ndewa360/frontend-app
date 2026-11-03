@@ -9,17 +9,19 @@ import { AdminSubscriptionsState } from '../../store/subscriptions/admin-subscri
 import { AdminUserSubscription, SubscriptionFilters } from '../../store/subscriptions/admin-subscriptions.model';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
+import { tierLabel, TIER_LABELS } from '../../../../shared/pricing/pricing-grid';
 import { ExtendedModule } from '@angular/flex-layout/extended';
 import { SelectModule } from 'carbon-components-angular';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor, NgClass, AsyncPipe, DecimalPipe } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-admin-subscriptions',
   templateUrl: './admin-subscriptions.component.html',
   styleUrls: ['./admin-subscriptions.component.scss'],
   standalone: true,
-  imports: [NgIf, FormsModule, NgFor, SelectModule, NgClass, ExtendedModule, AsyncPipe, DecimalPipe]
+  imports: [NgIf, FormsModule, NgFor, SelectModule, NgClass, ExtendedModule, AsyncPipe, DecimalPipe, TranslateModule]
 })
 export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -44,23 +46,33 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   analyticsTimeRange        = '30d';
 
   planOptions = [
-    { value: '', label: 'Tous les plans' },
-    { value: 'free', label: 'Gratuit' },
-    { value: 'premium', label: 'Premium' }
+    { value: '', label: 'ADMIN.SUBSCRIPTIONS.TS.ALL_PLANS' },
+    { value: 'free', label: 'ADMIN.SUBSCRIPTIONS.TS.FREE' },
+    { value: 'premium', label: 'ADMIN.SUBSCRIPTIONS.TS.PAYING' }
   ];
 
+  tierOptions = [
+    { value: '', label: 'ADMIN.SUBSCRIPTIONS.TS.ALL_TIERS' },
+    ...Object.entries(TIER_LABELS).map(([value, label]) => ({ value, label: value === 'FREE' ? 'ADMIN.SUBSCRIPTIONS.TS.FREE' : label }))
+  ];
+
+  /** Confirmation d'une suspension ou d'une réactivation (motif obligatoire pour suspendre). */
+  confirmAction: { type: 'suspend' | 'reactivate'; sub: AdminUserSubscription } | null = null;
+  confirmReason = '';
+  readonly minReasonLength = 10;
+
   statusOptions = [
-    { value: '', label: 'Tous les statuts' },
-    { value: 'active', label: 'Actif' },
-    { value: 'suspended', label: 'Suspendu (impayé)' },
-    { value: 'disabled', label: 'Suspendu par l’admin' }
+    { value: '', label: 'ADMIN.SUBSCRIPTIONS.TS.ALL_STATUSES' },
+    { value: 'active', label: 'ADMIN.SUBSCRIPTIONS.TS.STATUS_active' },
+    { value: 'suspended', label: 'ADMIN.SUBSCRIPTIONS.TS.STATUS_suspended' },
+    { value: 'disabled', label: 'ADMIN.SUBSCRIPTIONS.TS.STATUS_disabled' }
   ];
 
   paymentStatusOptions = [
-    { value: '', label: 'Tous les paiements' },
-    { value: 'up_to_date', label: 'À jour' },
-    { value: 'overdue', label: 'En retard' },
-    { value: 'unpaid', label: 'Impayé' }
+    { value: '', label: 'ADMIN.SUBSCRIPTIONS.TS.ALL_PAYMENTS' },
+    { value: 'up_to_date', label: 'ADMIN.SUBSCRIPTIONS.TS.UP_TO_DATE' },
+    { value: 'overdue', label: 'ADMIN.SUBSCRIPTIONS.TS.OVERDUE' },
+    { value: 'unpaid', label: 'ADMIN.SUBSCRIPTIONS.TS.UNPAID' }
   ];
 
   currentFilters: SubscriptionFilters = {
@@ -71,7 +83,8 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
     private store: Store,
     private dialog: MatDialog,
     private subscriptionsService: AdminSubscriptionsService,
-    private currencyService: AdminCurrencyService
+    private currencyService: AdminCurrencyService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -139,14 +152,36 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   onSuspendAccount(subscription: AdminUserSubscription): void {
-    this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(subscription._id, 'Suspension administrative'));
+    this.openMenuId = null;
+    this.confirmReason = '';
+    this.confirmAction = { type: 'suspend', sub: subscription };
   }
 
   onReactivateAccount(subscription: AdminUserSubscription): void {
-    this.store.dispatch(new AdminSubscriptionsAction.ReactivateAccount(subscription._id));
+    this.openMenuId = null;
+    this.confirmAction = { type: 'reactivate', sub: subscription };
+  }
+
+  get canConfirm(): boolean {
+    if (!this.confirmAction) return false;
+    return this.confirmAction.type === 'reactivate' || this.confirmReason.trim().length >= this.minReasonLength;
+  }
+
+  onConfirmAction(): void {
+    if (!this.canConfirm || !this.confirmAction) return;
+    const { type, sub } = this.confirmAction;
+    this.confirmAction = null;
+    this.store.dispatch(type === 'suspend'
+      ? new AdminSubscriptionsAction.SuspendAccount(sub._id, this.confirmReason.trim())
+      : new AdminSubscriptionsAction.ReactivateAccount(sub._id));
+  }
+
+  onCancelAction(): void {
+    this.confirmAction = null;
   }
 
   onSendPaymentReminder(subscription: any): void {
+    this.openMenuId = null;
     this.store.dispatch(new AdminSubscriptionsAction.SendPaymentReminder(subscription._id));
   }
 
@@ -250,17 +285,32 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
 
   getAccountStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      active: 'Actif', suspended: 'Suspendu (impayé)', disabled: 'Suspendu par l’admin'
+      active: 'active', suspended: 'suspended', disabled: 'disabled'
     };
-    return map[status] || status;
+    return map[status] ? this.translate.instant(`ADMIN.SUBSCRIPTIONS.TS.STATUS_${map[status]}`) : status;
   }
 
-  getPlanColor(plan: string): string {
+  getPlanColor(plan: string, tier?: string | null): string {
+    if (tier === 'GOLD') return 'warning';
+    if (tier && tier !== 'FREE') return 'success';
     return plan === 'premium' ? 'success' : plan === 'free' ? 'info' : 'secondary';
   }
 
-  getPlanLabel(plan: string): string {
-    return plan === 'premium' ? 'Premium' : plan === 'free' ? 'Gratuit' : plan;
+  getPlanLabel(plan: string, tier?: string | null): string {
+    return tierLabel(tier, plan, this.translate.currentLang);
+  }
+
+  isPaid(sub: { plan?: string; currentTier?: string | null }): boolean {
+    return sub.currentTier ? sub.currentTier !== 'FREE' : sub.plan === 'premium';
+  }
+
+  /** Montant facturé chaque mois (montant Gold négocié s'il existe). */
+  getMonthlyAmount(sub: AdminUserSubscription): number {
+    return sub.customMonthlyAmount ?? sub.monthlyAmount ?? 0;
+  }
+
+  tierDistributionLabel(id: string | undefined): string {
+    return id === 'NON_EVALUE' ? this.translate.instant('ADMIN.SUBSCRIPTIONS.TS.NOT_EVALUATED') : tierLabel(id, null, this.translate.currentLang);
   }
 
   getPaymentStatusColor(hasUnpaid: boolean, totalUnpaid: number): string {
@@ -269,8 +319,10 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   getPaymentStatusLabel(hasUnpaid: boolean, totalUnpaid: number): string {
-    if (!hasUnpaid) return 'À jour';
-    return totalUnpaid > 0 ? `${this.formatCurrency(totalUnpaid)} impayé` : 'En retard';
+    if (!hasUnpaid) return this.translate.instant('ADMIN.SUBSCRIPTIONS.TS.UP_TO_DATE');
+    return totalUnpaid > 0
+      ? this.translate.instant('ADMIN.SUBSCRIPTIONS.TS.AMOUNT_UNPAID', { amount: this.formatCurrency(totalUnpaid) })
+      : this.translate.instant('ADMIN.SUBSCRIPTIONS.TS.OVERDUE');
   }
 
   formatCurrency(amount: number): string {
@@ -278,8 +330,8 @@ export class AdminSubscriptionsComponent implements OnInit, OnDestroy {
   }
 
   formatDate(date: any): string {
-    if (!date) return 'N/A';
-    return new Date(date).toLocaleDateString('fr-FR');
+    if (!date) return '—';
+    return new Date(date).toLocaleDateString(this.translate.currentLang === 'en' ? 'en-GB' : 'fr-FR');
   }
 
   trackBySubscriptionId(_: number, s: AdminUserSubscription): string {

@@ -8,8 +8,8 @@
         <i class="fas fa-exclamation-triangle"></i>
       </div>
       <div class="header-text">
-        <h2 class="modal-title">Supprimer le pays</h2>
-        <p class="modal-subtitle">Action irréversible</p>
+        <h2 class="modal-title">{{ 'ADMIN.COUNTRY_DELETE.SUPPRIMER_LE_PAYS' | translate }}</h2>
+        <p class="modal-subtitle">{{ 'ADMIN.COUNTRY_DELETE.ACTION_IRREVERSIBLE' | translate }}</p>
       </div>
     </div>
   </div>
@@ -20,21 +20,21 @@
     <!-- Informations du pays -->
     <div class="country-info">
       <div class="country-flag">
-        <img loading="lazy" [src]="data.country.flag" [alt]="data.country.name + ' flag'" *ngIf="data.country.flag">
+        <img loading="lazy" [src]="data.country.flag" [alt]="data.country.name + ('ADMIN.COUNTRY_DELETE.FLAG' | translate)" *ngIf="data.country.flag">
         <div class="flag-placeholder" *ngIf="!data.country.flag">
           <i class="fas fa-flag"></i>
         </div>
       </div>
       <div class="country-details">
         <h3 class="country-name">{{ data.country.name }}</h3>
-        <p class="country-code">{{ data.country.code }} • {{ data.country.currency || 'Aucune devise' }}</p>
+        <p class="country-code">{{ data.country.code }} • {{ data.country.currency || ('ADMIN.COUNTRY_DELETE.AUCUNE_DEVISE' | translate) }}</p>
       </div>
     </div>
 
     <!-- Message principal -->
     <div class="message-section">
       <p class="main-message">
-        Êtes-vous sûr de vouloir supprimer définitivement le pays 
+        {{ 'ADMIN.COUNTRY_DELETE.ETES_VOUS_SUR_DE_VOULOIR' | translate }} 
         <strong>{{ data.country.name }}</strong> ?
       </p>
     </div>
@@ -48,17 +48,17 @@
           </div>
           <div class="stat-content">
             <div class="stat-number">{{ citiesCount }}</div>
-            <div class="stat-label">Ville{{ citiesCount > 1 ? 's' : '' }}</div>
+            <div class="stat-label">{{ 'ADMIN.COUNTRY_DELETE.CITIES_LABEL' | translate:{ count: citiesCount } }}</div>
           </div>
         </div>
         
         <div class="stat-item">
           <div class="stat-icon users">
-            <i class="fas fa-users"></i>
+            <i class="fas fa-home"></i>
           </div>
           <div class="stat-content">
-            <div class="stat-number">{{ usersCount }}</div>
-            <div class="stat-label">Utilisateur{{ usersCount > 1 ? 's' : '' }}</div>
+            <div class="stat-number">{{ propertiesCount }}</div>
+            <div class="stat-label">{{ 'ADMIN.COUNTRY_DELETE.PROPERTIES_LABEL' | translate:{ count: propertiesCount } }}</div>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@
           <i class="fas fa-exclamation-circle"></i>
         </div>
         <div class="warning-content">
-          <h4 class="warning-title">Attention !</h4>
+          <h4 class="warning-title">{{ isBlocked() ? ('ADMIN.COUNTRY_DELETE.SUPPRESSION_IMPOSSIBLE' | translate) : ('ADMIN.COUNTRY_DELETE.ATTENTION' | translate) }}</h4>
           <p class="warning-text">{{ getWarningMessage() }}</p>
         </div>
       </div>
@@ -80,7 +80,7 @@
       <div class="loading-spinner">
         <i class="fas fa-spinner fa-spin"></i>
       </div>
-      <p>Vérification des données associées...</p>
+      <p>{{ 'ADMIN.COUNTRY_DELETE.VERIFICATION_DES_DONNEES_ASSOCIEES' | translate }}</p>
     </div>
 
   </div>
@@ -91,17 +91,17 @@
       class="action-btn secondary"
       (click)="onCancel()"
       [disabled]="isLoading$ | async">
-      Annuler
+      {{ 'ADMIN.COUNTRY_DELETE.ANNULER' | translate }}
     </button>
     <button 
       class="action-btn danger"
       (click)="onConfirm()"
-      [disabled]="isLoading$ | async">
+      [disabled]="(isLoading$ | async) || isBlocked()">
       <i class="fas fa-trash mr-2"></i>
-      <span *ngIf="!(isLoading$ | async)">Supprimer définitivement</span>
+      <span *ngIf="!(isLoading$ | async)">{{ 'ADMIN.COUNTRY_DELETE.SUPPRIMER_DEFINITIVEMENT' | translate }}</span>
       <span *ngIf="isLoading$ | async">
         <i class="fas fa-spinner fa-spin mr-2"></i>
-        Suppression...
+        {{ 'ADMIN.COUNTRY_DELETE.SUPPRESSION' | translate }}
       </span>
     </button>
   </div>

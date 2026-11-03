@@ -1,14 +1,14 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Store } from '@ngxs/store';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { UserProfileState } from 'src/app/shared/store/user-profile/user-profile.state';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor, DatePipe } from '@angular/common';
+
+type AgentTab = 'ADMIN_REVIEW' | 'APPROVED' | 'REJECTED';
 
 interface AgentApplication {
   _id: string;
@@ -21,112 +21,146 @@ interface AgentApplication {
   verificationDocumentUrl: string;
   professionalCardUrl?: string;
   businessLicenseUrl?: string;
-  status: string;
+  status: AgentTab | string;
   createdAt: string;
+  updatedAt?: string;
+  adminApprovedAt?: string | null;
+  adminApprovedBy?: string | null;
+  /** Nom de l'administrateur qui a approuvé ou refusé (calculé par le serveur). */
+  decidedByName?: string | null;
+  rejectionReason?: string;
 }
 
+interface AgentDocument { labelKey: string; url: string; isImage: boolean; }
+
+/**
+ * Validation des agents : demandes à examiner, approuvées et refusées
+ * (GET /agents/admin/list, paginé côté serveur), avec l'historique de la
+ * décision et les pièces justificatives visibles dans la même vue.
+ */
 @Component({
   selector: 'app-agent-management',
   templateUrl: './agent-management.component.html',
   styleUrls: ['./agent-management.component.scss'],
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule, DatePipe]
+  imports: [NgIf, NgFor, FormsModule, DatePipe, TranslateModule]
 })
 export class AgentManagementComponent implements OnInit {
   trackByFn = trackByFn;
 
-  pendingAgents: AgentApplication[] = [];
-  approvedAgents: AgentApplication[] = [];
+  readonly tabs: AgentTab[] = ['ADMIN_REVIEW', 'APPROVED', 'REJECTED'];
+  selectedTab: AgentTab = 'ADMIN_REVIEW';
+
+  agents: AgentApplication[] = [];
+  counts: Record<string, number> = {};
+  page = 1;
+  readonly limit = 20;
+  total = 0;
+  totalPages = 1;
+  searchTerm = '';
+
   selectedAgent: AgentApplication | null = null;
   isLoading = false;
+
+  agentToApprove: AgentApplication | null = null;
+  isApproving = false;
+
   showRejectModal = false;
   rejectionReason = '';
-  selectedTab: 'pending' | 'approved' = 'pending';
-  searchTerm = '';
+  isRejecting = false;
 
   constructor(
     private http: HttpClient,
-    private store: Store,
     private toastr: ToastrService,
     private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.loadPendingAgents();
-    this.loadApprovedAgents();
+    this.load();
   }
 
-  private get adminId(): string {
-    const profile = this.store.selectSnapshot(UserProfileState.selectStateUserProfile);
-    return profile?._id || '';
-  }
-
-  async loadPendingAgents(): Promise<void> {
+  async load(): Promise<void> {
     this.isLoading = true;
     try {
-      const response: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/agents/pending`));
-      this.pendingAgents = response.data || response || [];
+      let params = new HttpParams().set('status', this.selectedTab).set('page', this.page).set('limit', this.limit);
+      if (this.searchTerm.trim()) params = params.set('search', this.searchTerm.trim());
+      const response: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/agents/admin/list`, { params }));
+      const data = response?.data || {};
+      this.agents = data.data || [];
+      this.counts = data.counts || {};
+      this.total = data.total || 0;
+      this.totalPages = Math.max(1, data.totalPages || 1);
+      if (this.selectedAgent) {
+        this.selectedAgent = this.agents.find((a) => a._id === this.selectedAgent!._id) || null;
+      }
     } catch {
-      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_LOAD_AGENTS_ERROR'));
-      this.pendingAgents = [];
+      this.agents = [];
+      this.toastr.error(this.translate.instant('ADMIN.AGENTS.LOAD_ERROR'));
     } finally {
       this.isLoading = false;
     }
   }
 
-  async loadApprovedAgents(): Promise<void> {
-    try {
-      const response: any = await firstValueFrom(this.http.get(`${environment.apiUrl}/agents/approved`));
-      this.approvedAgents = response.data || [];
-    } catch {
-      this.approvedAgents = [];
-    }
-  }
-
-  get filteredPendingAgents(): AgentApplication[] {
-    if (!this.searchTerm) return this.pendingAgents;
-    const term = this.searchTerm.toLowerCase();
-    return this.pendingAgents.filter(a =>
-      a.businessName?.toLowerCase().includes(term) ||
-      a.userId?.name?.toLowerCase().includes(term) ||
-      a.userId?.email?.toLowerCase().includes(term)
-    );
-  }
-
-  get filteredApprovedAgents(): AgentApplication[] {
-    if (!this.searchTerm) return this.approvedAgents;
-    const term = this.searchTerm.toLowerCase();
-    return this.approvedAgents.filter(a =>
-      a.businessName?.toLowerCase().includes(term) ||
-      a.userId?.name?.toLowerCase().includes(term) ||
-      a.userId?.email?.toLowerCase().includes(term)
-    );
-  }
-
-  get totalAgents(): number { return this.pendingAgents.length + this.approvedAgents.length; }
-  get approvalRate(): number {
-    if (this.totalAgents === 0) return 0;
-    return Math.round((this.approvedAgents.length / this.totalAgents) * 100);
-  }
-
-  onTabChange(tab: 'pending' | 'approved'): void {
+  onTabChange(tab: AgentTab): void {
+    if (tab === this.selectedTab) return;
     this.selectedTab = tab;
+    this.page = 1;
     this.selectedAgent = null;
+    this.load();
+  }
+
+  onSearch(): void {
+    this.page = 1;
+    this.load();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages || page === this.page) return;
+    this.page = page;
+    this.load();
   }
 
   viewAgent(agent: AgentApplication): void { this.selectedAgent = agent; }
 
-  async approveAgent(agent: AgentApplication): Promise<void> {
+  initial(agent: AgentApplication): string {
+    return String(agent.businessName || agent.userId?.name || '?').charAt(0).toUpperCase();
+  }
+
+  /** Pièces justificatives fournies (les images sont prévisualisées). */
+  documents(agent: AgentApplication): AgentDocument[] {
+    const docs: Array<[string, string | undefined]> = [
+      ['ADMIN.AGENTS.DOC_IDENTITY', agent.verificationDocumentUrl],
+      ['ADMIN.AGENTS.DOC_PRO_CARD', agent.professionalCardUrl],
+      ['ADMIN.AGENTS.DOC_LICENSE', agent.businessLicenseUrl],
+    ];
+    return docs
+      .filter(([, url]) => !!url)
+      .map(([labelKey, url]) => ({ labelKey, url: url!, isImage: /\.(png|jpe?g|webp|gif)(\?|$)/i.test(url!) }));
+  }
+
+  verificationTypeKey(type: string): string {
+    return `ADMIN.AGENTS.VERIFICATION_TYPES.${type || 'NATIONAL_ID'}`;
+  }
+
+  openApproveModal(agent: AgentApplication): void { this.agentToApprove = agent; }
+
+  closeApproveModal(): void {
+    if (!this.isApproving) this.agentToApprove = null;
+  }
+
+  async confirmApprove(): Promise<void> {
+    if (!this.agentToApprove || this.isApproving) return;
+    this.isApproving = true;
     try {
-      await firstValueFrom(this.http.patch(`${environment.apiUrl}/agents/${agent.userId._id}/admin-approve`, {
-        adminId: this.adminId
-      }));
-      this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_APPROVED'));
-      await this.loadPendingAgents();
-      await this.loadApprovedAgents();
+      await firstValueFrom(this.http.patch(`${environment.apiUrl}/agents/${this.agentToApprove.userId._id}/admin-approve`, {}));
+      this.toastr.success(this.translate.instant('ADMIN.AGENTS.APPROVED_TOAST'));
       this.selectedAgent = null;
+      await this.load();
     } catch {
-      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_APPROVE_ERROR'));
+      this.toastr.error(this.translate.instant('ADMIN.AGENTS.APPROVE_ERROR'));
+    } finally {
+      this.isApproving = false;
+      this.agentToApprove = null;
     }
   }
 
@@ -137,20 +171,22 @@ export class AgentManagementComponent implements OnInit {
   }
 
   async rejectAgent(): Promise<void> {
-    if (!this.selectedAgent || !this.rejectionReason.trim()) {
-      this.toastr.warning(this.translate.instant('NOTIFICATIONS.ADMIN_REJECTION_REASON_REQUIRED'));
+    if (!this.selectedAgent || !this.rejectionReason.trim() || this.isRejecting) {
+      this.toastr.warning(this.translate.instant('ADMIN.AGENTS.REJECT_REASON_REQUIRED'));
       return;
     }
+    this.isRejecting = true;
     try {
       await firstValueFrom(this.http.patch(`${environment.apiUrl}/agents/${this.selectedAgent.userId._id}/reject`, {
-        adminId: this.adminId,
-        reason: this.rejectionReason
+        reason: this.rejectionReason.trim()
       }));
-      this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_REJECTED'));
-      await this.loadPendingAgents();
+      this.toastr.success(this.translate.instant('ADMIN.AGENTS.REJECTED_TOAST'));
       this.closeRejectModal();
+      await this.load();
     } catch {
-      this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_AGENT_REJECT_ERROR'));
+      this.toastr.error(this.translate.instant('ADMIN.AGENTS.REJECT_ERROR'));
+    } finally {
+      this.isRejecting = false;
     }
   }
 
@@ -163,7 +199,7 @@ export class AgentManagementComponent implements OnInit {
   openDocument(url: string): void { window.open(url, '_blank', 'noopener,noreferrer'); }
 
   async refreshData(): Promise<void> {
-    await Promise.all([this.loadPendingAgents(), this.loadApprovedAgents()]);
-    this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_DATA_REFRESHED'));
+    await this.load();
+    this.toastr.success(this.translate.instant('ADMIN.AGENTS.REFRESHED'));
   }
 }

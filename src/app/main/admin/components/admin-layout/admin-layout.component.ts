@@ -66,7 +66,10 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     // Reconstruire le menu quand la langue change
     this.translate.onLangChange
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.buildMenuItems());
+      .subscribe(() => {
+        this.buildMenuItems();
+        this.updateCurrentRoute();
+      });
   }
 
   ngOnDestroy(): void {
@@ -77,18 +80,29 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
   }
 
   private buildMenuItems(): void {
-    this.menuItems = [
-      { id: 'dashboard',       label: this.translate.instant('ADMIN.MENU.DASHBOARD'),                    icon: 'tachometer-alt',  route: this.getRouteWithLang('/admin/dashboard'),       description: this.translate.instant('ADMIN.DESCRIPTIONS.DASHBOARD') },
-      { id: 'users',           label: this.translate.instant('ADMIN.MENU.USERS'),                        icon: 'users',           route: this.getRouteWithLang('/admin/users'),           description: this.translate.instant('ADMIN.DESCRIPTIONS.USERS') },
-      { id: 'subscriptions',   label: this.translate.instant('ADMIN.MENU.SUBSCRIPTIONS') || 'Souscriptions', icon: 'crown',      route: this.getRouteWithLang('/admin/subscriptions'),   description: 'Gérer les abonnements' },
-      { id: 'roles',           label: this.translate.instant('ADMIN.MENU.ROLES_PERMISSIONS'),             icon: 'user-shield',     route: this.getRouteWithLang('/admin/roles'),           description: this.translate.instant('ADMIN.DESCRIPTIONS.ROLES_PERMISSIONS') },
-      { id: 'geography',       label: this.translate.instant('ADMIN.MENU.GEOGRAPHY'),                    icon: 'globe-africa',    route: this.getRouteWithLang('/admin/geography'),       description: this.translate.instant('ADMIN.DESCRIPTIONS.GEOGRAPHY') },
-      { id: 'payments',        label: this.translate.instant('ADMIN.MENU.PAYMENTS'),                     icon: 'credit-card',     route: this.getRouteWithLang('/admin/payments'),        description: this.translate.instant('ADMIN.DESCRIPTIONS.PAYMENTS') },
-      { id: 'agents',          label: this.translate.instant('ADMIN.MENU.AGENTS') || 'Agents',           icon: 'user-tie',        route: this.getRouteWithLang('/admin/agents'),          description: 'Validation des agents' },
-      { id: 'platform-finance',label: 'Super Wallet',                                                     icon: 'wallet',          route: this.getRouteWithLang('/admin/platform-finance'),description: 'Revenus et retraits plateforme' },
-      { id: 'breach',          label: 'Violations de données',                                              icon: 'shield-virus',    route: this.getRouteWithLang('/admin/breach'),          description: 'Registre RGPD des incidents' },
-      { id: 'settings',        label: this.translate.instant('ADMIN.MENU.SETTINGS'),                     icon: 'cog',             route: this.getRouteWithLang('/admin/settings'),        description: this.translate.instant('ADMIN.DESCRIPTIONS.SETTINGS') },
+    // id → clés ADMIN.MENU.<KEY> et ADMIN.DESCRIPTIONS.<KEY>
+    const items: Array<[string, string, string]> = [
+      ['dashboard',        'DASHBOARD',         'tachometer-alt'],
+      ['users',            'USERS',             'users'],
+      ['subscriptions',    'SUBSCRIPTIONS',     'crown'],
+      ['payments',         'PAYMENTS',          'credit-card'],
+      ['premium-sales',    'PREMIUM_SALES',     'key'],
+      ['platform-finance', 'PLATFORM_FINANCE',  'wallet'],
+      ['agents',           'AGENTS',            'user-tie'],
+      ['roles',            'ROLES_PERMISSIONS', 'user-shield'],
+      ['geography',        'GEOGRAPHY',         'globe-africa'],
+      ['breach',           'BREACH',            'shield-virus'],
+      ['errors',           'ERRORS',            'bug'],
+      ['audit',            'AUDIT',             'history'],
+      ['settings',         'SETTINGS',          'cog'],
     ];
+    this.menuItems = items.map(([id, key, icon]) => ({
+      id,
+      label: this.translate.instant(`ADMIN.MENU.${key}`),
+      icon,
+      route: this.getRouteWithLang(`/admin/${id}`),
+      description: this.translate.instant(`ADMIN.DESCRIPTIONS.${key}`),
+    }));
   }
 
   private setupRouteListener(): void {

@@ -14,13 +14,14 @@ import {
   GlobalStatsResponse 
 } from '../../services/admin-dashboard.service';
 import { NgIf, NgFor, AsyncPipe, DecimalPipe, DatePipe } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss'],
   standalone: true,
-  imports: [NgIf, NgFor, RouterLink, AsyncPipe, DecimalPipe, DatePipe]
+  imports: [NgIf, NgFor, RouterLink, AsyncPipe, DecimalPipe, DatePipe, TranslateModule]
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -37,17 +38,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   globalStats: GlobalStatsResponse | null = null;
 
-  readonly MONTH_LABELS = [
-    'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun',
-    'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'
-  ];
 
   constructor(
     private store: Store,
     private router: Router,
     private languageUrlService: LanguageUrlService,
     private dashboardService: AdminDashboardService,
-    private currencyService: AdminCurrencyService
+    private currencyService: AdminCurrencyService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -93,22 +91,22 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     const lang = this.languageUrlService.getCurrentLanguage();
     if (sub?.unpaidAmount > 0) {
       this.alerts.push({
-        type: 'warning', title: 'Factures impayées',
-        message: `${sub.unpaidCount} facture(s) — ${this.formatCurrency(sub.unpaidAmount)}`,
+        type: 'warning', title: this.translate.instant('ADMIN.DASHBOARD.ALERTS.UNPAID_TITLE'),
+        message: this.translate.instant('ADMIN.DASHBOARD.ALERTS.UNPAID_TEXT', { count: sub.unpaidCount, amount: this.formatCurrency(sub.unpaidAmount) }),
         link: `/${lang}/admin/subscriptions`
       });
     }
     if (sub?.suspended > 0) {
       this.alerts.push({
-        type: 'info', title: 'Comptes suspendus',
-        message: `${sub.suspended} compte(s) suspendu(s)`,
+        type: 'info', title: this.translate.instant('ADMIN.DASHBOARD.ALERTS.SUSPENDED_TITLE'),
+        message: this.translate.instant('ADMIN.DASHBOARD.ALERTS.SUSPENDED_TEXT', { count: sub.suspended }),
         link: `/${lang}/admin/subscriptions`
       });
     }
     if (stats.users?.newThisMonth > 0) {
       this.alerts.push({
-        type: 'success', title: 'Nouveaux utilisateurs',
-        message: `${stats.users.newThisMonth} nouvel(s) utilisateur(s) ce mois`,
+        type: 'success', title: this.translate.instant('ADMIN.DASHBOARD.ALERTS.NEW_USERS_TITLE'),
+        message: this.translate.instant('ADMIN.DASHBOARD.ALERTS.NEW_USERS_TEXT', { count: stats.users.newThisMonth }),
         link: `/${lang}/admin/users`
       });
     }
@@ -123,7 +121,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       payments:      `/${lang}/admin/payments`,
       subscriptions: `/${lang}/admin/subscriptions`,
       agents:        `/${lang}/admin/agents`,
-      activities:    `/${lang}/admin/monitoring`
+      finance:       `/${lang}/admin/platform-finance`,
+      activities:    `/${lang}/admin/audit`
     };
     if (routes[section]) this.router.navigate([routes[section]]);
   }
@@ -145,7 +144,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   getActivityIcon(type: string): string {
     const icons: Record<string, string> = {
       user: 'fa-user', property: 'fa-home', payment: 'fa-credit-card',
-      system: 'fa-cog', coupon: 'fa-tag', role: 'fa-shield-alt',
+      system: 'fa-cog', role: 'fa-shield-alt',
+      success: 'fa-check-circle', error: 'fa-exclamation-circle',
       INFO: 'fa-info-circle', ERROR: 'fa-exclamation-circle', WARNING: 'fa-exclamation-triangle'
     };
     return icons[type] || 'fa-circle';
@@ -179,25 +179,31 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   getMonthLabel(month: number): string {
-    return this.MONTH_LABELS[(month - 1) % 12] || '';
+    // Mois abrégé dans la langue de l'interface.
+    const locale = this.translate.currentLang === 'en' ? 'en-US' : 'fr-FR';
+    return new Intl.DateTimeFormat(locale, { month: 'short' }).format(new Date(2000, (month - 1) % 12, 1));
   }
 
   // ── Helpers système ───────────────────────────────────────────────────────
 
   formatUptime(seconds: number): string {
-    if (!seconds) return 'N/A';
+    if (!seconds) return '—';
     const d = Math.floor(seconds / 86400);
     const h = Math.floor((seconds % 86400) / 3600);
     const m = Math.floor((seconds % 3600) / 60);
-    if (d > 0) return `${d}j ${h}h ${m}m`;
+    if (d > 0) return `${d}${this.translate.currentLang === 'en' ? 'd' : 'j'} ${h}h ${m}m`;
     if (h > 0) return `${h}h ${m}m`;
     return `${m}m`;
   }
 
-  /** Convertit des bytes en MB lisibles (Node.js retourne heapUsed en bytes) */
-  formatMemory(bytes: number): string {
-    if (!bytes) return '0 MB';
-    return `${Math.round(bytes / (1024 * 1024))} MB`;
+  /** Le backend renvoie déjà la mémoire en Mo (memory.unit = 'MB'). */
+  formatMemory(memory: { heapUsed?: number; heapTotal?: number } | null | undefined): string {
+    if (!memory?.heapUsed) return '—';
+    return memory.heapTotal ? `${memory.heapUsed} / ${memory.heapTotal} Mo` : `${memory.heapUsed} Mo`;
+  }
+
+  healthLabel(status: string): string {
+    return this.translate.instant(`ADMIN.DASHBOARD.HEALTH.${status === 'healthy' || status === 'warning' ? status.toUpperCase() : 'CRITICAL'}`);
   }
 
   formatCurrency(amount: number): string {
@@ -205,7 +211,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   formatDate(date: any): string {
-    if (!date) return 'N/A';
+    if (!date) return '—';
     return new Date(date).toLocaleDateString('fr-FR', {
       day: '2-digit', month: 'short', year: 'numeric',
       hour: '2-digit', minute: '2-digit'

@@ -30,7 +30,9 @@ function loadLang(lang) {
   const main = JSON.parse(fs.readFileSync(path.join(dir, `${lang}.json`), 'utf8'));
   const legalFile = path.join(dir, `${lang}-legal.json`);
   const legal = fs.existsSync(legalFile) ? JSON.parse(fs.readFileSync(legalFile, 'utf8')) : {};
-  return deepMerge(main, legal);
+  const adminFile = path.join(dir, `${lang}-admin.json`);
+  const admin = fs.existsSync(adminFile) ? JSON.parse(fs.readFileSync(adminFile, 'utf8')) : {};
+  return deepMerge(deepMerge(main, legal), admin);
 }
 const dictionaries = Object.fromEntries(langs.map((lang) => [lang, loadLang(lang)]));
 

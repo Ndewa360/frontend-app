@@ -1,11 +1,11 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry, UpdateCountryDto } from '../../store/geography/admin-geography.model';
@@ -21,9 +21,11 @@ export interface CountryEditModalData {
   templateUrl: './country-edit-modal.component.html',
   styleUrls: ['./country-edit-modal.component.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, NgIf, SelectModule, NgFor, AsyncPipe]
+  imports: [TranslateModule, FormsModule, ReactiveFormsModule, NgIf, SelectModule, NgFor, AsyncPipe]
 })
 export class CountryEditModalComponent implements OnInit, OnDestroy {
+  /** Traductions (textes construits dans le code). */
+  private readonly i18n = inject(TranslateService);
   trackByFn = trackByFn;
 
   private destroy$ = new Subject<void>();
@@ -189,17 +191,17 @@ export class CountryEditModalComponent implements OnInit, OnDestroy {
     if (!field || !field.errors) return '';
 
     if (field.errors['required']) {
-      return 'Ce champ est obligatoire';
+      return this.i18n.instant('ADMIN.COUNTRY_EDIT.TS.REQUIRED');
     }
     
     if (field.errors['minlength']) {
-      return `Minimum ${field.errors['minlength'].requiredLength} caractères`;
+      return this.i18n.instant('ADMIN.COUNTRY_EDIT.TS.MIN_LENGTH', { count: field.errors['minlength'].requiredLength });
     }
     
     if (field.errors['maxlength']) {
-      return `Maximum ${field.errors['maxlength'].requiredLength} caractères`;
+      return this.i18n.instant('ADMIN.COUNTRY_EDIT.TS.MAX_LENGTH', { count: field.errors['maxlength'].requiredLength });
     }
 
-    return 'Valeur invalide';
+    return this.i18n.instant('ADMIN.COUNTRY_EDIT.TS.INVALID');
   }
 }

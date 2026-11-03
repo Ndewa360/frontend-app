@@ -1,0 +1,87 @@
+<div class="adm-page">
+  <header class="adm-page__header">
+    <div>
+      <h2><i class="fas fa-key" aria-hidden="true"></i> {{ 'ADMIN.PREMIUM_SALES.TITLE' | translate }}</h2>
+      <p>{{ 'ADMIN.PREMIUM_SALES.SUBTITLE' | translate }}</p>
+    </div>
+    <button type="button" class="adm-btn" (click)="load()" [disabled]="isLoading">
+      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading" aria-hidden="true"></i> {{ 'ADMIN.COMMON.REFRESH' | translate }}
+    </button>
+  </header>
+
+  <section class="adm-page__stats" *ngIf="summary">
+    <div class="adm-page__stat adm-page__stat--success">
+      <span>{{ 'ADMIN.PREMIUM_SALES.MONTH_AMOUNT' | translate }}</span>
+      <strong>{{ formatAmount(summary.monthAmount) }}</strong>
+    </div>
+    <div class="adm-page__stat">
+      <span>{{ 'ADMIN.PREMIUM_SALES.MONTH_COUNT' | translate }}</span>
+      <strong>{{ summary.monthCount | number }}</strong>
+    </div>
+    <div class="adm-page__stat">
+      <span>{{ 'ADMIN.PREMIUM_SALES.TOTAL_AMOUNT' | translate }}</span>
+      <strong>{{ formatAmount(summary.paidAmount) }}</strong>
+    </div>
+    <div class="adm-page__stat">
+      <span>{{ 'ADMIN.PREMIUM_SALES.TOTAL_COUNT' | translate }}</span>
+      <strong>{{ summary.paidCount | number }}</strong>
+    </div>
+  </section>
+
+  <form class="adm-page__filters" (ngSubmit)="applyFilters()">
+    <label>
+      <span>{{ 'ADMIN.COMMON.STATUS' | translate }}</span>
+      <select name="status" [(ngModel)]="filters.status" (change)="applyFilters()">
+        <option value="">{{ 'ADMIN.COMMON.ALL' | translate }}</option>
+        <option *ngFor="let status of statuses; trackBy: trackByFn" [value]="status">{{ 'ADMIN.PREMIUM_SALES.STATUSES.' + status | translate }}</option>
+      </select>
+    </label>
+    <label class="adm-page__grow">
+      <span>{{ 'ADMIN.PREMIUM_SALES.BUYER_EMAIL' | translate }}</span>
+      <input type="search" name="search" [(ngModel)]="filters.search" [placeholder]="'ADMIN.PREMIUM_SALES.SEARCH_PLACEHOLDER' | translate">
+    </label>
+    <button type="submit" class="adm-btn adm-btn--primary">{{ 'ADMIN.AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  <section class="adm-page__card">
+    <div class="adm-table-scroll">
+      <table class="adm-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'ADMIN.PREMIUM_SALES.PURCHASED_ON' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.PREMIUM_SALES.BUYER' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.PREMIUM_SALES.OWNER' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.COMMON.AMOUNT' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.COMMON.STATUS' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.PREMIUM_SALES.EXPIRES' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.PREMIUM_SALES.VIEWS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sale of sales; trackBy: trackByFn">
+            <td class="adm-nowrap">{{ sale.purchaseDate | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ sale.buyerEmail }}</td>
+            <td>
+              {{ sale.owner.name || '—' }}
+              <div class="adm-muted" *ngIf="sale.owner.email">{{ sale.owner.email }}</div>
+            </td>
+            <td class="adm-nowrap">{{ formatAmount(sale.amount, sale.currency) }}</td>
+            <td><span [class]="'adm-pill ' + statusClass(sale.status)">{{ 'ADMIN.PREMIUM_SALES.STATUSES.' + sale.status | translate }}</span></td>
+            <td class="adm-nowrap">{{ sale.expiryDate | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ sale.accessCount | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="adm-page__empty" *ngIf="!isLoading && !sales.length">{{ 'ADMIN.PREMIUM_SALES.EMPTY' | translate }}</p>
+
+    <div class="adm-pagination" *ngIf="totalPages > 1">
+      <span>{{ 'ADMIN.COMMON.PAGE_OF' | translate:{ page: page, pages: totalPages, total: total } }}</span>
+      <div class="adm-pagination-buttons">
+        <button type="button" class="adm-btn adm-btn--sm" (click)="goToPage(page - 1)" [disabled]="page <= 1">{{ 'ADMIN.COMMON.PREVIOUS' | translate }}</button>
+        <button type="button" class="adm-btn adm-btn--sm" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">{{ 'ADMIN.COMMON.NEXT' | translate }}</button>
+      </div>
+    </div>
+  </section>
+</div>

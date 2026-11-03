@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
@@ -23,9 +24,11 @@ export interface CityToDelete {
   templateUrl: './city-delete-modal.component.html',
   styleUrls: ['./city-delete-modal.component.scss'],
   standalone: true,
-  imports: [NgIf, AsyncPipe, DecimalPipe]
+  imports: [TranslateModule, NgIf, AsyncPipe, DecimalPipe]
 })
 export class CityDeleteModalComponent implements OnInit {
+  /** Traductions (textes construits dans le code). */
+  private readonly i18n = inject(TranslateService);
   @Input() isOpen: boolean = false;
   @Input() city: CityToDelete | null = null;
   @Output() closeModal = new EventEmitter<void>();
@@ -117,11 +120,11 @@ export class CityDeleteModalComponent implements OnInit {
     
     switch (dangerLevel) {
     case 'high':
-      return 'Cette ville contient des utilisateurs ou des propriétés. La suppression peut affecter des données importantes.';
+      return this.i18n.instant('ADMIN.CITY_DELETE.TS.DANGER_HIGH');
     case 'medium':
-      return 'Cette ville est actuellement active. Sa suppression la rendra indisponible pour les nouveaux utilisateurs.';
+      return this.i18n.instant('ADMIN.CITY_DELETE.TS.DANGER_MEDIUM');
     default:
-      return 'Cette action supprimera définitivement la ville de la base de données.';
+      return this.i18n.instant('ADMIN.CITY_DELETE.TS.WARNING');
     }
   }
 

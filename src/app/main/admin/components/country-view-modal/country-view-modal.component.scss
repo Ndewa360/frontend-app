@@ -7,7 +7,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
   width: 100%;
   max-width: 800px;
   max-height: 90vh;
-  background: white;
+  background: var(--adm-surface);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -17,8 +17,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
 // En-tête du modal
 .modal-header {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, var(--adm-bg) 0%, var(--adm-surface-3) 100%);
+  border-bottom: 1px solid var(--adm-border);
   padding: 2rem;
   flex-shrink: 0;
 
@@ -38,7 +38,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
         height: 42px;
         border-radius: 8px;
         overflow: hidden;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--adm-border);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -52,11 +52,11 @@ $primary-light: rgba(204, 140, 10, 0.1);
         .flag-placeholder {
           width: 100%;
           height: 100%;
-          background: #f3f4f6;
+          background: var(--adm-surface-2);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #9ca3af;
+          color: var(--adm-text-faint);
           font-size: 1.5rem;
         }
       }
@@ -68,7 +68,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
           margin: 0 0 0.25rem 0;
           font-size: 1.5rem;
           font-weight: 700;
-          color: #111827;
+          color: var(--adm-text);
           background: linear-gradient(135deg, $primary-color, #fadc4d);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -78,7 +78,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
         .country-subtitle {
           margin: 0;
           font-size: 0.875rem;
-          color: #6b7280;
+          color: var(--adm-text-muted);
         }
       }
 
@@ -103,10 +103,10 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
           &.inactive {
             background: rgba(156, 163, 175, 0.1);
-            color: #6b7280;
+            color: var(--adm-text-muted);
 
             i {
-              color: #9ca3af;
+              color: var(--adm-text-faint);
             }
           }
 
@@ -122,8 +122,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
       height: 40px;
       border: none;
       border-radius: 8px;
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--adm-surface-2);
+      color: var(--adm-text-muted);
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
@@ -131,8 +131,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
       justify-content: center;
 
       &:hover {
-        background: #e5e7eb;
-        color: #374151;
+        background: var(--adm-surface-3);
+        color: var(--adm-text-2);
       }
     }
   }
@@ -158,8 +158,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
         align-items: center;
         gap: 1rem;
         padding: 1.5rem;
-        background: white;
-        border: 1px solid #e5e7eb;
+        background: var(--adm-surface);
+        border: 1px solid var(--adm-border);
         border-radius: 12px;
         transition: all 0.2s ease;
 
@@ -199,19 +199,19 @@ $primary-light: rgba(204, 140, 10, 0.1);
           .stat-number {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #111827;
+            color: var(--adm-text);
             line-height: 1;
           }
 
           .stat-label {
             font-size: 0.875rem;
-            color: #6b7280;
+            color: var(--adm-text-muted);
             margin: 0.25rem 0;
           }
 
           .stat-detail {
             font-size: 0.75rem;
-            color: #9ca3af;
+            color: var(--adm-text-faint);
           }
         }
       }
@@ -226,7 +226,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
       margin: 0 0 1.5rem 0;
       font-size: 1.125rem;
       font-weight: 600;
-      color: #111827;
+      color: var(--adm-text);
       display: flex;
       align-items: center;
     }
@@ -245,8 +245,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
       }
 
       .detail-group {
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
+        background: var(--adm-bg);
+        border: 1px solid var(--adm-border);
         border-radius: 8px;
         padding: 1rem;
 
@@ -254,7 +254,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
           margin: 0 0 1rem 0;
           font-size: 0.875rem;
           font-weight: 600;
-          color: #374151;
+          color: var(--adm-text-2);
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
@@ -265,7 +265,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
             justify-content: space-between;
             align-items: flex-start;
             padding: 0.5rem 0;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--adm-border);
 
             &:last-child {
               border-bottom: none;
@@ -273,7 +273,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
             .detail-label {
               font-size: 0.875rem;
-              color: #6b7280;
+              color: var(--adm-text-muted);
               font-weight: 500;
               flex-shrink: 0;
               margin-right: 1rem;
@@ -281,7 +281,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
             .detail-value {
               font-size: 0.875rem;
-              color: #111827;
+              color: var(--adm-text);
               text-align: right;
               word-break: break-word;
             }
@@ -297,7 +297,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
       margin: 0 0 1rem 0;
       font-size: 1.125rem;
       font-weight: 600;
-      color: #111827;
+      color: var(--adm-text);
       display: flex;
       align-items: center;
     }
@@ -309,8 +309,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
       .city-item {
         padding: 1rem;
-        background: white;
-        border: 1px solid #e5e7eb;
+        background: var(--adm-surface);
+        border: 1px solid var(--adm-border);
         border-radius: 8px;
         transition: all 0.2s ease;
 
@@ -327,7 +327,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
           .city-name {
             font-size: 1rem;
             font-weight: 600;
-            color: #111827;
+            color: var(--adm-text);
             margin-bottom: 0.5rem;
           }
 
@@ -338,8 +338,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
             .city-code {
               font-size: 0.75rem;
-              color: #6b7280;
-              background: #f3f4f6;
+              color: var(--adm-text-muted);
+              background: var(--adm-surface-2);
               padding: 0.25rem 0.5rem;
               border-radius: 4px;
             }
@@ -357,7 +357,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
               &.inactive {
                 background: rgba(156, 163, 175, 0.1);
-                color: #6b7280;
+                color: var(--adm-text-muted);
               }
             }
           }
@@ -370,7 +370,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
   .empty-cities {
     text-align: center;
     padding: 2rem;
-    color: #6b7280;
+    color: var(--adm-text-muted);
 
     .empty-icon {
       font-size: 3rem;
@@ -382,7 +382,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
       margin: 0 0 0.5rem 0;
       font-size: 1.125rem;
       font-weight: 600;
-      color: #374151;
+      color: var(--adm-text-2);
     }
 
     p {
@@ -395,7 +395,7 @@ $primary-light: rgba(204, 140, 10, 0.1);
   .loading-section {
     text-align: center;
     padding: 2rem;
-    color: #6b7280;
+    color: var(--adm-text-muted);
 
     .loading-spinner {
       font-size: 2rem;
@@ -412,8 +412,8 @@ $primary-light: rgba(204, 140, 10, 0.1);
 
 // Actions du modal
 .modal-actions {
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  background: var(--adm-bg);
+  border-top: 1px solid var(--adm-border);
   padding: 1.5rem 2rem;
   display: flex;
   justify-content: flex-end;
@@ -429,12 +429,12 @@ $primary-light: rgba(204, 140, 10, 0.1);
     border: none;
 
     &.secondary {
-      background: white;
-      color: #374151;
-      border: 1px solid #d1d5db;
+      background: var(--adm-surface);
+      color: var(--adm-text-2);
+      border: 1px solid var(--adm-border-strong);
 
       &:hover {
-        background: #f9fafb;
+        background: var(--adm-bg);
         border-color: #9ca3af;
       }
     }

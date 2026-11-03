@@ -1,0 +1,121 @@
+<div class="adm-page">
+  <header class="adm-page__header">
+    <div>
+      <h2><i class="fas fa-bug" aria-hidden="true"></i> {{ 'ADMIN.ERRORS.TITLE' | translate }}</h2>
+      <p>{{ 'ADMIN.ERRORS.SUBTITLE' | translate }}</p>
+    </div>
+    <button type="button" class="adm-btn" (click)="load()" [disabled]="isLoading">
+      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading" aria-hidden="true"></i> {{ 'ADMIN.COMMON.REFRESH' | translate }}
+    </button>
+  </header>
+
+  <section class="adm-page__stats" *ngIf="stats">
+    <div class="adm-page__stat">
+      <span>{{ 'ADMIN.ERRORS.STATS.LAST_24H' | translate }}</span>
+      <strong>{{ stats.recentErrors | number }}</strong>
+    </div>
+    <div class="adm-page__stat">
+      <span>{{ 'ADMIN.ERRORS.STATS.TO_HANDLE' | translate }}</span>
+      <strong>{{ (stats.errorsByStatus['NEW'] || 0) + (stats.errorsByStatus['ACKNOWLEDGED'] || 0) + (stats.errorsByStatus['IN_PROGRESS'] || 0) | number }}</strong>
+    </div>
+    <div class="adm-page__stat adm-page__stat--danger">
+      <span>{{ 'ADMIN.ERRORS.STATS.CRITICAL' | translate }}</span>
+      <strong>{{ (stats.errorsByLevel['CRITICAL'] || 0) + (stats.errorsByLevel['HIGH'] || 0) | number }}</strong>
+    </div>
+    <div class="adm-page__stat">
+      <span>{{ 'ADMIN.ERRORS.STATS.TOTAL' | translate }}</span>
+      <strong>{{ stats.totalErrors | number }}</strong>
+    </div>
+  </section>
+
+  <form class="adm-page__filters" (ngSubmit)="applyFilters()">
+    <label>
+      <span>{{ 'ADMIN.ERRORS.LEVEL' | translate }}</span>
+      <select name="level" [(ngModel)]="filters.level" (change)="applyFilters()">
+        <option value="">{{ 'ADMIN.COMMON.ALL' | translate }}</option>
+        <option *ngFor="let level of levels; trackBy: trackByFn" [value]="level">{{ 'ADMIN.ERRORS.LEVELS.' + level | translate }}</option>
+      </select>
+    </label>
+    <label>
+      <span>{{ 'ADMIN.COMMON.STATUS' | translate }}</span>
+      <select name="status" [(ngModel)]="filters.status" (change)="applyFilters()">
+        <option value="">{{ 'ADMIN.COMMON.ALL' | translate }}</option>
+        <option *ngFor="let status of statuses; trackBy: trackByFn" [value]="status">{{ 'ADMIN.ERRORS.STATUSES.' + status | translate }}</option>
+      </select>
+    </label>
+    <label class="adm-page__grow">
+      <span>{{ 'ADMIN.COMMON.SEARCH' | translate }}</span>
+      <input type="search" name="search" [(ngModel)]="filters.search" [placeholder]="'ADMIN.ERRORS.SEARCH_PLACEHOLDER' | translate">
+    </label>
+    <button type="submit" class="adm-btn adm-btn--primary">{{ 'ADMIN.AUDIT.FILTER' | translate }}</button>
+  </form>
+
+  <section class="adm-page__card">
+    <div class="adm-table-scroll">
+      <table class="adm-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'ADMIN.ERRORS.MESSAGE' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.ERRORS.LEVEL' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.ERRORS.SOURCE' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.ERRORS.OCCURRENCES' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.ERRORS.LAST_SEEN' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.COMMON.STATUS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let error of errors; trackBy: trackByFn">
+            <tr class="adm-table__row" [class.is-open]="selected?._id === error._id">
+              <td>
+                <button type="button" class="adm-table__link" (click)="select(error)" [attr.aria-expanded]="selected?._id === error._id">
+                  {{ error.message }}
+                </button>
+                <div class="adm-muted" *ngIf="error.url">{{ error.method }} {{ error.url }}</div>
+              </td>
+              <td><span class="adm-pill" [class]="'adm-pill ' + levelClass(error.level)">{{ 'ADMIN.ERRORS.LEVELS.' + error.level | translate }}</span></td>
+              <td>{{ error.source }}</td>
+              <td>{{ error.occurrenceCount | number }}</td>
+              <td class="adm-nowrap">{{ error.lastOccurrence | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td><span [class]="'adm-pill ' + statusClass(error.status)">{{ 'ADMIN.ERRORS.STATUSES.' + error.status | translate }}</span></td>
+            </tr>
+            <tr *ngIf="selected?._id === error._id" class="adm-table__detail">
+              <td colspan="6">
+                <dl class="adm-detail">
+                  <div><dt>{{ 'ADMIN.ERRORS.FIRST_SEEN' | translate }}</dt><dd>{{ error.firstOccurrence | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+                  <div *ngIf="error.userEmail"><dt>{{ 'ADMIN.ERRORS.USER' | translate }}</dt><dd>{{ error.userEmail }}</dd></div>
+                  <div *ngIf="error.component || error.feature"><dt>{{ 'ADMIN.ERRORS.COMPONENT' | translate }}</dt><dd>{{ error.component }} {{ error.feature }}</dd></div>
+                  <div *ngIf="error.resolvedBy"><dt>{{ 'ADMIN.ERRORS.RESOLVED_BY' | translate }}</dt><dd>{{ error.resolvedBy }} · {{ error.resolvedAt | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+                </dl>
+                <pre class="adm-code" *ngIf="stack(error)">{{ stack(error) }}</pre>
+                <div class="adm-page__actions">
+                  <button type="button" class="adm-btn adm-btn--sm" *ngIf="error.status === 'NEW'" (click)="setStatus(error, 'ACKNOWLEDGED')" [disabled]="updatingId === error._id">
+                    {{ 'ADMIN.ERRORS.ACTIONS.ACKNOWLEDGE' | translate }}
+                  </button>
+                  <button type="button" class="adm-btn adm-btn--sm adm-btn--primary" *ngIf="error.status !== 'RESOLVED'" (click)="setStatus(error, 'RESOLVED')" [disabled]="updatingId === error._id">
+                    {{ 'ADMIN.ERRORS.ACTIONS.RESOLVE' | translate }}
+                  </button>
+                  <button type="button" class="adm-btn adm-btn--sm" *ngIf="error.status !== 'IGNORED' && error.status !== 'RESOLVED'" (click)="setStatus(error, 'IGNORED')" [disabled]="updatingId === error._id">
+                    {{ 'ADMIN.ERRORS.ACTIONS.IGNORE' | translate }}
+                  </button>
+                  <button type="button" class="adm-btn adm-btn--sm" *ngIf="error.status === 'RESOLVED' || error.status === 'IGNORED'" (click)="setStatus(error, 'NEW')" [disabled]="updatingId === error._id">
+                    {{ 'ADMIN.ERRORS.ACTIONS.REOPEN' | translate }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="adm-page__empty" *ngIf="!isLoading && !errors.length">{{ 'ADMIN.ERRORS.EMPTY' | translate }}</p>
+
+    <div class="adm-pagination" *ngIf="total > limit">
+      <span>{{ 'ADMIN.COMMON.PAGE_OF' | translate:{ page: page, pages: totalPages, total: total } }}</span>
+      <div class="adm-pagination-buttons">
+        <button type="button" class="adm-btn adm-btn--sm" (click)="goToPage(page - 1)" [disabled]="page <= 1">{{ 'ADMIN.COMMON.PREVIOUS' | translate }}</button>
+        <button type="button" class="adm-btn adm-btn--sm" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">{{ 'ADMIN.COMMON.NEXT' | translate }}</button>
+      </div>
+    </div>
+  </section>
+</div>

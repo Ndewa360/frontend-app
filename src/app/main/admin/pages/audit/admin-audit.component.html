@@ -1,0 +1,102 @@
+<div class="audit-page">
+  <div class="audit-header">
+    <div>
+      <h1 class="audit-title"><i class="fas fa-history" aria-hidden="true"></i> {{ 'ADMIN.AUDIT.TITLE' | translate }}</h1>
+      <p class="audit-subtitle">{{ 'ADMIN.AUDIT.SUBTITLE' | translate }}</p>
+    </div>
+    <button class="audit-btn audit-btn-outline" type="button" (click)="load()" [disabled]="isLoading">
+      <i class="fas fa-sync-alt" [class.fa-spin]="isLoading" aria-hidden="true"></i> {{ 'ADMIN.COMMON.REFRESH' | translate }}
+    </button>
+  </div>
+
+  <div class="audit-filters">
+    <div class="audit-filter">
+      <label for="audit-result">{{ 'ADMIN.AUDIT.RESULT' | translate }}</label>
+      <select id="audit-result" [(ngModel)]="filters.success" (change)="applyFilters()">
+        <option value="">{{ 'ADMIN.COMMON.ALL' | translate }}</option>
+        <option value="true">{{ 'ADMIN.AUDIT.SUCCEEDED_PLURAL' | translate }}</option>
+        <option value="false">{{ 'ADMIN.AUDIT.FAILED_PLURAL' | translate }}</option>
+      </select>
+    </div>
+    <div class="audit-filter audit-filter-grow">
+      <label for="audit-target">{{ 'ADMIN.AUDIT.TARGET_LABEL' | translate }}</label>
+      <input id="audit-target" type="text" [(ngModel)]="filters.target" (keyup.enter)="applyFilters()"
+             [placeholder]="'ADMIN.AUDIT.TARGET_PLACEHOLDER' | translate">
+    </div>
+    <div class="audit-filter-actions">
+      <button class="audit-btn audit-btn-ghost" type="button" (click)="clearFilters()">{{ 'ADMIN.AUDIT.CLEAR' | translate }}</button>
+      <button class="audit-btn audit-btn-primary" type="button" (click)="applyFilters()">{{ 'ADMIN.AUDIT.FILTER' | translate }}</button>
+    </div>
+  </div>
+
+  <div class="audit-card">
+    <div class="audit-loading" *ngIf="isLoading"><div class="audit-spinner"></div></div>
+
+    <div class="audit-table-scroll">
+      <table class="audit-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'ADMIN.COMMON.DATE' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.AUDIT.ADMIN' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.AUDIT.ACTION' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.AUDIT.TARGET' | translate }}</th>
+            <th scope="col">{{ 'ADMIN.AUDIT.RESULT' | translate }}</th>
+            <th class="col-toggle"><span class="sr-only">{{ 'ADMIN.AUDIT.DETAIL' | translate }}</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let log of page.data; trackBy: trackById">
+            <tr [class.audit-row-error]="!log.success">
+              <td class="nowrap">{{ log.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>
+                <div class="audit-actor">{{ log.actorName || '—' }}</div>
+                <div class="audit-muted">{{ log.actorEmail }}</div>
+              </td>
+              <td>
+                <div>{{ actionLabel(log) }}</div>
+                <div class="audit-muted">{{ methodLabel(log.method) }} · <code>{{ log.path }}</code></div>
+              </td>
+              <td><code *ngIf="log.target">{{ log.target }}</code><span *ngIf="!log.target" class="audit-muted">—</span></td>
+              <td>
+                <span class="audit-badge" [class.ok]="log.success" [class.ko]="!log.success">
+                  {{ (log.success ? 'ADMIN.AUDIT.SUCCEEDED' : 'ADMIN.AUDIT.FAILED') | translate }} ({{ log.statusCode }})
+                </span>
+                <div class="audit-muted" *ngIf="!log.success && log.error">{{ log.error }}</div>
+              </td>
+              <td class="col-toggle">
+                <button *ngIf="hasPayload(log)" class="audit-btn audit-btn-ghost audit-btn-sm" type="button"
+                        (click)="toggle(log)" [attr.aria-expanded]="expandedId === log._id" [attr.aria-label]="'ADMIN.AUDIT.SHOW_PAYLOAD' | translate">
+                  <i class="fas" [class.fa-chevron-down]="expandedId !== log._id" [class.fa-chevron-up]="expandedId === log._id"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="expandedId === log._id" class="audit-detail-row">
+              <td colspan="6">
+                <div class="audit-muted">{{ 'ADMIN.AUDIT.PAYLOAD' | translate:{ ip: log.ip || ('ADMIN.AUDIT.UNKNOWN_IP' | translate) } }}</div>
+                <pre class="audit-payload">{{ log.payload | json }}</pre>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="audit-empty" *ngIf="!isLoading && page.data.length === 0">
+      <i class="fas fa-history"></i>
+      <h3>{{ 'ADMIN.AUDIT.EMPTY_TITLE' | translate }}</h3>
+      <p>{{ 'ADMIN.AUDIT.EMPTY_TEXT' | translate }}</p>
+    </div>
+
+    <div class="audit-pagination" *ngIf="page.total > 0">
+      <span>{{ 'ADMIN.AUDIT.PAGINATION' | translate:{ total: (page.total | number), page: page.page, pages: page.totalPages || 1 } }}</span>
+      <div class="audit-pagination-actions">
+        <button class="audit-btn audit-btn-outline audit-btn-sm" type="button" [disabled]="page.page <= 1 || isLoading" (click)="load(page.page - 1)" [attr.aria-label]="'ADMIN.COMMON.PREVIOUS' | translate">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="audit-btn audit-btn-outline audit-btn-sm" type="button" [disabled]="page.page >= page.totalPages || isLoading" (click)="load(page.page + 1)" [attr.aria-label]="'ADMIN.COMMON.NEXT' | translate">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

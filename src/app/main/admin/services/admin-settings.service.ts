@@ -14,6 +14,34 @@ import {
 // Shared Models
 import { ApiResultFormat } from '../../../shared/store/global/api-result-format.model';
 
+/** Réponse de GET /admin/settings/effective (backend AdminSettingsService.getEffectiveConfiguration). */
+export interface EffectiveConfiguration {
+  general: {
+    appName: string; appVersion: string | null; environment: string; timezone: string;
+    frontendUrl: string | null; apiDocsEnabled: boolean; cronsEnabled: boolean;
+  };
+  email: {
+    provider: string; configured: boolean; domain: string | null; senderName: string | null;
+    noReplySender: string | null; contactSender: string | null; dpoEmail: string | null;
+  };
+  payment: {
+    mobileMoneyAggregator: string | null;
+    providers: Array<{ name: string; configured: boolean; webhookSecured: boolean | null }>;
+  };
+  security: {
+    accessTokenTtl: string | null; refreshTokenTtlWeb: string | null; refreshTokenTtlMobile: string | null;
+    rateLimitMax: number | null; rateLimitWindowMs: number | null; allowedOrigins: string[];
+    encryptionConfigured: boolean; googleSignInConfigured: boolean;
+  };
+  notifications: {
+    pushConfigured: boolean; whatsappConfigured: boolean; whatsappWebhookSecured: boolean; whatsappApiVersion: string;
+  };
+  integrations: {
+    storageConfigured: boolean; storageBucket: string | null; redisConfigured: boolean;
+    geonamesConfigured: boolean; tracingConfigured: boolean;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,6 +73,13 @@ export class AdminSettingsService {
     }
     // Plusieurs sections : appel global PUT /admin/settings
     return this.http.put<ApiResultFormat<AdminSettings>>(`${this.apiUrl}`, settingsData).pipe(
+      map(response => response.data)
+    );
+  }
+
+  /** Configuration réellement utilisée par le serveur (lecture seule, sans secret). */
+  getEffectiveConfiguration(): Observable<EffectiveConfiguration> {
+    return this.http.get<ApiResultFormat<EffectiveConfiguration>>(`${this.apiUrl}/effective`).pipe(
       map(response => response.data)
     );
   }
@@ -97,8 +132,9 @@ export class AdminSettingsService {
   /**
    * Tester la configuration email
    */
-  testEmailConfiguration(testEmail: string): Observable<{ success: boolean; message: string }> {
-    return this.http.post<ApiResultFormat<{ success: boolean; message: string }>>(`${this.apiUrl}/email/test`, { testEmail }).pipe(
+  /** Le serveur envoie l'email de test à l'adresse de l'administrateur connecté. */
+  testEmailConfiguration(): Observable<{ success: boolean; message: string }> {
+    return this.http.post<ApiResultFormat<{ success: boolean; message: string }>>(`${this.apiUrl}/email/test`, {}).pipe(
       map(response => response.data)
     );
   }

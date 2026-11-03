@@ -6,19 +6,19 @@
     <div class="subs-header-left">
       <h1 class="subs-title">
         <i class="fas fa-crown subs-title-icon"></i>
-        Gestion des Souscriptions
+        {{ 'ADMIN.SUBSCRIPTIONS.ABONNEMENTS' | translate }}
       </h1>
-      <p class="subs-subtitle">Gérez les abonnements et paiements des utilisateurs</p>
+      <p class="subs-subtitle">{{ 'ADMIN.SUBSCRIPTIONS.PALIERS_DE_LA_GRILLE_LOYERS' | translate }}</p>
     </div>
     <div class="subs-header-actions">
       <button class="subs-btn subs-btn-outline" (click)="onToggleFilters()" [class.active]="showFilters">
-        <i class="fas fa-filter"></i> Filtres
+        <i class="fas fa-filter"></i> {{ 'ADMIN.SUBSCRIPTIONS.FILTRES' | translate }}
       </button>
       <button class="subs-btn subs-btn-outline" (click)="onExportData()">
-        <i class="fas fa-download"></i> Exporter
+        <i class="fas fa-download"></i> {{ 'ADMIN.SUBSCRIPTIONS.EXPORTER' | translate }}
       </button>
       <button class="subs-btn subs-btn-primary" (click)="onRefreshData()" [disabled]="isRefreshing">
-        <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i> Actualiser
+        <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i> {{ 'ADMIN.SUBSCRIPTIONS.ACTUALISER' | translate }}
       </button>
     </div>
   </div>
@@ -29,35 +29,35 @@
       <div class="subs-stat-icon"><i class="fas fa-users"></i></div>
       <div class="subs-stat-body">
         <div class="subs-stat-value">{{ stats.overview.totalUsers | number }}</div>
-        <div class="subs-stat-label">Utilisateurs total</div>
+        <div class="subs-stat-label">{{ 'ADMIN.SUBSCRIPTIONS.ABONNEMENTS_EN_COURS' | translate }}</div>
       </div>
     </div>
     <div class="subs-stat-card subs-stat-gold">
       <div class="subs-stat-icon"><i class="fas fa-crown"></i></div>
       <div class="subs-stat-body">
         <div class="subs-stat-value">{{ stats.overview.premiumUsers | number }}</div>
-        <div class="subs-stat-label">Premium</div>
+        <div class="subs-stat-label">{{ 'ADMIN.SUBSCRIPTIONS.COMPTES_PAYANTS_PRO_GOLD' | translate }}</div>
       </div>
     </div>
     <div class="subs-stat-card subs-stat-green">
       <div class="subs-stat-icon"><i class="fas fa-check-circle"></i></div>
       <div class="subs-stat-body">
         <div class="subs-stat-value">{{ stats.overview.activeUsers | number }}</div>
-        <div class="subs-stat-label">Comptes actifs</div>
+        <div class="subs-stat-label">{{ 'ADMIN.SUBSCRIPTIONS.COMPTES_ACTIFS' | translate }}</div>
       </div>
     </div>
     <div class="subs-stat-card subs-stat-orange">
       <div class="subs-stat-icon"><i class="fas fa-pause-circle"></i></div>
       <div class="subs-stat-body">
         <div class="subs-stat-value">{{ stats.overview.suspendedUsers | number }}</div>
-        <div class="subs-stat-label">Suspendus</div>
+        <div class="subs-stat-label">{{ 'ADMIN.SUBSCRIPTIONS.SUSPENDUS_IMPAYE' | translate }}</div>
       </div>
     </div>
     <div class="subs-stat-card subs-stat-red">
       <div class="subs-stat-icon"><i class="fas fa-exclamation-circle"></i></div>
       <div class="subs-stat-body">
         <div class="subs-stat-value">{{ formatCurrency(stats.overview.totalUnpaidAmount) }}</div>
-        <div class="subs-stat-label">Impayés</div>
+        <div class="subs-stat-label">{{ 'ADMIN.SUBSCRIPTIONS.IMPAYES_FACTURES' | translate:{ p0: (stats.overview.unpaidInvoicesCount | number) } }}</div>
       </div>
     </div>
   </div>
@@ -65,10 +65,10 @@
   <!-- Tab Navigation -->
   <div class="subs-tab-nav">
     <button class="subs-tab-btn" [class.active]="selectedTab === 'overview'" (click)="onTabChange('overview')">
-      <i class="fas fa-list"></i> Liste des souscriptions
+      <i class="fas fa-list"></i> {{ 'ADMIN.SUBSCRIPTIONS.LISTE_DES_SOUSCRIPTIONS' | translate }}
     </button>
     <button class="subs-tab-btn" [class.active]="selectedTab === 'analytics'" (click)="onTabChange('analytics')">
-      <i class="fas fa-chart-line"></i> Analytics
+      <i class="fas fa-chart-line"></i> {{ 'ADMIN.SUBSCRIPTIONS.ANALYSES' | translate }}
     </button>
   </div>
 
@@ -79,35 +79,41 @@
     <div class="subs-filters" *ngIf="showFilters">
       <div class="subs-filters-grid">
         <div class="subs-filter-group">
-          <label>Recherche</label>
-          <input type="text" class="subs-input" placeholder="Nom, email, ID..."
+          <label>{{ 'ADMIN.SUBSCRIPTIONS.RECHERCHE' | translate }}</label>
+          <input type="text" class="subs-input" [placeholder]="'ADMIN.SUBSCRIPTIONS.NOM_OU_EMAIL' | translate"
                  [(ngModel)]="currentFilters.search" (keyup.enter)="onApplyFilters(currentFilters)">
         </div>
         <div class="subs-filter-group">
-          <label>Plan</label>
+          <label>{{ 'ADMIN.SUBSCRIPTIONS.FORMULE' | translate }}</label>
           <select class="subs-select" [(ngModel)]="currentFilters.plan" (change)="onApplyFilters(currentFilters)">
-            <option *ngFor="let o of planOptions" [value]="o.value">{{ o.label }}</option>
+            <option *ngFor="let o of planOptions" [value]="o.value">{{ o.label | translate }}</option>
           </select>
         </div>
         <div class="subs-filter-group">
-          <label>Statut compte</label>
+          <label>{{ 'ADMIN.SUBSCRIPTIONS.PALIER' | translate }}</label>
+          <select class="subs-select" [(ngModel)]="currentFilters.currentTier" (change)="onApplyFilters(currentFilters)">
+            <option *ngFor="let o of tierOptions" [value]="o.value">{{ o.label | translate }}</option>
+          </select>
+        </div>
+        <div class="subs-filter-group">
+          <label>{{ 'ADMIN.SUBSCRIPTIONS.STATUT_COMPTE' | translate }}</label>
           <select class="subs-select" [(ngModel)]="currentFilters.accountStatus" (change)="onApplyFilters(currentFilters)">
-            <option *ngFor="let o of statusOptions" [value]="o.value">{{ o.label }}</option>
+            <option *ngFor="let o of statusOptions" [value]="o.value">{{ o.label | translate }}</option>
           </select>
         </div>
         <div class="subs-filter-group">
-          <label>Paiements</label>
+          <label>{{ 'ADMIN.SUBSCRIPTIONS.PAIEMENTS' | translate }}</label>
           <select class="subs-select" [(ngModel)]="currentFilters.paymentStatus" (change)="onApplyFilters(currentFilters)">
-            <option *ngFor="let o of paymentStatusOptions" [value]="o.value">{{ o.label }}</option>
+            <option *ngFor="let o of paymentStatusOptions" [value]="o.value">{{ o.label | translate }}</option>
           </select>
         </div>
       </div>
       <div class="subs-filters-actions">
         <button class="subs-btn subs-btn-ghost" (click)="onClearFilters()">
-          <i class="fas fa-times"></i> Effacer
+          <i class="fas fa-times"></i> {{ 'ADMIN.SUBSCRIPTIONS.EFFACER' | translate }}
         </button>
         <button class="subs-btn subs-btn-primary" (click)="onApplyFilters(currentFilters)">
-          <i class="fas fa-search"></i> Appliquer
+          <i class="fas fa-search"></i> {{ 'ADMIN.SUBSCRIPTIONS.APPLIQUER' | translate }}
         </button>
       </div>
     </div>
@@ -116,17 +122,17 @@
     <div class="subs-table-card">
       <div class="subs-table-header">
         <h3 class="subs-table-title">
-          <i class="fas fa-list"></i> Liste des souscriptions
+          <i class="fas fa-list"></i> {{ 'ADMIN.SUBSCRIPTIONS.LISTE_DES_SOUSCRIPTIONS' | translate }}
         </h3>
         <span class="subs-table-count" *ngIf="pagination$ | async as p">
-          {{ p.total }} résultat{{ p.total > 1 ? 's' : '' }}
+          {{ 'ADMIN.SUBSCRIPTIONS.RESULTS_COUNT' | translate:{ count: p.total } }}
         </span>
       </div>
 
       <!-- Loading -->
       <div class="subs-loading" *ngIf="isLoading$ | async">
         <div class="subs-spinner"></div>
-        <span>Chargement des souscriptions...</span>
+        <span>{{ 'ADMIN.SUBSCRIPTIONS.CHARGEMENT_DES_SOUSCRIPTIONS' | translate }}</span>
       </div>
 
       <!-- Table -->
@@ -134,13 +140,14 @@
         <table class="subs-table">
           <thead>
             <tr>
-              <th (click)="onSortChange('user.firstName')" class="sortable">Utilisateur <i class="fas fa-sort"></i></th>
-              <th (click)="onSortChange('plan')" class="sortable">Plan <i class="fas fa-sort"></i></th>
-              <th (click)="onSortChange('accountStatus')" class="sortable">Statut <i class="fas fa-sort"></i></th>
-              <th>Paiements</th>
-              <th (click)="onSortChange('propertyCount')" class="sortable">Propriétés <i class="fas fa-sort"></i></th>
-              <th (click)="onSortChange('createdAt')" class="sortable">Créé le <i class="fas fa-sort"></i></th>
-              <th class="col-actions">Actions</th>
+              <th (click)="onSortChange('user.firstName')" class="sortable">{{ 'ADMIN.SUBSCRIPTIONS.UTILISATEUR' | translate }} <i class="fas fa-sort"></i></th>
+              <th (click)="onSortChange('currentTier')" class="sortable">{{ 'ADMIN.SUBSCRIPTIONS.PALIER' | translate }} <i class="fas fa-sort"></i></th>
+              <th (click)="onSortChange('monthlyAmount')" class="sortable">{{ 'ADMIN.SUBSCRIPTIONS.MONTANT_MOIS' | translate }} <i class="fas fa-sort"></i></th>
+              <th (click)="onSortChange('accountStatus')" class="sortable">{{ 'ADMIN.SUBSCRIPTIONS.STATUT' | translate }} <i class="fas fa-sort"></i></th>
+              <th>{{ 'ADMIN.SUBSCRIPTIONS.PAIEMENTS' | translate }}</th>
+              <th (click)="onSortChange('propertyCount')" class="sortable">{{ 'ADMIN.SUBSCRIPTIONS.BIENS_FACTURES' | translate }} <i class="fas fa-sort"></i></th>
+              <th (click)="onSortChange('createdAt')" class="sortable">{{ 'ADMIN.SUBSCRIPTIONS.CREE_LE' | translate }} <i class="fas fa-sort"></i></th>
+              <th class="col-actions">{{ 'ADMIN.SUBSCRIPTIONS.ACTIONS' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -151,15 +158,19 @@
                   <div class="subs-user-info">
                     <div class="subs-user-name">{{ getUserFullName(sub.user) }}</div>
                     <div class="subs-user-email">{{ sub.user?.email }}</div>
-                    <div class="subs-user-type">{{ sub.user?.userType }}</div>
+                    <div class="subs-user-type">{{ sub.user?.userType === 'AGENT' ? ('ADMIN.SUBSCRIPTIONS.AGENT' | translate) : ('ADMIN.SUBSCRIPTIONS.PROPRIETAIRE' | translate) }}</div>
                   </div>
                 </div>
               </td>
               <td>
-                <span class="subs-badge" [ngClass]="'subs-badge-' + getPlanColor(sub.plan)">
-                  <i class="fas" [class.fa-crown]="sub.plan === 'premium'" [class.fa-user]="sub.plan !== 'premium'"></i>
-                  {{ getPlanLabel(sub.plan) }}
+                <span class="subs-badge" [ngClass]="'subs-badge-' + getPlanColor(sub.plan, sub.currentTier)">
+                  <i class="fas" [class.fa-crown]="isPaid(sub)" [class.fa-user]="!isPaid(sub)"></i>
+                  {{ getPlanLabel(sub.plan, sub.currentTier) }}
                 </span>
+              </td>
+              <td>
+                <strong>{{ formatCurrency(getMonthlyAmount(sub)) }}</strong>
+                <div class="subs-unpaid-detail" *ngIf="sub.customMonthlyAmount != null"><small>{{ 'ADMIN.SUBSCRIPTIONS.MONTANT_GOLD_NEGOCIE' | translate }}</small></div>
               </td>
               <td>
                 <span class="subs-badge" [ngClass]="'subs-badge-' + getAccountStatusColor(sub.accountStatus)">
@@ -173,38 +184,36 @@
                     {{ getPaymentStatusLabel(sub.hasUnpaidInvoices, sub.totalUnpaidAmount) }}
                   </span>
                   <div class="subs-unpaid-detail" *ngIf="sub.hasUnpaidInvoices">
-                    <small>{{ sub.unpaidInvoicesCount }} facture(s) — {{ formatCurrency(sub.totalUnpaidAmount) }}</small>
+                    <small>{{ 'ADMIN.SUBSCRIPTIONS.FACTURE_S' | translate:{ p0: (sub.unpaidInvoicesCount), p1: (formatCurrency(sub.totalUnpaidAmount)) } }}</small>
                   </div>
                 </div>
               </td>
               <td>
                 <div class="subs-prop-cell">
                   <span class="subs-prop-count">{{ sub.propertyCount }}</span>
-                  <span class="subs-prop-limit" *ngIf="sub.plan === 'free'"> / {{ sub.propertyLimit }}</span>
-                  <span class="subs-prop-unlimited" *ngIf="sub.plan === 'premium'"><i class="fas fa-infinity"></i></span>
                 </div>
               </td>
               <td class="subs-date-cell">{{ formatDate(sub.createdAt) }}</td>
               <td class="col-actions">
                 <div class="subs-actions" [class.open]="openMenuId === sub._id">
-                  <button class="subs-menu-btn" (click)="toggleSubscriptionMenu(sub._id)">
+                  <button class="subs-menu-btn" (click)="toggleSubscriptionMenu(sub._id)" [attr.aria-label]="'ADMIN.SUBSCRIPTIONS.ACTIONS' | translate" [attr.aria-expanded]="openMenuId === sub._id">
                     <i class="fas fa-ellipsis-v"></i>
                   </button>
                   <div class="subs-dropdown" *ngIf="openMenuId === sub._id">
                     <button class="subs-dropdown-item" (click)="onViewDetails(sub)">
-                      <i class="fas fa-eye"></i> Voir détails
+                      <i class="fas fa-eye"></i> {{ 'ADMIN.SUBSCRIPTIONS.VOIR_DETAILS' | translate }}
                     </button>
                     <div class="subs-dropdown-divider"></div>
                     <button class="subs-dropdown-item subs-item-warning"
-                            *ngIf="sub.accountStatus === 'active'" (click)="onSuspendAccount(sub)">
-                      <i class="fas fa-pause"></i> Suspendre
+                            *ngIf="sub.accountStatus !== 'disabled'" (click)="onSuspendAccount(sub)">
+                      <i class="fas fa-ban"></i> {{ 'ADMIN.SUBSCRIPTIONS.BLOQUER_LE_COMPTE' | translate }}
                     </button>
                     <button class="subs-dropdown-item subs-item-success"
-                            *ngIf="sub.accountStatus === 'suspended'" (click)="onReactivateAccount(sub)">
-                      <i class="fas fa-play"></i> Réactiver
+                            *ngIf="sub.accountStatus === 'suspended' || sub.accountStatus === 'disabled'" (click)="onReactivateAccount(sub)">
+                      <i class="fas fa-play"></i> {{ 'ADMIN.SUBSCRIPTIONS.REACTIVER' | translate }}
                     </button>
                     <button class="subs-dropdown-item" *ngIf="sub.hasUnpaidInvoices" (click)="onSendPaymentReminder(sub)">
-                      <i class="fas fa-envelope"></i> Rappel paiement
+                      <i class="fas fa-envelope"></i> {{ 'ADMIN.SUBSCRIPTIONS.RAPPEL_PAIEMENT' | translate }}
                     </button>
                   </div>
                 </div>
@@ -216,22 +225,21 @@
         <!-- Empty State -->
         <div class="subs-empty" *ngIf="(subscriptions$ | async)?.length === 0">
           <i class="fas fa-users subs-empty-icon"></i>
-          <h3>Aucune souscription trouvée</h3>
-          <p>Aucune souscription ne correspond aux critères de recherche.</p>
+          <h3>{{ 'ADMIN.SUBSCRIPTIONS.AUCUNE_SOUSCRIPTION_TROUVEE' | translate }}</h3>
+          <p>{{ 'ADMIN.SUBSCRIPTIONS.AUCUNE_SOUSCRIPTION_NE_CORRESPOND_AUX' | translate }}</p>
         </div>
       </div>
 
       <!-- Pagination -->
       <div class="subs-pagination" *ngIf="pagination$ | async as pagination">
         <div class="subs-pagination-info">
-          Affichage {{ (pagination.page - 1) * pagination.limit + 1 }} à
-          {{ getPaginationEnd(pagination) }} sur {{ pagination.total }} résultats
+          {{ 'ADMIN.SUBSCRIPTIONS.AFFICHAGE_A_SUR_RESULTATS' | translate:{ p0: ((pagination.page - 1) * pagination.limit + 1), p1: (getPaginationEnd(pagination)), p2: (pagination.total) } }}
         </div>
         <div class="subs-pagination-controls">
           <button class="subs-page-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(pagination.page - 1)">
             <i class="fas fa-chevron-left"></i>
           </button>
-          <span class="subs-page-current">Page {{ pagination.page }} / {{ pagination.totalPages }}</span>
+          <span class="subs-page-current">{{ 'ADMIN.SUBSCRIPTIONS.PAGE' | translate:{ p0: (pagination.page), p1: (pagination.totalPages) } }}</span>
           <button class="subs-page-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.page + 1)">
             <i class="fas fa-chevron-right"></i>
           </button>
@@ -246,18 +254,18 @@
 
     <!-- Sélecteur de période -->
     <div class="subs-analytics-toolbar">
-      <h3 class="subs-analytics-title"><i class="fas fa-chart-line"></i> Analytics des souscriptions</h3>
+      <h3 class="subs-analytics-title"><i class="fas fa-chart-line"></i> {{ 'ADMIN.SUBSCRIPTIONS.ANALYSES_DES_ABONNEMENTS' | translate }}</h3>
       <div class="subs-period-btns">
-        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='7d'"  (click)="onAnalyticsTimeRangeChange('7d')">7 jours</button>
-        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='30d'" (click)="onAnalyticsTimeRangeChange('30d')">30 jours</button>
-        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='90d'" (click)="onAnalyticsTimeRangeChange('90d')">90 jours</button>
+        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='7d'"  (click)="onAnalyticsTimeRangeChange('7d')">{{ 'ADMIN.SUBSCRIPTIONS.7_JOURS' | translate }}</button>
+        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='30d'" (click)="onAnalyticsTimeRangeChange('30d')">{{ 'ADMIN.SUBSCRIPTIONS.30_JOURS' | translate }}</button>
+        <button class="subs-period-btn" [class.active]="analyticsTimeRange==='90d'" (click)="onAnalyticsTimeRangeChange('90d')">{{ 'ADMIN.SUBSCRIPTIONS.90_JOURS' | translate }}</button>
       </div>
     </div>
 
     <!-- Loading analytics -->
     <div class="subs-loading" *ngIf="isLoadingAnalytics">
       <div class="subs-spinner"></div>
-      <span>Chargement des analytics...</span>
+      <span>{{ 'ADMIN.SUBSCRIPTIONS.CHARGEMENT_DES_ANALYSES' | translate }}</span>
     </div>
 
     <ng-container *ngIf="!isLoadingAnalytics">
@@ -269,28 +277,28 @@
             <div class="subs-kpi-icon"><i class="fas fa-coins"></i></div>
             <div class="subs-kpi-body">
               <div class="subs-kpi-value">{{ formatCurrency(stats.overview.totalRevenue) }}</div>
-              <div class="subs-kpi-label">Revenus totaux</div>
+              <div class="subs-kpi-label">{{ 'ADMIN.SUBSCRIPTIONS.REVENUS_TOTAUX' | translate }}</div>
             </div>
           </div>
           <div class="subs-kpi-card subs-kpi-monthly">
             <div class="subs-kpi-icon"><i class="fas fa-calendar-alt"></i></div>
             <div class="subs-kpi-body">
               <div class="subs-kpi-value">{{ formatCurrency(stats.overview.monthlyRevenue) }}</div>
-              <div class="subs-kpi-label">Revenus ce mois</div>
+              <div class="subs-kpi-label">{{ 'ADMIN.SUBSCRIPTIONS.ENCAISSE_CE_MOIS' | translate }}</div>
             </div>
           </div>
           <div class="subs-kpi-card subs-kpi-unpaid">
             <div class="subs-kpi-icon"><i class="fas fa-exclamation-circle"></i></div>
             <div class="subs-kpi-body">
               <div class="subs-kpi-value">{{ formatCurrency(stats.overview.totalUnpaidAmount) }}</div>
-              <div class="subs-kpi-label">Montant impayé ({{ stats.overview.unpaidInvoicesCount }} factures)</div>
+              <div class="subs-kpi-label">{{ 'ADMIN.SUBSCRIPTIONS.MONTANT_IMPAYE_FACTURES' | translate:{ p0: (stats.overview.unpaidInvoicesCount) } }}</div>
             </div>
           </div>
           <div class="subs-kpi-card subs-kpi-free">
             <div class="subs-kpi-icon"><i class="fas fa-user"></i></div>
             <div class="subs-kpi-body">
               <div class="subs-kpi-value">{{ stats.overview.freeUsers | number }}</div>
-              <div class="subs-kpi-label">Utilisateurs gratuits</div>
+              <div class="subs-kpi-label">{{ 'ADMIN.SUBSCRIPTIONS.COMPTES_GRATUITS' | translate }}<span *ngIf="stats.overview.trialUsers"> {{ 'ADMIN.SUBSCRIPTIONS.EN_ESSAI' | translate:{ p0: (stats.overview.trialUsers | number) } }}</span></div>
             </div>
           </div>
         </div>
@@ -298,35 +306,23 @@
         <!-- ── Distribution des plans ── -->
         <div class="subs-table-card subs-analytics-section">
           <div class="subs-table-header">
-            <h3 class="subs-table-title"><i class="fas fa-chart-pie"></i> Distribution des plans</h3>
+            <h3 class="subs-table-title"><i class="fas fa-chart-pie"></i> {{ 'ADMIN.SUBSCRIPTIONS.REPARTITION_PAR_PALIER' | translate }}</h3>
           </div>
           <div class="subs-plan-distribution">
-            <div class="subs-plan-bar-row">
-              <span class="subs-plan-bar-label">Premium</span>
+            <div class="subs-plan-bar-row" *ngFor="let t of stats.trends?.tierDistribution || []">
+              <span class="subs-plan-bar-label">{{ tierDistributionLabel(t._id) }}</span>
               <div class="subs-plan-bar-track">
-                <div class="subs-plan-bar subs-plan-bar-premium"
-                     [style.width.%]="stats.overview.totalUsers > 0 ? (stats.overview.premiumUsers / stats.overview.totalUsers * 100) : 0">
+                <div class="subs-plan-bar" [class.subs-plan-bar-free]="t._id === 'FREE' || t._id === 'NON_EVALUE'" [class.subs-plan-bar-premium]="t._id !== 'FREE' && t._id !== 'NON_EVALUE'"
+                     [style.width.%]="stats.overview.totalUsers > 0 ? (t.count / stats.overview.totalUsers * 100) : 0">
                 </div>
               </div>
-              <span class="subs-plan-bar-count">{{ stats.overview.premiumUsers | number }}</span>
+              <span class="subs-plan-bar-count">{{ t.count | number }}</span>
               <span class="subs-plan-bar-pct">
-                {{ stats.overview.totalUsers > 0 ? (stats.overview.premiumUsers / stats.overview.totalUsers * 100 | number:'1.0-1') : 0 }}%
+                {{ stats.overview.totalUsers > 0 ? (t.count / stats.overview.totalUsers * 100 | number:'1.0-1') : 0 }}%
               </span>
             </div>
             <div class="subs-plan-bar-row">
-              <span class="subs-plan-bar-label">Gratuit</span>
-              <div class="subs-plan-bar-track">
-                <div class="subs-plan-bar subs-plan-bar-free"
-                     [style.width.%]="stats.overview.totalUsers > 0 ? (stats.overview.freeUsers / stats.overview.totalUsers * 100) : 0">
-                </div>
-              </div>
-              <span class="subs-plan-bar-count">{{ stats.overview.freeUsers | number }}</span>
-              <span class="subs-plan-bar-pct">
-                {{ stats.overview.totalUsers > 0 ? (stats.overview.freeUsers / stats.overview.totalUsers * 100 | number:'1.0-1') : 0 }}%
-              </span>
-            </div>
-            <div class="subs-plan-bar-row">
-              <span class="subs-plan-bar-label">Suspendus</span>
+              <span class="subs-plan-bar-label">{{ 'ADMIN.SUBSCRIPTIONS.SUSPENDUS_IMPAYE' | translate }}</span>
               <div class="subs-plan-bar-track">
                 <div class="subs-plan-bar subs-plan-bar-suspended"
                      [style.width.%]="stats.overview.totalUsers > 0 ? (stats.overview.suspendedUsers / stats.overview.totalUsers * 100) : 0">
@@ -346,46 +342,46 @@
         <div class="subs-analytics-card">
           <div class="subs-analytics-header">
             <i class="fas fa-exchange-alt"></i>
-            <h4>Taux de conversion</h4>
+            <h4>{{ 'ADMIN.SUBSCRIPTIONS.TAUX_DE_CONVERSION' | translate }}</h4>
           </div>
           <div class="subs-analytics-value">{{ analyticsData.conversionRate | number:'1.1-1' }}%</div>
-          <p class="subs-analytics-desc">Free → Premium sur {{ analyticsTimeRange }}</p>
+          <p class="subs-analytics-desc">{{ 'ADMIN.SUBSCRIPTIONS.PART_DES_INSCRITS_DE_LA' | translate }}</p>
           <div class="subs-analytics-detail">
-            <span>{{ analyticsData.newPremium | number }} nouveaux premium</span>
-            <span>sur {{ analyticsData.newUsers | number }} inscrits</span>
+            <span>{{ 'ADMIN.SUBSCRIPTIONS.NOUVEAUX_COMPTES_PAYANTS' | translate:{ p0: (analyticsData.newPremium | number) } }}</span>
+            <span>{{ 'ADMIN.SUBSCRIPTIONS.SUR_INSCRITS' | translate:{ p0: (analyticsData.newUsers | number) } }}</span>
           </div>
         </div>
         <div class="subs-analytics-card">
           <div class="subs-analytics-header">
             <i class="fas fa-user-plus"></i>
-            <h4>Nouveaux inscrits</h4>
+            <h4>{{ 'ADMIN.SUBSCRIPTIONS.NOUVEAUX_INSCRITS' | translate }}</h4>
           </div>
           <div class="subs-analytics-value">{{ analyticsData.newUsers | number }}</div>
-          <p class="subs-analytics-desc">Sur les {{ analyticsTimeRange }}</p>
+          <p class="subs-analytics-desc">{{ 'ADMIN.SUBSCRIPTIONS.SUR_LES' | translate:{ p0: (analyticsTimeRange) } }}</p>
         </div>
         <div class="subs-analytics-card">
           <div class="subs-analytics-header">
             <i class="fas fa-crown"></i>
-            <h4>Nouveaux premium</h4>
+            <h4>{{ 'ADMIN.SUBSCRIPTIONS.NOUVEAUX_COMPTES_PAYANTS_2' | translate }}</h4>
           </div>
           <div class="subs-analytics-value">{{ analyticsData.newPremium | number }}</div>
-          <p class="subs-analytics-desc">Sur les {{ analyticsTimeRange }}</p>
+          <p class="subs-analytics-desc">{{ 'ADMIN.SUBSCRIPTIONS.SUR_LES' | translate:{ p0: (analyticsTimeRange) } }}</p>
         </div>
         <div class="subs-analytics-card" *ngIf="stats$ | async as stats">
           <div class="subs-analytics-header">
             <i class="fas fa-user-dollar"></i>
-            <h4>ARPU</h4>
+            <h4>{{ 'ADMIN.SUBSCRIPTIONS.REVENU_MOYEN_PAR_COMPTE_PAYANT' | translate }}</h4>
           </div>
-          <div class="subs-analytics-value">{{ formatCurrency(stats.overview.totalRevenue / (stats.overview.totalUsers || 1)) }}</div>
-          <p class="subs-analytics-desc">Revenu moyen par utilisateur</p>
+          <div class="subs-analytics-value">{{ formatCurrency(stats.topMetrics.averageRevenuePerUser) }}</div>
+          <p class="subs-analytics-desc">{{ 'ADMIN.SUBSCRIPTIONS.ENCAISSE_CE_MOIS_COMPTES_PAYANTS' | translate:{ p0: (stats.topMetrics.conversionRate | number:'1.0-1') } }}</p>
         </div>
       </div>
 
       <!-- ── Graphique tendances revenus ── -->
       <div class="subs-table-card subs-analytics-section" *ngIf="revenueTrends.length > 0">
         <div class="subs-table-header">
-          <h3 class="subs-table-title"><i class="fas fa-chart-bar"></i> Tendances des revenus</h3>
-          <span class="subs-table-count">{{ revenueTrends.length }} points</span>
+          <h3 class="subs-table-title"><i class="fas fa-chart-bar"></i> {{ 'ADMIN.SUBSCRIPTIONS.TENDANCES_DES_REVENUS' | translate }}</h3>
+          <span class="subs-table-count">{{ 'ADMIN.SUBSCRIPTIONS.POINTS' | translate:{ p0: (revenueTrends.length) } }}</span>
         </div>
         <div class="subs-trend-chart">
           <div class="subs-trend-bars">
@@ -404,8 +400,8 @@
       <div class="subs-table-card subs-analytics-section" *ngIf="revenueTrends.length === 0 && !isLoadingAnalytics">
         <div class="subs-empty" style="padding:32px">
           <i class="fas fa-chart-bar subs-empty-icon"></i>
-          <h3>Aucune tendance de revenus</h3>
-          <p>Aucun paiement enregistré sur cette période.</p>
+          <h3>{{ 'ADMIN.SUBSCRIPTIONS.AUCUNE_TENDANCE_DE_REVENUS' | translate }}</h3>
+          <p>{{ 'ADMIN.SUBSCRIPTIONS.AUCUN_PAIEMENT_ENREGISTRE_SUR_CETTE' | translate }}</p>
         </div>
       </div>
 
@@ -414,18 +410,18 @@
         <div class="subs-table-header">
           <h3 class="subs-table-title">
             <i class="fas fa-exclamation-triangle" style="color:#f97316"></i>
-            Utilisateurs à risque de churn ({{ churnRiskUsers.length }})
+            {{ 'ADMIN.SUBSCRIPTIONS.COMPTES_A_RISQUE_IMPAYE_DE' | translate:{ p0: (churnRiskUsers.length) } }}
           </h3>
         </div>
         <div class="subs-table-wrapper">
           <table class="subs-table">
             <thead>
               <tr>
-                <th>Utilisateur</th>
-                <th>Plan</th>
-                <th>Statut</th>
-                <th>Factures impayées</th>
-                <th class="col-actions">Actions</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.UTILISATEUR' | translate }}</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.PALIER' | translate }}</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.STATUT' | translate }}</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.FACTURES_IMPAYEES' | translate }}</th>
+                <th class="col-actions">{{ 'ADMIN.SUBSCRIPTIONS.ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -440,7 +436,7 @@
                   </div>
                 </td>
                 <td>
-                  <span class="subs-badge" [ngClass]="'subs-badge-' + getPlanColor(sub.plan)">{{ getPlanLabel(sub.plan) }}</span>
+                  <span class="subs-badge" [ngClass]="'subs-badge-' + getPlanColor(sub.plan, sub.currentTier)">{{ getPlanLabel(sub.plan, sub.currentTier) }}</span>
                 </td>
                 <td>
                   <span class="subs-badge" [ngClass]="'subs-badge-' + getAccountStatusColor(sub.accountStatus)">
@@ -448,12 +444,12 @@
                   </span>
                 </td>
                 <td>
-                  <span class="subs-badge subs-badge-danger">{{ sub.unpaidCount || 0 }} facture(s)</span>
+                  <span class="subs-badge subs-badge-danger">{{ 'ADMIN.SUBSCRIPTIONS.FACTURE_S' | translate:{ p0: (sub.unpaidCount || 0), p1: (formatCurrency(sub.unpaidAmount || 0)) } }}</span>
                 </td>
                 <td class="col-actions">
                   <button class="subs-btn subs-btn-outline" style="padding:4px 10px;font-size:0.75rem"
                           (click)="onSendPaymentReminder(sub)">
-                    <i class="fas fa-envelope"></i> Rappel
+                    <i class="fas fa-envelope"></i> {{ 'ADMIN.SUBSCRIPTIONS.RAPPEL' | translate }}
                   </button>
                 </td>
               </tr>
@@ -464,8 +460,8 @@
       <div class="subs-table-card subs-analytics-section" *ngIf="churnRiskUsers.length === 0 && !isLoadingAnalytics">
         <div class="subs-empty" style="padding:32px">
           <i class="fas fa-check-circle subs-empty-icon" style="color:#10b981"></i>
-          <h3>Aucun utilisateur à risque</h3>
-          <p>Tous les comptes premium sont à jour.</p>
+          <h3>{{ 'ADMIN.SUBSCRIPTIONS.AUCUN_COMPTE_A_RISQUE' | translate }}</h3>
+          <p>{{ 'ADMIN.SUBSCRIPTIONS.AUCUNE_FACTURE_PAYANTE_N_EST' | translate }}</p>
         </div>
       </div>
 
@@ -474,17 +470,17 @@
         <div class="subs-table-header">
           <h3 class="subs-table-title">
             <i class="fas fa-arrow-up" style="color:#10b981"></i>
-            Opportunités d'upgrade ({{ upgradeOpportunities.length }})
+            {{ 'ADMIN.SUBSCRIPTIONS.COMPTES_GRATUITS_PROCHES_DU_PRO' | translate:{ p0: (upgradeOpportunities.length) } }}
           </h3>
         </div>
         <div class="subs-table-wrapper">
           <table class="subs-table">
             <thead>
               <tr>
-                <th>Utilisateur</th>
-                <th>Propriétés utilisées</th>
-                <th>Limite</th>
-                <th>Taux d'utilisation</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.UTILISATEUR' | translate }}</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.BIENS' | translate }}</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.LOGEMENTS_OCCUPES' | translate }}</th>
+                <th>{{ 'ADMIN.SUBSCRIPTIONS.SEUIL_PRO_5_LOGEMENTS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -499,7 +495,7 @@
                   </div>
                 </td>
                 <td><strong>{{ sub.propertyCount }}</strong></td>
-                <td>{{ sub.propertyLimit }}</td>
+                <td>{{ 'ADMIN.SUBSCRIPTIONS.4_GRATUITS' | translate:{ p0: (sub.occupiedUnits) } }}</td>
                 <td>
                   <div class="subs-usage-bar">
                     <div class="subs-usage-fill"
@@ -518,13 +514,39 @@
       <div class="subs-table-card subs-analytics-section" *ngIf="upgradeOpportunities.length === 0 && !isLoadingAnalytics">
         <div class="subs-empty" style="padding:32px">
           <i class="fas fa-arrow-up subs-empty-icon" style="color:#10b981"></i>
-          <h3>Aucune opportunité d'upgrade</h3>
-          <p>Tous les utilisateurs gratuits ont encore de la marge.</p>
+          <h3>{{ 'ADMIN.SUBSCRIPTIONS.AUCUN_COMPTE_GRATUIT_PROCHE_DU' | translate }}</h3>
+          <p>{{ 'ADMIN.SUBSCRIPTIONS.AUCUN_COMPTE_GRATUIT_N_A' | translate }}</p>
         </div>
       </div>
 
     </ng-container>
 
   </ng-container>
+
+  <!-- Confirmation suspension / réactivation -->
+  <div class="subs-modal-overlay" *ngIf="confirmAction as c" (click)="onCancelAction()">
+    <div class="subs-modal" role="dialog" aria-modal="true" aria-labelledby="subs-confirm-title" (click)="$event.stopPropagation()">
+      <h3 id="subs-confirm-title" class="subs-modal-title">
+        <i class="fas" [class.fa-ban]="c.type === 'suspend'" [class.fa-play]="c.type === 'reactivate'"></i>
+        {{ c.type === 'suspend' ? ('ADMIN.SUBSCRIPTIONS.BLOQUER_LE_COMPTE' | translate) : ('ADMIN.SUBSCRIPTIONS.REACTIVER_LE_COMPTE' | translate) }}
+      </h3>
+      <p class="subs-modal-text"><strong>{{ getUserFullName(c.sub.user) }}</strong> — {{ c.sub.user?.email }}</p>
+      <ng-container *ngIf="c.type === 'suspend'">
+        <p class="subs-modal-text">{{ 'ADMIN.SUBSCRIPTIONS.L_UTILISATEUR_NE_POURRA_PLUS' | translate }}</p>
+        <label class="subs-modal-label" for="subs-reason">{{ 'ADMIN.SUBSCRIPTIONS.MOTIF_JOURNALISE_CARACTERES_MINIMUM' | translate:{ p0: (minReasonLength) } }}</label>
+        <textarea id="subs-reason" class="subs-input subs-modal-textarea" rows="3" maxlength="500" [(ngModel)]="confirmReason"></textarea>
+      </ng-container>
+      <p class="subs-modal-text" *ngIf="c.type === 'reactivate' && c.sub.accountStatus === 'suspended'">
+        {{ 'ADMIN.SUBSCRIPTIONS.CE_COMPTE_EST_SUSPENDU_POUR' | translate:{ p0: (formatCurrency(c.sub.totalUnpaidAmount || 0)) } }}
+      </p>
+      <p class="subs-modal-text" *ngIf="c.type === 'reactivate' && c.sub.accountStatus === 'disabled'">
+        {{ 'ADMIN.SUBSCRIPTIONS.L_UTILISATEUR_POURRA_DE_NOUVEAU' | translate }}
+      </p>
+      <div class="subs-modal-actions">
+        <button class="subs-btn subs-btn-ghost" (click)="onCancelAction()">{{ 'ADMIN.SUBSCRIPTIONS.ANNULER' | translate }}</button>
+        <button class="subs-btn subs-btn-primary" [disabled]="!canConfirm" (click)="onConfirmAction()">{{ 'ADMIN.SUBSCRIPTIONS.CONFIRMER' | translate }}</button>
+      </div>
+    </div>
+  </div>
 
 </div>

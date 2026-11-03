@@ -20,7 +20,7 @@ $gray-900: #0f172a;
 
   // ── Header ────────────────────────────────────────────────────────────────
   .admin-page-header {
-    background: $white; border: 1px solid $gray-200;
+    background: var(--adm-surface); border: 1px solid var(--adm-border);
     border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;
 
     .admin-header-content {
@@ -30,10 +30,10 @@ $gray-900: #0f172a;
 
     .admin-header-text {
       h1 {
-        font-size: 1.375rem; font-weight: 700; color: $gray-900; margin: 0 0 2px;
+        font-size: 1.375rem; font-weight: 700; color: var(--adm-text); margin: 0 0 2px;
         .admin-title-icon { margin-right: 10px; color: $primary; }
       }
-      .admin-page-subtitle { color: $gray-500; font-size: 0.8rem; margin: 0; }
+      .admin-page-subtitle { color: var(--adm-text-muted); font-size: 0.8rem; margin: 0; }
     }
 
     .admin-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -46,9 +46,9 @@ $gray-900: #0f172a;
     gap: 16px; margin-bottom: 20px;
 
     .admin-stat-card {
-      background: $white; border-radius: 10px; padding: 18px;
+      background: var(--adm-surface); border-radius: 10px; padding: 18px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      border: 1px solid $gray-200;
+      border: 1px solid var(--adm-border);
       display: flex; align-items: center; gap: 14px;
       transition: transform 0.2s;
       &:hover { transform: translateY(-2px); }
@@ -57,6 +57,7 @@ $gray-900: #0f172a;
       &.admin-stat-success { .admin-stat-icon { background: rgba($success,0.1); color: $success; } }
       &.admin-stat-warning { .admin-stat-icon { background: rgba($warning,0.1); color: darken($warning,15%); } }
       &.admin-stat-info    { .admin-stat-icon { background: rgba($info,0.1);    color: $info; } }
+      &.admin-stat-danger  { .admin-stat-icon { background: rgba($danger,0.1);  color: $danger; } }
 
       .admin-stat-icon {
         width: 44px; height: 44px; border-radius: 10px;
@@ -65,8 +66,8 @@ $gray-900: #0f172a;
       }
 
       .admin-stat-content { flex: 1; }
-      .admin-stat-number  { font-size: 1.625rem; font-weight: 700; color: $gray-900; }
-      .admin-stat-label   { font-size: 0.78rem; color: $gray-500; margin-top: 2px; }
+      .admin-stat-number  { font-size: 1.625rem; font-weight: 700; color: var(--adm-text); }
+      .admin-stat-label   { font-size: 0.78rem; color: var(--adm-text-muted); margin-top: 2px; }
     }
   }
 
@@ -75,15 +76,15 @@ $gray-900: #0f172a;
     margin-bottom: 20px;
 
     .admin-table-container {
-      background: $white; border-radius: 10px;
+      background: var(--adm-surface); border-radius: 10px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-      border: 1px solid $gray-200; overflow: hidden; position: relative;
+      border: 1px solid var(--adm-border); overflow: hidden; position: relative;
     }
 
     .admin-table-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 18px; border-bottom: 1px solid $gray-100;
-      background: $gray-50; flex-wrap: wrap; gap: 10px;
+      padding: 14px 18px; border-bottom: 1px solid var(--adm-border);
+      background: var(--adm-bg); flex-wrap: wrap; gap: 10px;
     }
   }
 
@@ -95,10 +96,10 @@ $gray-900: #0f172a;
       display: flex; align-items: center; gap: 6px;
       padding: 7px 14px; border-radius: 6px;
       font-size: 0.8125rem; font-weight: 500;
-      color: $gray-500; background: transparent; border: none; cursor: pointer;
+      color: var(--adm-text-muted); background: transparent; border: none; cursor: pointer;
       transition: all 0.15s;
 
-      &:hover { background: $gray-100; color: $gray-900; }
+      &:hover { background: var(--adm-surface-2); color: var(--adm-text); }
       &.active { background: $primary-light; color: $primary-dark; font-weight: 600; }
     }
   }
@@ -113,23 +114,25 @@ $gray-900: #0f172a;
       position: relative;
       .admin-search-icon {
         position: absolute; left: 10px; top: 50%;
-        transform: translateY(-50%); color: $gray-400; font-size: 0.8rem;
+        transform: translateY(-50%); color: var(--adm-text-faint); font-size: 0.8rem;
       }
       .admin-search-input {
         width: 100%; padding: 8px 10px 8px 32px;
-        border: 1px solid $gray-200; border-radius: 6px; font-size: 0.875rem;
+        border: 1px solid var(--adm-border); border-radius: 6px; font-size: 0.875rem;
         &:focus { outline: none; border-color: $primary; box-shadow: 0 0 0 2px rgba($primary,0.1); }
       }
     }
+
+    &.admin-filters-bar { padding: 12px 16px; border-bottom: 1px solid var(--adm-border); }
 
     .admin-filters-section { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .admin-filter-group {
       display: flex; flex-direction: column; gap: 3px;
-      .admin-filter-label { font-size: 0.72rem; font-weight: 500; color: $gray-400; }
+      .admin-filter-label { font-size: 0.72rem; font-weight: 500; color: var(--adm-text-faint); }
       .admin-filter-select {
-        padding: 7px 26px 7px 10px; border: 1px solid $gray-200;
-        border-radius: 6px; font-size: 0.8125rem; background: $white;
+        padding: 7px 26px 7px 10px; border: 1px solid var(--adm-border);
+        border-radius: 6px; font-size: 0.8125rem; background: var(--adm-surface);
         appearance: none;
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
         background-position: right 6px center; background-repeat: no-repeat; background-size: 1.1em;
@@ -138,17 +141,20 @@ $gray-900: #0f172a;
     }
   }
 
+  // Les tableaux défilent horizontalement sur mobile au lieu de déborder.
+  .admin-table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; .admin-table { min-width: 760px; } }
+
   // ── Table ─────────────────────────────────────────────────────────────────
   .admin-table {
     width: 100%; border-collapse: collapse;
 
     th, td {
       padding: 11px 16px; text-align: left;
-      border-bottom: 1px solid $gray-100; font-size: 0.875rem;
+      border-bottom: 1px solid var(--adm-border); font-size: 0.875rem;
     }
 
     th {
-      background: $gray-50; font-weight: 600; color: $gray-500;
+      background: var(--adm-bg); font-weight: 600; color: var(--adm-text-muted);
       font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
     }
 
@@ -156,67 +162,9 @@ $gray-900: #0f172a;
     tr:last-child td { border-bottom: none; }
 
     .admin-user-info {
-      .admin-user-name  { font-weight: 600; color: $gray-900; font-size: 0.875rem; }
-      .admin-user-email { font-size: 0.78rem; color: $gray-400; }
+      .admin-user-name  { font-weight: 600; color: var(--adm-text); font-size: 0.875rem; }
+      .admin-user-email { font-size: 0.78rem; color: var(--adm-text-faint); }
     }
-  }
-
-  // ── Coupons grid ──────────────────────────────────────────────────────────
-  .admin-coupons-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 14px; padding: 16px;
-
-    .admin-coupon-card {
-      background: $white; border: 1px solid $gray-200;
-      border-radius: 10px; overflow: hidden;
-      transition: box-shadow 0.2s, transform 0.2s;
-      &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-2px); }
-
-      .admin-coupon-main {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 12px 16px;
-        background: linear-gradient(135deg, $primary-light, rgba($primary,0.04));
-        border-bottom: 1px solid $gray-100;
-
-        .admin-code-text {
-          font-size: 0.9375rem; font-weight: 800; letter-spacing: 2px;
-          color: $primary-dark; font-family: monospace;
-        }
-
-        .admin-coupon-actions { display: flex; gap: 4px; }
-      }
-
-      .admin-coupon-content {
-        padding: 12px 16px;
-        .admin-coupon-name  { font-weight: 600; color: $gray-900; margin-bottom: 4px; font-size: 0.875rem; }
-        .admin-coupon-value { font-size: 0.8125rem; color: $gray-500; margin-bottom: 3px; strong { color: $primary-dark; } }
-        .admin-coupon-usage { font-size: 0.75rem; color: $gray-400; }
-      }
-
-      .admin-coupon-footer {
-        display: flex; align-items: center; gap: 10px;
-        padding: 10px 16px; border-top: 1px solid $gray-100; background: $gray-50;
-      }
-    }
-  }
-
-  // ── Toggle ────────────────────────────────────────────────────────────────
-  .admin-toggle-btn {
-    position: relative; width: 36px; height: 20px;
-    background: $gray-300; border-radius: 10px;
-    border: none; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
-
-    &.active { background: $success; }
-
-    .admin-toggle-slider {
-      position: absolute; top: 2px; left: 2px;
-      width: 16px; height: 16px; border-radius: 50%;
-      background: $white; transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    }
-
-    &.active .admin-toggle-slider { transform: translateX(16px); }
   }
 
   // ── Loading ───────────────────────────────────────────────────────────────
@@ -241,71 +189,15 @@ $gray-900: #0f172a;
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; padding: 48px; text-align: center;
     .admin-empty-icon { font-size: 2.5rem; color: $gray-200; margin-bottom: 10px; }
-    h3 { font-size: 1rem; font-weight: 600; color: $gray-700; margin: 0 0 6px; }
+    h3 { font-size: 1rem; font-weight: 600; color: var(--adm-text-2); margin: 0 0 6px; }
   }
 
   // ── Pagination ────────────────────────────────────────────────────────────
   .admin-pagination {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 16px; border-top: 1px solid $gray-100;
-    font-size: 0.8125rem; color: $gray-500;
-  }
-
-  // ── Modal ─────────────────────────────────────────────────────────────────
-  .admin-modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000; padding: 16px;
-
-    .admin-modal-container {
-      background: $white; border-radius: 12px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-      max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto;
-      animation: pmSlide 0.25s ease-out;
-    }
-
-    .admin-modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 20px; border-bottom: 1px solid $gray-100;
-
-      .admin-modal-title {
-        font-size: 1.0625rem; font-weight: 600; color: $gray-900;
-        margin: 0; display: flex; align-items: center; gap: 8px;
-        i { color: $primary; }
-      }
-
-      .admin-modal-close {
-        background: none; border: none; font-size: 1.25rem;
-        color: $gray-400; cursor: pointer; padding: 4px 8px; border-radius: 4px;
-        &:hover { background: $gray-100; color: $gray-700; }
-      }
-    }
-
-    .admin-modal-content { padding: 20px; }
-  }
-
-  // ── Form ──────────────────────────────────────────────────────────────────
-  .admin-form-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-    @media (max-width: 480px) { grid-template-columns: 1fr; }
-  }
-
-  .admin-form-group {
-    display: flex; flex-direction: column; gap: 5px;
-
-    label { font-size: 0.8125rem; font-weight: 500; color: $gray-700; }
-
-    .admin-form-input {
-      padding: 8px 12px; border: 1px solid $gray-200;
-      border-radius: 6px; font-size: 0.875rem; background: $white;
-      &:focus { outline: none; border-color: $primary; box-shadow: 0 0 0 2px rgba($primary,0.1); }
-    }
-  }
-
-  .admin-form-actions {
-    display: flex; justify-content: flex-end; gap: 8px;
-    padding-top: 14px; border-top: 1px solid $gray-100; margin-top: 14px;
+    padding: 12px 16px; border-top: 1px solid var(--adm-border);
+    font-size: 0.8125rem; color: var(--adm-text-muted); flex-wrap: wrap; gap: 8px;
+    .admin-pagination-actions { display: flex; gap: 6px; }
   }
 
   // ── Badges ────────────────────────────────────────────────────────────────
@@ -318,7 +210,7 @@ $gray-900: #0f172a;
     &.admin-badge-warning  { background: rgba($warning,0.15); color: darken($warning,20%); }
     &.admin-badge-danger   { background: rgba($danger,0.1);   color: $danger; }
     &.admin-badge-info     { background: rgba($info,0.1);     color: darken($info,10%); }
-    &.admin-badge-secondary{ background: rgba($gray-500,0.1); color: $gray-700; }
+    &.admin-badge-secondary{ background: rgba($gray-500,0.1); color: var(--adm-text-2); }
   }
 
   // ── Buttons ───────────────────────────────────────────────────────────────
@@ -330,10 +222,12 @@ $gray-900: #0f172a;
     &.admin-btn-sm { padding: 5px 10px; font-size: 0.78rem; }
 
     &.admin-btn-primary  { background: $primary; color: $white; &:hover { background: $primary-dark; } }
-    &.admin-btn-secondary{ background: $white; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
-    &.admin-btn-outline  { background: transparent; color: $gray-700; border: 1px solid $gray-200; &:hover { background: $gray-50; } }
+    &.admin-btn-secondary{ background: var(--adm-surface); color: var(--adm-text-2); border: 1px solid var(--adm-border); &:hover { background: var(--adm-bg); } }
+    &.admin-btn-outline  { background: transparent; color: var(--adm-text-2); border: 1px solid var(--adm-border); &:hover { background: var(--adm-bg); } }
     &.admin-btn-danger   { background: transparent; color: $danger; border: 1px solid rgba($danger,0.3); &:hover { background: rgba($danger,0.05); } }
 
+    text-decoration: none;
+    text-decoration: none;
     &:disabled { opacity: 0.5; cursor: not-allowed; }
   }
 }

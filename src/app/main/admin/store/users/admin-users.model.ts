@@ -12,6 +12,14 @@ export interface AdminUser {
   twoFactorEnabled?: boolean;
   roles: AdminUserRole[];
   lastLoginAt?: Date;
+  /** Abonnement en cours (liste admin) : palier de la grille et montant mensuel. */
+  subscription?: {
+    plan: string;
+    currentTier: string | null;
+    monthlyAmount: number;
+    accountStatus: 'active' | 'suspended' | 'disabled';
+  } | null;
+  userType?: string;
   lastLoginIP?: string;
   loginCount?: number;
   country?: string;

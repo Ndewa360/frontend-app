@@ -7,7 +7,7 @@ $danger-light: rgba(220, 38, 38, 0.1);
 .country-delete-modal {
   width: 100%;
   max-width: 500px;
-  background: white;
+  background: var(--adm-surface);
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -15,7 +15,7 @@ $danger-light: rgba(220, 38, 38, 0.1);
 
 // En-tête du modal
 .modal-header {
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  background: linear-gradient(135deg, var(--adm-danger-soft) 0%, var(--adm-danger-soft) 100%);
   border-bottom: 1px solid #fecaca;
   padding: 2rem;
 
@@ -44,13 +44,13 @@ $danger-light: rgba(220, 38, 38, 0.1);
         margin: 0 0 0.25rem 0;
         font-size: 1.5rem;
         font-weight: 700;
-        color: #111827;
+        color: var(--adm-text);
       }
 
       .modal-subtitle {
         margin: 0;
         font-size: 0.875rem;
-        color: #6b7280;
+        color: var(--adm-text-muted);
         font-weight: 500;
       }
     }
@@ -67,7 +67,7 @@ $danger-light: rgba(220, 38, 38, 0.1);
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: #f9fafb;
+    background: var(--adm-bg);
     border-radius: 12px;
     margin-bottom: 1.5rem;
 
@@ -76,7 +76,7 @@ $danger-light: rgba(220, 38, 38, 0.1);
       height: 32px;
       border-radius: 6px;
       overflow: hidden;
-      border: 1px solid #e5e7eb;
+      border: 1px solid var(--adm-border);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -90,11 +90,11 @@ $danger-light: rgba(220, 38, 38, 0.1);
       .flag-placeholder {
         width: 100%;
         height: 100%;
-        background: #f3f4f6;
+        background: var(--adm-surface-2);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #9ca3af;
+        color: var(--adm-text-faint);
         font-size: 1rem;
       }
     }
@@ -106,13 +106,13 @@ $danger-light: rgba(220, 38, 38, 0.1);
         margin: 0 0 0.25rem 0;
         font-size: 1.125rem;
         font-weight: 600;
-        color: #111827;
+        color: var(--adm-text);
       }
 
       .country-code {
         margin: 0;
         font-size: 0.875rem;
-        color: #6b7280;
+        color: var(--adm-text-muted);
       }
     }
   }
@@ -124,12 +124,12 @@ $danger-light: rgba(220, 38, 38, 0.1);
     .main-message {
       margin: 0;
       font-size: 1rem;
-      color: #374151;
+      color: var(--adm-text-2);
       line-height: 1.6;
       text-align: center;
 
       strong {
-        color: #111827;
+        color: var(--adm-text);
         font-weight: 600;
       }
     }
@@ -148,9 +148,9 @@ $danger-light: rgba(220, 38, 38, 0.1);
         align-items: center;
         gap: 0.75rem;
         padding: 1rem;
-        background: #f9fafb;
+        background: var(--adm-bg);
         border-radius: 8px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--adm-border);
 
         .stat-icon {
           width: 40px;
@@ -175,13 +175,13 @@ $danger-light: rgba(220, 38, 38, 0.1);
           .stat-number {
             font-size: 1.25rem;
             font-weight: 700;
-            color: #111827;
+            color: var(--adm-text);
             line-height: 1;
           }
 
           .stat-label {
             font-size: 0.75rem;
-            color: #6b7280;
+            color: var(--adm-text-muted);
             margin-top: 0.25rem;
           }
         }
@@ -193,7 +193,7 @@ $danger-light: rgba(220, 38, 38, 0.1);
       display: flex;
       gap: 0.75rem;
       padding: 1rem;
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      background: linear-gradient(135deg, var(--adm-warning-soft) 0%, var(--adm-warning-soft) 100%);
       border: 1px solid #f59e0b;
       border-radius: 8px;
 
@@ -209,13 +209,13 @@ $danger-light: rgba(220, 38, 38, 0.1);
           margin: 0 0 0.25rem 0;
           font-size: 0.875rem;
           font-weight: 600;
-          color: #92400e;
+          color: var(--adm-warning);
         }
 
         .warning-text {
           margin: 0;
           font-size: 0.875rem;
-          color: #b45309;
+          color: var(--adm-warning);
           line-height: 1.5;
         }
       }
@@ -226,7 +226,7 @@ $danger-light: rgba(220, 38, 38, 0.1);
   .loading-section {
     text-align: center;
     padding: 2rem;
-    color: #6b7280;
+    color: var(--adm-text-muted);
 
     .loading-spinner {
       font-size: 2rem;
@@ -243,8 +243,8 @@ $danger-light: rgba(220, 38, 38, 0.1);
 
 // Actions du modal
 .modal-actions {
-  background: #f9fafb;
-  border-top: 1px solid #e5e7eb;
+  background: var(--adm-bg);
+  border-top: 1px solid var(--adm-border);
   padding: 1.5rem 2rem;
   display: flex;
   justify-content: flex-end;
@@ -268,12 +268,12 @@ $danger-light: rgba(220, 38, 38, 0.1);
     }
 
     &.secondary {
-      background: white;
-      color: #374151;
-      border: 1px solid #d1d5db;
+      background: var(--adm-surface);
+      color: var(--adm-text-2);
+      border: 1px solid var(--adm-border-strong);
 
       &:hover:not(:disabled) {
-        background: #f9fafb;
+        background: var(--adm-bg);
         border-color: #9ca3af;
       }
     }

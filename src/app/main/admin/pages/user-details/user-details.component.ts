@@ -1,10 +1,14 @@
+import { Store } from '@ngxs/store';
+import { UserProfileState } from '../../../../shared/store/user-profile/user-profile.state';
+import { isSuperAdmin } from '../../utils/admin-roles';
 import { trackByFn } from '../../../../shared/utils/track-by.util';
+import { tierLabel } from '../../../../shared/pricing/pricing-grid';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AdminUsersService } from '../../services/admin-users.service';
 import { AdminSubscriptionsService } from '../../services/admin-subscriptions.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
@@ -87,8 +91,20 @@ interface UserDetails {
     _id: string;
     plan: 'free' | 'premium' | 'trial';
     accountStatus: 'active' | 'suspended' | 'disabled';
-    propertyLimit: number;
+    propertyLimit?: number;
     monthlyAmount: number;
+    /** Palier de la grille (FREE, PRO_1…PRO_4, GOLD). */
+    currentTier?: string | null;
+    customMonthlyAmount?: number | null;
+    /** Calcul de la grille au moment de la consultation. */
+    pricing?: {
+      tier: string;
+      amount: number;
+      occupiedUnitsCount: number;
+      totalRent: number;
+      propertiesCount: number;
+      trialActive: boolean;
+    } | null;
     hasUnpaidInvoices: boolean;
     totalUnpaidAmount: number;
     unpaidInvoicesCount: number;
@@ -120,9 +136,11 @@ interface UserDetails {
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss'],
   standalone: true,
-  imports: [NgIf, NgClass, ExtendedModule, NgFor, FormsModule, NgStyle, JsonPipe]
+  imports: [TranslateModule, NgIf, NgClass, ExtendedModule, NgFor, FormsModule, NgStyle, JsonPipe]
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
+  /** Confirmation forcée d'un paiement : réservée au super-admin (le serveur refuse sinon). */
+  superAdmin = false;
   trackByFn = trackByFn;
 
   private destroy$ = new Subject<void>();
@@ -172,10 +190,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     private languageUrlService: LanguageUrlService,
     private toastr: ToastrService,
     private translate: TranslateService,
-    private currencyService: AdminCurrencyService
+    private currencyService: AdminCurrencyService,
+    private store: Store
   ) {}
 
   ngOnInit(): void {
+    this.superAdmin = isSuperAdmin(this.store.selectSnapshot(UserProfileState.selectStateUserProfile));
     this.userId = this.route.snapshot.params['id'];
     if (!this.userId) {
       this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_NO_USER_SPECIFIED'));
@@ -273,12 +293,12 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   confirmTransaction(): void {
-    if (!this.pendingConfirmRef) return;
+    if (!this.pendingConfirmRef || (this.adminNote || '').trim().length < 10) return;
     const ref = this.pendingConfirmRef;
     this.confirmingRef = ref;
     this.showConfirmModal = false;
 
-    this.usersService.confirmRentTransaction(ref, this.adminNote || undefined)
+    this.usersService.confirmRentTransaction(ref, this.adminNote.trim())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -303,9 +323,9 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   confirmSuspend(): void {
-    if (!this.suspendReason.trim() || !this.user?.subscription) return;
+    if (this.suspendReason.trim().length < 10 || !this.user?.subscription) return;
     this.showSuspendModal = false;
-    this.subscriptionsService.suspendAccount(this.user.subscription._id, this.suspendReason)
+    this.subscriptionsService.suspendAccount(this.user.subscription._id, this.suspendReason.trim())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next:  () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_ACCOUNT_SUSPENDED')); this.loadUserDetails(); },
@@ -356,9 +376,14 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     this.showMarkPaidModal = true;
   }
 
+  /** Une référence vérifiable (reçu, virement, transaction) est obligatoire : elle est journalisée. */
+  get paymentRefValid(): boolean {
+    return this.paymentRef.trim().length >= 3;
+  }
+
   confirmMarkPaid(): void {
-    if (!this.user?.subscription || !this.selectedPeriodId) return;
-    const ref = this.paymentRef.trim() || 'ADMIN_MANUAL';
+    if (!this.user?.subscription || !this.selectedPeriodId || !this.paymentRefValid) return;
+    const ref = this.paymentRef.trim();
     this.showMarkPaidModal = false;
     this.isMarkingPaid = true;
 
@@ -392,15 +417,17 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     return full || this.user.name || this.user.email;
   }
 
-  getPlanBadgeClass(plan?: string): string {
+  getPlanBadgeClass(plan?: string, tier?: string | null): string {
+    if (tier === 'GOLD') return 'admin-badge admin-badge-warning';
+    if (tier && tier !== 'FREE') return 'admin-badge admin-badge-success';
     return plan === 'premium' ? 'admin-badge admin-badge-success'
       : plan === 'trial'   ? 'admin-badge admin-badge-info'
         : 'admin-badge admin-badge-secondary';
   }
 
-  getPlanLabel(plan?: string): string {
-    const map: Record<string, string> = { premium: 'Premium', free: 'Gratuit', trial: 'Essai' };
-    return map[plan || ''] || plan || 'Inconnu';
+  getPlanLabel(plan?: string, tier?: string | null): string {
+    if (plan === 'trial' && !tier) return 'Essai';
+    return tierLabel(tier, plan, this.translate.currentLang);
   }
 
   getStatusBadgeClass(status?: string): string {
@@ -413,19 +440,15 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   getStatusLabel(status?: string): string {
-    const map: Record<string, string> = { active: 'Actif', suspended: 'Suspendu (impayé)', disabled: 'Suspendu par l’admin' };
-    return map[status || ''] || 'Inconnu';
+    return ['active', 'suspended', 'disabled'].includes(status || '')
+      ? this.translate.instant(`ADMIN.USER_DETAILS.TS.ACCOUNT_${status}`)
+      : this.translate.instant('ADMIN.USER_DETAILS.TS.UNKNOWN');
   }
 
   getUserStatusLabel(status?: string): string {
-    const map: Record<string, string> = {
-      active:    'Actif',
-      inactive:  'Inactif',
-      suspended: 'Suspendu',
-      banned:    'Banni',
-      disabled:  'Désactivé'
-    };
-    return map[status || ''] || status || 'Inconnu';
+    return ['active', 'inactive', 'suspended', 'banned', 'disabled'].includes(status || '')
+      ? this.translate.instant(`ADMIN.USER_DETAILS.TS.USER_${status}`)
+      : status || this.translate.instant('ADMIN.USER_DETAILS.TS.UNKNOWN');
   }
 
   getUserStatusClass(status?: string): string {
@@ -440,13 +463,9 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   getPeriodStateLabel(state: string): string {
-    const map: Record<string, string> = {
-      payed:            '✅ Payé',
-      unpaid:           '🔴 Impayé',
-      waiting:          '⏳ En attente',
-      should_not_payed: '⚪ Non applicable'
-    };
-    return map[state] || state;
+    return ['payed', 'unpaid', 'waiting', 'should_not_payed'].includes(state)
+      ? this.translate.instant(`ADMIN.USER_DETAILS.TS.PERIOD_${state}`)
+      : state;
   }
 
   getPeriodStateClass(state: string): string {
@@ -468,16 +487,20 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   formatDate(date: any): string {
-    if (!date) return 'N/A';
-    return new Date(date).toLocaleDateString('fr-FR', {
+    if (!date) return '—';
+    return new Date(date).toLocaleDateString(this.locale, {
       year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit'
     });
   }
 
   formatDateShort(date: any): string {
-    if (!date) return 'N/A';
-    return new Date(date).toLocaleDateString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    if (!date) return '—';
+    return new Date(date).toLocaleDateString(this.locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
+  }
+
+  private get locale(): string {
+    return this.translate.currentLang === 'en' ? 'en-GB' : 'fr-FR';
   }
 
   getOccupancyClass(rate: number): string {
@@ -487,14 +510,9 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
   }
 
   getTxStatusLabel(status: string): string {
-    const map: Record<string, string> = {
-      PENDING:   '⏳ En attente',
-      FAILED:    '❌ Échoué',
-      SUCCESS:   '✅ Réussi',
-      CANCELLED: '⏹ Annulé',
-      EXPIRED:   '⏰ Expiré'
-    };
-    return map[status] || status;
+    return ['PENDING', 'FAILED', 'SUCCESS', 'CANCELLED', 'EXPIRED'].includes(status)
+      ? this.translate.instant(`ADMIN.USER_DETAILS.TS.TX_${status}`)
+      : status;
   }
 
   getTxStatusClass(status: string): string {

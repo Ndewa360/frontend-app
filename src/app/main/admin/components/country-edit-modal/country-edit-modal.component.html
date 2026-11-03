@@ -9,7 +9,7 @@
           <i class="fas fa-edit"></i>
         </div>
         <div class="header-text">
-          <h2 class="modal-title">Modifier le pays</h2>
+          <h2 class="modal-title">{{ 'ADMIN.COUNTRY_EDIT.MODIFIER_LE_PAYS' | translate }}</h2>
           <p class="modal-subtitle">{{ data.country.name }}</p>
         </div>
       </div>
@@ -27,14 +27,14 @@
       <div class="form-section">
         <h3 class="section-title">
           <i class="fas fa-info-circle mr-2"></i>
-          Informations de base
+          {{ 'ADMIN.COUNTRY_EDIT.INFORMATIONS_DE_BASE' | translate }}
         </h3>
         
         <div class="form-grid">
           <!-- Nom du pays -->
           <div class="form-group">
             <label class="form-label" for="name">
-              Nom du pays <span class="required">*</span>
+              {{ 'ADMIN.COUNTRY_EDIT.NOM_DU_PAYS' | translate }} <span class="required">*</span>
             </label>
             <input 
               type="text" 
@@ -42,7 +42,7 @@
               class="form-input"
               [class.error]="hasError('name')"
               formControlName="name"
-              placeholder="Nom complet du pays">
+              [placeholder]="'ADMIN.COUNTRY_EDIT.NOM_COMPLET_DU_PAYS' | translate">
             <div class="error-message" *ngIf="hasError('name')">
               {{ getErrorMessage('name') }}
             </div>
@@ -51,7 +51,7 @@
           <!-- Code pays -->
           <div class="form-group">
             <label class="form-label" for="code">
-              Code pays <span class="required">*</span>
+              {{ 'ADMIN.COUNTRY_EDIT.CODE_PAYS' | translate }} <span class="required">*</span>
             </label>
             <input 
               type="text" 
@@ -59,7 +59,7 @@
               class="form-input"
               [class.error]="hasError('code')"
               formControlName="code"
-              placeholder="Ex: CM, FR, US"
+              [placeholder]="'ADMIN.COUNTRY_EDIT.EX_CM_FR_US' | translate"
               maxlength="3">
             <div class="error-message" *ngIf="hasError('code')">
               {{ getErrorMessage('code') }}
@@ -69,14 +69,14 @@
           <!-- Devise -->
           <div class="form-group">
             <label class="form-label" for="currency">
-              Devise <span class="required">*</span>
+              {{ 'ADMIN.COUNTRY_EDIT.DEVISE' | translate }} <span class="required">*</span>
             </label>
             <select 
               id="currency"
               class="form-select"
               [class.error]="hasError('currency')"
               formControlName="currency">
-              <option value="">Sélectionnez une devise</option>
+              <option value="">{{ 'ADMIN.COUNTRY_EDIT.SELECTIONNEZ_UNE_DEVISE' | translate }}</option>
               <option *ngFor="let currency of currencies trackBy: trackByFn" [value]="currency.code">
                 {{ currency.code }} - {{ currency.name }} ({{ currency.symbol }})
               </option>
@@ -89,39 +89,39 @@
           <!-- Capitale -->
           <div class="form-group">
             <label class="form-label" for="capital">
-              Capitale
+              {{ 'ADMIN.COUNTRY_EDIT.CAPITALE' | translate }}
             </label>
             <input 
               type="text" 
               id="capital"
               class="form-input"
               formControlName="capital"
-              placeholder="Capitale du pays">
+              [placeholder]="'ADMIN.COUNTRY_EDIT.CAPITALE_DU_PAYS' | translate">
           </div>
 
           <!-- Code téléphone -->
           <div class="form-group">
             <label class="form-label" for="phoneCode">
-              Code téléphone
+              {{ 'ADMIN.COUNTRY_EDIT.CODE_TELEPHONE' | translate }}
             </label>
             <input 
               type="text" 
               id="phoneCode"
               class="form-input"
               formControlName="phoneCode"
-              placeholder="Ex: +237, +33, +1">
+              [placeholder]="'ADMIN.COUNTRY_EDIT.EX_237_33_1' | translate">
           </div>
 
           <!-- Fuseau horaire -->
           <div class="form-group">
             <label class="form-label" for="timezone">
-              Fuseau horaire
+              {{ 'ADMIN.COUNTRY_EDIT.FUSEAU_HORAIRE' | translate }}
             </label>
             <select 
               id="timezone"
               class="form-select"
               formControlName="timezone">
-              <option value="">Sélectionnez un fuseau horaire</option>
+              <option value="">{{ 'ADMIN.COUNTRY_EDIT.SELECTIONNEZ_UN_FUSEAU_HORAIRE' | translate }}</option>
               <option *ngFor="let tz of timezones trackBy: trackByFn" [value]="tz">
                 {{ tz }}
               </option>
@@ -134,7 +134,7 @@
       <div class="form-section">
         <h3 class="section-title">
           <i class="fas fa-toggle-on mr-2"></i>
-          Statut
+          {{ 'ADMIN.COUNTRY_EDIT.STATUT' | translate }}
         </h3>
         
         <div class="status-toggle">
@@ -145,11 +145,11 @@
               formControlName="isActive">
             <span class="toggle-slider"></span>
             <span class="toggle-label">
-              Pays actif
+              {{ 'ADMIN.COUNTRY_EDIT.PAYS_ACTIF' | translate }}
             </span>
           </label>
           <p class="toggle-description">
-            Un pays actif peut être sélectionné par les utilisateurs lors de l'inscription ou de la création de propriétés.
+            {{ 'ADMIN.COUNTRY_EDIT.UN_PAYS_ACTIF_PEUT_ETRE' | translate }}
           </p>
         </div>
       </div>
@@ -164,7 +164,7 @@
       class="action-btn secondary"
       (click)="onCancel()"
       [disabled]="isLoading$ | async">
-      Annuler
+      {{ 'ADMIN.COUNTRY_EDIT.ANNULER' | translate }}
     </button>
     <button 
       type="button"
@@ -172,10 +172,10 @@
       (click)="onSave()"
       [disabled]="countryForm.invalid || (isLoading$ | async)">
       <i class="fas fa-save mr-2"></i>
-      <span *ngIf="!(isLoading$ | async)">Sauvegarder</span>
+      <span *ngIf="!(isLoading$ | async)">{{ 'ADMIN.COUNTRY_EDIT.SAUVEGARDER' | translate }}</span>
       <span *ngIf="isLoading$ | async">
         <i class="fas fa-spinner fa-spin mr-2"></i>
-        Sauvegarde...
+        {{ 'ADMIN.COUNTRY_EDIT.SAUVEGARDE' | translate }}
       </span>
     </button>
   </div>

@@ -16,8 +16,13 @@ export interface GlobalStatsResponse {
     premiumCount: number;
   };
   platformWallet: {
+    /** Solde disponible (revenus encaissés en ligne − retraits). */
     totalBalance: number;
+    grossRevenue: number;
+    /** Abonnements réglés hors ligne (marqués payés par un admin) : comptés, non retirables. */
+    manualRevenue: number;
     monthlyDeposits: number;
+    monthlyRevenue?: number;
     monthlyWithdrawals: number;
     pendingWithdrawals: number;
   };
@@ -28,6 +33,7 @@ export interface GlobalStatsResponse {
     subscriptionRevenue: number;
   };
   summary: {
+    totalRevenue?: number;
     totalSubscriptions: number;
     totalPlatformBalance: number;
     monthlyRecurring: number;

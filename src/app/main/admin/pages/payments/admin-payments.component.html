@@ -3,12 +3,15 @@
   <div class="admin-page-header">
     <div class="admin-header-content">
       <div class="admin-header-text">
-        <h1 class="admin-page-title"><i class="fas fa-credit-card admin-title-icon"></i> Gestion des Paiements</h1>
-        <p class="admin-page-subtitle">Suivi des transactions, abonnements et coupons</p>
+        <h1 class="admin-page-title"><i class="fas fa-credit-card admin-title-icon"></i> {{ 'ADMIN.PAYMENTS.PAIEMENTS_DES_ABONNEMENTS' | translate }}</h1>
+        <p class="admin-page-subtitle">{{ 'ADMIN.PAYMENTS.FACTURES_MENSUELLES_DE_LA_GRILLE' | translate }}</p>
       </div>
       <div class="admin-header-actions">
+        <button class="admin-btn admin-btn-secondary" (click)="onExport()" [disabled]="isExporting">
+          <i class="fas" [class.fa-file-csv]="!isExporting" [class.fa-spinner]="isExporting" [class.fa-spin]="isExporting"></i> {{ 'ADMIN.PAYMENTS.EXPORTER_CSV' | translate }}
+        </button>
         <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()" [disabled]="isRefreshing">
-          <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i> Actualiser
+          <i class="fas fa-sync-alt" [class.fa-spin]="isRefreshing"></i> {{ 'ADMIN.PAYMENTS.ACTUALISER' | translate }}
         </button>
       </div>
     </div>
@@ -17,31 +20,38 @@
   <!-- Stats -->
   <div class="admin-stats-grid" *ngIf="stats$ | async as stats">
     <div class="admin-stat-card admin-stat-primary">
-      <div class="admin-stat-icon"><i class="fas fa-credit-card"></i></div>
+      <div class="admin-stat-icon"><i class="fas fa-file-invoice"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.totalPayments ?? 0 }}</div>
-        <div class="admin-stat-label">Paiements totaux</div>
+        <div class="admin-stat-label">{{ 'ADMIN.PAYMENTS.FACTURES_EMISES' | translate }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-success">
       <div class="admin-stat-icon"><i class="fas fa-check-circle"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.successfulPayments ?? 0 }}</div>
-        <div class="admin-stat-label">Complétés</div>
+        <div class="admin-stat-label">{{ 'ADMIN.PAYMENTS.FACTURES_PAYEES' | translate }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-warning">
       <div class="admin-stat-icon"><i class="fas fa-coins"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ formatCurrency(stats.totalRevenue ?? 0) }}</div>
-        <div class="admin-stat-label">Revenus totaux</div>
+        <div class="admin-stat-label">{{ 'ADMIN.PAYMENTS.ENCAISSE_AU_TOTAL' | translate }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-info">
-      <div class="admin-stat-icon"><i class="fas fa-ticket-alt"></i></div>
+      <div class="admin-stat-icon"><i class="fas fa-user-check"></i></div>
       <div class="admin-stat-content">
-        <div class="admin-stat-number">{{ stats.topCoupons?.length ?? 0 }}</div>
-        <div class="admin-stat-label">Coupons utilisés</div>
+        <div class="admin-stat-number">{{ formatCurrency(stats.averageRevenuePerUser ?? 0) }}</div>
+        <div class="admin-stat-label">{{ 'ADMIN.PAYMENTS.REVENU_MENSUEL_MOYEN_PAR_COMPTE' | translate }}</div>
+      </div>
+    </div>
+    <div class="admin-stat-card admin-stat-danger">
+      <div class="admin-stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-number">{{ stats.failedPayments ?? 0 }}</div>
+        <div class="admin-stat-label">{{ 'ADMIN.PAYMENTS.TENTATIVES_DE_PAIEMENT_ECHOUEES_OPERATEUR' | translate }}</div>
       </div>
     </div>
   </div>
@@ -50,304 +60,178 @@
   <div class="admin-content-section">
     <div class="admin-table-container">
       <div class="admin-table-header">
-        <div class="admin-tabs-nav">
-          <button class="admin-tab-btn" [class.active]="selectedTab === 'payments'" (click)="onTabChange('payments')">
-            <i class="fas fa-credit-card"></i> Paiements
+        <div class="admin-tabs-nav" role="tablist">
+          <button class="admin-tab-btn" role="tab" [class.active]="selectedTab === 'payments'" [attr.aria-selected]="selectedTab === 'payments'" (click)="onTabChange('payments')">
+            <i class="fas fa-file-invoice"></i> {{ 'ADMIN.PAYMENTS.FACTURES' | translate }}
           </button>
-          <button class="admin-tab-btn" [class.active]="selectedTab === 'subscriptions'" (click)="onTabChange('subscriptions')">
-            <i class="fas fa-calendar-check"></i> Abonnements
-          </button>
-          <button class="admin-tab-btn" [class.active]="selectedTab === 'coupons'" (click)="onTabChange('coupons')">
-            <i class="fas fa-ticket-alt"></i> Coupons
+          <button class="admin-tab-btn" role="tab" [class.active]="selectedTab === 'subscriptions'" [attr.aria-selected]="selectedTab === 'subscriptions'" (click)="onTabChange('subscriptions')">
+            <i class="fas fa-calendar-check"></i> {{ 'ADMIN.PAYMENTS.ABONNEMENTS_EN_COURS' | translate }}
           </button>
         </div>
-        <button *ngIf="selectedTab === 'coupons'" class="admin-btn admin-btn-primary admin-btn-sm" (click)="onCreateCoupon()">
-          <i class="fas fa-plus"></i> Nouveau coupon
-        </button>
       </div>
 
       <div class="admin-loading-overlay" *ngIf="isLoading$ | async">
         <div class="admin-loader"><div class="admin-spinner"></div></div>
       </div>
 
-      <!-- ── Payments Tab ── -->
-      <div *ngIf="selectedTab === 'payments' && !(isLoading$ | async)">
-        <div class="admin-filters-container" style="padding:12px 16px;border-bottom:1px solid #f1f5f9">
+      <!-- ── Factures ── -->
+      <div *ngIf="selectedTab === 'payments'">
+        <div class="admin-filters-container admin-filters-bar">
           <div class="admin-search-section">
             <div class="admin-search-input-group">
               <i class="fas fa-search admin-search-icon"></i>
-              <input type="text" class="admin-search-input" placeholder="Rechercher..."
-                     [(ngModel)]="paymentSearchTerm" (input)="onPaymentSearch($event)">
+              <input type="text" class="admin-search-input" [placeholder]="'ADMIN.PAYMENTS.NOM_EMAIL_OU_REFERENCE_DE' | translate"
+                     [(ngModel)]="paymentSearchTerm" (ngModelChange)="onPaymentSearch($event)" [attr.aria-label]="'ADMIN.PAYMENTS.RECHERCHER_UNE_FACTURE' | translate">
             </div>
           </div>
           <div class="admin-filters-section">
             <div class="admin-filter-group">
-              <label class="admin-filter-label">Statut</label>
-              <select class="admin-filter-select" (change)="onPaymentStatusFilter($event)">
-                <option value="">Tous</option>
-                <option value="completed">Complété</option>
-                <option value="pending">En attente</option>
-                <option value="failed">Échoué</option>
+              <label class="admin-filter-label" for="pay-status">{{ 'ADMIN.PAYMENTS.STATUT' | translate }}</label>
+              <select id="pay-status" class="admin-filter-select" (change)="onPaymentStatusFilter($event)">
+                <option value="">{{ 'ADMIN.PAYMENTS.TOUS' | translate }}</option>
+                <option value="completed">{{ 'ADMIN.PAYMENTS.PAYEE' | translate }}</option>
+                <option value="pending">{{ 'ADMIN.PAYMENTS.EN_ATTENTE' | translate }}</option>
+                <option value="failed">{{ 'ADMIN.PAYMENTS.IMPAYEE' | translate }}</option>
               </select>
             </div>
           </div>
         </div>
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Référence</th>
-              <th>Utilisateur</th>
-              <th>Montant</th>
-              <th>Méthode</th>
-              <th>Statut</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let payment of payments$ | async; trackBy: trackByPaymentId">
-              <td><span class="admin-badge admin-badge-secondary">{{ payment.reference ?? payment._id?.slice(-8) }}</span></td>
-              <td>
-                <div class="admin-user-info">
-                  <div class="admin-user-name">{{ getUserName(payment.user) }}</div>
-                  <div class="admin-user-email">{{ payment.user?.email }}</div>
-                </div>
-              </td>
-              <td><strong>{{ formatCurrency(payment.amount ?? 0) }}</strong></td>
-              <td>{{ payment.method ?? 'N/A' }}</td>
-              <td>
-                <span class="admin-badge" [ngClass]="getPaymentStatusClasses(payment.status)">
-                  {{ getPaymentStatusLabel(payment.status) }}
-                </span>
-              </td>
-              <td>{{ (payment.processedAt ?? payment.createdAt) | date:'dd/MM/yyyy HH:mm' }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="admin-empty-state" *ngIf="(payments$ | async)?.length === 0">
-          <i class="fas fa-credit-card admin-empty-icon"></i>
-          <h3>Aucun paiement trouvé</h3>
-          <p>Les paiements de souscriptions apparaîtront ici.</p>
-        </div>
-      </div>
-
-      <!-- ── Subscriptions Tab ── -->
-      <div *ngIf="selectedTab === 'subscriptions' && !(isLoading$ | async)">
-        <div class="admin-filters-container" style="padding:12px 16px;border-bottom:1px solid #f1f5f9">
-          <div class="admin-filters-section">
-            <div class="admin-filter-group">
-              <label class="admin-filter-label">Plan</label>
-              <select class="admin-filter-select" (change)="onSubscriptionPlanFilter($event)">
-                <option value="">Tous les plans</option>
-                <option value="free">Gratuit</option>
-                <option value="premium">Premium</option>
-              </select>
-            </div>
-            <div class="admin-filter-group">
-              <label class="admin-filter-label">Statut</label>
-              <select class="admin-filter-select" (change)="onSubscriptionStatusFilter($event)">
-                <option value="">Tous</option>
-                <option value="active">Actif</option>
-                <option value="cancelled">Suspendu</option>
-                <option value="inactive">Désactivé</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Plan</th>
-              <th>Montant/mois</th>
-              <th>Statut</th>
-              <th>Limite propriétés</th>
-              <th>Depuis</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let sub of subscriptions$ | async; trackBy: trackBySubscriptionId">
-              <td>
-                <div class="admin-user-info">
-                  <div class="admin-user-name">{{ getUserName(sub.user) }}</div>
-                  <div class="admin-user-email">{{ sub.user?.email }}</div>
-                </div>
-              </td>
-              <td>
-                <span class="admin-badge" [class.admin-badge-warning]="sub.plan === 'premium'" [class.admin-badge-secondary]="sub.plan !== 'premium'">
-                  <i class="fas" [class.fa-crown]="sub.plan === 'premium'" [class.fa-user]="sub.plan !== 'premium'"></i>
-                  {{ sub.plan === 'premium' ? 'Premium' : 'Gratuit' }}
-                </span>
-              </td>
-              <td>{{ formatCurrency(getSubAmount(sub)) }}</td>
-              <td>
-                <span class="admin-badge" [ngClass]="getSubscriptionStatusClasses(getSubStatus(sub))">
-                  {{ getSubscriptionStatusLabel(getSubStatus(sub)) }}
-                </span>
-              </td>
-              <td>{{ getSubPropertyLimit(sub) }}</td>
-              <td>{{ sub.createdAt | date:'dd/MM/yyyy' }}</td>
-              <td>
-                <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger"
-                        *ngIf="getSubStatus(sub) === 'active' || getSubStatus(sub) === 'ACTIVE'"
-                        (click)="onCancelSubscription(sub)">
-                  <i class="fas fa-pause"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="admin-empty-state" *ngIf="(subscriptions$ | async)?.length === 0">
-          <i class="fas fa-calendar-check admin-empty-icon"></i>
-          <h3>Aucun abonnement trouvé</h3>
-        </div>
-      </div>
-
-      <!-- ── Coupons Tab ── -->
-      <div *ngIf="selectedTab === 'coupons' && !(isLoading$ | async)">
-        <div class="admin-filters-container" style="padding:12px 16px;border-bottom:1px solid #f1f5f9">
-          <div class="admin-search-section">
-            <div class="admin-search-input-group">
-              <i class="fas fa-search admin-search-icon"></i>
-              <input type="text" class="admin-search-input" placeholder="Rechercher un coupon..."
-                     [(ngModel)]="couponSearchTerm">
-            </div>
-          </div>
-        </div>
-
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Code</th>
-              <th>Nom</th>
-              <th>Valeur</th>
-              <th>Utilisations</th>
-              <th>Expiration</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngIf="coupons$ | async as allCoupons">
-              <tr *ngFor="let coupon of filterCoupons(allCoupons); trackBy: trackByCouponId">
-                <td><strong class="admin-badge admin-badge-secondary">{{ coupon.code }}</strong></td>
-                <td>{{ coupon.name }}</td>
-                <td><strong>{{ getCouponValueLabel(coupon) }}</strong></td>
-                <td>{{ getCouponUsage(coupon) }}</td>
+        <div class="admin-table-scroll">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>{{ 'ADMIN.PAYMENTS.REFERENCE' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.UTILISATEUR' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.PALIER' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.MONTANT' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.MOYEN' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.STATUT' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.PERIODE' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.PAYEE_LE' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let payment of payments$ | async; trackBy: trackByPaymentId">
+                <td><span class="admin-badge admin-badge-secondary">{{ payment.reference ?? payment._id.slice(-8) }}</span></td>
                 <td>
-                  <span *ngIf="getCouponExpiry(coupon)">{{ getCouponExpiry(coupon) | date:'dd/MM/yyyy' }}</span>
-                  <span *ngIf="!getCouponExpiry(coupon)" class="admin-badge admin-badge-secondary">Illimité</span>
-                </td>
-                <td>
-                  <span class="admin-badge" [class.admin-badge-success]="coupon.isActive" [class.admin-badge-secondary]="!coupon.isActive">
-                    {{ coupon.isActive ? 'Actif' : 'Inactif' }}
-                  </span>
-                </td>
-                <td>
-                  <div style="display:flex;gap:4px">
-                    <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditCoupon(coupon)">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onToggleCouponStatus(coupon)">
-                      <i class="fas" [class.fa-toggle-on]="coupon.isActive" [class.fa-toggle-off]="!coupon.isActive"></i>
-                    </button>
-                    <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteCoupon(coupon)">
-                      <i class="fas fa-trash"></i>
-                    </button>
+                  <div class="admin-user-info">
+                    <div class="admin-user-name">{{ getUserName(payment.user) }}</div>
+                    <div class="admin-user-email">{{ payment.user?.email }}</div>
                   </div>
                 </td>
+                <td>{{ tierLabel(payment.subscription?.tier, payment.subscription?.plan) }}</td>
+                <td><strong>{{ formatCurrency(payment.amount ?? 0) }}</strong></td>
+                <td>{{ payment.status === 'completed' ? getMethodLabel(payment.method) : '—' }}</td>
+                <td>
+                  <span class="admin-badge" [ngClass]="getPaymentStatusClasses(payment.status)">
+                    {{ getPaymentStatusLabel(payment.status) }}
+                  </span>
+                </td>
+                <td>{{ payment.createdAt | date:'MMMM yyyy' }}</td>
+                <td>{{ payment.processedAt ? (payment.processedAt | date:'dd/MM/yyyy HH:mm') : '—' }}</td>
               </tr>
-            </ng-container>
-          </tbody>
-        </table>
-        <div class="admin-empty-state" *ngIf="(coupons$ | async)?.length === 0">
-          <i class="fas fa-ticket-alt admin-empty-icon"></i>
-          <h3>Aucun coupon trouvé</h3>
-          <button class="admin-btn admin-btn-primary" (click)="onCreateCoupon()">
-            <i class="fas fa-plus"></i> Créer un coupon
-          </button>
+            </tbody>
+          </table>
+        </div>
+        <div class="admin-empty-state" *ngIf="(payments$ | async)?.length === 0 && !(isLoading$ | async)">
+          <i class="fas fa-file-invoice admin-empty-icon"></i>
+          <h3>{{ 'ADMIN.PAYMENTS.AUCUNE_FACTURE_TROUVEE' | translate }}</h3>
+          <p>{{ 'ADMIN.PAYMENTS.LES_FACTURES_D_ABONNEMENT_PAYANTES' | translate }}</p>
+        </div>
+        <div class="admin-pagination" *ngIf="(pagination$ | async)?.payments as p">
+          <span>{{ 'ADMIN.PAYMENTS.FACTURE_S_PAGE' | translate:{ p0: (p.total | number), p1: (p.page), p2: (p.totalPages || 1) } }}</span>
+          <div class="admin-pagination-actions">
+            <button class="admin-btn admin-btn-outline admin-btn-sm" [disabled]="p.page <= 1" (click)="goToPaymentsPage(p.page - 1)" [attr.aria-label]="'ADMIN.PAYMENTS.PAGE_PRECEDENTE' | translate">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="admin-btn admin-btn-outline admin-btn-sm" [disabled]="p.page >= p.totalPages" (click)="goToPaymentsPage(p.page + 1)" [attr.aria-label]="'ADMIN.PAYMENTS.PAGE_SUIVANTE' | translate">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Modal Coupon -->
-  <div class="admin-modal-overlay" *ngIf="showCouponModal" (click)="onCloseCouponModal()">
-    <div class="admin-modal" (click)="$event.stopPropagation()">
-      <div class="admin-modal-header">
-        <h3><i class="fas fa-ticket-alt"></i> {{ editingCoupon ? 'Modifier le coupon' : 'Nouveau coupon' }}</h3>
-        <button class="admin-modal-close" (click)="onCloseCouponModal()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="admin-modal-body">
-        <form [formGroup]="couponForm">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div>
-              <label class="admin-form-label">Nom *</label>
-              <input type="text" class="admin-form-control" formControlName="name" placeholder="Nom du coupon">
-            </div>
-            <div>
-              <label class="admin-form-label">Code *</label>
-              <input type="text" class="admin-form-control" formControlName="code" placeholder="CODE2025" style="text-transform:uppercase">
-            </div>
-            <div style="grid-column:1/-1">
-              <label class="admin-form-label">Description</label>
-              <input type="text" class="admin-form-control" formControlName="description">
-            </div>
-            <div>
-              <label class="admin-form-label">Type *</label>
-              <select class="admin-form-control" formControlName="type">
-                <option value="percentage">Pourcentage (%)</option>
-                <option value="fixed">Montant fixe (FCFA)</option>
+      <!-- ── Abonnements ── -->
+      <div *ngIf="selectedTab === 'subscriptions'">
+        <div class="admin-filters-container admin-filters-bar">
+          <div class="admin-filters-section">
+            <div class="admin-filter-group">
+              <label class="admin-filter-label" for="sub-plan">{{ 'ADMIN.PAYMENTS.FORMULE' | translate }}</label>
+              <select id="sub-plan" class="admin-filter-select" (change)="onSubscriptionPlanFilter($event)">
+                <option value="">{{ 'ADMIN.PAYMENTS.TOUTES' | translate }}</option>
+                <option value="free">{{ 'ADMIN.PAYMENTS.GRATUIT' | translate }}</option>
+                <option value="premium">{{ 'ADMIN.PAYMENTS.PAYANT_PRO_GOLD' | translate }}</option>
               </select>
             </div>
-            <div>
-              <label class="admin-form-label">Valeur *</label>
-              <input type="number" class="admin-form-control" formControlName="value" min="0">
-            </div>
-            <div>
-              <label class="admin-form-label">Limite d'utilisation</label>
-              <input type="number" class="admin-form-control" formControlName="usageLimit" min="1" placeholder="Illimité si vide">
-            </div>
-            <div>
-              <label class="admin-form-label">Date de début</label>
-              <input type="date" class="admin-form-control" formControlName="startDate">
-            </div>
-            <div>
-              <label class="admin-form-label">Date de fin</label>
-              <input type="date" class="admin-form-control" formControlName="endDate">
+            <div class="admin-filter-group">
+              <label class="admin-filter-label" for="sub-status">{{ 'ADMIN.PAYMENTS.STATUT' | translate }}</label>
+              <select id="sub-status" class="admin-filter-select" (change)="onSubscriptionStatusFilter($event)">
+                <option value="">{{ 'ADMIN.PAYMENTS.TOUS' | translate }}</option>
+                <option value="active">{{ 'ADMIN.PAYMENTS.ACTIF' | translate }}</option>
+                <option value="cancelled">{{ 'ADMIN.PAYMENTS.SUSPENDU_IMPAYE' | translate }}</option>
+                <option value="inactive">{{ 'ADMIN.PAYMENTS.DESACTIVE_ADMIN' | translate }}</option>
+              </select>
             </div>
           </div>
-        </form>
-      </div>
-      <div class="admin-modal-footer">
-        <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseCouponModal()">Annuler</button>
-        <button type="button" class="admin-btn admin-btn-primary" [disabled]="couponForm.invalid" (click)="onSaveCoupon()">
-          <i class="fas fa-save"></i> {{ editingCoupon ? 'Mettre à jour' : 'Créer' }}
-        </button>
-      </div>
-    </div>
-  </div>
+          <a class="admin-btn admin-btn-outline admin-btn-sm" routerLink="../subscriptions">
+            <i class="fas fa-crown"></i> {{ 'ADMIN.PAYMENTS.GERER_LES_ABONNEMENTS' | translate }}
+          </a>
+        </div>
 
-
-  <!-- Modal Suspension abonnement -->
-  <div class="admin-modal-overlay" *ngIf="showCancelModal" (click)="cancelCancelSubscription()">
-    <div class="admin-modal" (click)="$event.stopPropagation()">
-      <div class="admin-modal-header">
-        <h3>Suspendre l'abonnement</h3>
-        <button class="admin-modal-close" (click)="cancelCancelSubscription()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="admin-modal-body">
-        <p style="margin-bottom:12px">Suspendre l'abonnement de <strong>{{ getCancellingUserName() }}</strong> ?</p>
-        <label class="admin-form-label">Raison</label>
-        <textarea class="admin-form-control" rows="2" [(ngModel)]="cancelReason" placeholder="Raison (optionnel)..."></textarea>
-      </div>
-      <div class="admin-modal-footer">
-        <button class="admin-btn admin-btn-secondary" (click)="cancelCancelSubscription()">Annuler</button>
-        <button class="admin-btn admin-btn-danger" (click)="confirmCancelSubscription()">
-          <i class="fas fa-pause"></i> Confirmer la suspension
-        </button>
+        <div class="admin-table-scroll">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>{{ 'ADMIN.PAYMENTS.UTILISATEUR' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.PALIER' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.MONTANT_MOIS' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.STATUT' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.DERNIER_PAIEMENT' | translate }}</th>
+                <th>{{ 'ADMIN.PAYMENTS.DEPUIS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sub of subscriptions$ | async; trackBy: trackBySubscriptionId">
+                <td>
+                  <div class="admin-user-info">
+                    <div class="admin-user-name">{{ getUserName(sub.user) }}</div>
+                    <div class="admin-user-email">{{ sub.user?.email }}</div>
+                  </div>
+                </td>
+                <td>
+                  <span class="admin-badge" [class.admin-badge-warning]="isPaidTier(sub.currentTier, sub.plan)" [class.admin-badge-secondary]="!isPaidTier(sub.currentTier, sub.plan)">
+                    <i class="fas" [class.fa-crown]="isPaidTier(sub.currentTier, sub.plan)" [class.fa-user]="!isPaidTier(sub.currentTier, sub.plan)"></i>
+                    {{ tierLabel(sub.currentTier, sub.plan) }}
+                  </span>
+                </td>
+                <td>{{ formatCurrency(getSubAmount(sub)) }}</td>
+                <td>
+                  <span class="admin-badge" [ngClass]="getSubscriptionStatusClasses(sub.status)">
+                    {{ getSubscriptionStatusLabel(sub.status) }}
+                  </span>
+                </td>
+                <td>{{ sub.lastPayment ? (sub.lastPayment | date:'dd/MM/yyyy') : '—' }}</td>
+                <td>{{ sub.createdAt | date:'dd/MM/yyyy' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="admin-empty-state" *ngIf="(subscriptions$ | async)?.length === 0 && !(isLoading$ | async)">
+          <i class="fas fa-calendar-check admin-empty-icon"></i>
+          <h3>{{ 'ADMIN.PAYMENTS.AUCUN_ABONNEMENT_TROUVE' | translate }}</h3>
+        </div>
+        <div class="admin-pagination" *ngIf="(pagination$ | async)?.subscriptions as p">
+          <span>{{ 'ADMIN.PAYMENTS.ABONNEMENT_S_PAGE' | translate:{ p0: (p.total | number), p1: (p.page), p2: (p.totalPages || 1) } }}</span>
+          <div class="admin-pagination-actions">
+            <button class="admin-btn admin-btn-outline admin-btn-sm" [disabled]="p.page <= 1" (click)="goToSubscriptionsPage(p.page - 1)" [attr.aria-label]="'ADMIN.PAYMENTS.PAGE_PRECEDENTE' | translate">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="admin-btn admin-btn-outline admin-btn-sm" [disabled]="p.page >= p.totalPages" (click)="goToSubscriptionsPage(p.page + 1)" [attr.aria-label]="'ADMIN.PAYMENTS.PAGE_SUIVANTE' | translate">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

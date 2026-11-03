@@ -1,0 +1,340 @@
+// Thème de l'espace d'administration (feuille globale, angular.json).
+//
+// Toutes les couleurs de l'admin passent par ces variables CSS : clair par
+// défaut, sombre sous `html.app-theme--dark` (même classe que le reste de
+// l'application, voir shared/styles/dark-theme.scss). Les feuilles des pages
+// utilisent `styles/admin-tokens` dont les variables SCSS pointent ici.
+//
+// Contient aussi les composants communs (fenêtre de confirmation, tableaux
+// défilants, pagination, valeurs « configuré ») et les règles pour téléphone.
+
+:root {
+  --adm-primary: #cc8c0a;
+  --adm-primary-dark: #b87e09;
+  --adm-primary-soft: rgba(204, 140, 10, 0.12);
+  --adm-on-primary: #ffffff;
+
+  --adm-bg: #f8fafc;
+  --adm-surface: #ffffff;
+  --adm-surface-2: #f1f5f9;
+  --adm-surface-3: #e2e8f0;
+  --adm-border: #e2e8f0;
+  --adm-border-strong: #cbd5e1;
+
+  --adm-text: #0f172a;
+  --adm-text-2: #334155;
+  --adm-text-muted: #64748b;
+  --adm-text-faint: #94a3b8;
+
+  --adm-success: #059669;
+  --adm-success-soft: rgba(16, 185, 129, 0.12);
+  --adm-warning: #b45309;
+  --adm-warning-soft: rgba(245, 158, 11, 0.14);
+  --adm-danger: #dc2626;
+  --adm-danger-soft: rgba(239, 68, 68, 0.12);
+  --adm-info: #2563eb;
+  --adm-info-soft: rgba(59, 130, 246, 0.12);
+
+  --adm-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --adm-shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.18);
+  --adm-overlay: rgba(15, 23, 42, 0.55);
+  --adm-header-bg: #0f172a;
+}
+
+html.app-theme--dark {
+  --adm-primary: #e0a42a;
+  --adm-primary-dark: #cc8c0a;
+  --adm-primary-soft: rgba(224, 164, 42, 0.16);
+  --adm-on-primary: #121417;
+
+  --adm-bg: #121417;
+  --adm-surface: #1c1f24;
+  --adm-surface-2: #252930;
+  --adm-surface-3: #30353d;
+  --adm-border: #353a42;
+  --adm-border-strong: #474d57;
+
+  --adm-text: #e6e8eb;
+  --adm-text-2: #c4c9d1;
+  --adm-text-muted: #a3a9b3;
+  --adm-text-faint: #7b828d;
+
+  --adm-success: #34d399;
+  --adm-success-soft: rgba(52, 211, 153, 0.14);
+  --adm-warning: #fbbf24;
+  --adm-warning-soft: rgba(251, 191, 36, 0.14);
+  --adm-danger: #f87171;
+  --adm-danger-soft: rgba(248, 113, 113, 0.14);
+  --adm-info: #60a5fa;
+  --adm-info-soft: rgba(96, 165, 250, 0.14);
+
+  --adm-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --adm-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.6);
+  --adm-overlay: rgba(0, 0, 0, 0.65);
+  --adm-header-bg: #0b0d10;
+}
+
+// ── Composants communs ─────────────────────────────────────────────────────
+
+// Fenêtre de confirmation (remplace confirm() du navigateur).
+.adm-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--adm-overlay);
+}
+
+.adm-confirm {
+  width: 100%;
+  max-width: 440px;
+  padding: 24px;
+  border-radius: 12px;
+  background: var(--adm-surface);
+  color: var(--adm-text);
+  box-shadow: var(--adm-shadow-lg);
+
+  h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+  p { margin: 0 0 16px; color: var(--adm-text-2); line-height: 1.5; }
+  label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 500; }
+  textarea, input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--adm-border-strong);
+    border-radius: 8px;
+    background: var(--adm-surface);
+    color: var(--adm-text);
+    font: inherit;
+  }
+  .adm-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+}
+
+// Boutons simples, utilisables partout dans l'admin.
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid var(--adm-border-strong);
+  border-radius: 8px;
+  background: var(--adm-surface);
+  color: var(--adm-text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms, border-color 150ms;
+
+  &:hover:not(:disabled) { background: var(--adm-surface-2); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; }
+  &:focus-visible { outline: 2px solid var(--adm-primary); outline-offset: 2px; }
+
+  &--primary {
+    border-color: var(--adm-primary);
+    background: var(--adm-primary);
+    color: var(--adm-on-primary);
+    &:hover:not(:disabled) { background: var(--adm-primary-dark); }
+  }
+  &--danger {
+    border-color: var(--adm-danger);
+    background: var(--adm-danger);
+    color: #fff;
+    &:hover:not(:disabled) { filter: brightness(0.92); background: var(--adm-danger); }
+  }
+  &--ghost { border-color: transparent; background: transparent; }
+  &--sm { min-height: 30px; padding: 4px 10px; font-size: 13px; }
+}
+
+// Pastilles d'état.
+.adm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--adm-surface-2);
+  color: var(--adm-text-2);
+
+  &--success { background: var(--adm-success-soft); color: var(--adm-success); }
+  &--warning { background: var(--adm-warning-soft); color: var(--adm-warning); }
+  &--danger { background: var(--adm-danger-soft); color: var(--adm-danger); }
+  &--info { background: var(--adm-info-soft); color: var(--adm-info); }
+  &--primary { background: var(--adm-primary-soft); color: var(--adm-primary-dark); }
+}
+
+// Pagination simple (précédent / suivant).
+.adm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  color: var(--adm-text-muted);
+  font-size: 13px;
+  flex-wrap: wrap;
+
+  .adm-pagination-buttons { display: flex; gap: 8px; }
+}
+
+// Tableau qui défile horizontalement au lieu de déborder de l'écran.
+.adm-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// Page d'administration simple (en-tête, chiffres, filtres, carte, tableau).
+.adm-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: var(--adm-text);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    h2 { margin: 0; font-size: 24px; font-weight: 700; i { color: var(--adm-primary); margin-right: 6px; } }
+    p { margin: 4px 0 0; color: var(--adm-text-muted); }
+  }
+
+  &__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    background: var(--adm-surface);
+    box-shadow: var(--adm-shadow);
+    span { color: var(--adm-text-muted); font-size: 13px; }
+    strong { font-size: 22px; }
+    &--danger strong { color: var(--adm-danger); }
+    &--success strong { color: var(--adm-success); }
+  }
+
+  &__filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--adm-text-muted); }
+    select, input {
+      min-height: 38px;
+      padding: 6px 10px;
+      border: 1px solid var(--adm-border-strong);
+      border-radius: 8px;
+      background: var(--adm-surface);
+      color: var(--adm-text);
+      font: inherit;
+    }
+  }
+  &__grow { flex: 1 1 240px; }
+
+  &__card {
+    padding: 4px 16px 8px;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    background: var(--adm-surface);
+    box-shadow: var(--adm-shadow);
+  }
+
+  &__empty { padding: 24px 0; color: var(--adm-text-faint); text-align: center; }
+  &__actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th, td { padding: 10px 12px; border-bottom: 1px solid var(--adm-border); text-align: left; vertical-align: top; }
+  th { color: var(--adm-text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+  .is-open td { background: var(--adm-surface-2); }
+
+  &__link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--adm-text);
+    font: inherit;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    &:hover { color: var(--adm-primary-dark); text-decoration: underline; }
+    &:focus-visible { outline: 2px solid var(--adm-primary); outline-offset: 2px; }
+  }
+  &__detail td { background: var(--adm-surface-2); }
+}
+
+.adm-muted { color: var(--adm-text-muted); font-size: 12px; }
+.adm-nowrap { white-space: nowrap; }
+
+.adm-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px 16px;
+  margin: 0 0 12px;
+  dt { color: var(--adm-text-muted); font-size: 12px; }
+  dd { margin: 2px 0 0; }
+}
+
+.adm-code {
+  max-height: 260px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--adm-bg);
+  color: var(--adm-text-2);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+// ── Téléphone : toutes les pages de l'admin ────────────────────────────────
+@media (max-width: 768px) {
+  .admin-main {
+    // Tableaux des pages : défilement horizontal maîtrisé.
+    table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    // Fenêtres des pages : plein écran.
+    .modal-container,
+    .admin-modal,
+    .admin-modal-content,
+    .sub-modal {
+      width: 100% !important;
+      max-width: 100% !important;
+      max-height: 100vh !important;
+      min-height: 100vh;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+    .modal-overlay,
+    .admin-modal-overlay { padding: 0 !important; align-items: stretch !important; }
+  }
+
+  // Fenêtres Angular Material ouvertes depuis l'admin.
+  .cdk-overlay-pane.admin-dialog,
+  .cdk-overlay-pane:has(.admin-modal-shell) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh;
+  }
+}

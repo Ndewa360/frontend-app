@@ -20,14 +20,14 @@
           <i class="fas fa-globe" *ngIf="currentStep === 'region'"></i>
           <i class="fas fa-check" *ngIf="currentStep === 'country'"></i>
         </div>
-        <span class="step-label">Région</span>
+        <span class="step-label">{{ 'ADMIN.COUNTRY_SELECT.REGION' | translate }}</span>
       </div>
       <div class="step-connector" [class.active]="currentStep === 'country'"></div>
       <div class="step" [class.active]="currentStep === 'country'">
         <div class="step-circle">
           <i class="fas fa-flag"></i>
         </div>
-        <span class="step-label">Pays</span>
+        <span class="step-label">{{ 'ADMIN.COUNTRY_SELECT.PAYS' | translate }}</span>
       </div>
     </div>
   </div>
@@ -38,8 +38,8 @@
     <!-- Étape 1: Sélection de région -->
     <div *ngIf="currentStep === 'region'" class="step-content region-selection">
       <div class="section-title">
-        <h3>Choisissez une région</h3>
-        <p>Sélectionnez la région géographique pour afficher les pays disponibles</p>
+        <h3>{{ 'ADMIN.COUNTRY_SELECT.CHOISISSEZ_UNE_REGION' | translate }}</h3>
+        <p>{{ 'ADMIN.COUNTRY_SELECT.SELECTIONNEZ_LA_REGION_GEOGRAPHIQUE_POUR' | translate }}</p>
       </div>
       
       <div class="regions-grid">
@@ -52,8 +52,8 @@
             <i [class]="region.icon"></i>
           </div>
           <div class="region-info">
-            <h4 class="region-name">{{ region.label }}</h4>
-            <p class="region-description">{{ region.description }}</p>
+            <h4 class="region-name">{{ region.label | translate }}</h4>
+            <p class="region-description">{{ region.description | translate }}</p>
           </div>
           <div class="region-arrow">
             <i class="fas fa-chevron-right"></i>
@@ -73,7 +73,7 @@
           </button>
           <div class="region-badge" [style.background-color]="selectedRegion?.color">
             <i [class]="selectedRegion?.icon"></i>
-            <span>{{ selectedRegion?.label }}</span>
+            <span>{{ (selectedRegion?.label || '') | translate }}</span>
           </div>
         </div>
         
@@ -84,7 +84,7 @@
             <input 
               type="text" 
               class="search-input"
-              placeholder="Rechercher un pays..."
+              [placeholder]="'ADMIN.COUNTRY_SELECT.RECHERCHER_UN_PAYS' | translate"
               [formControl]="searchControl"
               [disabled]="isLoading$ | async">
           </div>
@@ -96,7 +96,7 @@
         <div class="loading-spinner">
           <i class="fas fa-spinner fa-spin"></i>
         </div>
-        <p>Chargement des pays...</p>
+        <p>{{ 'ADMIN.COUNTRY_SELECT.CHARGEMENT_DES_PAYS' | translate }}</p>
       </div>
 
       <!-- Liste des pays -->
@@ -108,7 +108,7 @@
           (click)="onSelectCountry(country)">
           
           <div class="country-flag">
-            <img [src]="getCountryFlag(country)" [alt]="country.name.common + ' flag'" loading="lazy">
+            <img [src]="getCountryFlag(country)" [alt]="country.name.common + ('ADMIN.COUNTRY_SELECT.FLAG' | translate)" loading="lazy">
           </div>
           
           <div class="country-info">
@@ -145,8 +145,8 @@
           <div class="empty-icon">
             <i class="fas fa-search"></i>
           </div>
-          <h4>Aucun pays trouvé</h4>
-          <p>Aucun pays ne correspond à votre recherche dans la région {{ selectedRegion?.label }}.</p>
+          <h4>{{ 'ADMIN.COUNTRY_SELECT.AUCUN_PAYS_TROUVE' | translate }}</h4>
+          <p>{{ 'ADMIN.COUNTRY_SELECT.AUCUN_PAYS_NE_CORRESPOND_A' | translate:{ p0: ((selectedRegion?.label || '') | translate) } }}</p>
         </div>
       </div>
     </div>
@@ -159,7 +159,7 @@
         class="btn-secondary" 
         (click)="onCancel()"
         [disabled]="isLoading$ | async">
-        Annuler
+        {{ 'ADMIN.COUNTRY_SELECT.ANNULER' | translate }}
       </button>
       
       <button 
@@ -168,10 +168,10 @@
         (click)="onConfirm()"
         [disabled]="!selectedCountry || (isLoading$ | async)">
         <i class="fas fa-plus mr-2"></i>
-        <span *ngIf="!(isLoading$ | async)">Ajouter le pays</span>
+        <span *ngIf="!(isLoading$ | async)">{{ 'ADMIN.COUNTRY_SELECT.AJOUTER_LE_PAYS' | translate }}</span>
         <span *ngIf="isLoading$ | async">
           <i class="fas fa-spinner fa-spin mr-2"></i>
-          Ajout en cours...
+          {{ 'ADMIN.COUNTRY_SELECT.AJOUT_EN_COURS' | translate }}
         </span>
       </button>
     </div>

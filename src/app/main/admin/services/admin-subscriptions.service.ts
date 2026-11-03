@@ -18,6 +18,7 @@ import {
 
 // Shared Models
 import { ApiResultFormat } from '../../../shared/store/global/api-result-format.model';
+import { CsvExport } from '../utils/csv-download';
 
 @Injectable({
   providedIn: 'root'
@@ -116,22 +117,12 @@ export class AdminSubscriptionsService {
   /**
    * Exporter les souscriptions
    */
-  exportSubscriptions(filters: SubscriptionFilters = {}, format: string = 'xlsx'): Observable<{ downloadUrl: string }> {
-    let params = new HttpParams().set('format', format);
-    
-    // Ajouter les filtres aux paramètres
-    Object.keys(filters).forEach(key => {
-      const value = filters[key];
-      if (value !== undefined && value !== null && value !== '') {
-        if (value instanceof Date) {
-          params = params.set(key, value.toISOString());
-        } else {
-          params = params.set(key, value.toString());
-        }
-      }
-    });
-
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
+  exportSubscriptions(filters: SubscriptionFilters = {}): Observable<CsvExport> {
+    // Le backend lit les filtres dans le corps et renvoie le CSV complet.
+    const body = Object.fromEntries(
+      Object.entries(filters || {}).filter(([, v]) => v !== undefined && v !== null && v !== '')
+    );
+    return this.http.post<ApiResultFormat<CsvExport>>(`${this.apiUrl}/export`, body).pipe(
       map(response => response.data)
     );
   }

@@ -5,26 +5,26 @@
     <div class="admin-header-content">
       <div class="admin-header-text">
         <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="goBack()">
-          <i class="fas fa-arrow-left"></i> Retour
+          <i class="fas fa-arrow-left"></i> {{ 'ADMIN.USER_DETAILS.RETOUR' | translate }}
         </button>
         <h1 class="admin-page-title" *ngIf="user">{{ getUserDisplayName() }}</h1>
         <p class="admin-page-subtitle" *ngIf="user">{{ user.email }}</p>
       </div>
       <div class="admin-header-actions" *ngIf="user">
         <button class="admin-btn admin-btn-secondary" (click)="refreshData()">
-          <i class="fas fa-sync-alt"></i> Actualiser
+          <i class="fas fa-sync-alt"></i> {{ 'ADMIN.USER_DETAILS.ACTUALISER' | translate }}
         </button>
         <!-- Suspendre : visible si compte actif -->
         <button class="admin-btn admin-btn-warning"
           *ngIf="user.subscription?.accountStatus === 'active'"
           (click)="suspendAccount()">
-          <i class="fas fa-pause"></i> Suspendre
+          <i class="fas fa-pause"></i> {{ 'ADMIN.USER_DETAILS.SUSPENDRE' | translate }}
         </button>
         <!-- Réactiver : visible si compte suspendu OU désactivé -->
         <button class="admin-btn admin-btn-success"
           *ngIf="user.subscription?.accountStatus === 'suspended' || user.subscription?.accountStatus === 'disabled'"
           (click)="reactivateAccount()">
-          <i class="fas fa-play"></i> Réactiver
+          <i class="fas fa-play"></i> {{ 'ADMIN.USER_DETAILS.REACTIVER' | translate }}
         </button>
       </div>
     </div>
@@ -34,16 +34,16 @@
   <div class="admin-loading-overlay" *ngIf="isLoading">
     <div class="admin-loader">
       <div class="admin-spinner"></div>
-      <p>Chargement des détails...</p>
+      <p>{{ 'ADMIN.USER_DETAILS.CHARGEMENT_DES_DETAILS' | translate }}</p>
     </div>
   </div>
 
   <!-- Error State -->
   <div class="admin-empty-state" *ngIf="!isLoading && !user">
     <i class="fas fa-exclamation-triangle admin-empty-icon"></i>
-    <h3>Utilisateur non trouvé</h3>
-    <p>L'utilisateur demandé n'existe pas ou a été supprimé.</p>
-    <button class="admin-btn admin-btn-primary" (click)="goBack()">Retour à la liste</button>
+    <h3>{{ 'ADMIN.USER_DETAILS.UTILISATEUR_NON_TROUVE' | translate }}</h3>
+    <p>{{ 'ADMIN.USER_DETAILS.L_UTILISATEUR_DEMANDE_N_EXISTE' | translate }}</p>
+    <button class="admin-btn admin-btn-primary" (click)="goBack()">{{ 'ADMIN.USER_DETAILS.RETOUR_A_LA_LISTE' | translate }}</button>
   </div>
 
   <!-- Content -->
@@ -55,24 +55,24 @@
         <div class="admin-stat-icon"><i class="fas fa-building"></i></div>
         <div class="admin-stat-content">
           <div class="admin-stat-number">{{ user.properties?.total || 0 }}</div>
-          <div class="admin-stat-label">Propriétés</div>
-          <div class="admin-stat-trend">{{ user.properties?.occupiedUnits || 0 }} unités occupées</div>
+          <div class="admin-stat-label">{{ 'ADMIN.USER_DETAILS.PROPRIETES' | translate }}</div>
+          <div class="admin-stat-trend">{{ 'ADMIN.USER_DETAILS.UNITES_OCCUPEES' | translate:{ p0: (user.properties?.occupiedUnits || 0) } }}</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-info">
         <div class="admin-stat-icon"><i class="fas fa-door-open"></i></div>
         <div class="admin-stat-content">
           <div class="admin-stat-number">{{ user.properties?.totalUnits || 0 }}</div>
-          <div class="admin-stat-label">Unités totales</div>
-          <div class="admin-stat-trend">{{ user.properties?.vacant || 0 }} vacantes</div>
+          <div class="admin-stat-label">{{ 'ADMIN.USER_DETAILS.UNITES_TOTALES' | translate }}</div>
+          <div class="admin-stat-trend">{{ 'ADMIN.USER_DETAILS.VACANTES' | translate:{ p0: (user.properties?.vacant || 0) } }}</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-warning">
         <div class="admin-stat-icon"><i class="fas fa-dollar-sign"></i></div>
         <div class="admin-stat-content">
           <div class="admin-stat-number">{{ formatCurrency(user.financialSummary?.totalRevenue || 0) }}</div>
-          <div class="admin-stat-label">Revenus totaux</div>
-          <div class="admin-stat-trend">{{ formatCurrency(user.financialSummary?.monthlyRevenue || 0) }}/mois</div>
+          <div class="admin-stat-label">{{ 'ADMIN.USER_DETAILS.REVENUS_TOTAUX' | translate }}</div>
+          <div class="admin-stat-trend">{{ 'ADMIN.USER_DETAILS.MOIS' | translate:{ p0: (formatCurrency(user.financialSummary?.monthlyRevenue || 0)) } }}</div>
         </div>
       </div>
       <div class="admin-stat-card admin-stat-primary">
@@ -81,9 +81,9 @@
           <div class="admin-stat-number" [ngClass]="getOccupancyClass(user.financialSummary?.averageOccupancy || 0)">
             {{ user.financialSummary?.averageOccupancy || 0 }}%
           </div>
-          <div class="admin-stat-label">Taux d'occupation</div>
+          <div class="admin-stat-label">{{ 'ADMIN.USER_DETAILS.TAUX_D_OCCUPATION' | translate }}</div>
           <div class="admin-stat-trend" *ngIf="(user.financialSummary?.unpaidAmount || 0) > 0" style="color:#ef4444">
-            {{ formatCurrency(user.financialSummary.unpaidAmount) }} impayés
+            {{ 'ADMIN.USER_DETAILS.IMPAYES' | translate:{ p0: (formatCurrency(user.financialSummary.unpaidAmount)) } }}
           </div>
         </div>
       </div>
@@ -95,43 +95,43 @@
       <!-- Informations utilisateur -->
       <div class="admin-health-card">
         <div class="admin-card-header">
-          <h3><i class="fas fa-user" style="color:#cc8c0a;margin-right:8px"></i>Informations utilisateur</h3>
+          <h3><i class="fas fa-user" style="color:#cc8c0a;margin-right:8px"></i>{{ 'ADMIN.USER_DETAILS.INFORMATIONS_UTILISATEUR' | translate }}</h3>
         </div>
         <div class="admin-health-content">
           <div class="admin-health-services">
             <div class="admin-service-item">
-              <span class="admin-service-name">Nom complet</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.NOM_COMPLET' | translate }}</span>
               <span class="admin-service-status">{{ getUserDisplayName() }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Email</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.EMAIL' | translate }}</span>
               <span class="admin-service-status">{{ user.email }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Téléphone</span>
-              <span class="admin-service-status">{{ user.phoneNumber || 'Non renseigné' }}</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.TELEPHONE' | translate }}</span>
+              <span class="admin-service-status">{{ user.phoneNumber || ('ADMIN.USER_DETAILS.NON_RENSEIGNE' | translate) }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Type de compte</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.TYPE_DE_COMPTE' | translate }}</span>
               <span class="admin-badge admin-badge-info">{{ user.userType }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Statut utilisateur</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.STATUT_UTILISATEUR' | translate }}</span>
               <!-- CORRECTION : affiche le vrai statut (active/inactive/suspended/banned/disabled) -->
               <span [class]="getUserStatusClass(user.status)">{{ getUserStatusLabel(user.status) }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Email confirmé</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.EMAIL_CONFIRME' | translate }}</span>
               <span [class]="user.emailConfirmed ? 'admin-badge admin-badge-success' : 'admin-badge admin-badge-warning'">
-                {{ user.emailConfirmed ? 'Oui' : 'Non' }}
+                {{ user.emailConfirmed ? ('ADMIN.USER_DETAILS.OUI' | translate) : ('ADMIN.USER_DETAILS.NON' | translate) }}
               </span>
             </div>
             <div class="admin-service-item" *ngIf="user.country">
-              <span class="admin-service-name">Pays</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.PAYS' | translate }}</span>
               <span class="admin-service-status">{{ user.country }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Membre depuis</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.MEMBRE_DEPUIS' | translate }}</span>
               <span class="admin-service-status">{{ formatDate(user.createdAt) }}</span>
             </div>
           </div>
@@ -141,7 +141,7 @@
       <!-- Souscription -->
       <div class="admin-health-card">
         <div class="admin-card-header">
-          <h3><i class="fas fa-crown" style="color:#cc8c0a;margin-right:8px"></i>Souscription</h3>
+          <h3><i class="fas fa-crown" style="color:#cc8c0a;margin-right:8px"></i>{{ 'ADMIN.USER_DETAILS.SOUSCRIPTION' | translate }}</h3>
           <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="refreshData()">
             <i class="fas fa-sync-alt"></i>
           </button>
@@ -149,36 +149,41 @@
         <div class="admin-health-content" *ngIf="user.subscription; else noSubscription">
           <div class="admin-health-services">
             <div class="admin-service-item">
-              <span class="admin-service-name">Plan</span>
-              <span [class]="getPlanBadgeClass(user.subscription.plan)">{{ getPlanLabel(user.subscription.plan) }}</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.PALIER' | translate }}</span>
+              <span [class]="getPlanBadgeClass(user.subscription.plan, user.subscription.currentTier)">{{ getPlanLabel(user.subscription.plan, user.subscription.currentTier) }}<ng-container *ngIf="user.subscription.pricing?.trialActive"> {{ 'ADMIN.USER_DETAILS.ESSAI' | translate }}</ng-container></span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Statut souscription</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.STATUT_DU_COMPTE' | translate }}</span>
               <span [class]="getStatusBadgeClass(user.subscription.accountStatus)">{{ getStatusLabel(user.subscription.accountStatus) }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Propriétés utilisées</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.BIENS_FACTURES' | translate }}</span>
+              <span class="admin-service-status">{{ user.subscription.pricing?.propertiesCount ?? user.properties?.total ?? 0 }}</span>
+            </div>
+            <div class="admin-service-item" *ngIf="user.subscription.pricing as p">
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.LOGEMENTS_OCCUPES_LOYERS' | translate }}</span>
+              <span class="admin-service-status">{{ p.occupiedUnitsCount }} · {{ formatCurrency(p.totalRent) }}</span>
+            </div>
+            <div class="admin-service-item">
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.MONTANT_MENSUEL' | translate }}</span>
               <span class="admin-service-status">
-                {{ user.properties?.total || 0 }} / {{ user.subscription.propertyLimit || '∞' }}
+                {{ formatCurrency(user.subscription.customMonthlyAmount ?? user.subscription.pricing?.amount ?? user.subscription.monthlyAmount ?? 0) }}
+                <small *ngIf="user.subscription.customMonthlyAmount != null"> {{ 'ADMIN.USER_DETAILS.GOLD_NEGOCIE' | translate }}</small>
               </span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Montant mensuel</span>
-              <span class="admin-service-status">{{ formatCurrency(user.subscription.monthlyAmount || 0) }}</span>
-            </div>
-            <div class="admin-service-item">
-              <span class="admin-service-name">Dernier paiement</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.DERNIER_PAIEMENT' | translate }}</span>
               <span class="admin-service-status">{{ formatDate(user.subscription.lastPaymentDate) }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Souscrit depuis</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.SOUSCRIT_DEPUIS' | translate }}</span>
               <span class="admin-service-status">{{ formatDate(user.subscription.createdAt) }}</span>
             </div>
           </div>
         </div>
         <ng-template #noSubscription>
           <div class="admin-empty-state" style="padding:1rem">
-            <p>Aucune souscription active</p>
+            <p>{{ 'ADMIN.USER_DETAILS.AUCUNE_SOUSCRIPTION_ACTIVE' | translate }}</p>
           </div>
         </ng-template>
       </div>
@@ -189,10 +194,10 @@
     <div class="admin-bottom-grid" *ngIf="user.subscription">
       <div class="admin-health-card">
         <div class="admin-card-header">
-          <h3><i class="fas fa-credit-card" style="color:#cc8c0a;margin-right:8px"></i>État des paiements</h3>
+          <h3><i class="fas fa-credit-card" style="color:#cc8c0a;margin-right:8px"></i>{{ 'ADMIN.USER_DETAILS.ETAT_DES_PAIEMENTS' | translate }}</h3>
           <button class="admin-btn admin-btn-ghost admin-btn-sm"
             *ngIf="user.subscription.hasUnpaidInvoices"
-            (click)="sendPaymentReminder()" title="Envoyer un rappel">
+            (click)="sendPaymentReminder()" [title]="'ADMIN.USER_DETAILS.ENVOYER_UN_RAPPEL' | translate">
             <i class="fas fa-envelope"></i>
           </button>
         </div>
@@ -206,22 +211,22 @@
                [class.fa-exclamation-triangle]="user.subscription.hasUnpaidInvoices"
                [style.color]="user.subscription.hasUnpaidInvoices ? '#D97706' : '#059669'"></i>
             <span [style.color]="user.subscription.hasUnpaidInvoices ? '#92400E' : '#065F46'" style="font-weight:600">
-              {{ user.subscription.hasUnpaidInvoices ? 'Paiements en retard' : 'Paiements à jour' }}
+              {{ user.subscription.hasUnpaidInvoices ? ('ADMIN.USER_DETAILS.PAIEMENTS_EN_RETARD' | translate) : ('ADMIN.USER_DETAILS.PAIEMENTS_A_JOUR' | translate) }}
             </span>
           </div>
 
           <div class="admin-health-services" *ngIf="user.subscription.hasUnpaidInvoices">
             <div class="admin-service-item">
-              <span class="admin-service-name">Factures impayées</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.FACTURES_IMPAYEES' | translate }}</span>
               <span class="admin-service-status down">{{ user.subscription.unpaidInvoicesCount }}</span>
             </div>
             <div class="admin-service-item">
-              <span class="admin-service-name">Montant total dû</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.MONTANT_TOTAL_DU' | translate }}</span>
               <span class="admin-service-status down">{{ formatCurrency(user.subscription.totalUnpaidAmount) }}</span>
             </div>
             <!-- Première période impayée -->
             <div class="admin-service-item" *ngIf="user.subscription.firstUnpaidPeriod">
-              <span class="admin-service-name">Période impayée</span>
+              <span class="admin-service-name">{{ 'ADMIN.USER_DETAILS.PERIODE_IMPAYEE' | translate }}</span>
               <span class="admin-service-status">
                 {{ formatDateShort(user.subscription.firstUnpaidPeriod.startedAt) }}
                 → {{ formatDateShort(user.subscription.firstUnpaidPeriod.endedAt) }}
@@ -235,10 +240,10 @@
             <button class="admin-btn admin-btn-success admin-btn-sm"
               (click)="markAsPaid()" [disabled]="isMarkingPaid">
               <i class="fas" [class.fa-check]="!isMarkingPaid" [class.fa-spinner]="isMarkingPaid" [class.fa-spin]="isMarkingPaid"></i>
-              {{ isMarkingPaid ? 'En cours...' : 'Marquer payé' }}
+              {{ isMarkingPaid ? ('ADMIN.USER_DETAILS.EN_COURS' | translate) : ('ADMIN.USER_DETAILS.MARQUER_PAYE' | translate) }}
             </button>
             <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="sendPaymentReminder()">
-              <i class="fas fa-envelope"></i> Rappel email
+              <i class="fas fa-envelope"></i> {{ 'ADMIN.USER_DETAILS.RAPPEL_EMAIL' | translate }}
             </button>
           </div>
         </div>
@@ -247,30 +252,30 @@
       <!-- Historique des périodes -->
       <div class="admin-health-card" *ngIf="user.subscription.recentPeriods?.length > 0">
         <div class="admin-card-header">
-          <h3><i class="fas fa-history" style="color:#cc8c0a;margin-right:8px"></i>Historique des périodes</h3>
+          <h3><i class="fas fa-history" style="color:#cc8c0a;margin-right:8px"></i>{{ 'ADMIN.USER_DETAILS.HISTORIQUE_DES_PERIODES' | translate }}</h3>
         </div>
         <div class="admin-health-content" style="max-height:280px;overflow-y:auto">
           <table style="width:100%;border-collapse:collapse;font-size:11px">
             <thead>
-              <tr style="background:#F3F4F6">
-                <th style="padding:6px 8px;text-align:left;font-weight:600;color:#374151">Période</th>
-                <th style="padding:6px 8px;text-align:right;font-weight:600;color:#374151">Montant</th>
-                <th style="padding:6px 8px;text-align:center;font-weight:600;color:#374151">Statut</th>
-                <th style="padding:6px 8px;text-align:left;font-weight:600;color:#374151">Payé le</th>
+              <tr style="background:var(--adm-surface-2)">
+                <th style="padding:6px 8px;text-align:left;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.PERIODE' | translate }}</th>
+                <th style="padding:6px 8px;text-align:right;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.MONTANT' | translate }}</th>
+                <th style="padding:6px 8px;text-align:center;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.STATUT' | translate }}</th>
+                <th style="padding:6px 8px;text-align:left;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.PAYE_LE' | translate }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let period of user.subscription.recentPeriods trackBy: trackByFn" style="border-bottom:1px solid #F3F4F6">
-                <td style="padding:6px 8px;color:#374151">
+              <tr *ngFor="let period of user.subscription.recentPeriods trackBy: trackByFn" style="border-bottom:1px solid var(--adm-border)">
+                <td style="padding:6px 8px;color:var(--adm-text-2)">
                   {{ formatDateShort(period.startedAt) }} → {{ formatDateShort(period.endedAt) }}
                 </td>
-                <td style="padding:6px 8px;text-align:right;color:#374151">
+                <td style="padding:6px 8px;text-align:right;color:var(--adm-text-2)">
                   {{ formatCurrency(period.calculatedAmount) }}
                 </td>
                 <td style="padding:6px 8px;text-align:center">
                   <span [class]="getPeriodStateClass(period.state)">{{ getPeriodStateLabel(period.state) }}</span>
                 </td>
-                <td style="padding:6px 8px;color:#6B7280">
+                <td style="padding:6px 8px;color:var(--adm-text-muted)">
                   {{ period.paymentDate ? formatDateShort(period.paymentDate) : '—' }}
                 </td>
               </tr>
@@ -286,7 +291,7 @@
         <div class="admin-table-header" style="display:flex;justify-content:space-between;align-items:center">
           <h3 class="admin-table-title">
             <i class="fas fa-exchange-alt" style="color:#cc8c0a"></i>
-            Historique des transactions (loyer + souscription)
+            {{ 'ADMIN.USER_DETAILS.HISTORIQUE_DES_TRANSACTIONS_LOYER_SOUSCRIPTION' | translate }}
             <span *ngIf="rentTransactions.length > 0" class="admin-badge admin-badge-secondary" style="margin-left:8px">
               {{ rentTransactions.length }}
             </span>
@@ -297,47 +302,47 @@
         </div>
 
         <!-- Loader -->
-        <div *ngIf="isLoadingRentTx" style="padding:24px;text-align:center;color:#94a3b8">
-          <i class="fas fa-spinner fa-spin"></i> Chargement...
+        <div *ngIf="isLoadingRentTx" style="padding:24px;text-align:center;color:var(--adm-text-faint)">
+          <i class="fas fa-spinner fa-spin"></i> {{ 'ADMIN.USER_DETAILS.CHARGEMENT' | translate }}
         </div>
 
         <!-- Tableau -->
         <div *ngIf="!isLoadingRentTx && rentTransactions.length > 0" style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse;font-size:12px">
             <thead>
-              <tr style="background:#F3F4F6">
-                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Date</th>
-                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Type</th>
-                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Détail</th>
-                <th style="padding:8px 12px;text-align:right;font-weight:600;color:#374151">Montant</th>
-                <th style="padding:8px 12px;text-align:left;font-weight:600;color:#374151">Provider</th>
-                <th style="padding:8px 12px;text-align:center;font-weight:600;color:#374151">Statut</th>
-                <th style="padding:8px 12px;text-align:center;font-weight:600;color:#374151">Actions</th>
+              <tr style="background:var(--adm-surface-2)">
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.DATE' | translate }}</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.TYPE' | translate }}</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.DETAIL' | translate }}</th>
+                <th style="padding:8px 12px;text-align:right;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.MONTANT' | translate }}</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.PROVIDER' | translate }}</th>
+                <th style="padding:8px 12px;text-align:center;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.STATUT' | translate }}</th>
+                <th style="padding:8px 12px;text-align:center;font-weight:600;color:var(--adm-text-2)">{{ 'ADMIN.USER_DETAILS.ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let tx of rentTransactions trackBy: trackByFn"
-                  style="border-bottom:1px solid #F3F4F6"
+                  style="border-bottom:1px solid var(--adm-border)"
                   [style.background]="isTxBusy(tx.externalRef) ? '#FFFBEB' : 'white'">
-                <td style="padding:8px 12px;color:#6B7280">{{ formatDate(tx.createdAt) }}</td>
+                <td style="padding:8px 12px;color:var(--adm-text-muted)">{{ formatDate(tx.createdAt) }}</td>
                 <td style="padding:8px 12px">
                   <span [class]="getTxContextClass(tx.context)">{{ getTxContextLabel(tx.context) }}</span>
                 </td>
                 <td style="padding:8px 12px">
                   <ng-container *ngIf="tx.context === 'RENT'">
-                    <div style="font-weight:600;color:#374151">{{ tx.locataire?.fullName || 'Locataire inconnu' }}</div>
-                    <div style="font-size:11px;color:#9CA3AF">{{ tx.property?.name || '' }} — {{ tx.room?.code || '' }}</div>
-                    <div style="font-size:11px;color:#9CA3AF">{{ tx.locataire?.phoneNumber || tx.locataire?.email || '' }}</div>
+                    <div style="font-weight:600;color:var(--adm-text-2)">{{ tx.locataire?.fullName || ('ADMIN.USER_DETAILS.LOCATAIRE_INCONNU' | translate) }}</div>
+                    <div style="font-size:11px;color:var(--adm-text-faint)">{{ tx.property?.name || '' }} — {{ tx.room?.code || '' }}</div>
+                    <div style="font-size:11px;color:var(--adm-text-faint)">{{ tx.locataire?.phoneNumber || tx.locataire?.email || '' }}</div>
                   </ng-container>
                   <ng-container *ngIf="tx.context === 'SUBSCRIPTION'">
-                    <div style="font-weight:600;color:#374151">{{ tx.period?.billingRef || 'Période inconnue' }}</div>
-                    <div style="font-size:11px;color:#9CA3AF" *ngIf="tx.period">{{ formatDateShort(tx.period.startedAt) }} → {{ formatDateShort(tx.period.endedAt) }}</div>
+                    <div style="font-weight:600;color:var(--adm-text-2)">{{ tx.period?.billingRef || ('ADMIN.USER_DETAILS.PERIODE_INCONNUE' | translate) }}</div>
+                    <div style="font-size:11px;color:var(--adm-text-faint)" *ngIf="tx.period">{{ formatDateShort(tx.period.startedAt) }} → {{ formatDateShort(tx.period.endedAt) }}</div>
                   </ng-container>
                 </td>
-                <td style="padding:8px 12px;text-align:right;font-weight:700;color:#374151">
+                <td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--adm-text-2)">
                   {{ formatCurrency(tx.amount) }}
                 </td>
-                <td style="padding:8px 12px;color:#374151">{{ getProviderLabel(tx.provider) }}</td>
+                <td style="padding:8px 12px;color:var(--adm-text-2)">{{ getProviderLabel(tx.provider) }}</td>
                 <td style="padding:8px 12px;text-align:center">
                   <span [class]="getTxStatusClass(tx.status)">{{ getTxStatusLabel(tx.status) }}</span>
                   <div *ngIf="tx.failureReason" style="font-size:10px;color:#EF4444;margin-top:2px">{{ tx.failureReason }}</div>
@@ -348,7 +353,7 @@
                     <button
                       class="admin-btn admin-btn-ghost admin-btn-sm"
                       (click)="openTxDetail(tx)"
-                      title="Voir les détails complets">
+                      [title]="'ADMIN.USER_DETAILS.VOIR_LES_DETAILS_COMPLETS' | translate">
                       <i class="fas fa-eye"></i>
                     </button>
 
@@ -359,24 +364,24 @@
                         class="admin-btn admin-btn-outline admin-btn-sm"
                         (click)="recheckTransaction(tx.externalRef)"
                         [disabled]="isTxBusy(tx.externalRef)"
-                        title="Interroger le provider pour vérifier si le paiement a abouti">
+                        [title]="'ADMIN.USER_DETAILS.INTERROGER_LE_PROVIDER_POUR_VERIFIER' | translate">
                         <i class="fas"
                            [class.fa-search]="!isRecheckingTx(tx.externalRef)"
                            [class.fa-spinner]="isRecheckingTx(tx.externalRef)"
                            [class.fa-spin]="isRecheckingTx(tx.externalRef)"></i>
-                        Vérifier
+                        {{ 'ADMIN.USER_DETAILS.VERIFIER' | translate }}
                       </button>
                       <!-- Confirmer manuellement -->
-                      <button
+                      <button *ngIf="superAdmin"
                         class="admin-btn admin-btn-success admin-btn-sm"
                         (click)="openConfirmModal(tx.externalRef)"
                         [disabled]="isTxBusy(tx.externalRef)"
-                        title="Confirmer manuellement : l'argent a bien été reçu">
+                        [title]="'ADMIN.USER_DETAILS.CONFIRMER_MANUELLEMENT_L_ARGENT_A' | translate">
                         <i class="fas"
                            [class.fa-check]="!isConfirmingTx(tx.externalRef)"
                            [class.fa-spinner]="isConfirmingTx(tx.externalRef)"
                            [class.fa-spin]="isConfirmingTx(tx.externalRef)"></i>
-                        Confirmer
+                        {{ 'ADMIN.USER_DETAILS.CONFIRMER' | translate }}
                       </button>
                     </ng-container>
 
@@ -385,7 +390,7 @@
                       class="admin-btn admin-btn-danger admin-btn-sm"
                       (click)="openDeleteTxModal(tx.externalRef)"
                       [disabled]="isDeletingThisTx(tx.externalRef)"
-                      title="Supprimer cette transaction">
+                      [title]="'ADMIN.USER_DETAILS.SUPPRIMER_CETTE_TRANSACTION' | translate">
                       <i class="fas"
                          [class.fa-trash]="!isDeletingThisTx(tx.externalRef)"
                          [class.fa-spinner]="isDeletingThisTx(tx.externalRef)"
@@ -394,7 +399,7 @@
 
                     <!-- Aucune action pour SUCCESS -->
                     <span *ngIf="tx.status === 'SUCCESS'"
-                          style="color:#9CA3AF;font-size:11px">—</span>
+                          style="color:var(--adm-text-faint);font-size:11px">—</span>
                   </div>
                 </td>
               </tr>
@@ -404,9 +409,9 @@
 
         <!-- Empty -->
         <div *ngIf="!isLoadingRentTx && rentTransactions.length === 0"
-             style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">
+             style="padding:20px;text-align:center;color:var(--adm-text-faint);font-size:13px">
           <i class="fas fa-inbox" style="margin-right:6px"></i>
-          Aucune transaction enregistrée
+          {{ 'ADMIN.USER_DETAILS.AUCUNE_TRANSACTION_ENREGISTREE' | translate }}
         </div>
       </div>
     </div>
@@ -415,33 +420,33 @@
     <div class="admin-content-section">
       <div class="admin-table-container">
         <div class="admin-table-header">
-          <h3 class="admin-table-title"><i class="fas fa-chart-bar"></i> Résumé financier</h3>
+          <h3 class="admin-table-title"><i class="fas fa-chart-bar"></i> {{ 'ADMIN.USER_DETAILS.RESUME_FINANCIER' | translate }}</h3>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:16px">
-          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:14px;text-align:center">
+          <div style="background:var(--adm-success-soft);border:1px solid #BBF7D0;border-radius:8px;padding:14px;text-align:center">
             <div style="font-size:18px;font-weight:800;color:#059669">{{ formatCurrency(user.financialSummary?.totalRevenue || 0) }}</div>
-            <div style="font-size:11px;color:#6B7280;margin-top:4px">Revenus totaux encaissés</div>
+            <div style="font-size:11px;color:var(--adm-text-muted);margin-top:4px">{{ 'ADMIN.USER_DETAILS.REVENUS_TOTAUX_ENCAISSES' | translate }}</div>
           </div>
-          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:14px;text-align:center">
+          <div style="background:var(--adm-info-soft);border:1px solid #BFDBFE;border-radius:8px;padding:14px;text-align:center">
             <div style="font-size:18px;font-weight:800;color:#2563EB">{{ formatCurrency(user.financialSummary?.monthlyRevenue || 0) }}</div>
-            <div style="font-size:11px;color:#6B7280;margin-top:4px">Revenus ce mois</div>
+            <div style="font-size:11px;color:var(--adm-text-muted);margin-top:4px">{{ 'ADMIN.USER_DETAILS.REVENUS_CE_MOIS' | translate }}</div>
           </div>
-          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:14px;text-align:center">
+          <div style="background:var(--adm-bg);border:1px solid var(--adm-border);border-radius:8px;padding:14px;text-align:center">
             <div style="font-size:18px;font-weight:800;color:#BB890B">{{ user.financialSummary?.averageOccupancy || 0 }}%</div>
-            <div style="font-size:11px;color:#6B7280;margin-top:4px">Taux d'occupation moyen</div>
+            <div style="font-size:11px;color:var(--adm-text-muted);margin-top:4px">{{ 'ADMIN.USER_DETAILS.TAUX_D_OCCUPATION_MOYEN' | translate }}</div>
           </div>
           <div *ngIf="(user.financialSummary?.unpaidAmount || 0) > 0"
-               style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:14px;text-align:center">
+               style="background:var(--adm-danger-soft);border:1px solid #FECACA;border-radius:8px;padding:14px;text-align:center">
             <div style="font-size:18px;font-weight:800;color:#DC2626">{{ formatCurrency(user.financialSummary.unpaidAmount) }}</div>
-            <div style="font-size:11px;color:#6B7280;margin-top:4px">Souscription impayée</div>
+            <div style="font-size:11px;color:var(--adm-text-muted);margin-top:4px">{{ 'ADMIN.USER_DETAILS.SOUSCRIPTION_IMPAYEE' | translate }}</div>
           </div>
-          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:14px;text-align:center">
-            <div style="font-size:18px;font-weight:800;color:#374151">{{ user.properties?.total || 0 }}</div>
-            <div style="font-size:11px;color:#6B7280;margin-top:4px">Biens immobiliers</div>
+          <div style="background:var(--adm-bg);border:1px solid var(--adm-border);border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:var(--adm-text-2)">{{ user.properties?.total || 0 }}</div>
+            <div style="font-size:11px;color:var(--adm-text-muted);margin-top:4px">{{ 'ADMIN.USER_DETAILS.BIENS_IMMOBILIERS' | translate }}</div>
           </div>
-          <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:14px;text-align:center">
-            <div style="font-size:18px;font-weight:800;color:#374151">{{ user.properties?.occupiedUnits || 0 }} / {{ user.properties?.totalUnits || 0 }}</div>
-            <div style="font-size:11px;color:#6B7280;margin-top:4px">Unités occupées / totales</div>
+          <div style="background:var(--adm-bg);border:1px solid var(--adm-border);border-radius:8px;padding:14px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:var(--adm-text-2)">{{ user.properties?.occupiedUnits || 0 }} / {{ user.properties?.totalUnits || 0 }}</div>
+            <div style="font-size:11px;color:var(--adm-text-muted);margin-top:4px">{{ 'ADMIN.USER_DETAILS.UNITES_OCCUPEES_TOTALES' | translate }}</div>
           </div>
         </div>
       </div>
@@ -454,19 +459,19 @@
 <div class="admin-modal-overlay" *ngIf="showSuspendModal" (click)="cancelSuspend()">
   <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:480px">
     <div class="admin-modal-header">
-      <h3 class="admin-modal-title"><i class="fas fa-pause" style="color:#D97706"></i> Suspendre le compte</h3>
+      <h3 class="admin-modal-title"><i class="fas fa-pause" style="color:#D97706"></i> {{ 'ADMIN.USER_DETAILS.SUSPENDRE_LE_COMPTE' | translate }}</h3>
       <button class="admin-modal-close" (click)="cancelSuspend()"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-content">
-      <label class="admin-form-label">Raison de la suspension <span style="color:red">*</span></label>
+      <label class="admin-form-label">{{ 'ADMIN.USER_DETAILS.RAISON_DE_LA_SUSPENSION' | translate }} <span style="color:red">*</span></label>
       <textarea class="admin-form-control" rows="3" [(ngModel)]="suspendReason"
-        placeholder="Expliquez la raison de la suspension..."></textarea>
-      <small style="color:#9CA3AF;font-size:11px">Un email de notification sera envoyé à l'utilisateur.</small>
+        [placeholder]="'ADMIN.USER_DETAILS.EXPLIQUEZ_LA_RAISON_DE_LA' | translate"></textarea>
+      <small style="color:var(--adm-text-faint);font-size:11px">{{ 'ADMIN.USER_DETAILS.UN_EMAIL_DE_NOTIFICATION_SERA' | translate }}</small>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="cancelSuspend()">Annuler</button>
-      <button class="admin-btn admin-btn-warning" (click)="confirmSuspend()" [disabled]="!suspendReason.trim()">
-        <i class="fas fa-pause"></i> Confirmer la suspension
+      <button class="admin-btn admin-btn-secondary" (click)="cancelSuspend()">{{ 'ADMIN.USER_DETAILS.ANNULER' | translate }}</button>
+      <button class="admin-btn admin-btn-warning" (click)="confirmSuspend()" [disabled]="suspendReason.trim().length < 10">
+        <i class="fas fa-pause"></i> {{ 'ADMIN.USER_DETAILS.CONFIRMER_LA_SUSPENSION' | translate }}
       </button>
     </div>
   </div>
@@ -476,23 +481,27 @@
 <div class="admin-modal-overlay" *ngIf="showMarkPaidModal" (click)="cancelMarkPaid()">
   <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:480px">
     <div class="admin-modal-header">
-      <h3 class="admin-modal-title"><i class="fas fa-check" style="color:#059669"></i> Marquer comme payé</h3>
+      <h3 class="admin-modal-title"><i class="fas fa-check" style="color:#059669"></i> {{ 'ADMIN.USER_DETAILS.MARQUER_COMME_PAYE' | translate }}</h3>
       <button class="admin-modal-close" (click)="cancelMarkPaid()"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-content">
-      <div *ngIf="user?.subscription?.firstUnpaidPeriod" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px">
-        <div><strong>Période :</strong> {{ formatDateShort(user.subscription.firstUnpaidPeriod.startedAt) }} → {{ formatDateShort(user.subscription.firstUnpaidPeriod.endedAt) }}</div>
-        <div><strong>Montant :</strong> {{ formatCurrency(user.subscription.firstUnpaidPeriod.calculatedAmount) }}</div>
-        <div><strong>Réf. :</strong> {{ user.subscription.firstUnpaidPeriod.billingRef }}</div>
+      <div *ngIf="user?.subscription?.firstUnpaidPeriod" style="background:var(--adm-bg);border:1px solid var(--adm-border);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px">
+        <div><strong>{{ 'ADMIN.USER_DETAILS.PERIODE_2' | translate }}</strong> {{ formatDateShort(user.subscription.firstUnpaidPeriod.startedAt) }} → {{ formatDateShort(user.subscription.firstUnpaidPeriod.endedAt) }}</div>
+        <div><strong>{{ 'ADMIN.USER_DETAILS.MONTANT_2' | translate }}</strong> {{ formatCurrency(user.subscription.firstUnpaidPeriod.calculatedAmount) }}</div>
+        <div><strong>{{ 'ADMIN.USER_DETAILS.REF' | translate }}</strong> {{ user.subscription.firstUnpaidPeriod.billingRef }}</div>
       </div>
-      <label class="admin-form-label">Référence de paiement (optionnel)</label>
-      <input type="text" class="admin-form-control" [(ngModel)]="paymentRef"
-        placeholder="Ex: VIREMENT_2024_001 (laisser vide pour ADMIN_MANUAL)">
+      <p style="font-size:12px;color:var(--adm-text-muted);margin:0 0 10px">
+        {{ 'ADMIN.USER_DETAILS.A_UTILISER_UNIQUEMENT_POUR_UN' | translate }}
+      </p>
+      <label class="admin-form-label" for="mark-paid-ref">{{ 'ADMIN.USER_DETAILS.REFERENCE_DU_PAIEMENT_RECU' | translate }}</label>
+      <input id="mark-paid-ref" type="text" class="admin-form-control" [(ngModel)]="paymentRef" maxlength="100"
+        [placeholder]="'ADMIN.USER_DETAILS.EX_N_DE_TRANSACTION_MOBILE' | translate">
+      <small *ngIf="paymentRef && !paymentRefValid" style="color:var(--adm-danger)">{{ 'ADMIN.USER_DETAILS.3_CARACTERES_MINIMUM' | translate }}</small>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="cancelMarkPaid()">Annuler</button>
-      <button class="admin-btn admin-btn-success" (click)="confirmMarkPaid()">
-        <i class="fas fa-check"></i> Confirmer le paiement
+      <button class="admin-btn admin-btn-secondary" (click)="cancelMarkPaid()">{{ 'ADMIN.USER_DETAILS.ANNULER' | translate }}</button>
+      <button class="admin-btn admin-btn-success" (click)="confirmMarkPaid()" [disabled]="!paymentRefValid">
+        <i class="fas fa-check"></i> {{ 'ADMIN.USER_DETAILS.CONFIRMER_LE_PAIEMENT' | translate }}
       </button>
     </div>
   </div>
@@ -502,30 +511,33 @@
 <div class="admin-modal-overlay" *ngIf="showConfirmModal" (click)="cancelConfirmModal()">
   <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:500px">
     <div class="admin-modal-header">
-      <h3 class="admin-modal-title"><i class="fas fa-check-circle" style="color:#059669"></i> Confirmer le paiement manuellement</h3>
+      <h3 class="admin-modal-title"><i class="fas fa-check-circle" style="color:#059669"></i> {{ 'ADMIN.USER_DETAILS.CONFIRMER_LE_PAIEMENT_MANUELLEMENT' | translate }}</h3>
       <button class="admin-modal-close" (click)="cancelConfirmModal()"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-content">
-      <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#92400E">
+      <div style="background:var(--adm-warning-soft);border:1px solid #FDE68A;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:var(--adm-warning)">
         <i class="fas fa-exclamation-triangle" style="margin-right:6px"></i>
-        <strong>Action irréversible.</strong> Cette action va :
+        <strong>{{ 'ADMIN.USER_DETAILS.ACTION_IRREVERSIBLE' | translate }}</strong> {{ 'ADMIN.USER_DETAILS.CETTE_ACTION_VA' | translate }}
         <ul style="margin:6px 0 0 16px;padding:0">
-          <li *ngIf="pendingConfirmContext === 'RENT'">Créer le paiement de loyer dans le système</li>
-          <li *ngIf="pendingConfirmContext === 'RENT'">Créditer le wallet du propriétaire</li>
-          <li *ngIf="pendingConfirmContext === 'SUBSCRIPTION'">Marquer la période de souscription comme payée</li>
-          <li *ngIf="pendingConfirmContext === 'SUBSCRIPTION'">Réactiver le compte si suspendu</li>
-          <li>Marquer la transaction comme réussie</li>
-          <li>Envoyer les emails de confirmation</li>
+          <li *ngIf="pendingConfirmContext === 'RENT'">{{ 'ADMIN.USER_DETAILS.CREER_LE_PAIEMENT_DE_LOYER' | translate }}</li>
+          <li *ngIf="pendingConfirmContext === 'RENT'">{{ 'ADMIN.USER_DETAILS.CREDITER_LE_WALLET_DU_PROPRIETAIRE' | translate }}</li>
+          <li *ngIf="pendingConfirmContext === 'SUBSCRIPTION'">{{ 'ADMIN.USER_DETAILS.MARQUER_LA_PERIODE_DE_SOUSCRIPTION' | translate }}</li>
+          <li *ngIf="pendingConfirmContext === 'SUBSCRIPTION'">{{ 'ADMIN.USER_DETAILS.REACTIVER_LE_COMPTE_SI_SUSPENDU' | translate }}</li>
+          <li>{{ 'ADMIN.USER_DETAILS.MARQUER_LA_TRANSACTION_COMME_REUSSIE' | translate }}</li>
+          <li>{{ 'ADMIN.USER_DETAILS.ENVOYER_LES_EMAILS_DE_CONFIRMATION' | translate }}</li>
         </ul>
       </div>
-      <label class="admin-form-label">Note admin (optionnel)</label>
+      <p style="font-size:12px;color:var(--adm-text-muted);margin:8px 0">
+        {{ 'ADMIN.USER_DETAILS.L_OPERATEUR_EST_D_ABORD' | translate }}
+      </p>
+      <label class="admin-form-label">{{ 'ADMIN.USER_DETAILS.JUSTIFICATION_OBLIGATOIRE_10_CARACTERES_MINIMUM' | translate }}</label>
       <input type="text" class="admin-form-control" [(ngModel)]="adminNote"
-        placeholder="Ex: Locataire a confirmé le paiement par téléphone">
+        [placeholder]="'ADMIN.USER_DETAILS.EX_RECU_MTN_N_123456789' | translate">
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="cancelConfirmModal()">Annuler</button>
-      <button class="admin-btn admin-btn-success" (click)="confirmTransaction()">
-        <i class="fas fa-check"></i> Confirmer la réception
+      <button class="admin-btn admin-btn-secondary" (click)="cancelConfirmModal()">{{ 'ADMIN.USER_DETAILS.ANNULER' | translate }}</button>
+      <button class="admin-btn admin-btn-success" (click)="confirmTransaction()" [disabled]="(adminNote || '').trim().length < 10">
+        <i class="fas fa-check"></i> {{ 'ADMIN.USER_DETAILS.CONFIRMER_LA_RECEPTION' | translate }}
       </button>
     </div>
   </div>
@@ -538,7 +550,7 @@
 
     <!-- Header fixe -->
     <div class="admin-modal-header" style="flex-shrink:0">
-      <h3><i class="fas fa-receipt" style="color:#cc8c0a"></i> Détail de la transaction</h3>
+      <h3><i class="fas fa-receipt" style="color:#cc8c0a"></i> {{ 'ADMIN.USER_DETAILS.DETAIL_DE_LA_TRANSACTION' | translate }}</h3>
       <button class="admin-modal-close" (click)="closeTxDetail()"><i class="fas fa-times"></i></button>
     </div>
 
@@ -546,7 +558,7 @@
     <div style="flex:1;overflow-y:auto;min-height:0">
 
       <!-- Bandeau statut coloré selon les 5 statuts -->
-      <div style="padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E5E7EB"
+      <div style="padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--adm-border)"
            [ngStyle]="{
              background: selectedTx.status === 'SUCCESS'   ? '#D1FAE5' :
                          selectedTx.status === 'PENDING'   ? '#FEF3C7' :
@@ -570,46 +582,46 @@
 
         <!-- Informations transaction -->
         <div>
-          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Informations transaction</div>
+          <div style="font-size:10px;font-weight:700;color:var(--adm-text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{{ 'ADMIN.USER_DETAILS.INFORMATIONS_TRANSACTION' | translate }}</div>
           <div style="display:flex;flex-direction:column;gap:0">
             <div style="display:grid;grid-template-columns:160px 1fr;gap:0;font-size:12px">
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Référence externe</div>
-              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#374151;word-break:break-all;border-bottom:1px solid #F3F4F6">{{ selectedTx.externalRef }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.REFERENCE_EXTERNE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:var(--adm-text-2);word-break:break-all;border-bottom:1px solid var(--adm-border)">{{ selectedTx.externalRef }}</div>
 
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Réf. provider</div>
-              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.rawProviderResponse?.['transCode'] || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.REF_PROVIDER' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.rawProviderResponse?.['transCode'] || '—' }}</div>
 
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Provider</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ getProviderLabel(selectedTx.provider) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.PROVIDER' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ getProviderLabel(selectedTx.provider) }}</div>
 
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Montant</div>
-              <div style="padding:7px 0 7px 12px;font-weight:700;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.amount) }} <span style="font-weight:400;color:#9CA3AF">{{ displayCurrency }}</span></div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.MONTANT' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-weight:700;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ formatCurrency(selectedTx.amount) }} <span style="font-weight:400;color:var(--adm-text-faint)">{{ displayCurrency }}</span></div>
 
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Créé le</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDate(selectedTx.createdAt) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.CREE_LE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ formatDate(selectedTx.createdAt) }}</div>
 
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Mis à jour le</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDate(selectedTx.updatedAt) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.MIS_A_JOUR_LE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ formatDate(selectedTx.updatedAt) }}</div>
 
               <ng-container *ngIf="selectedTx.processedAt">
-                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Traité le</div>
-                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDate(selectedTx.processedAt) }}</div>
+                <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.TRAITE_LE' | translate }}</div>
+                <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ formatDate(selectedTx.processedAt) }}</div>
               </ng-container>
 
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Event traité</div>
-              <div style="padding:7px 0 7px 12px;border-bottom:1px solid #F3F4F6">
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.EVENT_TRAITE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;border-bottom:1px solid var(--adm-border)">
                 <span [class]="selectedTx.eventProcessed ? 'admin-badge admin-badge-success' : 'admin-badge admin-badge-secondary'">
-                  {{ selectedTx.eventProcessed ? 'Oui' : 'Non' }}
+                  {{ selectedTx.eventProcessed ? ('ADMIN.USER_DETAILS.OUI' | translate) : ('ADMIN.USER_DETAILS.NON' | translate) }}
                 </span>
               </div>
 
               <ng-container *ngIf="selectedTx.description">
-                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Description</div>
-                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.description }}</div>
+                <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.DESCRIPTION' | translate }}</div>
+                <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.description }}</div>
               </ng-container>
 
               <ng-container *ngIf="selectedTx.failureReason">
-                <div style="padding:7px 0;color:#6B7280">Raison échec</div>
+                <div style="padding:7px 0;color:var(--adm-text-muted)">{{ 'ADMIN.USER_DETAILS.RAISON_ECHEC' | translate }}</div>
                 <div style="padding:7px 0 7px 12px;color:#DC2626;font-weight:500">{{ selectedTx.failureReason }}</div>
               </ng-container>
             </div>
@@ -620,80 +632,80 @@
         <ng-container *ngIf="selectedTx.context === 'RENT'">
 
           <!-- Locataire -->
-          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
-            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Locataire</div>
+          <div style="border-top:2px solid var(--adm-border);padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:var(--adm-text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{{ 'ADMIN.USER_DETAILS.LOCATAIRE' | translate }}</div>
             <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Nom complet</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.fullName || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Email</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.email || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Téléphone</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.phoneNumber || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Pays</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.country || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.NOM_COMPLET' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);font-weight:600;border-bottom:1px solid var(--adm-border)">{{ selectedTx.locataire?.fullName || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.EMAIL' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.locataire?.email || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.TELEPHONE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.locataire?.phoneNumber || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.PAYS' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.locataire?.country || '—' }}</div>
               <ng-container *ngIf="selectedTx.locataire?.idCardNumber">
-                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Pièce d'identité</div>
-                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.idCardType }} — {{ selectedTx.locataire?.idCardNumber }}</div>
+                <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.PIECE_D_IDENTITE' | translate }}</div>
+                <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.locataire?.idCardType }} — {{ selectedTx.locataire?.idCardNumber }}</div>
               </ng-container>
               <ng-container *ngIf="selectedTx.locataire?.fullNameRef">
-                <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Contact urgence</div>
-                <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.locataire?.fullNameRef }} — {{ selectedTx.locataire?.phoneNumberRef }}</div>
+                <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.CONTACT_URGENCE' | translate }}</div>
+                <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.locataire?.fullNameRef }} — {{ selectedTx.locataire?.phoneNumberRef }}</div>
               </ng-container>
-              <div style="padding:7px 0;color:#6B7280">ID locataire</div>
-              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.locataireId || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted)">{{ 'ADMIN.USER_DETAILS.ID_LOCATAIRE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:var(--adm-text-faint);font-size:11px">{{ selectedTx.locataireId || '—' }}</div>
             </div>
           </div>
 
           <!-- Propriété -->
-          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
-            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Propriété</div>
+          <div style="border-top:2px solid var(--adm-border);padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:var(--adm-text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{{ 'ADMIN.USER_DETAILS.PROPRIETE' | translate }}</div>
             <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Nom</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.property?.name || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Adresse</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.property?.location || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Type</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.property?.propertyType || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280">ID propriété</div>
-              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.propertyId || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.NOM' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);font-weight:600;border-bottom:1px solid var(--adm-border)">{{ selectedTx.property?.name || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.ADRESSE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.property?.location || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.TYPE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.property?.propertyType || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted)">{{ 'ADMIN.USER_DETAILS.ID_PROPRIETE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:var(--adm-text-faint);font-size:11px">{{ selectedTx.propertyId || '—' }}</div>
             </div>
           </div>
 
           <!-- Unité / Chambre -->
-          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
-            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Unité / Chambre</div>
+          <div style="border-top:2px solid var(--adm-border);padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:var(--adm-text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{{ 'ADMIN.USER_DETAILS.UNITE_CHAMBRE' | translate }}</div>
             <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Code</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.code || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Type</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.type || '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Loyer mensuel</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.price ? formatCurrency(selectedTx.room.price) : '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Caution</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.room?.cautionPrice ? formatCurrency(selectedTx.room.cautionPrice) : '—' }}</div>
-              <div style="padding:7px 0;color:#6B7280">ID unité</div>
-              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.roomId || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.CODE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);font-weight:600;border-bottom:1px solid var(--adm-border)">{{ selectedTx.room?.code || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.TYPE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.room?.type || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.LOYER_MENSUEL' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.room?.price ? formatCurrency(selectedTx.room.price) : '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.CAUTION' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.room?.cautionPrice ? formatCurrency(selectedTx.room.cautionPrice) : '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted)">{{ 'ADMIN.USER_DETAILS.ID_UNITE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:var(--adm-text-faint);font-size:11px">{{ selectedTx.roomId || '—' }}</div>
             </div>
           </div>
 
           <!-- Contrat de location -->
-          <div style="border-top:2px solid #F3F4F6;padding-top:16px" *ngIf="selectedTx.location">
-            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Contrat de location</div>
+          <div style="border-top:2px solid var(--adm-border);padding-top:16px" *ngIf="selectedTx.location">
+            <div style="font-size:10px;font-weight:700;color:var(--adm-text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{{ 'ADMIN.USER_DETAILS.CONTRAT_DE_LOCATION' | translate }}</div>
             <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Début</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDateShort(selectedTx.location.startedAt) }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Fin</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ selectedTx.location.endedAt ? formatDateShort(selectedTx.location.endedAt) : 'En cours' }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Loyer contrat</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.location.locationPriceUnit) }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Statut</div>
-              <div style="padding:7px 0 7px 12px;border-bottom:1px solid #F3F4F6">
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.DEBUT' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ formatDateShort(selectedTx.location.startedAt) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.FIN' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ selectedTx.location.endedAt ? formatDateShort(selectedTx.location.endedAt) : ('ADMIN.USER_DETAILS.EN_COURS_2' | translate) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.LOYER_CONTRAT' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);font-weight:600;border-bottom:1px solid var(--adm-border)">{{ formatCurrency(selectedTx.location.locationPriceUnit) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.STATUT' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;border-bottom:1px solid var(--adm-border)">
                 <span [class]="selectedTx.location.isRunning ? 'admin-badge admin-badge-success' : 'admin-badge admin-badge-secondary'">
-                  {{ selectedTx.location.isRunning ? 'Actif' : 'Terminé' }}
+                  {{ selectedTx.location.isRunning ? ('ADMIN.USER_DETAILS.ACTIF' | translate) : ('ADMIN.USER_DETAILS.TERMINE' | translate) }}
                 </span>
               </div>
-              <div style="padding:7px 0;color:#6B7280">ID contrat</div>
-              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.locationId || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted)">{{ 'ADMIN.USER_DETAILS.ID_CONTRAT' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:var(--adm-text-faint);font-size:11px">{{ selectedTx.locationId || '—' }}</div>
             </div>
           </div>
 
@@ -701,28 +713,28 @@
 
         <!-- Période souscription (SUBSCRIPTION) -->
         <ng-container *ngIf="selectedTx.context === 'SUBSCRIPTION' && selectedTx.period">
-          <div style="border-top:2px solid #F3F4F6;padding-top:16px">
-            <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Période de souscription</div>
+          <div style="border-top:2px solid var(--adm-border);padding-top:16px">
+            <div style="font-size:10px;font-weight:700;color:var(--adm-text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{{ 'ADMIN.USER_DETAILS.PERIODE_DE_SOUSCRIPTION' | translate }}</div>
             <div style="display:grid;grid-template-columns:160px 1fr;font-size:12px">
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Référence</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ selectedTx.period.billingRef }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Début</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDateShort(selectedTx.period.startedAt) }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Fin</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;border-bottom:1px solid #F3F4F6">{{ formatDateShort(selectedTx.period.endedAt) }}</div>
-              <div style="padding:7px 0;color:#6B7280;border-bottom:1px solid #F3F4F6">Montant calculé</div>
-              <div style="padding:7px 0 7px 12px;color:#374151;font-weight:600;border-bottom:1px solid #F3F4F6">{{ formatCurrency(selectedTx.period.calculatedAmount) }}</div>
-              <div style="padding:7px 0;color:#6B7280">ID souscription</div>
-              <div style="padding:7px 0 7px 12px;font-family:monospace;color:#9CA3AF;font-size:11px">{{ selectedTx.subscriptionId || '—' }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.REFERENCE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);font-weight:600;border-bottom:1px solid var(--adm-border)">{{ selectedTx.period.billingRef }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.DEBUT' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ formatDateShort(selectedTx.period.startedAt) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.FIN' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);border-bottom:1px solid var(--adm-border)">{{ formatDateShort(selectedTx.period.endedAt) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted);border-bottom:1px solid var(--adm-border)">{{ 'ADMIN.USER_DETAILS.MONTANT_CALCULE' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;color:var(--adm-text-2);font-weight:600;border-bottom:1px solid var(--adm-border)">{{ formatCurrency(selectedTx.period.calculatedAmount) }}</div>
+              <div style="padding:7px 0;color:var(--adm-text-muted)">{{ 'ADMIN.USER_DETAILS.ID_SOUSCRIPTION' | translate }}</div>
+              <div style="padding:7px 0 7px 12px;font-family:monospace;color:var(--adm-text-faint);font-size:11px">{{ selectedTx.subscriptionId || '—' }}</div>
             </div>
           </div>
         </ng-container>
 
         <!-- Réponse provider brute -->
-        <div style="border-top:2px solid #F3F4F6;padding-top:16px"
+        <div style="border-top:2px solid var(--adm-border);padding-top:16px"
              *ngIf="selectedTx.rawProviderResponse && (selectedTx.rawProviderResponse | json) !== '{}'">
-          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Réponse provider</div>
-          <pre style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:6px;padding:12px;font-size:11px;color:#374151;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:0">{{ selectedTx.rawProviderResponse | json }}</pre>
+          <div style="font-size:10px;font-weight:700;color:var(--adm-text-faint);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">{{ 'ADMIN.USER_DETAILS.REPONSE_PROVIDER' | translate }}</div>
+          <pre style="background:var(--adm-bg);border:1px solid var(--adm-border);border-radius:6px;padding:12px;font-size:11px;color:var(--adm-text-2);overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:0">{{ selectedTx.rawProviderResponse | json }}</pre>
         </div>
 
       </div>
@@ -730,21 +742,21 @@
 
     <!-- Footer fixe -->
     <div class="admin-modal-footer" style="flex-shrink:0">
-      <button class="admin-btn admin-btn-secondary" (click)="closeTxDetail()">Fermer</button>
+      <button class="admin-btn admin-btn-secondary" (click)="closeTxDetail()">{{ 'ADMIN.USER_DETAILS.FERMER' | translate }}</button>
       <button *ngIf="selectedTx.status === 'PENDING'"
         class="admin-btn admin-btn-outline"
         (click)="closeTxDetail(); recheckTransaction(selectedTx.externalRef)">
-        <i class="fas fa-search"></i> Vérifier
+        <i class="fas fa-search"></i> {{ 'ADMIN.USER_DETAILS.VERIFIER' | translate }}
       </button>
-      <button *ngIf="selectedTx.status === 'PENDING' || selectedTx.status === 'FAILED'"
+      <button *ngIf="superAdmin && (selectedTx.status === 'PENDING' || selectedTx.status === 'FAILED')"
         class="admin-btn admin-btn-success"
         (click)="closeTxDetail(); openConfirmModal(selectedTx.externalRef)">
-        <i class="fas fa-check"></i> Confirmer
+        <i class="fas fa-check"></i> {{ 'ADMIN.USER_DETAILS.CONFIRMER' | translate }}
       </button>
       <button *ngIf="canDeleteTx(selectedTx.status)"
         class="admin-btn admin-btn-danger"
         (click)="closeTxDetail(); openDeleteTxModal(selectedTx.externalRef)">
-        <i class="fas fa-trash"></i> Supprimer
+        <i class="fas fa-trash"></i> {{ 'ADMIN.USER_DETAILS.SUPPRIMER' | translate }}
       </button>
     </div>
   </div>
@@ -754,22 +766,22 @@
 <div class="admin-modal-overlay" *ngIf="showDeleteTxModal" (click)="cancelDeleteTx()">
   <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:440px">
     <div class="admin-modal-header">
-      <h3 class="admin-modal-title"><i class="fas fa-trash" style="color:#DC2626"></i> Supprimer la transaction</h3>
+      <h3 class="admin-modal-title"><i class="fas fa-trash" style="color:#DC2626"></i> {{ 'ADMIN.USER_DETAILS.SUPPRIMER_LA_TRANSACTION' | translate }}</h3>
       <button class="admin-modal-close" (click)="cancelDeleteTx()"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-content">
-      <div style="background:#FEE2E2;border:1px solid #FECACA;border-radius:8px;padding:12px;font-size:13px;color:#991B1B">
+      <div style="background:var(--adm-danger-soft);border:1px solid #FECACA;border-radius:8px;padding:12px;font-size:13px;color:var(--adm-danger)">
         <i class="fas fa-exclamation-triangle" style="margin-right:6px"></i>
-        <strong>Cette action est irréversible.</strong> La transaction sera définitivement supprimée de la base de données.
+        <strong>{{ 'ADMIN.USER_DETAILS.CETTE_ACTION_EST_IRREVERSIBLE' | translate }}</strong> {{ 'ADMIN.USER_DETAILS.LA_TRANSACTION_SERA_DEFINITIVEMENT_SUPPRIMEE' | translate }}
       </div>
-      <p style="margin-top:12px;font-size:13px;color:#374151">
-        Seules les transactions <strong>échouées</strong>, <strong>annulées</strong> ou <strong>expirées</strong> peuvent être supprimées.
+      <p style="margin-top:12px;font-size:13px;color:var(--adm-text-2)">
+        {{ 'ADMIN.USER_DETAILS.SEULES_LES_TRANSACTIONS' | translate }} <strong>{{ 'ADMIN.USER_DETAILS.ECHOUEES' | translate }}</strong>, <strong>{{ 'ADMIN.USER_DETAILS.ANNULEES' | translate }}</strong> {{ 'ADMIN.USER_DETAILS.OU' | translate }} <strong>{{ 'ADMIN.USER_DETAILS.EXPIREES' | translate }}</strong> {{ 'ADMIN.USER_DETAILS.PEUVENT_ETRE_SUPPRIMEES' | translate }}
       </p>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="cancelDeleteTx()">Annuler</button>
+      <button class="admin-btn admin-btn-secondary" (click)="cancelDeleteTx()">{{ 'ADMIN.USER_DETAILS.ANNULER' | translate }}</button>
       <button class="admin-btn admin-btn-danger" (click)="confirmDeleteTx()">
-        <i class="fas fa-trash"></i> Confirmer la suppression
+        <i class="fas fa-trash"></i> {{ 'ADMIN.USER_DETAILS.CONFIRMER_LA_SUPPRESSION' | translate }}
       </button>
     </div>
   </div>

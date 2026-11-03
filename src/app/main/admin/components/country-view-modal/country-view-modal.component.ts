@@ -1,4 +1,5 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Component, Inject, OnInit, OnDestroy, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
@@ -16,9 +17,11 @@ export interface CountryViewModalData {
   templateUrl: './country-view-modal.component.html',
   styleUrls: ['./country-view-modal.component.scss'],
   standalone: true,
-  imports: [NgIf, NgFor, AsyncPipe]
+  imports: [TranslateModule, NgIf, NgFor, AsyncPipe]
 })
 export class CountryViewModalComponent implements OnInit, OnDestroy {
+  /** Traductions (textes construits dans le code). */
+  private readonly i18n = inject(TranslateService);
   private destroy$ = new Subject<void>();
   
   isLoading$ = new BehaviorSubject<boolean>(false);
@@ -26,8 +29,8 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
   stats = {
     totalCities: 0,
     activeCities: 0,
-    totalUsers: 0,
-    activeUsers: 0
+    /** Biens (non supprimés) situés dans ce pays. */
+    properties: 0
   };
 
   constructor(
@@ -63,6 +66,13 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
       this.calculateStats();
       this.isLoading$.next(false);
     });
+
+    this.adminGeographyService.getCountryUsage(this.data.country._id).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: usage => this.stats = { ...this.stats, properties: usage.properties },
+      error: () => this.stats = { ...this.stats, properties: 0 }
+    });
   }
 
   /**
@@ -70,10 +80,9 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    */
   private calculateStats(): void {
     this.stats = {
+      ...this.stats,
       totalCities: this.cities.length,
-      activeCities: this.cities.filter(city => city.isActive).length,
-      totalUsers: 0, // TODO: Implémenter le comptage des utilisateurs
-      activeUsers: 0 // TODO: Implémenter le comptage des utilisateurs actifs
+      activeCities: this.cities.filter(city => city.isActive).length
     };
   }
 
@@ -88,7 +97,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    * Obtenir le statut du pays
    */
   getCountryStatus(): string {
-    return this.data.country.isActive ? 'Actif' : 'Inactif';
+    return this.data.country.isActive ? this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.ACTIVE') : this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.INACTIVE');
   }
 
   /**
@@ -102,7 +111,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    * Formater la population
    */
   getFormattedPopulation(): string {
-    if (!this.data.country.population) return 'Non disponible';
+    if (!this.data.country.population) return this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.NOT_AVAILABLE');
     return new Intl.NumberFormat('fr-FR').format(this.data.country.population);
   }
 
@@ -110,7 +119,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    * Formater la superficie
    */
   getFormattedArea(): string {
-    if (!this.data.country.area) return 'Non disponible';
+    if (!this.data.country.area) return this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.NOT_AVAILABLE');
     return `${new Intl.NumberFormat('fr-FR').format(this.data.country.area)  } km²`;
   }
 
@@ -119,7 +128,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    */
   getFormattedLanguages(): string {
     if (!this.data.country.languages || this.data.country.languages.length === 0) {
-      return 'Non disponible';
+      return this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.NOT_AVAILABLE');
     }
     return this.data.country.languages.join(', ');
   }
@@ -128,7 +137,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    * Obtenir les coordonnées formatées
    */
   getFormattedCoordinates(): string {
-    if (!this.data.country.coordinates) return 'Non disponible';
+    if (!this.data.country.coordinates) return this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.NOT_AVAILABLE');
     const lat = this.data.country.coordinates.latitude.toFixed(4);
     const lng = this.data.country.coordinates.longitude.toFixed(4);
     return `${lat}, ${lng}`;
@@ -138,7 +147,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    * Obtenir la date de création formatée
    */
   getFormattedCreatedAt(): string {
-    if (!this.data.country.createdAt) return 'Non disponible';
+    if (!this.data.country.createdAt) return this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.NOT_AVAILABLE');
     return new Date(this.data.country.createdAt).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'long',
@@ -152,7 +161,7 @@ export class CountryViewModalComponent implements OnInit, OnDestroy {
    * Obtenir la date de mise à jour formatée
    */
   getFormattedUpdatedAt(): string {
-    if (!this.data.country.updatedAt) return 'Non disponible';
+    if (!this.data.country.updatedAt) return this.i18n.instant('ADMIN.COUNTRY_VIEW.TS.NOT_AVAILABLE');
     return new Date(this.data.country.updatedAt).toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'long',

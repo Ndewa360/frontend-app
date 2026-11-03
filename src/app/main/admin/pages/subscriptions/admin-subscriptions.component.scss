@@ -34,7 +34,7 @@ $red:    #ef4444;
   .subs-title {
     font-size: 1.375rem;
     font-weight: 700;
-    color: $gray-900;
+    color: var(--adm-text);
     margin: 0 0 4px;
     display: flex;
     align-items: center;
@@ -45,7 +45,7 @@ $red:    #ef4444;
 
   .subs-subtitle {
     font-size: 0.875rem;
-    color: $gray-500;
+    color: var(--adm-text-muted);
     margin: 0;
   }
 
@@ -79,18 +79,18 @@ $red:    #ef4444;
   }
 
   &.subs-btn-outline {
-    background: $white;
-    color: $gray-700;
-    border: 1px solid $gray-300;
+    background: var(--adm-surface);
+    color: var(--adm-text-2);
+    border: 1px solid var(--adm-border-strong);
     &:hover:not(:disabled) { border-color: $primary; color: $primary; }
     &.active { border-color: $primary; color: $primary; background: $primary-light; }
   }
 
   &.subs-btn-ghost {
     background: transparent;
-    color: $gray-500;
+    color: var(--adm-text-muted);
     border: 1px solid transparent;
-    &:hover:not(:disabled) { background: $gray-100; color: $gray-700; }
+    &:hover:not(:disabled) { background: var(--adm-surface-2); color: var(--adm-text-2); }
   }
 }
 
@@ -103,14 +103,14 @@ $red:    #ef4444;
 }
 
 .subs-stat-card {
-  background: $white;
+  background: var(--adm-surface);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  border: 1px solid $gray-200;
+  border: 1px solid var(--adm-border);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 
   &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -130,13 +130,13 @@ $red:    #ef4444;
   .subs-stat-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $gray-900;
+    color: var(--adm-text);
     line-height: 1.2;
   }
 
   .subs-stat-label {
     font-size: 0.75rem;
-    color: $gray-500;
+    color: var(--adm-text-muted);
     margin-top: 2px;
   }
 
@@ -149,8 +149,8 @@ $red:    #ef4444;
 
 // ── Filters ───────────────────────────────────────────────────────────────────
 .subs-filters {
-  background: $white;
-  border: 1px solid $gray-200;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
@@ -168,7 +168,7 @@ $red:    #ef4444;
       display: block;
       font-size: 0.75rem;
       font-weight: 600;
-      color: $gray-500;
+      color: var(--adm-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
       margin-bottom: 6px;
@@ -185,11 +185,11 @@ $red:    #ef4444;
 .subs-input, .subs-select {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid $gray-300;
+  border: 1px solid var(--adm-border-strong);
   border-radius: 8px;
   font-size: 0.875rem;
-  color: $gray-700;
-  background: $white;
+  color: var(--adm-text-2);
+  background: var(--adm-surface);
   transition: border-color 0.15s ease;
   box-sizing: border-box;
 
@@ -202,8 +202,8 @@ $red:    #ef4444;
 
 // ── Table Card ────────────────────────────────────────────────────────────────
 .subs-table-card {
-  background: $white;
-  border: 1px solid $gray-200;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   overflow: hidden;
@@ -214,12 +214,12 @@ $red:    #ef4444;
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid $gray-100;
+  border-bottom: 1px solid var(--adm-border);
 
   .subs-table-title {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: $gray-900;
+    color: var(--adm-text);
     margin: 0;
     display: flex;
     align-items: center;
@@ -230,8 +230,8 @@ $red:    #ef4444;
 
   .subs-table-count {
     font-size: 0.8125rem;
-    color: $gray-500;
-    background: $gray-100;
+    color: var(--adm-text-muted);
+    background: var(--adm-surface-2);
     padding: 3px 10px;
     border-radius: 20px;
   }
@@ -244,14 +244,14 @@ $red:    #ef4444;
   justify-content: center;
   gap: 12px;
   padding: 48px;
-  color: $gray-500;
+  color: var(--adm-text-muted);
   font-size: 0.875rem;
 }
 
 .subs-spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid $gray-200;
+  border: 2px solid var(--adm-border);
   border-top-color: $primary;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -272,11 +272,11 @@ $red:    #ef4444;
     text-align: left;
     font-size: 0.75rem;
     font-weight: 600;
-    color: $gray-500;
+    color: var(--adm-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    background: $gray-50;
-    border-bottom: 1px solid $gray-200;
+    background: var(--adm-bg);
+    border-bottom: 1px solid var(--adm-border);
     white-space: nowrap;
 
     &.sortable {
@@ -291,17 +291,17 @@ $red:    #ef4444;
 
   td {
     padding: 14px 16px;
-    border-bottom: 1px solid $gray-100;
+    border-bottom: 1px solid var(--adm-border);
     vertical-align: middle;
-    color: $gray-700;
+    color: var(--adm-text-2);
 
     &.col-actions { text-align: center; }
-    &.subs-date-cell { white-space: nowrap; color: $gray-500; font-size: 0.8125rem; }
+    &.subs-date-cell { white-space: nowrap; color: var(--adm-text-muted); font-size: 0.8125rem; }
   }
 
   .subs-row {
     transition: background 0.1s ease;
-    &:hover { background: $gray-50; }
+    &:hover { background: var(--adm-bg); }
     &:last-child td { border-bottom: none; }
   }
 }
@@ -328,9 +328,9 @@ $red:    #ef4444;
   text-transform: uppercase;
 }
 
-.subs-user-name  { font-weight: 600; color: $gray-900; font-size: 0.875rem; }
-.subs-user-email { font-size: 0.75rem; color: $gray-500; margin-top: 1px; }
-.subs-user-type  { font-size: 0.6875rem; color: $gray-400; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.04em; }
+.subs-user-name  { font-weight: 600; color: var(--adm-text); font-size: 0.875rem; }
+.subs-user-email { font-size: 0.75rem; color: var(--adm-text-muted); margin-top: 1px; }
+.subs-user-type  { font-size: 0.6875rem; color: var(--adm-text-faint); margin-top: 1px; text-transform: uppercase; letter-spacing: 0.04em; }
 
 // ── Badges ────────────────────────────────────────────────────────────────────
 .subs-badge {
@@ -345,11 +345,11 @@ $red:    #ef4444;
 
   &.subs-badge-sm { padding: 2px 8px; font-size: 0.6875rem; }
 
-  &.subs-badge-success { background: #dcfce7; color: #166534; }
-  &.subs-badge-warning { background: #fef3c7; color: #92400e; }
-  &.subs-badge-danger  { background: #fee2e2; color: #991b1b; }
-  &.subs-badge-info    { background: #dbeafe; color: #1e40af; }
-  &.subs-badge-secondary { background: $gray-100; color: $gray-700; }
+  &.subs-badge-success { background: var(--adm-success-soft); color: var(--adm-success); }
+  &.subs-badge-warning { background: var(--adm-warning-soft); color: var(--adm-warning); }
+  &.subs-badge-danger  { background: var(--adm-danger-soft); color: var(--adm-danger); }
+  &.subs-badge-info    { background: var(--adm-info-soft); color: var(--adm-info); }
+  &.subs-badge-secondary { background: var(--adm-surface-2); color: var(--adm-text-2); }
 }
 
 // ── Payment Cell ──────────────────────────────────────────────────────────────
@@ -367,9 +367,9 @@ $red:    #ef4444;
   align-items: center;
   gap: 4px;
   font-weight: 600;
-  color: $gray-900;
+  color: var(--adm-text);
 
-  .subs-prop-limit { color: $gray-400; font-weight: 400; }
+  .subs-prop-limit { color: var(--adm-text-faint); font-weight: 400; }
   .subs-prop-unlimited { color: $green; font-size: 0.875rem; }
 }
 
@@ -382,10 +382,10 @@ $red:    #ef4444;
 .subs-menu-btn {
   width: 32px;
   height: 32px;
-  border: 1px solid $gray-200;
+  border: 1px solid var(--adm-border);
   border-radius: 6px;
-  background: $white;
-  color: $gray-500;
+  background: var(--adm-surface);
+  color: var(--adm-text-muted);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -399,8 +399,8 @@ $red:    #ef4444;
   position: absolute;
   right: 0;
   top: calc(100% + 4px);
-  background: $white;
-  border: 1px solid $gray-200;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   min-width: 180px;
@@ -423,21 +423,21 @@ $red:    #ef4444;
   background: none;
   border: none;
   font-size: 0.8125rem;
-  color: $gray-700;
+  color: var(--adm-text-2);
   cursor: pointer;
   text-align: left;
   transition: background 0.1s ease;
 
-  i { width: 14px; text-align: center; color: $gray-400; }
+  i { width: 14px; text-align: center; color: var(--adm-text-faint); }
 
-  &:hover { background: $gray-50; color: $gray-900; i { color: $primary; } }
-  &.subs-item-warning { color: $orange; i { color: $orange; } &:hover { background: #fff7ed; } }
-  &.subs-item-success { color: $green;  i { color: $green;  } &:hover { background: #f0fdf4; } }
+  &:hover { background: var(--adm-bg); color: var(--adm-text); i { color: $primary; } }
+  &.subs-item-warning { color: $orange; i { color: $orange; } &:hover { background: var(--adm-warning-soft); } }
+  &.subs-item-success { color: $green;  i { color: $green;  } &:hover { background: var(--adm-success-soft); } }
 }
 
 .subs-dropdown-divider {
   height: 1px;
-  background: $gray-100;
+  background: var(--adm-surface-2);
   margin: 4px 0;
 }
 
@@ -445,7 +445,7 @@ $red:    #ef4444;
 .subs-empty {
   text-align: center;
   padding: 64px 24px;
-  color: $gray-500;
+  color: var(--adm-text-muted);
 
   .subs-empty-icon {
     font-size: 3rem;
@@ -454,7 +454,7 @@ $red:    #ef4444;
     margin-bottom: 16px;
   }
 
-  h3 { font-size: 1.125rem; font-weight: 600; color: $gray-700; margin: 0 0 8px; }
+  h3 { font-size: 1.125rem; font-weight: 600; color: var(--adm-text-2); margin: 0 0 8px; }
   p  { font-size: 0.875rem; margin: 0; }
 }
 
@@ -464,13 +464,13 @@ $red:    #ef4444;
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px;
-  border-top: 1px solid $gray-100;
+  border-top: 1px solid var(--adm-border);
   flex-wrap: wrap;
   gap: 12px;
 
   .subs-pagination-info {
     font-size: 0.8125rem;
-    color: $gray-500;
+    color: var(--adm-text-muted);
   }
 
   .subs-pagination-controls {
@@ -482,10 +482,10 @@ $red:    #ef4444;
   .subs-page-btn {
     width: 32px;
     height: 32px;
-    border: 1px solid $gray-200;
+    border: 1px solid var(--adm-border);
     border-radius: 6px;
-    background: $white;
-    color: $gray-500;
+    background: var(--adm-surface);
+    color: var(--adm-text-muted);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -499,7 +499,7 @@ $red:    #ef4444;
 
   .subs-page-current {
     font-size: 0.8125rem;
-    color: $gray-700;
+    color: var(--adm-text-2);
     font-weight: 500;
     padding: 0 4px;
   }
@@ -510,8 +510,8 @@ $red:    #ef4444;
   display: flex;
   gap: 4px;
   margin-bottom: 20px;
-  background: $white;
-  border: 1px solid $gray-200;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 10px;
   padding: 4px;
 
@@ -523,7 +523,7 @@ $red:    #ef4444;
     border: none;
     border-radius: 7px;
     background: transparent;
-    color: $gray-500;
+    color: var(--adm-text-muted);
     font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
@@ -531,7 +531,7 @@ $red:    #ef4444;
 
     i { font-size: 12px; }
 
-    &:hover { background: $gray-50; color: $gray-700; }
+    &:hover { background: var(--adm-bg); color: var(--adm-text-2); }
 
     &.active {
       background: $primary;
@@ -554,7 +554,7 @@ $red:    #ef4444;
 .subs-analytics-title {
   font-size: 1rem;
   font-weight: 600;
-  color: $gray-900;
+  color: var(--adm-text);
   margin: 0;
   display: flex;
   align-items: center;
@@ -564,7 +564,7 @@ $red:    #ef4444;
 
 .subs-period-btns {
   display: flex;
-  border: 1px solid $gray-200;
+  border: 1px solid var(--adm-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -573,16 +573,16 @@ $red:    #ef4444;
   padding: 6px 14px;
   font-size: 0.8rem;
   border: none;
-  border-right: 1px solid $gray-200;
-  background: $white;
+  border-right: 1px solid var(--adm-border);
+  background: var(--adm-surface);
   cursor: pointer;
-  color: $gray-500;
+  color: var(--adm-text-muted);
   font-weight: 500;
   transition: all 0.15s;
 
   &:last-child { border-right: none; }
   &.active { background: $primary; color: $white; }
-  &:hover:not(.active) { background: $gray-50; }
+  &:hover:not(.active) { background: var(--adm-bg); }
 }
 
 .subs-analytics-section { margin-bottom: 20px; }
@@ -596,8 +596,8 @@ $red:    #ef4444;
 }
 
 .subs-kpi-card {
-  background: $white;
-  border: 1px solid $gray-200;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -623,14 +623,14 @@ $red:    #ef4444;
   .subs-kpi-value {
     font-size: 1.25rem;
     font-weight: 700;
-    color: $gray-900;
+    color: var(--adm-text);
     line-height: 1.2;
     word-break: break-word;
   }
 
   .subs-kpi-label {
     font-size: 0.75rem;
-    color: $gray-500;
+    color: var(--adm-text-muted);
     margin-top: 3px;
   }
 
@@ -658,12 +658,12 @@ $red:    #ef4444;
 .subs-plan-bar-label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: $gray-700;
+  color: var(--adm-text-2);
 }
 
 .subs-plan-bar-track {
   height: 10px;
-  background: $gray-100;
+  background: var(--adm-surface-2);
   border-radius: 5px;
   overflow: hidden;
 }
@@ -682,13 +682,13 @@ $red:    #ef4444;
 .subs-plan-bar-count {
   font-size: 0.8rem;
   font-weight: 700;
-  color: $gray-900;
+  color: var(--adm-text);
   text-align: right;
 }
 
 .subs-plan-bar-pct {
   font-size: 0.75rem;
-  color: $gray-500;
+  color: var(--adm-text-muted);
   text-align: right;
 }
 
@@ -701,8 +701,8 @@ $red:    #ef4444;
 }
 
 .subs-analytics-card {
-  background: $white;
-  border: 1px solid $gray-200;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
@@ -716,7 +716,7 @@ $red:    #ef4444;
     gap: 10px;
     margin-bottom: 14px;
     padding-bottom: 12px;
-    border-bottom: 1px solid $gray-100;
+    border-bottom: 1px solid var(--adm-border);
 
     i {
       width: 36px;
@@ -734,7 +734,7 @@ $red:    #ef4444;
     h4 {
       font-size: 0.75rem;
       font-weight: 700;
-      color: $gray-500;
+      color: var(--adm-text-muted);
       margin: 0;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -744,14 +744,14 @@ $red:    #ef4444;
   .subs-analytics-value {
     font-size: 1.75rem;
     font-weight: 700;
-    color: $gray-900;
+    color: var(--adm-text);
     margin-bottom: 4px;
     line-height: 1.2;
   }
 
   .subs-analytics-desc {
     font-size: 0.75rem;
-    color: $gray-400;
+    color: var(--adm-text-faint);
     margin: 0 0 8px;
   }
 }
@@ -763,11 +763,11 @@ $red:    #ef4444;
   gap: 2px;
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid $gray-100;
+  border-top: 1px solid var(--adm-border);
 
   span {
     font-size: 0.75rem;
-    color: $gray-400;
+    color: var(--adm-text-faint);
   }
 }
 
@@ -815,7 +815,7 @@ $red:    #ef4444;
 
 .subs-trend-bar-label {
   font-size: 0.65rem;
-  color: $gray-400;
+  color: var(--adm-text-faint);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -826,7 +826,7 @@ $red:    #ef4444;
 .subs-trend-bar-value {
   font-size: 0.6rem;
   font-weight: 600;
-  color: $gray-700;
+  color: var(--adm-text-2);
   text-align: center;
   white-space: nowrap;
 }
@@ -834,7 +834,7 @@ $red:    #ef4444;
 // Usage bar
 .subs-usage-bar {
   height: 8px;
-  background: $gray-100;
+  background: var(--adm-surface-2);
   border-radius: 4px;
   overflow: hidden;
   margin-bottom: 3px;
@@ -870,3 +870,19 @@ $red:    #ef4444;
   .subs-plan-bar-row { grid-template-columns: 60px 1fr 40px; }
   .subs-plan-bar-pct { display: none; }
 }
+
+// ── Modale de confirmation ──────────────────────────────────────────────────
+.subs-modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+.subs-modal {
+  background: var(--adm-surface); border-radius: 12px; width: 100%; max-width: 480px;
+  padding: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+.subs-modal-title { margin: 0 0 12px; font-size: 1.05rem; font-weight: 600; color: var(--adm-text); display: flex; gap: 8px; align-items: center; }
+.subs-modal-text { margin: 0 0 10px; font-size: 0.875rem; color: var(--adm-text-2); line-height: 1.5; }
+.subs-modal-label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--adm-text-muted); margin-bottom: 4px; }
+.subs-modal-textarea { width: 100%; resize: vertical; }
+.subs-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }

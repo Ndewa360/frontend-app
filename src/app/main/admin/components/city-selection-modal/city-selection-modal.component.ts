@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, BehaviorSubject, of } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngxs/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { GeonamesService, TransformedCity } from '../../services/geonames.service';
 import { AdminGeographyService } from '../../services/admin-geography.service';
@@ -26,9 +26,11 @@ const PAGE_SIZE = 20;
   templateUrl: './city-selection-modal.component.html',
   styleUrls: ['./city-selection-modal.component.scss'],
   standalone: true,
-  imports: [NgIf, FormsModule, ReactiveFormsModule, NgFor, AsyncPipe, DecimalPipe]
+  imports: [TranslateModule, NgIf, FormsModule, ReactiveFormsModule, NgFor, AsyncPipe, DecimalPipe]
 })
 export class CitySelectionModalComponent implements OnInit, OnDestroy {
+  /** Traductions (textes construits dans le code). */
+  private readonly i18n = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   currentStep: 'country' | 'city' = 'country';
@@ -208,8 +210,8 @@ export class CitySelectionModalComponent implements OnInit, OnDestroy {
   isCitySelected(city: TransformedCity): boolean { return this.selectedCity?.geonameId === city.geonameId; }
 
   getConfirmButtonText(): string {
-    if (this.isLoading$.value) return 'Création en cours...';
-    return this.selectedCity ? `Ajouter ${this.selectedCity.name}` : 'Sélectionner une ville';
+    if (this.isLoading$.value) return this.i18n.instant('ADMIN.CITY_SELECT.TS.CREATING');
+    return this.selectedCity ? this.i18n.instant('ADMIN.CITY_SELECT.TS.ADD_CITY', { name: this.selectedCity.name }) : this.i18n.instant('ADMIN.CITY_SELECT.TS.SELECT_CITY');
   }
 
   canConfirm(): boolean { return !!(this.selectedCountry && this.selectedCity && !this.isLoading$.value); }

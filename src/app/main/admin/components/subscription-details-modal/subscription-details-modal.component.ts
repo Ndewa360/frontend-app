@@ -1,9 +1,10 @@
 import { trackByFn } from '../../../../shared/utils/track-by.util';
-import { Component, Inject, OnInit } from '@angular/core';
+import { tierLabel } from '../../../../shared/pricing/pricing-grid';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AdminSubscriptionsAction } from '../../store/subscriptions/admin-subscriptions.actions';
 import { AdminUserSubscription } from '../../store/subscriptions/admin-subscriptions.model';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
@@ -21,9 +22,11 @@ export interface SubscriptionDetailsModalData {
   templateUrl: './subscription-details-modal.component.html',
   styleUrls: ['./subscription-details-modal.component.scss'],
   standalone: true,
-  imports: [NgClass, ExtendedModule, NgIf, NgFor, FormsModule]
+  imports: [TranslateModule, NgClass, ExtendedModule, NgIf, NgFor, FormsModule]
 })
 export class SubscriptionDetailsModalComponent implements OnInit {
+  /** Traductions (textes construits dans le code). */
+  private readonly i18n = inject(TranslateService);
   trackByFn = trackByFn;
 
 
@@ -79,8 +82,8 @@ export class SubscriptionDetailsModalComponent implements OnInit {
       next: (res) => {
         this.savingAmount = false;
         this.toastr.success(res?.appliesNow
-          ? 'Montant Gold appliqué à ce compte.'
-          : 'Montant enregistré : il s\'appliquera dès que le compte sera au palier Gold.');
+          ? this.i18n.instant('ADMIN.SUB_MODAL.TS.GOLD_APPLIED')
+          : this.i18n.instant('ADMIN.SUB_MODAL.TS.GOLD_SAVED'));
         this.dialogRef.close({ action: 'custom-amount' });
       },
       error: () => {
@@ -114,12 +117,13 @@ export class SubscriptionDetailsModalComponent implements OnInit {
       this.saveCustomAmount();
       return;
     case 'suspend':
-      if (!this.actionReason.trim()) {
-        this.toastr.warning(this.translate.instant('ADMIN.SUBSCRIPTION.SUSPENSION_REASON_REQUIRED'));
+      // Même règle que le serveur : motif journalisé de 10 caractères minimum.
+      if (this.actionReason.trim().length < 10) {
+        this.toastr.warning(this.i18n.instant('ADMIN.SUB_MODAL.TS.REASON_MIN'));
         return;
       }
       this.store.dispatch(new AdminSubscriptionsAction.SuspendAccount(
-        this.subscription._id, this.actionReason
+        this.subscription._id, this.actionReason.trim()
       ));
       this.dialogRef.close({ action: 'suspend' });
       break;
@@ -141,8 +145,8 @@ export class SubscriptionDetailsModalComponent implements OnInit {
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   getPlanLabel(plan: string): string {
-    if (plan === 'premium') return this.subscription.currentTier === 'GOLD' ? 'Gold' : 'Pro';
-    return plan === 'trial' ? 'Essai' : 'Gratuit';
+    if (plan === 'trial' && !this.subscription.currentTier) return this.i18n.instant('ADMIN.SUB_MODAL.TS.TRIAL');
+    return tierLabel(this.subscription.currentTier, plan, this.i18n.currentLang);
   }
 
   getPlanClass(plan: string): string {
@@ -151,7 +155,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
-      active: 'Actif', suspended: 'Suspendu', disabled: 'Désactivé'
+      active: this.i18n.instant('ADMIN.SUB_MODAL.TS.STATUS_ACTIVE'), suspended: this.i18n.instant('ADMIN.SUB_MODAL.TS.STATUS_SUSPENDED'), disabled: this.i18n.instant('ADMIN.SUB_MODAL.TS.STATUS_DISABLED')
     };
     return labels[status] || status;
   }
@@ -165,7 +169,7 @@ export class SubscriptionDetailsModalComponent implements OnInit {
 
   getPeriodStateLabel(state: string): string {
     const labels: Record<string, string> = {
-      payed: 'Payé', unpaid: 'Impayé', waiting: 'En attente', should_not_payed: 'Gratuit'
+      payed: this.i18n.instant('ADMIN.SUB_MODAL.TS.PAID'), unpaid: this.i18n.instant('ADMIN.SUB_MODAL.TS.UNPAID'), waiting: this.i18n.instant('ADMIN.SUB_MODAL.TS.WAITING'), should_not_payed: this.i18n.instant('ADMIN.SUB_MODAL.TS.NOTHING_DUE')
     };
     return labels[state] || state;
   }

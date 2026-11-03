@@ -33,7 +33,7 @@ $gray-900: #0f172a;
       animation: dashSpin 0.8s linear infinite;
     }
 
-    p { color: $gray-500; font-size: 0.875rem; }
+    p { color: var(--adm-text-muted); font-size: 0.875rem; }
   }
 
   // ── Header ────────────────────────────────────────────────────────────────
@@ -42,8 +42,8 @@ $gray-900: #0f172a;
     align-items: flex-start; margin-bottom: 24px;
 
     .admin-dashboard-title {
-      h2 { font-size: 1.5rem; font-weight: 700; color: $gray-900; margin: 0 0 4px; }
-      .admin-dashboard-subtitle { color: $gray-500; font-size: 0.875rem; margin: 0; }
+      h2 { font-size: 1.5rem; font-weight: 700; color: var(--adm-text); margin: 0 0 4px; }
+      .admin-dashboard-subtitle { color: var(--adm-text-muted); font-size: 0.875rem; margin: 0; }
     }
 
     .admin-dashboard-actions { display: flex; gap: 8px; }
@@ -56,9 +56,9 @@ $gray-900: #0f172a;
     gap: 16px; margin-bottom: 24px;
 
     .admin-stat-card {
-      background: $white; border-radius: 10px; padding: 20px;
+      background: var(--adm-surface); border-radius: 10px; padding: 20px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      border: 1px solid $gray-200;
+      border: 1px solid var(--adm-border);
       display: flex; align-items: center; gap: 16px;
       transition: transform 0.2s, box-shadow 0.2s;
 
@@ -77,8 +77,8 @@ $gray-900: #0f172a;
 
       .admin-stat-content {
         flex: 1;
-        h3 { font-size: 1.75rem; font-weight: 700; color: $gray-900; margin: 0 0 4px; }
-        p  { color: $gray-500; font-size: 0.8rem; margin: 0 0 6px; }
+        h3 { font-size: 1.75rem; font-weight: 700; color: var(--adm-text); margin: 0 0 4px; }
+        p  { color: var(--adm-text-muted); font-size: 0.8rem; margin: 0 0 6px; }
 
         .admin-stat-change {
           font-size: 0.75rem; font-weight: 600;
@@ -103,16 +103,16 @@ $gray-900: #0f172a;
   // ── Cards ─────────────────────────────────────────────────────────────────
   .admin-health-card,
   .admin-activities-card {
-    background: $white; border-radius: 10px;
+    background: var(--adm-surface); border-radius: 10px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    border: 1px solid $gray-200; overflow: hidden;
+    border: 1px solid var(--adm-border); overflow: hidden;
 
     .admin-card-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 16px 20px; border-bottom: 1px solid $gray-100;
-      background: $gray-50;
+      padding: 16px 20px; border-bottom: 1px solid var(--adm-border);
+      background: var(--adm-bg);
 
-      h3 { font-size: 0.9375rem; font-weight: 600; color: $gray-900; margin: 0; }
+      h3 { font-size: 0.9375rem; font-weight: 600; color: var(--adm-text); margin: 0; }
 
       .admin-health-status {
         padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;
@@ -131,13 +131,13 @@ $gray-900: #0f172a;
   // ── Service items ─────────────────────────────────────────────────────────
   .admin-service-item {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 0; border-bottom: 1px solid $gray-100; font-size: 0.875rem;
+    padding: 10px 0; border-bottom: 1px solid var(--adm-border); font-size: 0.875rem;
     &:last-child { border-bottom: none; }
 
-    .admin-service-name { color: $gray-700; font-weight: 500; }
+    .admin-service-name { color: var(--adm-text-2); font-weight: 500; }
 
     .admin-service-status {
-      font-weight: 600; color: $gray-900;
+      font-weight: 600; color: var(--adm-text);
       padding: 2px 8px; border-radius: 4px; font-size: 0.78rem;
       &.up       { background: rgba($success,0.1); color: darken($success,10%); }
       &.down     { background: rgba($danger,0.1);  color: $danger; }
@@ -148,7 +148,7 @@ $gray-900: #0f172a;
   // ── Activity items ────────────────────────────────────────────────────────
   .admin-activity-item {
     display: flex; gap: 12px; padding: 10px 0;
-    border-bottom: 1px solid $gray-100;
+    border-bottom: 1px solid var(--adm-border);
     &:last-child { border-bottom: none; }
 
     .admin-activity-icon {
@@ -159,7 +159,7 @@ $gray-900: #0f172a;
       &.user    { background: rgba($info,0.1);    color: $info;    }
       &.property{ background: rgba($success,0.1); color: $success; }
       &.payment { background: rgba($primary,0.1); color: $primary; }
-      &.system  { background: rgba($gray-500,0.1);color: $gray-500;}
+      &.system  { background: rgba($gray-500,0.1);color: var(--adm-text-muted);}
       &.INFO    { background: rgba($info,0.1);    color: $info;    }
       &.ERROR   { background: rgba($danger,0.1);  color: $danger;  }
       &.WARNING { background: rgba($warning,0.1); color: darken($warning,15%); }
@@ -167,10 +167,10 @@ $gray-900: #0f172a;
 
     .admin-activity-content {
       flex: 1;
-      .admin-activity-description { font-size: 0.875rem; color: $gray-900; margin: 0 0 3px; }
+      .admin-activity-description { font-size: 0.875rem; color: var(--adm-text); margin: 0 0 3px; }
       .admin-activity-meta {
-        display: flex; gap: 12px; font-size: 0.75rem; color: $gray-400;
-        .admin-activity-user { font-weight: 500; color: $gray-500; }
+        display: flex; gap: 12px; font-size: 0.75rem; color: var(--adm-text-faint);
+        .admin-activity-user { font-weight: 500; color: var(--adm-text-muted); }
       }
     }
   }
@@ -184,10 +184,10 @@ $gray-900: #0f172a;
     i { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     .admin-alert-body { flex: 1; strong { display: block; margin-bottom: 2px; } }
 
-    &.alert-warning { background: #fef3c7; color: #92400e; }
-    &.alert-info    { background: #dbeafe; color: #1e40af; }
-    &.alert-success { background: #dcfce7; color: #166534; }
-    &.alert-danger  { background: #fee2e2; color: #991b1b; }
+    &.alert-warning { background: var(--adm-warning-soft); color: var(--adm-warning); }
+    &.alert-info    { background: var(--adm-info-soft); color: var(--adm-info); }
+    &.alert-success { background: var(--adm-success-soft); color: var(--adm-success); }
+    &.alert-danger  { background: var(--adm-danger-soft); color: var(--adm-danger); }
   }
 
   // ── Bar chart ─────────────────────────────────────────────────────────────
@@ -206,22 +206,22 @@ $gray-900: #0f172a;
         &:hover { opacity: 0.8; }
       }
 
-      .dash-bar-label { font-size: 0.65rem; color: $gray-400; text-align: center; white-space: nowrap; }
+      .dash-bar-label { font-size: 0.65rem; color: var(--adm-text-faint); text-align: center; white-space: nowrap; }
     }
   }
 
   // ── Quick actions ─────────────────────────────────────────────────────────
   .admin-quick-actions {
-    h3 { font-size: 1.125rem; font-weight: 600; color: $gray-900; margin: 0 0 16px; }
+    h3 { font-size: 1.125rem; font-weight: 600; color: var(--adm-text); margin: 0 0 16px; }
 
     .admin-actions-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;
 
       .admin-action-btn {
         display: flex; align-items: center; gap: 10px;
-        padding: 14px 18px; background: $white;
-        border: 1px solid $gray-200; border-radius: 8px;
-        color: $gray-700; font-size: 0.875rem; font-weight: 500;
+        padding: 14px 18px; background: var(--adm-surface);
+        border: 1px solid var(--adm-border); border-radius: 8px;
+        color: var(--adm-text-2); font-size: 0.875rem; font-weight: 500;
         cursor: pointer; transition: all 0.15s;
 
         i { color: $primary; font-size: 1rem; }
@@ -242,9 +242,9 @@ $gray-900: #0f172a;
     font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.15s;
 
     &.admin-btn-secondary {
-      background: $white; color: $gray-700;
-      border: 1px solid $gray-200;
-      &:hover { background: $gray-50; border-color: $primary; color: $primary-dark; }
+      background: var(--adm-surface); color: var(--adm-text-2);
+      border: 1px solid var(--adm-border);
+      &:hover { background: var(--adm-bg); border-color: $primary; color: $primary-dark; }
     }
 
     &.admin-btn-ghost {
@@ -261,7 +261,7 @@ $gray-900: #0f172a;
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; padding: 32px; text-align: center;
     i { font-size: 2rem; color: $gray-200; margin-bottom: 8px; }
-    p { color: $gray-400; font-size: 0.875rem; margin: 0; }
+    p { color: var(--adm-text-faint); font-size: 0.875rem; margin: 0; }
   }
 }
 
@@ -282,3 +282,18 @@ $gray-900: #0f172a;
     .admin-quick-actions .admin-actions-grid { grid-template-columns: 1fr; }
   }
 }
+
+// Cartes de chiffres cliquables (mènent au détail).
+button.admin-stat-card {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  &:hover { border-color: var(--adm-primary); }
+  &:focus-visible { outline: 2px solid var(--adm-primary); outline-offset: 2px; }
+}
+
+.admin-card-icon { margin-right: 8px; color: var(--adm-primary); }
+
+.admin-empty-text { padding: 1rem; color: var(--adm-text-faint); text-align: center; }

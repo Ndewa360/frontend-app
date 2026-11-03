@@ -18,7 +18,7 @@ $danger: #ef4444;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: $gray-50;
+  background: var(--adm-bg);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -109,7 +109,7 @@ $danger: #ef4444;
       cursor: pointer;
 
       option {
-        color: $gray-900;
+        color: var(--adm-text);
       }
     }
   }
@@ -178,8 +178,8 @@ $danger: #ef4444;
 // ── Sidebar ───────────────────────────────────────────────────────────────────
 .admin-sidebar {
   width: 256px;
-  background: $white;
-  border-right: 1px solid $gray-200;
+  background: var(--adm-surface);
+  border-right: 1px solid var(--adm-border);
   overflow-y: auto;
   flex-shrink: 0;
   display: flex;
@@ -193,13 +193,13 @@ $danger: #ef4444;
   // Page header inside sidebar
   .admin-page-header {
     padding: 0 20px 16px;
-    border-bottom: 1px solid $gray-100;
+    border-bottom: 1px solid var(--adm-border);
     margin-bottom: 16px;
 
     .admin-page-title {
       font-size: 1rem;
       font-weight: 700;
-      color: $gray-900;
+      color: var(--adm-text);
       margin: 0 0 4px;
       line-height: 1.3;
     }
@@ -210,7 +210,7 @@ $danger: #ef4444;
       flex-wrap: wrap;
       gap: 4px;
       font-size: 0.75rem;
-      color: $gray-400;
+      color: var(--adm-text-faint);
 
       .admin-breadcrumb-item {
         display: flex;
@@ -233,7 +233,7 @@ $danger: #ef4444;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: $gray-400;
+      color: var(--adm-text-faint);
       margin: 0 0 8px 8px;
     }
 
@@ -253,7 +253,7 @@ $danger: #ef4444;
       gap: 10px;
       padding: 9px 12px;
       border-radius: 8px;
-      color: $gray-700;
+      color: var(--adm-text-2);
       text-decoration: none;
       font-size: 0.8125rem;
       font-weight: 500;
@@ -265,7 +265,7 @@ $danger: #ef4444;
         width: 16px;
         text-align: center;
         flex-shrink: 0;
-        color: $gray-400;
+        color: var(--adm-text-faint);
         transition: color 0.15s ease;
       }
 
@@ -286,8 +286,8 @@ $danger: #ef4444;
       }
 
       &:hover {
-        background: $gray-50;
-        color: $gray-900;
+        background: var(--adm-bg);
+        color: var(--adm-text);
 
         .admin-nav-icon { color: $primary; }
       }
@@ -319,7 +319,7 @@ $danger: #ef4444;
 .admin-main {
   flex: 1;
   overflow: hidden;
-  background: $gray-50;
+  background: var(--adm-bg);
 
   .admin-main-content {
     height: 100%;
@@ -330,18 +330,18 @@ $danger: #ef4444;
 
 // ── Responsive ────────────────────────────────────────────────────────────────
 @media (max-width: 768px) {
-  .admin-sidebar { width: 220px; }
   .admin-main .admin-main-content { padding: 16px; }
 }
 
-@media (max-width: 640px) {
+// Téléphone et petite tablette : navigation en barre horizontale défilante.
+@media (max-width: 768px) {
   .admin-content { flex-direction: column; }
 
   .admin-sidebar {
     width: 100%;
     height: auto;
     border-right: none;
-    border-bottom: 1px solid $gray-200;
+    border-bottom: 1px solid var(--adm-border);
 
     .admin-nav-list {
       display: flex;

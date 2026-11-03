@@ -56,7 +56,12 @@ export interface SubscriptionPeriod {
 
 export interface SubscriptionStats {
   overview: {
+    /** Abonnements en cours. */
     totalUsers: number;
+    /** Comptes utilisateurs (non supprimés). */
+    totalAccounts?: number;
+    /** Comptes en période d'essai. */
+    trialUsers?: number;
     freeUsers: number;
     premiumUsers: number;
     activeUsers: number;
@@ -71,6 +76,7 @@ export interface SubscriptionStats {
     userGrowth: ChartData[];
     revenueGrowth: ChartData[];
     planDistribution: PlanDistribution[];
+    tierDistribution?: Array<{ _id?: string; tier?: string; count: number; monthlyAmount?: number }>;
     paymentStatus: PaymentStatusDistribution[];
   };
   topMetrics: {
@@ -106,6 +112,7 @@ export interface PaymentStatusDistribution {
 export interface SubscriptionFilters {
   search?: string;
   plan?: string;
+  currentTier?: string;
   accountStatus?: string;
   paymentStatus?: string;
   userType?: string;

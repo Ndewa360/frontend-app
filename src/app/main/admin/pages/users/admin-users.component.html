@@ -1,299 +1,311 @@
-<!-- Admin Users Component -->
 <div class="admin-users-container">
 <ng-container *ngIf="{ loading: isLoading$ | async } as ctx">
-  <!-- Header Section -->
+  <!-- En-tête -->
   <div class="admin-page-header">
     <div class="admin-header-content">
       <div class="admin-header-text">
         <h1 class="admin-page-title">
-          <i class="fas fa-users admin-title-icon"></i>
-          Gestion des Utilisateurs
+          <i class="fas fa-users admin-title-icon" aria-hidden="true"></i>
+          {{ 'ADMIN.USERS.TITLE' | translate }}
         </h1>
-        <p class="admin-page-subtitle">Gérez les comptes utilisateurs, leurs rôles et permissions dans le système</p>
+        <p class="admin-page-subtitle">{{ 'ADMIN.USERS.SUBTITLE' | translate }}</p>
       </div>
       <div class="admin-header-actions">
         <button class="admin-btn admin-btn-secondary" (click)="onRefreshData()" [disabled]="ctx.loading">
-          <i class="fas fa-sync-alt" [class.fa-spin]="ctx.loading"></i><span>Actualiser</span>
+          <i class="fas fa-sync-alt" [class.fa-spin]="ctx.loading" aria-hidden="true"></i><span>{{ 'ADMIN.COMMON.REFRESH' | translate }}</span>
         </button>
         <button class="admin-btn admin-btn-outline" (click)="onExportUsers()" [disabled]="ctx.loading">
-          <i class="fas fa-download"></i><span>Exporter</span>
+          <i class="fas fa-download" aria-hidden="true"></i><span>{{ 'ADMIN.COMMON.EXPORT_CSV' | translate }}</span>
         </button>
         <button class="admin-btn admin-btn-outline" (click)="navigateToAgentValidation()" [disabled]="ctx.loading">
-          <i class="fas fa-user-tie"></i><span>Valider les agents</span>
+          <i class="fas fa-user-tie" aria-hidden="true"></i><span>{{ 'ADMIN.USERS.VALIDATE_AGENTS' | translate }}</span>
         </button>
-        <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="ctx.loading">
-          <i class="fas fa-plus"></i><span>Nouvel Utilisateur</span>
+        <button *ngIf="superAdmin" class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="ctx.loading">
+          <i class="fas fa-plus" aria-hidden="true"></i><span>{{ 'ADMIN.USERS.NEW_USER' | translate }}</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Loading State -->
   <div class="admin-loading-overlay" *ngIf="ctx.loading">
     <div class="admin-loader">
       <div class="admin-spinner"></div>
-      <p>Chargement des données...</p>
+      <p>{{ 'ADMIN.COMMON.LOADING' | translate }}</p>
     </div>
   </div>
 
-  <!-- Stats Cards -->
+  <!-- Chiffres -->
   <div class="admin-stats-grid" *ngIf="!ctx.loading && (stats$ | async) as stats">
     <div class="admin-stat-card admin-stat-primary">
-      <div class="admin-stat-icon"><i class="fas fa-users"></i></div>
+      <div class="admin-stat-icon" aria-hidden="true"><i class="fas fa-users"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.totalUsers | number }}</div>
-        <div class="admin-stat-label">Utilisateurs totaux</div>
+        <div class="admin-stat-label">{{ 'ADMIN.USERS.STATS.TOTAL' | translate }}</div>
         <div class="admin-stat-trend" *ngIf="stats.newUsersThisMonth > 0">
-          <i class="fas fa-arrow-up"></i> +{{ stats.newUsersThisMonth }} ce mois
+          {{ 'ADMIN.USERS.STATS.NEW_THIS_MONTH_COUNT' | translate:{ count: stats.newUsersThisMonth } }}
         </div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-success">
-      <div class="admin-stat-icon"><i class="fas fa-user-check"></i></div>
+      <div class="admin-stat-icon" aria-hidden="true"><i class="fas fa-user-check"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.activeUsers | number }}</div>
-        <div class="admin-stat-label">Utilisateurs actifs</div>
-        <div class="admin-stat-percentage">{{ (stats.totalUsers > 0 ? (stats.activeUsers / stats.totalUsers * 100) : 0) | number:'1.0-1' }}% du total</div>
+        <div class="admin-stat-label">{{ 'ADMIN.USERS.STATS.ACTIVE' | translate }}</div>
+        <div class="admin-stat-percentage">{{ 'ADMIN.USERS.STATS.OF_TOTAL' | translate:{ percent: ((stats.totalUsers > 0 ? (stats.activeUsers / stats.totalUsers * 100) : 0) | number:'1.0-1') } }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-info">
-      <div class="admin-stat-icon"><i class="fas fa-shield-alt"></i></div>
+      <div class="admin-stat-icon" aria-hidden="true"><i class="fas fa-shield-alt"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.verifiedUsers | number }}</div>
-        <div class="admin-stat-label">Utilisateurs vérifiés</div>
-        <div class="admin-stat-percentage">{{ (stats.totalUsers > 0 ? (stats.verifiedUsers / stats.totalUsers * 100) : 0) | number:'1.0-1' }}% du total</div>
+        <div class="admin-stat-label">{{ 'ADMIN.USERS.STATS.VERIFIED' | translate }}</div>
+        <div class="admin-stat-percentage">{{ 'ADMIN.USERS.STATS.OF_TOTAL' | translate:{ percent: ((stats.totalUsers > 0 ? (stats.verifiedUsers / stats.totalUsers * 100) : 0) | number:'1.0-1') } }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-warning">
-      <div class="admin-stat-icon"><i class="fas fa-user-plus"></i></div>
+      <div class="admin-stat-icon" aria-hidden="true"><i class="fas fa-user-plus"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ stats.newUsersThisMonth | number }}</div>
-        <div class="admin-stat-label">Nouveaux ce mois</div>
+        <div class="admin-stat-label">{{ 'ADMIN.USERS.STATS.NEW_THIS_MONTH' | translate }}</div>
       </div>
     </div>
   </div>
 
-  <!-- Filters and Search -->
+  <!-- Filtres -->
   <div class="admin-content-section" *ngIf="!ctx.loading">
     <div class="admin-filters-container">
       <div class="admin-search-section">
         <div class="admin-search-input-group">
-          <i class="fas fa-search admin-search-icon"></i>
-          <input type="text" class="admin-search-input" placeholder="Rechercher par nom, email ou téléphone..."
+          <i class="fas fa-search admin-search-icon" aria-hidden="true"></i>
+          <input type="text" class="admin-search-input" [placeholder]="'ADMIN.USERS.SEARCH_PLACEHOLDER' | translate"
+                 [attr.aria-label]="'ADMIN.USERS.SEARCH_PLACEHOLDER' | translate"
                  [(ngModel)]="searchTerm" (input)="onSearch($event)" [disabled]="ctx.loading">
         </div>
       </div>
       <div class="admin-filters-section">
         <div class="admin-filter-group">
-          <label class="admin-filter-label">Statut</label>
-          <select class="admin-filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()" [disabled]="ctx.loading">
-            <option value="">Tous les statuts</option>
-            <option value="active">Actif</option>
-            <option value="inactive">Inactif</option>
-            <option value="suspended">Suspendu</option>
-            <option value="banned">Banni</option>
+          <label class="admin-filter-label" for="filter-status">{{ 'ADMIN.COMMON.STATUS' | translate }}</label>
+          <select id="filter-status" class="admin-filter-select" [(ngModel)]="selectedStatus" (change)="applyFilters()" [disabled]="ctx.loading">
+            <option value="">{{ 'ADMIN.USERS.FILTERS.ALL_STATUSES' | translate }}</option>
+            <option value="active">{{ 'ADMIN.USERS.STATUS.active' | translate }}</option>
+            <option value="inactive">{{ 'ADMIN.USERS.STATUS.inactive' | translate }}</option>
+            <option value="suspended">{{ 'ADMIN.USERS.STATUS.suspended' | translate }}</option>
+            <option value="banned">{{ 'ADMIN.USERS.STATUS.banned' | translate }}</option>
           </select>
         </div>
         <div class="admin-filter-group">
-          <label class="admin-filter-label">Rôle</label>
-          <select class="admin-filter-select" [(ngModel)]="selectedRole" (change)="applyFilters()" [disabled]="ctx.loading">
-            <option value="">Tous les rôles</option>
-            <option *ngFor="let role of availableRoles trackBy: trackByFn" [value]="role.id">{{ role.name }}</option>
+          <label class="admin-filter-label" for="filter-role">{{ 'ADMIN.USERS.ROLE' | translate }}</label>
+          <select id="filter-role" class="admin-filter-select" [(ngModel)]="selectedRole" (change)="applyFilters()" [disabled]="ctx.loading">
+            <option value="">{{ 'ADMIN.USERS.FILTERS.ALL_ROLES' | translate }}</option>
+            <option *ngFor="let role of availableRoles; trackBy: trackByFn" [value]="role.id">{{ role.name }}</option>
           </select>
         </div>
         <div class="admin-filter-group">
-          <label class="admin-filter-label">Vérification</label>
-          <select class="admin-filter-select" [(ngModel)]="selectedVerification" (change)="applyFilters()" [disabled]="ctx.loading">
-            <option value="">Tous</option>
-            <option value="verified">Vérifiés</option>
-            <option value="unverified">Non vérifiés</option>
+          <label class="admin-filter-label" for="filter-verification">{{ 'ADMIN.USERS.FILTERS.VERIFICATION' | translate }}</label>
+          <select id="filter-verification" class="admin-filter-select" [(ngModel)]="selectedVerification" (change)="applyFilters()" [disabled]="ctx.loading">
+            <option value="">{{ 'ADMIN.COMMON.ALL' | translate }}</option>
+            <option value="verified">{{ 'ADMIN.USERS.FILTERS.VERIFIED' | translate }}</option>
+            <option value="unverified">{{ 'ADMIN.USERS.FILTERS.UNVERIFIED' | translate }}</option>
           </select>
         </div>
         <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onClearFilters()" [disabled]="ctx.loading">
-          <i class="fas fa-times"></i> Effacer
+          <i class="fas fa-times" aria-hidden="true"></i> {{ 'ADMIN.USERS.FILTERS.CLEAR' | translate }}
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Users Table Section -->
+  <!-- Liste -->
   <div class="admin-content-section" *ngIf="!ctx.loading">
     <div class="admin-table-container">
       <div class="admin-table-header">
-        <h3 class="admin-table-title"><i class="fas fa-list"></i> Liste des Utilisateurs</h3>
+        <h3 class="admin-table-title"><i class="fas fa-list" aria-hidden="true"></i> {{ 'ADMIN.USERS.LIST_TITLE' | translate }}</h3>
         <div class="admin-table-actions">
           <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onToggleView()" [disabled]="ctx.loading">
-            <i [class]="viewMode === 'list' ? 'fas fa-th' : 'fas fa-list'"></i>
-            <span>{{ viewMode === 'list' ? 'Grille' : 'Liste' }}</span>
+            <i [class]="viewMode === 'list' ? 'fas fa-th' : 'fas fa-list'" aria-hidden="true"></i>
+            <span>{{ (viewMode === 'list' ? 'ADMIN.USERS.VIEW_GRID' : 'ADMIN.USERS.VIEW_LIST') | translate }}</span>
           </button>
         </div>
       </div>
 
-      <!-- Bulk Actions -->
+      <!-- Actions groupées -->
       <div class="admin-bulk-actions" *ngIf="selectedUsers.length > 0">
         <div class="admin-bulk-info">
-          <i class="fas fa-check-circle"></i>
-          <span>{{ selectedUsers.length }} utilisateur(s) sélectionné(s)</span>
+          <i class="fas fa-check-circle" aria-hidden="true"></i>
+          <span>{{ 'ADMIN.USERS.SELECTED' | translate:{ count: selectedUsers.length } }}</span>
         </div>
         <div class="admin-bulk-buttons">
           <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('activate')" [disabled]="ctx.loading">
-            <i class="fas fa-check"></i> Activer
+            <i class="fas fa-check" aria-hidden="true"></i> {{ 'ADMIN.USERS.ACTIVATE' | translate }}
           </button>
           <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onBulkAction('deactivate')" [disabled]="ctx.loading">
-            <i class="fas fa-times"></i> Désactiver
+            <i class="fas fa-times" aria-hidden="true"></i> {{ 'ADMIN.USERS.DEACTIVATE' | translate }}
           </button>
-          <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onBulkAction('delete')" [disabled]="ctx.loading">
-            <i class="fas fa-trash"></i> Supprimer
+          <button *ngIf="superAdmin" class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onBulkAction('delete')" [disabled]="ctx.loading">
+            <i class="fas fa-trash" aria-hidden="true"></i> {{ 'ADMIN.COMMON.DELETE' | translate }}
           </button>
         </div>
       </div>
 
-      <!-- Users List/Grid -->
-      <div class="admin-users-content" *ngIf="users$ | async as users; else noUsers">
-        <!-- List View -->
-        <div class="admin-users-list" *ngIf="viewMode === 'list'">
-          <div class="admin-user-item" *ngFor="let user of users trackBy: trackByFn" [class.selected]="isUserSelected(user._id)">
-            <div class="admin-user-checkbox">
-              <input type="checkbox" [checked]="isUserSelected(user._id)" (change)="onUserSelect(user._id, $event)">
-            </div>
-            <div class="admin-user-avatar">
-              <img loading="lazy" *ngIf="user.profilePicture" [src]="user.profilePicture" [alt]="user.name" class="admin-avatar-image">
-              <div *ngIf="!user.profilePicture" class="admin-avatar-initials" [style.background-color]="getAvatarColor(user.name)">
-                {{ getInitials(user.name) }}
+      <div class="admin-users-content" *ngIf="(users$ | async) as users">
+        <ng-container *ngIf="users.length; else noUsers">
+          <!-- Vue liste -->
+          <div class="admin-users-list" *ngIf="viewMode === 'list'">
+            <div class="admin-user-item" *ngFor="let user of users; trackBy: trackByFn" [class.selected]="isUserSelected(user._id)">
+              <div class="admin-user-checkbox">
+                <input type="checkbox" [checked]="isUserSelected(user._id)" (change)="onUserSelect(user._id, $event)"
+                       [attr.aria-label]="'ADMIN.USERS.SELECT_USER' | translate:{ name: user.name }">
               </div>
-            </div>
-            <div class="admin-user-info" (click)="onViewUserDetails(user)" style="cursor:pointer">
-              <div class="admin-user-name">{{ user.name }}</div>
-              <div class="admin-user-email">{{ user.email }}</div>
-            </div>
-            <div class="admin-user-role">
-              <span class="admin-role-badge" [class]="'role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles?.length > 0">
-                {{ user.roles[0]?.displayName || user.roles[0]?.name }}
-              </span>
-              <span class="admin-role-badge role-user" *ngIf="!user.roles?.length">Utilisateur</span>
-            </div>
-            <div class="admin-user-status">
-              <span class="admin-status-badge" [class]="'status-' + user.status">{{ getStatusLabel(user.status) }}</span>
-            </div>
-            <div class="admin-user-actions">
-              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onViewUserDetails(user)" title="Voir les détails">
-                <i class="fas fa-eye"></i>
+              <div class="admin-user-avatar">
+                <img loading="lazy" *ngIf="user.profilePicture" [src]="user.profilePicture" [alt]="user.name" class="admin-avatar-image">
+                <div *ngIf="!user.profilePicture" class="admin-avatar-initials" [style.background-color]="getAvatarColor(user.name)">
+                  {{ getInitials(user.name) }}
+                </div>
+              </div>
+              <button type="button" class="admin-user-info" (click)="onViewUserDetails(user)">
+                <span class="admin-user-name">{{ user.name }}</span>
+                <span class="admin-user-email">{{ user.email }}</span>
               </button>
-              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)" title="Modifier">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onOpenAssignRole(user)" title="Gérer les rôles">
-                <i class="fas fa-user-tag"></i>
-              </button>
-              <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onResetPassword(user)" title="Réinitialiser mot de passe">
-                <i class="fas fa-key"></i>
-              </button>
-              <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteUser(user)" title="Supprimer">
-                <i class="fas fa-trash"></i>
-              </button>
+              <div class="admin-user-tier">
+                <span class="adm-pill" [class.adm-pill--primary]="isPaid(user)">{{ tier(user) }}</span>
+                <small *ngIf="isPaid(user)">{{ formatAmount(user.subscription?.monthlyAmount) }}</small>
+              </div>
+              <div class="admin-user-role">
+                <span class="admin-role-badge" [class]="'admin-role-badge role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles?.length > 0">
+                  {{ user.roles[0]?.displayName || user.roles[0]?.name }}
+                </span>
+                <span class="admin-role-badge role-user" *ngIf="!user.roles?.length">{{ 'ADMIN.USERS.ROLE_USER' | translate }}</span>
+              </div>
+              <div class="admin-user-status">
+                <span class="admin-status-badge" [class]="'admin-status-badge status-' + user.status">{{ getStatusLabel(user.status) }}</span>
+              </div>
+              <div class="admin-user-login">
+                <span class="admin-user-login-label">{{ 'ADMIN.USERS.LAST_LOGIN' | translate }}</span>
+                <span>{{ user.lastLoginAt ? (user.lastLoginAt | date:'dd/MM/yyyy HH:mm') : ('ADMIN.COMMON.NEVER' | translate) }}</span>
+              </div>
+              <div class="admin-user-actions">
+                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onViewUserDetails(user)"
+                        [title]="'ADMIN.USERS.ACTIONS.DETAILS' | translate" [attr.aria-label]="'ADMIN.USERS.ACTIONS.DETAILS' | translate">
+                  <i class="fas fa-eye" aria-hidden="true"></i>
+                </button>
+                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)"
+                        [title]="'ADMIN.COMMON.EDIT' | translate" [attr.aria-label]="'ADMIN.COMMON.EDIT' | translate">
+                  <i class="fas fa-edit" aria-hidden="true"></i>
+                </button>
+                <button *ngIf="superAdmin" class="admin-btn admin-btn-outline admin-btn-sm" (click)="onOpenAssignRole(user)"
+                        [title]="'ADMIN.USERS.ACTIONS.ROLES' | translate" [attr.aria-label]="'ADMIN.USERS.ACTIONS.ROLES' | translate">
+                  <i class="fas fa-user-tag" aria-hidden="true"></i>
+                </button>
+                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onResetPassword(user)"
+                        [title]="'ADMIN.USERS.ACTIONS.RESET_PASSWORD' | translate" [attr.aria-label]="'ADMIN.USERS.ACTIONS.RESET_PASSWORD' | translate">
+                  <i class="fas fa-key" aria-hidden="true"></i>
+                </button>
+                <button *ngIf="superAdmin" class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteUser(user)"
+                        [title]="'ADMIN.COMMON.DELETE' | translate" [attr.aria-label]="'ADMIN.COMMON.DELETE' | translate">
+                  <i class="fas fa-trash" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Grid View -->
-        <div class="admin-users-grid" *ngIf="viewMode === 'grid'">
-          <div class="admin-user-card" *ngFor="let user of users trackBy: trackByFn" [class.selected]="isUserSelected(user._id)">
-            <div class="admin-user-card-header">
-              <div class="admin-user-card-checkbox">
-                <input type="checkbox" [checked]="isUserSelected(user._id)" (change)="onUserSelect(user._id, $event)">
+          <!-- Vue grille -->
+          <div class="admin-users-grid" *ngIf="viewMode === 'grid'">
+            <div class="admin-user-card" *ngFor="let user of users; trackBy: trackByFn" [class.selected]="isUserSelected(user._id)">
+              <div class="admin-user-card-header">
+                <div class="admin-user-card-checkbox">
+                  <input type="checkbox" [checked]="isUserSelected(user._id)" (change)="onUserSelect(user._id, $event)"
+                         [attr.aria-label]="'ADMIN.USERS.SELECT_USER' | translate:{ name: user.name }">
+                </div>
+                <div class="admin-user-card-actions">
+                  <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onViewUserDetails(user)"
+                          [title]="'ADMIN.USERS.ACTIONS.DETAILS' | translate" [attr.aria-label]="'ADMIN.USERS.ACTIONS.DETAILS' | translate">
+                    <i class="fas fa-eye" aria-hidden="true"></i>
+                  </button>
+                  <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)"
+                          [title]="'ADMIN.COMMON.EDIT' | translate" [attr.aria-label]="'ADMIN.COMMON.EDIT' | translate">
+                    <i class="fas fa-edit" aria-hidden="true"></i>
+                  </button>
+                  <button *ngIf="superAdmin" class="admin-btn admin-btn-outline admin-btn-sm" (click)="onOpenAssignRole(user)"
+                          [title]="'ADMIN.USERS.ACTIONS.ROLES' | translate" [attr.aria-label]="'ADMIN.USERS.ACTIONS.ROLES' | translate">
+                    <i class="fas fa-user-tag" aria-hidden="true"></i>
+                  </button>
+                  <button *ngIf="superAdmin" class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteUser(user)"
+                          [title]="'ADMIN.COMMON.DELETE' | translate" [attr.aria-label]="'ADMIN.COMMON.DELETE' | translate">
+                    <i class="fas fa-trash" aria-hidden="true"></i>
+                  </button>
+                </div>
               </div>
-              <div class="admin-user-card-actions">
-                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onViewUserDetails(user)" title="Voir les détails">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onEditUser(user)" title="Modifier">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="admin-btn admin-btn-outline admin-btn-sm" (click)="onOpenAssignRole(user)" title="Gérer les rôles">
-                  <i class="fas fa-user-tag"></i>
-                </button>
-                <button class="admin-btn admin-btn-outline admin-btn-sm admin-btn-danger" (click)="onDeleteUser(user)" title="Supprimer">
-                  <i class="fas fa-trash"></i>
-                </button>
+              <div class="admin-user-card-avatar">
+                <img loading="lazy" *ngIf="user.profilePicture" [src]="user.profilePicture" [alt]="user.name" class="admin-avatar-image">
+                <div *ngIf="!user.profilePicture" class="admin-avatar-initials" [style.background-color]="getAvatarColor(user.name)">
+                  {{ getInitials(user.name) }}
+                </div>
               </div>
-            </div>
-            <div class="admin-user-card-avatar">
-              <img loading="lazy" *ngIf="user.profilePicture" [src]="user.profilePicture" [alt]="user.name" class="admin-avatar-image">
-              <div *ngIf="!user.profilePicture" class="admin-avatar-initials" [style.background-color]="getAvatarColor(user.name)">
-                {{ getInitials(user.name) }}
-              </div>
-            </div>
-            <div class="admin-user-card-info" (click)="onViewUserDetails(user)" style="cursor:pointer">
-              <div class="admin-user-card-name">{{ user.name }}</div>
-              <div class="admin-user-card-email">{{ user.email }}</div>
-              <div class="admin-user-card-meta">
-                <div class="admin-user-card-role">
-                  <span class="admin-role-badge" [class]="'role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles?.length > 0">
+              <button type="button" class="admin-user-card-info" (click)="onViewUserDetails(user)">
+                <span class="admin-user-card-name">{{ user.name }}</span>
+                <span class="admin-user-card-email">{{ user.email }}</span>
+                <span class="admin-user-card-meta">
+                  <span class="adm-pill" [class.adm-pill--primary]="isPaid(user)">
+                    {{ tier(user) }}<ng-container *ngIf="isPaid(user)"> · {{ formatAmount(user.subscription?.monthlyAmount) }}</ng-container>
+                  </span>
+                  <span class="admin-role-badge" [class]="'admin-role-badge role-' + (user.roles[0]?.name || 'user')" *ngIf="user.roles?.length > 0">
                     {{ user.roles[0]?.displayName || user.roles[0]?.name }}
                   </span>
-                  <span class="admin-role-badge role-user" *ngIf="!user.roles?.length">Utilisateur</span>
-                </div>
-                <div class="admin-user-card-status">
-                  <span class="admin-status-badge" [class]="'status-' + user.status">{{ getStatusLabel(user.status) }}</span>
-                </div>
-              </div>
-              <div class="admin-user-card-details">
-                <div class="admin-user-card-detail" *ngIf="user.phoneNumber">
-                  <i class="fas fa-phone"></i><span>{{ user.phoneNumber }}</span>
-                </div>
-                <div class="admin-user-card-detail" *ngIf="user.country">
-                  <i class="fas fa-globe"></i><span>{{ user.country }}</span>
-                </div>
-                <div class="admin-user-card-detail">
-                  <i class="fas fa-calendar"></i><span>{{ user.createdAt | date:'dd/MM/yyyy' }}</span>
-                </div>
-              </div>
+                  <span class="admin-status-badge" [class]="'admin-status-badge status-' + user.status">{{ getStatusLabel(user.status) }}</span>
+                </span>
+                <span class="admin-user-card-details">
+                  <span class="admin-user-card-detail" *ngIf="user.phoneNumber">
+                    <i class="fas fa-phone" aria-hidden="true"></i><span>{{ user.phoneNumber }}</span>
+                  </span>
+                  <span class="admin-user-card-detail">
+                    <i class="fas fa-calendar" aria-hidden="true"></i><span>{{ 'ADMIN.USERS.REGISTERED_ON' | translate:{ date: (user.createdAt | date:'dd/MM/yyyy') } }}</span>
+                  </span>
+                  <span class="admin-user-card-detail">
+                    <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+                    <span>{{ 'ADMIN.USERS.LAST_LOGIN' | translate }} : {{ user.lastLoginAt ? (user.lastLoginAt | date:'dd/MM/yyyy') : ('ADMIN.COMMON.NEVER' | translate) }}</span>
+                  </span>
+                </span>
+              </button>
             </div>
           </div>
-        </div>
+        </ng-container>
       </div>
 
       <ng-template #noUsers>
         <div class="admin-empty-state">
-          <i class="fas fa-users admin-empty-icon"></i>
-          <h3>Aucun utilisateur trouvé</h3>
-          <p>Il n'y a aucun utilisateur correspondant à vos critères de recherche.</p>
-          <button class="admin-btn admin-btn-primary" (click)="onCreateUser()" [disabled]="ctx.loading">
-            <i class="fas fa-plus"></i> Créer un utilisateur
-          </button>
+          <i class="fas fa-users admin-empty-icon" aria-hidden="true"></i>
+          <h3>{{ 'ADMIN.USERS.EMPTY_TITLE' | translate }}</h3>
+          <p>{{ 'ADMIN.USERS.EMPTY_TEXT' | translate }}</p>
         </div>
       </ng-template>
 
       <!-- Pagination -->
       <div class="admin-pagination" *ngIf="(users$ | async)?.length > 0 && (pagination$ | async) as pagination">
         <div class="admin-pagination-info">
-          <span>Affichage de {{ getDisplayRange(pagination).start }} à {{ getDisplayRange(pagination).end }} sur {{ pagination.total }} utilisateurs</span>
+          <span>{{ 'ADMIN.USERS.RANGE' | translate:{ start: getDisplayRange(pagination).start, end: getDisplayRange(pagination).end, total: pagination.total } }}</span>
         </div>
         <div class="admin-pagination-controls">
-          <button class="admin-pagination-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(1)">
-            <i class="fas fa-angle-double-left"></i>
+          <button class="admin-pagination-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(1)" [attr.aria-label]="'ADMIN.USERS.FIRST_PAGE' | translate">
+            <i class="fas fa-angle-double-left" aria-hidden="true"></i>
           </button>
-          <button class="admin-pagination-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(pagination.page - 1)">
-            <i class="fas fa-angle-left"></i>
+          <button class="admin-pagination-btn" [disabled]="pagination.page <= 1" (click)="onPageChange(pagination.page - 1)" [attr.aria-label]="'ADMIN.COMMON.PREVIOUS' | translate">
+            <i class="fas fa-angle-left" aria-hidden="true"></i>
           </button>
           <div class="admin-pagination-pages">
-            <button *ngFor="let page of getVisiblePages(pagination) trackBy: trackByFn" class="admin-pagination-page"
+            <button *ngFor="let page of getVisiblePages(pagination); trackBy: trackByFn" class="admin-pagination-page"
                     [class.active]="page === pagination.page" [disabled]="page === '...'"
                     (click)="page !== '...' && onPageChange(page)">{{ page }}</button>
           </div>
-          <button class="admin-pagination-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.page + 1)">
-            <i class="fas fa-angle-right"></i>
+          <button class="admin-pagination-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.page + 1)" [attr.aria-label]="'ADMIN.COMMON.NEXT' | translate">
+            <i class="fas fa-angle-right" aria-hidden="true"></i>
           </button>
-          <button class="admin-pagination-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.totalPages)">
-            <i class="fas fa-angle-double-right"></i>
+          <button class="admin-pagination-btn" [disabled]="pagination.page >= pagination.totalPages" (click)="onPageChange(pagination.totalPages)" [attr.aria-label]="'ADMIN.USERS.LAST_PAGE' | translate">
+            <i class="fas fa-angle-double-right" aria-hidden="true"></i>
           </button>
         </div>
         <div class="admin-pagination-size">
-          <select class="admin-pagination-select" [value]="pagination.limit" (change)="onPageSizeChange($event)">
-            <option value="10">10 par page</option>
-            <option value="20">20 par page</option>
-            <option value="50">50 par page</option>
-            <option value="100">100 par page</option>
+          <select class="admin-pagination-select" [value]="pagination.limit" (change)="onPageSizeChange($event)" [attr.aria-label]="'ADMIN.USERS.PAGE_SIZE' | translate:{ count: pagination.limit }">
+            <option *ngFor="let size of [10, 20, 50, 100]" [value]="size">{{ 'ADMIN.USERS.PAGE_SIZE' | translate:{ count: size } }}</option>
           </select>
         </div>
       </div>
@@ -302,145 +314,102 @@
 </ng-container>
 </div>
 
-<!-- ── Modal Assignation Rôles ── -->
-<div class="admin-modal-overlay" *ngIf="showAssignRoleModal" (click)="onCancelAssignRole()">
-  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:480px;width:100%">
-    <div class="admin-modal-header">
-      <h3><i class="fas fa-user-tag" style="color:#cc8c0a"></i> Gérer les rôles</h3>
-      <button class="admin-modal-close" (click)="onCancelAssignRole()"><i class="fas fa-times"></i></button>
+<!-- Rôles (super-admin) -->
+<div class="adm-confirm-overlay" *ngIf="showAssignRoleModal" (click)="onCancelAssignRole()">
+  <div class="adm-confirm" role="dialog" aria-modal="true" aria-labelledby="assign-role-title" (click)="$event.stopPropagation()">
+    <h3 id="assign-role-title"><i class="fas fa-user-tag" aria-hidden="true"></i> {{ 'ADMIN.USERS.ROLES_TITLE' | translate }}</h3>
+    <p>{{ 'ADMIN.USERS.ROLES_FOR' | translate:{ name: userToAssignRole?.name } }}</p>
+    <div class="assign-role-list">
+      <button type="button" *ngFor="let role of availableRoles; trackBy: trackByFn"
+              class="assign-role-item" [class.selected]="isRoleSelected(role.id)" [attr.aria-pressed]="isRoleSelected(role.id)"
+              (click)="onRoleToggle(role.id)">
+        <span class="assign-role-check"><i class="fas fa-check" *ngIf="isRoleSelected(role.id)" aria-hidden="true"></i></span>
+        <span class="assign-role-name">{{ role.name }}</span>
+      </button>
+      <p *ngIf="availableRoles.length === 0">{{ 'ADMIN.USERS.NO_ROLES' | translate }}</p>
     </div>
-    <div class="admin-modal-body">
-      <p style="margin-bottom:12px;font-size:0.875rem;color:#6f6f6f">
-        Utilisateur : <strong>{{ userToAssignRole?.name }}</strong>
-      </p>
-      <div class="assign-role-list">
-        <label
-          *ngFor="let role of availableRoles trackBy: trackByFn"
-          class="assign-role-item"
-          [class.selected]="isRoleSelected(role.id)"
-          (click)="onRoleToggle(role.id)">
-          <span class="assign-role-check">
-            <i class="fas fa-check" *ngIf="isRoleSelected(role.id)"></i>
-          </span>
-          <span class="assign-role-name">{{ role.name }}</span>
-        </label>
-        <p *ngIf="availableRoles.length === 0" style="color:#6f6f6f;font-size:0.875rem;text-align:center;padding:16px">
-          Aucun rôle disponible
-        </p>
+    <p class="assign-role-count">{{ 'ADMIN.USERS.ROLES_SELECTED' | translate:{ count: selectedRoleIds.length } }}</p>
+    <div class="adm-confirm-actions">
+      <button type="button" class="adm-btn" (click)="onCancelAssignRole()">{{ 'ADMIN.COMMON.CANCEL' | translate }}</button>
+      <button type="button" class="adm-btn adm-btn--primary" (click)="onConfirmAssignRole()">
+        <i class="fas fa-save" aria-hidden="true"></i> {{ 'ADMIN.COMMON.SAVE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Suppression (super-admin) -->
+<div class="adm-confirm-overlay" *ngIf="showDeleteModal" (click)="cancelDeleteUser()">
+  <div class="adm-confirm" role="alertdialog" aria-modal="true" aria-labelledby="delete-user-title" (click)="$event.stopPropagation()">
+    <h3 id="delete-user-title">{{ 'ADMIN.USERS.DELETE_TITLE' | translate }}</h3>
+    <p>{{ 'ADMIN.USERS.DELETE_TEXT' | translate:{ name: userToDelete?.name } }}</p>
+    <p>{{ 'ADMIN.USERS.DELETE_RULES' | translate }}</p>
+    <div class="adm-confirm-actions">
+      <button type="button" class="adm-btn" (click)="cancelDeleteUser()">{{ 'ADMIN.COMMON.CANCEL' | translate }}</button>
+      <button type="button" class="adm-btn adm-btn--danger" (click)="confirmDeleteUser()">
+        <i class="fas fa-trash" aria-hidden="true"></i> {{ 'ADMIN.COMMON.DELETE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Réinitialisation du mot de passe -->
+<div class="adm-confirm-overlay" *ngIf="showResetPwdModal" (click)="cancelResetPassword()">
+  <div class="adm-confirm" role="dialog" aria-modal="true" aria-labelledby="reset-pwd-title" (click)="$event.stopPropagation()">
+    <h3 id="reset-pwd-title">{{ 'ADMIN.USERS.RESET_TITLE' | translate }}</h3>
+    <p>{{ 'ADMIN.USERS.RESET_TEXT' | translate:{ email: userToResetPwd?.email } }}</p>
+    <div class="adm-confirm-actions">
+      <button type="button" class="adm-btn" (click)="cancelResetPassword()">{{ 'ADMIN.COMMON.CANCEL' | translate }}</button>
+      <button type="button" class="adm-btn adm-btn--primary" (click)="confirmResetPassword()">
+        <i class="fas fa-paper-plane" aria-hidden="true"></i> {{ 'ADMIN.USERS.SEND' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Création / modification -->
+<div class="adm-confirm-overlay" *ngIf="showCreateModal || showEditModal" (click)="onCloseModal()">
+  <div class="adm-confirm adm-user-form" role="dialog" aria-modal="true" aria-labelledby="user-form-title" (click)="$event.stopPropagation()">
+    <h3 id="user-form-title">{{ (showCreateModal ? 'ADMIN.USERS.FORM.CREATE_TITLE' : 'ADMIN.USERS.FORM.EDIT_TITLE') | translate }}</h3>
+    <form [formGroup]="userForm" (ngSubmit)="onSubmitUser()" class="adm-user-form__grid">
+      <div class="adm-user-form__full">
+        <label for="user-name">{{ 'ADMIN.USERS.FORM.NAME' | translate }} *</label>
+        <input id="user-name" type="text" formControlName="name" [attr.readonly]="showEditModal ? true : null">
+        <small class="adm-user-form__error" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">{{ 'ADMIN.USERS.FORM.NAME_ERROR' | translate }}</small>
       </div>
-      <p style="margin-top:10px;font-size:0.78rem;color:#6f6f6f">
-        <i class="fas fa-info-circle"></i>
-        {{ selectedRoleIds.length }} rôle(s) sélectionné(s)
-      </p>
-    </div>
-    <div class="admin-modal-footer">
-      <button type="button" class="admin-btn admin-btn-secondary" (click)="onCancelAssignRole()">Annuler</button>
-      <button type="button" class="admin-btn admin-btn-primary" (click)="onConfirmAssignRole()">
-        <i class="fas fa-save"></i> Enregistrer
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ── Modal Suppression Utilisateur ── -->
-<div class="admin-modal-overlay" *ngIf="showDeleteModal" (click)="cancelDeleteUser()">
-  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:440px;width:100%">
-    <div class="admin-modal-header">
-      <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> Confirmer la suppression</h3>
-      <button class="admin-modal-close" (click)="cancelDeleteUser()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="admin-modal-body">
-      <p>Supprimer définitivement l’utilisateur <strong>{{ userToDelete?.name }}</strong> ?</p>
-      <p style="font-size:12px;color:#9ca3af;margin-top:8px">Cette action est irréversible.</p>
-    </div>
-    <div class="admin-modal-footer">
-      <button type="button" class="admin-btn admin-btn-secondary" (click)="cancelDeleteUser()">Annuler</button>
-      <button type="button" class="admin-btn admin-btn-primary" style="background:#ef4444;border-color:#ef4444" (click)="confirmDeleteUser()">
-        <i class="fas fa-trash"></i> Supprimer
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ── Modal Réinitialisation Mot de Passe ── -->
-<div class="admin-modal-overlay" *ngIf="showResetPwdModal" (click)="cancelResetPassword()">
-  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:440px;width:100%">
-    <div class="admin-modal-header">
-      <h3><i class="fas fa-key" style="color:#f59e0b"></i> Réinitialiser le mot de passe</h3>
-      <button class="admin-modal-close" (click)="cancelResetPassword()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="admin-modal-body">
-      <p>Envoyer un email de réinitialisation à <strong>{{ userToResetPwd?.email }}</strong> ?</p>
-    </div>
-    <div class="admin-modal-footer">
-      <button type="button" class="admin-btn admin-btn-secondary" (click)="cancelResetPassword()">Annuler</button>
-      <button type="button" class="admin-btn admin-btn-primary" (click)="confirmResetPassword()">
-        <i class="fas fa-paper-plane"></i> Envoyer
-      </button>
-    </div>
-  </div>
-</div>
-<div class="admin-modal-overlay" *ngIf="showCreateModal || showEditModal" (click)="onCloseModal()">
-  <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:580px;width:100%">
-    <div class="admin-modal-header">
-      <h3>
-        <i class="fas fa-user-plus" *ngIf="showCreateModal"></i>
-        <i class="fas fa-user-edit" *ngIf="showEditModal"></i>
-        {{ showCreateModal ? 'Nouvel utilisateur' : 'Modifier l\'utilisateur' }}
-      </h3>
-      <button class="admin-modal-close" (click)="onCloseModal()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="admin-modal-body">
-      <form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-          <div style="grid-column:1/-1">
-            <label class="admin-form-label">Nom complet *</label>
-            <input type="text" class="admin-form-control" formControlName="name" placeholder="Nom complet">
-            <small style="color:#ef4444" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
-              Nom requis (min. 2 caractères)
-            </small>
-          </div>
-          <div>
-            <label class="admin-form-label">Email *</label>
-            <input type="email" class="admin-form-control" formControlName="email" placeholder="email@exemple.com"
-                   [attr.readonly]="showEditModal ? true : null">
-            <small style="color:#ef4444" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-              Email invalide
-            </small>
-          </div>
-          <div>
-            <label class="admin-form-label">Téléphone</label>
-            <input type="tel" class="admin-form-control" formControlName="phoneNumber" placeholder="+237 6XX XXX XXX">
-          </div>
-          <div>
-            <label class="admin-form-label">{{ showCreateModal ? 'Mot de passe *' : 'Nouveau mot de passe (optionnel)' }}</label>
-            <input type="password" class="admin-form-control" formControlName="password"
-                   [placeholder]="showCreateModal ? 'Min. 8 caractères' : 'Laisser vide pour ne pas changer'">
-            <small style="color:#ef4444" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
-              Mot de passe requis (min. 8 caractères)
-            </small>
-          </div>
-          <div>
-            <label class="admin-form-label">Statut</label>
-            <select class="admin-form-control" formControlName="status">
-              <option value="active">Actif</option>
-              <option value="inactive">Inactif</option>
-              <option value="suspended">Suspendu</option>
-              <option value="pending">En attente</option>
-            </select>
-          </div>
-          <div>
-            <label class="admin-form-label">Pays</label>
-            <input type="text" class="admin-form-control" formControlName="country" placeholder="Ex: Cameroun">
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="admin-modal-footer">
-      <button type="button" class="admin-btn admin-btn-secondary" (click)="onCloseModal()">Annuler</button>
-      <button type="button" class="admin-btn admin-btn-primary" [disabled]="userForm.invalid" (click)="onSubmitUser()">
-        <i class="fas fa-save"></i>
-        {{ showCreateModal ? 'Créer l\'utilisateur' : 'Enregistrer' }}
+      <div>
+        <label for="user-email">{{ 'ADMIN.COMMON.EMAIL' | translate }} *</label>
+        <input id="user-email" type="email" formControlName="email" placeholder="email@exemple.com" [attr.readonly]="showEditModal ? true : null">
+        <small class="adm-user-form__error" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">{{ 'ADMIN.USERS.FORM.EMAIL_ERROR' | translate }}</small>
+      </div>
+      <div>
+        <label for="user-phone">{{ 'ADMIN.COMMON.PHONE' | translate }}</label>
+        <input id="user-phone" type="tel" formControlName="phoneNumber" placeholder="+237 6XX XXX XXX">
+      </div>
+      <div>
+        <label for="user-password">{{ (showCreateModal ? 'ADMIN.USERS.FORM.PASSWORD' : 'ADMIN.USERS.FORM.NEW_PASSWORD') | translate }}</label>
+        <input id="user-password" type="password" formControlName="password" autocomplete="new-password"
+               [placeholder]="(showCreateModal ? 'ADMIN.USERS.FORM.PASSWORD_HINT' : 'ADMIN.USERS.FORM.NEW_PASSWORD_HINT') | translate">
+        <small class="adm-user-form__error" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">{{ 'ADMIN.USERS.FORM.PASSWORD_ERROR' | translate }}</small>
+      </div>
+      <div>
+        <label for="user-status">{{ 'ADMIN.COMMON.STATUS' | translate }}</label>
+        <select id="user-status" formControlName="status">
+          <option value="active">{{ 'ADMIN.USERS.STATUS.active' | translate }}</option>
+          <option value="inactive">{{ 'ADMIN.USERS.STATUS.inactive' | translate }}</option>
+          <option value="suspended">{{ 'ADMIN.USERS.STATUS.suspended' | translate }}</option>
+        </select>
+      </div>
+      <div class="adm-user-form__full">
+        <label for="user-country">{{ 'ADMIN.USERS.FORM.COUNTRY' | translate }}</label>
+        <input id="user-country" type="text" formControlName="country" [placeholder]="'ADMIN.USERS.FORM.COUNTRY_HINT' | translate">
+      </div>
+    </form>
+    <div class="adm-confirm-actions">
+      <button type="button" class="adm-btn" (click)="onCloseModal()">{{ 'ADMIN.COMMON.CANCEL' | translate }}</button>
+      <button type="button" class="adm-btn adm-btn--primary" [disabled]="userForm.invalid" (click)="onSubmitUser()">
+        <i class="fas fa-save" aria-hidden="true"></i>
+        {{ (showCreateModal ? 'ADMIN.USERS.FORM.CREATE' : 'ADMIN.COMMON.SAVE') | translate }}
       </button>
     </div>
   </div>

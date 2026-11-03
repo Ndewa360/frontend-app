@@ -4,7 +4,7 @@ import { tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 // Models
-import { AdminPaymentsStateModel, AdminPayment, AdminSubscription, AdminCoupon, PaymentStats } from './admin-payments.model';
+import { AdminPaymentsStateModel, AdminPayment, AdminSubscription, PaymentStats } from './admin-payments.model';
 
 // Actions
 import { AdminPaymentsAction } from './admin-payments.actions';
@@ -12,27 +12,22 @@ import { AdminPaymentsAction } from './admin-payments.actions';
 // Services
 import { AdminPaymentsService } from '../../services/admin-payments.service';
 
+const EMPTY_PAGE = { page: 1, limit: 20, total: 0, totalPages: 0 };
+
 @State<AdminPaymentsStateModel>({
   name: 'adminPayments',
   defaults: {
     payments: [],
     subscriptions: [],
-    coupons: [],
     stats: null,
     filters: {
       payments: {
         page: 1,
         limit: 20,
-        sortBy: 'createdAt',
+        sortBy: 'paymentDate',
         sortOrder: 'desc'
       },
       subscriptions: {
-        page: 1,
-        limit: 20,
-        sortBy: 'createdAt',
-        sortOrder: 'desc'
-      },
-      coupons: {
         page: 1,
         limit: 20,
         sortBy: 'createdAt',
@@ -40,24 +35,8 @@ import { AdminPaymentsService } from '../../services/admin-payments.service';
       }
     },
     pagination: {
-      payments: {
-        page: 1,
-        limit: 20,
-        total: 0,
-        totalPages: 0
-      },
-      subscriptions: {
-        page: 1,
-        limit: 20,
-        total: 0,
-        totalPages: 0
-      },
-      coupons: {
-        page: 1,
-        limit: 20,
-        total: 0,
-        totalPages: 0
-      }
+      payments: { ...EMPTY_PAGE },
+      subscriptions: { ...EMPTY_PAGE }
     },
     loading: false,
     error: null,
@@ -78,11 +57,6 @@ export class AdminPaymentsState {
   @Selector()
   static selectSubscriptions(state: AdminPaymentsStateModel): AdminSubscription[] {
     return state.subscriptions;
-  }
-
-  @Selector()
-  static selectCoupons(state: AdminPaymentsStateModel): AdminCoupon[] {
-    return state.coupons;
   }
 
   @Selector()
@@ -117,22 +91,19 @@ export class AdminPaymentsState {
 
   // Actions
 
+  /** Les filtres reçus complètent ceux déjà actifs (recherche + statut + page). */
   @Action(AdminPaymentsAction.LoadPayments)
   loadPayments(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadPayments) {
-    ctx.patchState({ loading: true, error: null });
-    const filters = action.filters || ctx.getState().filters.payments;
+    const state = ctx.getState();
+    const filters = { ...state.filters.payments, ...(action.filters || {}) };
+    ctx.patchState({ loading: true, error: null, filters: { ...state.filters, payments: filters } });
     return this.adminPaymentsService.getPayments(filters).pipe(
       tap(response => {
         ctx.patchState({
-          payments: response.payments || (response as any).data || [],
+          payments: response.payments,
           pagination: {
             ...ctx.getState().pagination,
-            payments: {
-              page: response.meta?.page || 1,
-              limit: response.meta?.limit || 20,
-              total: response.total || 0,
-              totalPages: response.meta?.totalPages || 0
-            }
+            payments: { ...response.meta, total: response.total }
           },
           loading: false,
           error: null,
@@ -141,54 +112,23 @@ export class AdminPaymentsState {
       }),
       catchError(error => {
         ctx.patchState({ loading: false, error: error.message });
-        return throwError(error);
+        return throwError(() => error);
       })
     );
-  }
-
-  @Action(AdminPaymentsAction.LoadPaymentsSuccess)
-  loadPaymentsSuccess(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadPaymentsSuccess) {
-    ctx.patchState({
-      payments: action.payments || [],
-      pagination: {
-        ...ctx.getState().pagination,
-        payments: {
-          page: action.meta?.page || 1,
-          limit: action.meta?.limit || 20,
-          total: action.total || 0,
-          totalPages: action.meta?.totalPages || 0
-        }
-      },
-      loading: false,
-      error: null,
-      lastUpdated: new Date()
-    });
-  }
-
-  @Action(AdminPaymentsAction.LoadPaymentsFailure)
-  loadPaymentsFailure(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadPaymentsFailure) {
-    ctx.patchState({
-      loading: false,
-      error: action.error
-    });
   }
 
   @Action(AdminPaymentsAction.LoadSubscriptions)
   loadSubscriptions(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadSubscriptions) {
-    ctx.patchState({ loading: true, error: null });
-    const filters = action.filters || ctx.getState().filters.subscriptions;
+    const state = ctx.getState();
+    const filters = { ...state.filters.subscriptions, ...(action.filters || {}) };
+    ctx.patchState({ loading: true, error: null, filters: { ...state.filters, subscriptions: filters } });
     return this.adminPaymentsService.getSubscriptions(filters).pipe(
       tap(response => {
         ctx.patchState({
-          subscriptions: response.subscriptions || (response as any).data || [],
+          subscriptions: response.subscriptions,
           pagination: {
             ...ctx.getState().pagination,
-            subscriptions: {
-              page: response.meta?.page || 1,
-              limit: response.meta?.limit || 20,
-              total: response.total || 0,
-              totalPages: response.meta?.totalPages || 0
-            }
+            subscriptions: { ...response.meta, total: response.total }
           },
           loading: false,
           error: null,
@@ -197,68 +137,32 @@ export class AdminPaymentsState {
       }),
       catchError(error => {
         ctx.patchState({ loading: false, error: error.message });
-        return throwError(error);
+        return throwError(() => error);
       })
     );
   }
 
-  @Action(AdminPaymentsAction.LoadSubscriptionsSuccess)
-  loadSubscriptionsSuccess(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadSubscriptionsSuccess) {
-    ctx.patchState({
-      subscriptions: action.subscriptions || [],
-      pagination: {
-        ...ctx.getState().pagination,
-        subscriptions: {
-          page: action.meta?.page || 1,
-          limit: action.meta?.limit || 20,
-          total: action.total || 0,
-          totalPages: action.meta?.totalPages || 0
-        }
-      },
-      loading: false,
-      error: null,
-      lastUpdated: new Date()
-    });
-  }
-
-  @Action(AdminPaymentsAction.LoadSubscriptionsFailure)
-  loadSubscriptionsFailure(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadSubscriptionsFailure) {
-    ctx.patchState({
-      loading: false,
-      error: action.error
-    });
-  }
-
   @Action(AdminPaymentsAction.LoadPaymentStats)
   loadPaymentStats(ctx: StateContext<AdminPaymentsStateModel>) {
-    ctx.patchState({ loading: true, error: null });
-    
     return this.adminPaymentsService.getPaymentsStats().pipe(
       tap(stats => {
         ctx.dispatch(new AdminPaymentsAction.LoadPaymentStatsSuccess(stats));
       }),
       catchError(error => {
         ctx.dispatch(new AdminPaymentsAction.LoadPaymentStatsFailure(error));
-        return throwError(error);
+        return throwError(() => error);
       })
     );
   }
 
   @Action(AdminPaymentsAction.LoadPaymentStatsSuccess)
   loadPaymentStatsSuccess(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadPaymentStatsSuccess) {
-    ctx.patchState({
-      stats: action.stats,
-      loading: false,
-      error: null
-    });
+    ctx.patchState({ stats: action.stats, error: null });
   }
 
   @Action(AdminPaymentsAction.LoadPaymentStatsFailure)
   loadPaymentStatsFailure(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadPaymentStatsFailure) {
-    ctx.patchState({
-      loading: false,
-      error: action.error
-    });
+    ctx.patchState({ error: action.error });
   }
 
   @Action(AdminPaymentsAction.SetLoading)
@@ -278,7 +182,6 @@ export class AdminPaymentsState {
     ctx.patchState({
       payments: [],
       subscriptions: [],
-      coupons: [],
       stats: null,
       error: null,
       lastUpdated: null
@@ -287,97 +190,10 @@ export class AdminPaymentsState {
 
   @Action(AdminPaymentsAction.RefreshData)
   refreshData(ctx: StateContext<AdminPaymentsStateModel>) {
-    const state = ctx.getState();
-    ctx.dispatch([
-      new AdminPaymentsAction.LoadPayments(state.filters.payments),
-      new AdminPaymentsAction.LoadSubscriptions(state.filters.subscriptions),
-      new AdminPaymentsAction.LoadCoupons(state.filters.coupons),
+    return ctx.dispatch([
+      new AdminPaymentsAction.LoadPayments(),
+      new AdminPaymentsAction.LoadSubscriptions(),
       new AdminPaymentsAction.LoadPaymentStats()
     ]);
-  }
-
-  @Action(AdminPaymentsAction.LoadCoupons)
-  loadCoupons(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.LoadCoupons) {
-    ctx.patchState({ loading: true, error: null });
-    const filters = action.filters || ctx.getState().filters.coupons;
-    return this.adminPaymentsService.getCoupons(filters).pipe(
-      tap(response => {
-        ctx.patchState({
-          coupons: response.coupons,
-          loading: false,
-          lastUpdated: new Date()
-        });
-      }),
-      catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminPaymentsAction.CreateCoupon)
-  createCoupon(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.CreateCoupon) {
-    ctx.patchState({ loading: true });
-    return this.adminPaymentsService.createCoupon(action.couponData).pipe(
-      tap(coupon => {
-        const state = ctx.getState();
-        ctx.patchState({ coupons: [coupon, ...state.coupons], loading: false });
-      }),
-      catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminPaymentsAction.UpdateCoupon)
-  updateCoupon(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.UpdateCoupon) {
-    ctx.patchState({ loading: true });
-    return this.adminPaymentsService.updateCoupon(action.couponId, action.couponData).pipe(
-      tap(updated => {
-        const state = ctx.getState();
-        ctx.patchState({
-          coupons: state.coupons.map(c => c._id === updated._id ? updated : c),
-          loading: false
-        });
-      }),
-      catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminPaymentsAction.DeleteCoupon)
-  deleteCoupon(ctx: StateContext<AdminPaymentsStateModel>, action: AdminPaymentsAction.DeleteCoupon) {
-    ctx.patchState({ loading: true });
-    return this.adminPaymentsService.deleteCoupon(action.couponId).pipe(
-      tap(() => {
-        const state = ctx.getState();
-        ctx.patchState({
-          coupons: state.coupons.filter(c => c._id !== action.couponId),
-          loading: false
-        });
-      }),
-      catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
-        return throwError(error);
-      })
-    );
-  }
-
-  @Action(AdminPaymentsAction.ProcessPendingPayments)
-  processPendingPayments(ctx: StateContext<AdminPaymentsStateModel>) {
-    ctx.patchState({ loading: true });
-    return this.adminPaymentsService.processPendingPayments().pipe(
-      tap(() => {
-        ctx.patchState({ loading: false });
-        ctx.dispatch(new AdminPaymentsAction.LoadPayments());
-      }),
-      catchError(error => {
-        ctx.patchState({ loading: false, error: error.message });
-        return throwError(error);
-      })
-    );
   }
 }

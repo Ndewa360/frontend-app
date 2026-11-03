@@ -1,199 +1,120 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AdminPaymentsAction } from '../../store/payments/admin-payments.actions';
 import { AdminPaymentsState } from '../../store/payments/admin-payments.state';
 import { AdminPaymentsService } from '../../services/admin-payments.service';
 import { AdminCurrencyService } from '../../services/admin-currency.service';
-import { AdminPayment, AdminSubscription, AdminCoupon } from '../../store/payments/admin-payments.model';
-import { ExtendedModule } from '@angular/flex-layout/extended';
-import { SelectModule } from 'carbon-components-angular';
-import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe } from '@angular/common';
+import { AdminPayment, AdminSubscription } from '../../store/payments/admin-payments.model';
+import { downloadCsv } from '../../utils/csv-download';
+import { tierLabel } from '../../../../shared/pricing/pricing-grid';
+import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe, DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin-payments',
   templateUrl: './admin-payments.component.html',
   styleUrls: ['./admin-payments.component.scss'],
   standalone: true,
-  imports: [NgIf, FormsModule, SelectModule, NgFor, NgClass, ExtendedModule, ReactiveFormsModule, AsyncPipe, DatePipe]
+  imports: [NgIf, FormsModule, NgFor, NgClass, AsyncPipe, DatePipe, DecimalPipe, RouterLink, TranslateModule]
 })
 export class AdminPaymentsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  private search$ = new Subject<string>();
 
   payments$      = this.store.select(AdminPaymentsState.selectPayments);
   subscriptions$ = this.store.select(AdminPaymentsState.selectSubscriptions);
-  coupons$       = this.store.select(AdminPaymentsState.selectCoupons);
   stats$         = this.store.select(AdminPaymentsState.selectStats);
+  pagination$    = this.store.select(AdminPaymentsState.selectPagination);
   isLoading$     = this.store.select(AdminPaymentsState.selectIsLoading);
 
-  selectedTab = 'payments';
-  showCouponModal = false;
-  editingCoupon: AdminCoupon | null = null;
-  isProcessing = false;
+  selectedTab: 'payments' | 'subscriptions' = 'payments';
   isRefreshing = false;
-
-
-  // Modal cancel subscription
-  showCancelModal = false;
-  cancellingSubscription: AdminSubscription | null = null;
-  cancelReason = '';
+  isExporting = false;
 
   // Filters
   paymentSearchTerm = '';
   paymentStatusFilter = '';
-  couponSearchTerm = '';
-
-  couponForm: FormGroup;
 
   constructor(
     private store: Store,
-    private fb: FormBuilder,
     private paymentsService: AdminPaymentsService,
     private toastr: ToastrService,
-    private translate: TranslateService,
-    private currencyService: AdminCurrencyService
-  ) {
-    this.couponForm = this.fb.group({
-      name:        ['', Validators.required],
-      code:        ['', Validators.required],
-      description: [''],
-      type:        ['percentage', Validators.required],
-      value:       [0, [Validators.required, Validators.min(0)]],
-      usageLimit:  [null],
-      startDate:   [null],
-      endDate:     [null],
-      isActive:    [true]
-    });
-  }
+    private currencyService: AdminCurrencyService,
+    private translate: TranslateService
+  ) {}
 
-  ngOnInit(): void { this.loadData(); }
+  ngOnInit(): void {
+    this.search$
+      .pipe(debounceTime(350), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(search => this.store.dispatch(new AdminPaymentsAction.LoadPayments({ search, page: 1 })));
+    this.store.dispatch(new AdminPaymentsAction.RefreshData());
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  private loadData(): void {
-    this.store.dispatch([
-      new AdminPaymentsAction.LoadPayments(),
-      new AdminPaymentsAction.LoadSubscriptions(),
-      new AdminPaymentsAction.LoadCoupons(),
-      new AdminPaymentsAction.LoadPaymentStats()
-    ]);
-  }
-
-  onTabChange(tab: string): void { this.selectedTab = tab; }
+  onTabChange(tab: 'payments' | 'subscriptions'): void { this.selectedTab = tab; }
 
   onRefreshData(): void {
     this.isRefreshing = true;
-    this.store.dispatch(new AdminPaymentsAction.RefreshData());
-    setTimeout(() => this.isRefreshing = false, 1000);
+    this.store.dispatch(new AdminPaymentsAction.RefreshData())
+      .pipe(finalize(() => this.isRefreshing = false))
+      .subscribe({ error: () => this.toastr.error(this.translate.instant('ADMIN.PAYMENTS.TS.LOAD_ERROR')) });
   }
 
-  // ── Payments ──────────────────────────────────────────────────────────────
+  // ── Factures ──────────────────────────────────────────────────────────────
 
-  onPaymentSearch(event: Event): void {
-    this.paymentSearchTerm = (event.target as HTMLInputElement).value;
+  onPaymentSearch(value: string): void {
+    this.search$.next((value || '').trim());
   }
 
   onPaymentStatusFilter(event: Event): void {
     this.paymentStatusFilter = (event.target as HTMLSelectElement).value;
-    this.store.dispatch(new AdminPaymentsAction.LoadPayments({ status: this.paymentStatusFilter }));
+    this.store.dispatch(new AdminPaymentsAction.LoadPayments({ status: this.paymentStatusFilter, page: 1 }));
   }
 
-  // ── Subscriptions ─────────────────────────────────────────────────────────
+  goToPaymentsPage(page: number): void {
+    this.store.dispatch(new AdminPaymentsAction.LoadPayments({ page }));
+  }
+
+  onExport(): void {
+    if (this.isExporting) return;
+    this.isExporting = true;
+    const filters = this.store.selectSnapshot(AdminPaymentsState.selectFilters).payments;
+    this.paymentsService.exportPayments({ ...filters, page: 1 })
+      .pipe(finalize(() => this.isExporting = false), takeUntil(this.destroy$))
+      .subscribe({
+        next: file => {
+          if (!file?.recordCount) { this.toastr.info(this.translate.instant('ADMIN.PAYMENTS.TS.EXPORT_EMPTY')); return; }
+          downloadCsv(file);
+          this.toastr.success(this.translate.instant('ADMIN.PAYMENTS.TS.EXPORT_DONE', { count: file.recordCount }));
+        },
+        error: () => this.toastr.error(this.translate.instant('ADMIN.PAYMENTS.TS.EXPORT_ERROR'))
+      });
+  }
+
+  // ── Abonnements ───────────────────────────────────────────────────────────
 
   onSubscriptionStatusFilter(event: Event): void {
     const status = (event.target as HTMLSelectElement).value;
-    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ status }));
+    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ status, page: 1 }));
   }
 
   onSubscriptionPlanFilter(event: Event): void {
-    const plan = (event.target as HTMLSelectElement).value;
-    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ subscriptionPlan: plan } as any));
+    const subscriptionPlan = (event.target as HTMLSelectElement).value;
+    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ subscriptionPlan, page: 1 }));
   }
 
-  onCancelSubscription(subscription: AdminSubscription): void {
-    this.cancellingSubscription = subscription;
-    this.cancelReason = '';
-    this.showCancelModal = true;
-  }
-
-  confirmCancelSubscription(): void {
-    if (!this.cancellingSubscription) return;
-    const reason = this.cancelReason.trim() || 'Annulation administrative';
-    this.showCancelModal = false;
-    this.paymentsService.cancelSubscription(this.cancellingSubscription._id, reason)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => { this.toastr.success(this.translate.instant('NOTIFICATIONS.ADMIN_SUBSCRIPTION_CANCELLED')); this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions()); },
-        error: () => this.toastr.error(this.translate.instant('NOTIFICATIONS.ADMIN_SUBSCRIPTION_CANCEL_ERROR'))
-      });
-    this.cancellingSubscription = null;
-  }
-
-  cancelCancelSubscription(): void { this.showCancelModal = false; this.cancellingSubscription = null; }
-
-  // ── Coupons ───────────────────────────────────────────────────────────────
-
-  onCreateCoupon(): void {
-    this.editingCoupon = null;
-    this.couponForm.reset({ type: 'percentage', value: 0, isActive: true });
-    this.showCouponModal = true;
-  }
-
-  onEditCoupon(coupon: AdminCoupon): void {
-    this.editingCoupon = coupon;
-    this.couponForm.patchValue({
-      name:        coupon.name,
-      code:        coupon.code,
-      description: coupon.description,
-      type:        coupon.type,
-      value:       coupon.value,
-      usageLimit:  coupon.usageLimit,
-      startDate:   coupon.startDate ? new Date(coupon.startDate).toISOString().split('T')[0] : null,
-      endDate:     coupon.endDate   ? new Date(coupon.endDate).toISOString().split('T')[0]   : null,
-      isActive:    coupon.isActive
-    });
-    this.showCouponModal = true;
-  }
-
-  onSaveCoupon(): void {
-    if (this.couponForm.invalid) { this.couponForm.markAllAsTouched(); return; }
-    const data = this.couponForm.value;
-    if (this.editingCoupon) {
-      this.store.dispatch(new AdminPaymentsAction.UpdateCoupon(this.editingCoupon._id, data));
-    } else {
-      this.store.dispatch(new AdminPaymentsAction.CreateCoupon(data));
-    }
-    this.showCouponModal = false;
-    this.editingCoupon = null;
-  }
-
-  onDeleteCoupon(coupon: AdminCoupon): void {
-    if (!confirm(`Supprimer le coupon "${coupon.code}" ?`)) return;
-    this.store.dispatch(new AdminPaymentsAction.DeleteCoupon(coupon._id));
-  }
-
-  onToggleCouponStatus(coupon: AdminCoupon): void {
-    this.store.dispatch(new AdminPaymentsAction.UpdateCoupon(coupon._id, { isActive: !coupon.isActive }));
-  }
-
-  onCloseCouponModal(): void { this.showCouponModal = false; this.editingCoupon = null; }
-
-  filterCoupons(coupons: AdminCoupon[]): AdminCoupon[] {
-    if (!coupons) return [];
-    if (!this.couponSearchTerm) return coupons;
-    const term = this.couponSearchTerm.toLowerCase();
-    return coupons.filter(c =>
-      c.code?.toLowerCase().includes(term) ||
-      c.name?.toLowerCase().includes(term)
-    );
+  goToSubscriptionsPage(page: number): void {
+    this.store.dispatch(new AdminPaymentsAction.LoadSubscriptions({ page }));
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -203,79 +124,59 @@ export class AdminPaymentsComponent implements OnInit, OnDestroy {
   }
 
   getUserName(user: any): string {
-    if (!user) return 'N/A';
-    return user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || 'N/A';
-  }
-
-  getSubStatus(sub: AdminSubscription): string {
-    return sub.status || (sub as any).accountStatus || 'inactive';
+    if (!user) return '—';
+    return user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email || '—';
   }
 
   getSubAmount(sub: AdminSubscription): number {
-    return sub.amount || (sub as any).monthlyAmount || 0;
+    return sub.customMonthlyAmount ?? sub.monthlyAmount ?? sub.amount ?? 0;
   }
 
-  getSubPropertyLimit(sub: AdminSubscription): string {
-    return sub.propertyLimit ? sub.propertyLimit.toString() : '∞';
+  tierLabel(tier?: string | null, plan?: string | null): string {
+    return tierLabel(tier, plan, this.translate.currentLang);
   }
 
-  getCouponUsage(coupon: AdminCoupon): string {
-    const used = coupon.usageCount ?? (coupon as any).usedCount ?? 0;
-    const limit = coupon.usageLimit ?? (coupon as any).maxUses;
-    return `${used} / ${limit ?? '∞'}`;
+  isPaidTier(tier?: string | null, plan?: string | null): boolean {
+    return tier ? tier !== 'FREE' : plan === 'premium';
   }
 
-  getCouponExpiry(coupon: AdminCoupon): Date | null {
-    return coupon.endDate || (coupon as any).validUntil || null;
-  }
-
-  getCouponValueLabel(coupon: AdminCoupon): string {
-    const t = coupon.type?.toString().toLowerCase();
-    return (t === 'percentage' || t === 'percent') ? `${coupon.value}%` : `${coupon.value} FCFA`;
-  }
-
-  getCancellingUserName(): string {
-    const user = this.cancellingSubscription?.user;
-    return this.getUserName(user);
+  getMethodLabel(method?: string): string {
+    const map: Record<string, string> = {
+      mobile_money: 'Mobile Money', MOBILE_MONEY: 'Mobile Money', WALLET: this.translate.instant('ADMIN.PAYMENTS.TS.WALLET'),
+      wallet: this.translate.instant('ADMIN.PAYMENTS.TS.WALLET'), MANUAL: this.translate.instant('ADMIN.PAYMENTS.TS.MANUAL'),
+      ORANGE_MONEY: 'Orange Money', MTN_MONEY: 'MTN MoMo'
+    };
+    return (method && map[method]) || method || '—';
   }
 
   getPaymentStatusClasses(status: string): string {
     const map: Record<string, string> = {
-      completed: 'admin-badge-success', pending: 'admin-badge-warning',
-      failed: 'admin-badge-danger', cancelled: 'admin-badge-secondary', refunded: 'admin-badge-info'
+      completed: 'admin-badge-success', pending: 'admin-badge-warning', failed: 'admin-badge-danger'
     };
     return map[status] || 'admin-badge-secondary';
   }
 
   getPaymentStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      completed: 'Complété', pending: 'En attente',
-      failed: 'Échoué', cancelled: 'Annulé', refunded: 'Remboursé'
+      completed: 'PAID', pending: 'PENDING', failed: 'UNPAID'
     };
-    return map[status] || status;
+    return map[status] ? this.translate.instant(`ADMIN.PAYMENTS.TS.STATUS_${map[status]}`) : status;
   }
 
   getSubscriptionStatusClasses(status: string): string {
     const map: Record<string, string> = {
-      active: 'admin-badge-success', ACTIVE: 'admin-badge-success',
-      inactive: 'admin-badge-secondary', DISABLED: 'admin-badge-secondary',
-      cancelled: 'admin-badge-danger', SUSPENDED: 'admin-badge-warning',
-      expired: 'admin-badge-warning'
+      active: 'admin-badge-success', cancelled: 'admin-badge-warning', inactive: 'admin-badge-danger'
     };
     return map[status] || 'admin-badge-secondary';
   }
 
   getSubscriptionStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      active: 'Actif', ACTIVE: 'Actif',
-      inactive: 'Inactif', DISABLED: 'Désactivé',
-      cancelled: 'Annulé', SUSPENDED: 'Suspendu',
-      expired: 'Expiré'
+      active: 'ACTIVE', cancelled: 'SUSPENDED', inactive: 'DISABLED'
     };
-    return map[status] || status;
+    return map[status] ? this.translate.instant(`ADMIN.PAYMENTS.TS.SUB_${map[status]}`) : status;
   }
 
   trackByPaymentId(_: number, p: AdminPayment): string      { return p._id; }
   trackBySubscriptionId(_: number, s: AdminSubscription): string { return s._id; }
-  trackByCouponId(_: number, c: AdminCoupon): string        { return c._id; }
 }

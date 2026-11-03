@@ -49,6 +49,25 @@ export interface PricingSummary {
   plan: string;
 }
 
+export const TIER_LABELS: Record<PricingTier, string> = {
+  FREE: 'Gratuit',
+  PRO_1: 'Pro 1',
+  PRO_2: 'Pro 2',
+  PRO_3: 'Pro 3',
+  PRO_4: 'Pro 4',
+  GOLD: 'Gold',
+};
+
+/** Libellé d'un palier ; repli sur le plan (« premium » → Pro, « free » → Gratuit / Free). */
+export function tierLabel(tier: string | null | undefined, plan?: string | null, lang = 'fr'): string {
+  const free = lang === 'en' ? 'Free' : 'Gratuit';
+  if (tier === 'FREE') return free;
+  if (tier && (TIER_LABELS as Record<string, string>)[tier]) return (TIER_LABELS as Record<string, string>)[tier];
+  if (plan === 'premium') return 'Pro';
+  if (plan === 'free') return free;
+  return tier || plan || '—';
+}
+
 export function isPaidTier(tier: PricingTier | null | undefined): boolean {
   return !!tier && tier !== 'FREE';
 }

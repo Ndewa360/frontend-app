@@ -37,11 +37,6 @@ export namespace AdminSubscriptionsAction {
     constructor(public subscriptionId: string) {}
   }
 
-  export class DisableAccount {
-    static readonly type = '[Admin Subscriptions] Disable Account';
-    constructor(public subscriptionId: string, public reason: string) {}
-  }
-
   // Payment Actions
   export class SendPaymentReminder {
     static readonly type = '[Admin Subscriptions] Send Payment Reminder';
@@ -51,16 +46,6 @@ export namespace AdminSubscriptionsAction {
   export class MarkPaymentAsPaid {
     static readonly type = '[Admin Subscriptions] Mark Payment As Paid';
     constructor(public subscriptionId: string, public periodId: string, public paymentReference: string) {}
-  }
-
-  export class ProcessUnpaidInvoices {
-    static readonly type = '[Admin Subscriptions] Process Unpaid Invoices';
-    constructor(public subscriptionId: string) {}
-  }
-
-  export class BulkReactivate {
-    static readonly type = '[Admin Subscriptions] Bulk Reactivate';
-    constructor(public subscriptionIds: string[]) {}
   }
 
   // Selection Actions
@@ -85,12 +70,7 @@ export namespace AdminSubscriptionsAction {
   // Export Actions
   export class ExportSubscriptions {
     static readonly type = '[Admin Subscriptions] Export Subscriptions';
-    constructor(public filters?: SubscriptionFilters, public format: string = 'xlsx') {}
-  }
-
-  export class GenerateReport {
-    static readonly type = '[Admin Subscriptions] Generate Report';
-    constructor(public reportType: string, public dateFrom: Date, public dateTo: Date) {}
+    constructor(public filters?: SubscriptionFilters) {}
   }
 
   // Utility Actions

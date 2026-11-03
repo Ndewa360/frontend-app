@@ -3,18 +3,18 @@
   <div class="admin-page-header">
     <div class="admin-header-content">
       <div class="admin-header-text">
-        <h1 class="admin-page-title"><i class="fas fa-wallet admin-title-icon"></i> Super Wallet Plateforme</h1>
-        <p class="admin-page-subtitle">Revenus, solde disponible et gestion des retraits</p>
+        <h1 class="admin-page-title"><i class="fas fa-wallet admin-title-icon"></i> {{ 'ADMIN.FINANCE.SUPER_WALLET_PLATEFORME' | translate }}</h1>
+        <p class="admin-page-subtitle">{{ 'ADMIN.FINANCE.REVENUS_SOLDE_DISPONIBLE_ET_GESTION' | translate }}</p>
       </div>
       <div class="admin-header-actions">
         <button class="admin-btn admin-btn-secondary" (click)="onRefresh()">
-          <i class="fas fa-sync-alt"></i> Actualiser
+          <i class="fas fa-sync-alt"></i> {{ 'ADMIN.FINANCE.ACTUALISER' | translate }}
         </button>
         <button class="admin-btn admin-btn-secondary" (click)="openConfigModal()">
-          <i class="fas fa-cog"></i> Config
+          <i class="fas fa-cog"></i> {{ 'ADMIN.FINANCE.CONFIG' | translate }}
         </button>
         <button class="admin-btn admin-btn-primary" (click)="openWithdrawalModal()">
-          <i class="fas fa-arrow-up"></i> Nouveau retrait
+          <i class="fas fa-arrow-up"></i> {{ 'ADMIN.FINANCE.NOUVEAU_RETRAIT' | translate }}
         </button>
       </div>
     </div>
@@ -26,26 +26,26 @@
       <div class="admin-stat-icon"><i class="fas fa-coins"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ formatCurrency(balance.available) }}</div>
-        <div class="admin-stat-label">Solde disponible</div>
-        <div class="admin-stat-trend">Réservé : {{ formatCurrency(balance.reservedWithdrawals) }}</div>
+        <div class="admin-stat-label">{{ 'ADMIN.FINANCE.SOLDE_DISPONIBLE' | translate }}</div>
+        <div class="admin-stat-trend">{{ 'ADMIN.FINANCE.RESERVE' | translate:{ p0: (formatCurrency(balance.reservedWithdrawals)) } }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-primary">
       <div class="admin-stat-icon"><i class="fas fa-chart-line"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ formatCurrency(balance.grossRevenue) }}</div>
-        <div class="admin-stat-label">Revenus bruts totaux</div>
-        <div class="admin-stat-trend">Souscriptions + Accès premium + Frais</div>
+        <div class="admin-stat-label">{{ 'ADMIN.FINANCE.REVENUS_BRUTS_TOTAUX' | translate }}</div>
+        <div class="admin-stat-trend">{{ 'ADMIN.FINANCE.SOUSCRIPTIONS_ACCES_PREMIUM_FRAIS' | translate }}</div>
       </div>
     </div>
     <div class="admin-stat-card admin-stat-info">
       <div class="admin-stat-icon"><i class="fas fa-arrow-trend-up"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ formatCurrency(kpis?.currentMonthRevenue || 0) }}</div>
-        <div class="admin-stat-label">Revenus ce mois</div>
+        <div class="admin-stat-label">{{ 'ADMIN.FINANCE.REVENUS_CE_MOIS' | translate }}</div>
         <div class="admin-stat-trend" [class.pf-positive]="growthPositive" [class.pf-negative]="!growthPositive">
           <i class="fas" [class.fa-arrow-up]="growthPositive" [class.fa-arrow-down]="!growthPositive"></i>
-          {{ kpis?.monthOverMonthGrowth | number:'1.1-1' }}% vs mois précédent
+          {{ 'ADMIN.FINANCE.VS_MOIS_PRECEDENT' | translate:{ p0: (kpis?.monthOverMonthGrowth | number:'1.1-1') } }}
         </div>
       </div>
     </div>
@@ -53,8 +53,8 @@
       <div class="admin-stat-icon"><i class="fas fa-arrow-down"></i></div>
       <div class="admin-stat-content">
         <div class="admin-stat-number">{{ formatCurrency(balance.confirmedWithdrawals) }}</div>
-        <div class="admin-stat-label">Total retraits confirmés</div>
-        <div class="admin-stat-trend">ARPU : {{ formatCurrency(kpis?.arpu || 0) }}</div>
+        <div class="admin-stat-label">{{ 'ADMIN.FINANCE.TOTAL_RETRAITS_CONFIRMES' | translate }}</div>
+        <div class="admin-stat-trend">{{ 'ADMIN.FINANCE.ARPU' | translate:{ p0: (formatCurrency(kpis?.arpu || 0)) } }}</div>
       </div>
     </div>
   </div>
@@ -62,15 +62,15 @@
   <!-- Breakdown -->
   <div class="pf-breakdown" *ngIf="balance">
     <div class="pf-breakdown-item">
-      <span class="pf-breakdown-label"><i class="fas fa-calendar-check"></i> Souscriptions</span>
+      <span class="pf-breakdown-label"><i class="fas fa-calendar-check"></i> {{ 'ADMIN.FINANCE.SOUSCRIPTIONS' | translate }}</span>
       <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.subscriptions) }}</span>
     </div>
     <div class="pf-breakdown-item">
-      <span class="pf-breakdown-label"><i class="fas fa-star"></i> Accès premium</span>
+      <span class="pf-breakdown-label"><i class="fas fa-star"></i> {{ 'ADMIN.FINANCE.ACCES_PREMIUM' | translate }}</span>
       <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.premiumAccess) }}</span>
     </div>
     <div class="pf-breakdown-item">
-      <span class="pf-breakdown-label"><i class="fas fa-percent"></i> Frais de retrait récupérés</span>
+      <span class="pf-breakdown-label"><i class="fas fa-percent"></i> {{ 'ADMIN.FINANCE.FRAIS_DE_RETRAIT_RECUPERES' | translate }}</span>
       <span class="pf-breakdown-value">{{ formatCurrency(balance.breakdown.withdrawalFees) }}</span>
     </div>
   </div>
@@ -81,13 +81,13 @@
       <div class="admin-table-header">
         <div class="admin-tabs-nav">
           <button class="admin-tab-btn" [class.active]="selectedTab==='overview'" (click)="onTabChange('overview')">
-            <i class="fas fa-chart-bar"></i> Revenus
+            <i class="fas fa-chart-bar"></i> {{ 'ADMIN.FINANCE.REVENUS' | translate }}
           </button>
           <button class="admin-tab-btn" [class.active]="selectedTab==='transactions'" (click)="onTabChange('transactions')">
-            <i class="fas fa-list"></i> Transactions
+            <i class="fas fa-list"></i> {{ 'ADMIN.FINANCE.TRANSACTIONS' | translate }}
           </button>
           <button class="admin-tab-btn" [class.active]="selectedTab==='withdrawals'" (click)="onTabChange('withdrawals')">
-            <i class="fas fa-arrow-up"></i> Retraits
+            <i class="fas fa-arrow-up"></i> {{ 'ADMIN.FINANCE.RETRAITS' | translate }}
             <span class="admin-badge admin-badge-warning pf-badge" *ngIf="pendingWithdrawalsCount > 0">{{ pendingWithdrawalsCount }}</span>
           </button>
         </div>
@@ -97,11 +97,11 @@
             <option *ngFor="let y of years trackBy: trackByFn" [value]="y">{{ y }}</option>
           </select>
           <div class="pf-period-btns">
-            <button class="pf-period-btn" [class.active]="selectedPeriod==='monthly'" (click)="onPeriodChange('monthly')">Mensuel</button>
-            <button class="pf-period-btn" [class.active]="selectedPeriod==='quarterly'" (click)="onPeriodChange('quarterly')">Trimestriel</button>
-            <button class="pf-period-btn" [class.active]="selectedPeriod==='semester'" (click)="onPeriodChange('semester')">Semestriel</button>
+            <button class="pf-period-btn" [class.active]="selectedPeriod==='monthly'" (click)="onPeriodChange('monthly')">{{ 'ADMIN.FINANCE.MENSUEL' | translate }}</button>
+            <button class="pf-period-btn" [class.active]="selectedPeriod==='quarterly'" (click)="onPeriodChange('quarterly')">{{ 'ADMIN.FINANCE.TRIMESTRIEL' | translate }}</button>
+            <button class="pf-period-btn" [class.active]="selectedPeriod==='semester'" (click)="onPeriodChange('semester')">{{ 'ADMIN.FINANCE.SEMESTRIEL' | translate }}</button>
           </div>
-          <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="onComputeSnapshot()" title="Recalculer snapshot">
+          <button class="admin-btn admin-btn-ghost admin-btn-sm" (click)="onComputeSnapshot()" [title]="'ADMIN.FINANCE.RECALCULER_SNAPSHOT' | translate">
             <i class="fas fa-calculator"></i>
           </button>
         </div>
@@ -137,14 +137,14 @@
             [placement]="tooltipPlacement">
           </pf-pie-tooltip>
           <div class="pf-legend">
-            <span class="pf-legend-item pf-legend-sub"><span></span> Souscriptions</span>
-            <span class="pf-legend-item pf-legend-premium"><span></span> Accès premium</span>
-            <span class="pf-legend-item pf-legend-fees"><span></span> Frais retrait</span>
+            <span class="pf-legend-item pf-legend-sub"><span></span> {{ 'ADMIN.FINANCE.SOUSCRIPTIONS' | translate }}</span>
+            <span class="pf-legend-item pf-legend-premium"><span></span> {{ 'ADMIN.FINANCE.ACCES_PREMIUM' | translate }}</span>
+            <span class="pf-legend-item pf-legend-fees"><span></span> {{ 'ADMIN.FINANCE.FRAIS_RETRAIT' | translate }}</span>
           </div>
         </div>
         <div class="admin-empty-state" *ngIf="!revenueData.length">
           <i class="fas fa-chart-bar admin-empty-icon"></i>
-          <h3>Aucune donnée pour cette période</h3>
+          <h3>{{ 'ADMIN.FINANCE.AUCUNE_DONNEE_POUR_CETTE_PERIODE' | translate }}</h3>
         </div>
       </div>
 
@@ -153,14 +153,14 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Type</th><th>Montant</th><th>Devise</th><th>Utilisateur</th><th>Date</th><th>Référence</th>
+              <th>{{ 'ADMIN.FINANCE.TYPE' | translate }}</th><th>{{ 'ADMIN.FINANCE.MONTANT' | translate }}</th><th>{{ 'ADMIN.FINANCE.DEVISE' | translate }}</th><th>{{ 'ADMIN.FINANCE.UTILISATEUR' | translate }}</th><th>{{ 'ADMIN.FINANCE.DATE' | translate }}</th><th>{{ 'ADMIN.FINANCE.REFERENCE' | translate }}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let tx of transactions trackBy: trackByFn">
               <td>
                 <span class="admin-badge" [class.admin-badge-primary]="tx.type==='subscription'" [class.admin-badge-warning]="tx.type==='premium_access'">
-                  {{ tx.type === 'subscription' ? 'Souscription' : 'Accès premium' }}
+                  {{ tx.type === 'subscription' ? ('ADMIN.FINANCE.SOUSCRIPTION' | translate) : ('ADMIN.FINANCE.ACCES_PREMIUM' | translate) }}
                 </span>
               </td>
               <td><strong>{{ formatCurrency(tx.amount) }}</strong></td>
@@ -172,7 +172,7 @@
           </tbody>
         </table>
         <div class="admin-empty-state" *ngIf="!transactions.length">
-          <i class="fas fa-list admin-empty-icon"></i><h3>Aucune transaction</h3>
+          <i class="fas fa-list admin-empty-icon"></i><h3>{{ 'ADMIN.FINANCE.AUCUNE_TRANSACTION' | translate }}</h3>
         </div>
       </div>
 
@@ -181,7 +181,7 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Référence</th><th>Montant</th><th>Frais</th><th>Net</th><th>Méthode</th><th>Bénéficiaire</th><th>Statut</th><th>Demandé par</th><th>Date</th><th>Actions</th>
+              <th>{{ 'ADMIN.FINANCE.REFERENCE' | translate }}</th><th>{{ 'ADMIN.FINANCE.MONTANT' | translate }}</th><th>{{ 'ADMIN.FINANCE.FRAIS' | translate }}</th><th>{{ 'ADMIN.FINANCE.NET' | translate }}</th><th>{{ 'ADMIN.FINANCE.METHODE' | translate }}</th><th>{{ 'ADMIN.FINANCE.BENEFICIAIRE' | translate }}</th><th>{{ 'ADMIN.FINANCE.STATUT' | translate }}</th><th>{{ 'ADMIN.FINANCE.DEMANDE_PAR' | translate }}</th><th>{{ 'ADMIN.FINANCE.DATE' | translate }}</th><th>{{ 'ADMIN.FINANCE.ACTIONS' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -190,7 +190,7 @@
               <td>{{ formatCurrency(w.requestedAmount) }}</td>
               <td>{{ formatCurrency(w.feeAmount) }} ({{ w.feePercent }}%)</td>
               <td><strong>{{ formatCurrency(w.netAmount) }}</strong></td>
-              <td>{{ w.method === 'BANK_TRANSFER' ? 'Virement' : 'Mobile Money' }}</td>
+              <td>{{ w.method === 'BANK_TRANSFER' ? ('ADMIN.FINANCE.VIREMENT' | translate) : 'Mobile Money' }}</td>
               <td>
                 <div>{{ w.recipientName }}</div>
                 <small class="pf-muted">{{ w.recipientAccount }}</small>
@@ -200,16 +200,16 @@
               <td>{{ w.createdAt | date:'dd/MM/yyyy' }}</td>
               <td>
                 <div class="pf-actions">
-                  <button *ngIf="w.status==='PENDING'" class="admin-btn admin-btn-sm admin-btn-success" (click)="openApproveModal(w)" title="Approuver">
+                  <button *ngIf="w.status==='PENDING'" class="admin-btn admin-btn-sm admin-btn-success" (click)="openApproveModal(w)" [title]="'ADMIN.FINANCE.APPROUVER' | translate">
                     <i class="fas fa-check"></i>
                   </button>
-                  <button *ngIf="w.status==='APPROVED'" class="admin-btn admin-btn-sm admin-btn-primary" (click)="openConfirmModal(w)" title="Confirmer virement">
+                  <button *ngIf="w.status==='APPROVED'" class="admin-btn admin-btn-sm admin-btn-primary" (click)="openConfirmModal(w)" [title]="'ADMIN.FINANCE.CONFIRMER_VIREMENT' | translate">
                     <i class="fas fa-check-double"></i>
                   </button>
-                  <button *ngIf="w.status==='APPROVED' || w.status==='PROCESSING'" class="admin-btn admin-btn-sm admin-btn-danger" (click)="openFailModal(w)" title="Marquer échoué">
+                  <button *ngIf="w.status==='APPROVED' || w.status==='PROCESSING'" class="admin-btn admin-btn-sm admin-btn-danger" (click)="openFailModal(w)" [title]="'ADMIN.FINANCE.MARQUER_ECHOUE' | translate">
                     <i class="fas fa-times"></i>
                   </button>
-                  <button *ngIf="w.status==='PENDING' || w.status==='APPROVED'" class="admin-btn admin-btn-sm admin-btn-secondary" (click)="openCancelModal(w)" title="Annuler">
+                  <button *ngIf="w.status==='PENDING' || w.status==='APPROVED'" class="admin-btn admin-btn-sm admin-btn-secondary" (click)="openCancelModal(w)" [title]="'ADMIN.FINANCE.ANNULER' | translate">
                     <i class="fas fa-ban"></i>
                   </button>
                 </div>
@@ -218,7 +218,7 @@
           </tbody>
         </table>
         <div class="admin-empty-state" *ngIf="!withdrawals.length">
-          <i class="fas fa-arrow-up admin-empty-icon"></i><h3>Aucun retrait</h3>
+          <i class="fas fa-arrow-up admin-empty-icon"></i><h3>{{ 'ADMIN.FINANCE.AUCUN_RETRAIT' | translate }}</h3>
         </div>
       </div>
     </div>
@@ -238,8 +238,8 @@
           </svg>
         </div>
         <div>
-          <h2 class="pw-title">Nouveau retrait plateforme</h2>
-          <p class="pw-subtitle">Solde disponible : <strong>{{ formatCurrency(balance?.available || 0) }}</strong></p>
+          <h2 class="pw-title">{{ 'ADMIN.FINANCE.NOUVEAU_RETRAIT_PLATEFORME' | translate }}</h2>
+          <p class="pw-subtitle">{{ 'ADMIN.FINANCE.SOLDE_DISPONIBLE_2' | translate }} <strong>{{ formatCurrency(balance?.available || 0) }}</strong></p>
         </div>
       </div>
       <button class="pw-close" (click)="showWithdrawalModal=false" [disabled]="isLoading">
@@ -258,12 +258,12 @@
           </svg>
           <span *ngIf="wStep === 'method'">1</span>
         </div>
-        <span class="pw-step-label">Méthode</span>
+        <span class="pw-step-label">{{ 'ADMIN.FINANCE.METHODE' | translate }}</span>
       </div>
       <div class="pw-step-line"></div>
       <div class="pw-step" [class.active]="wStep === 'details'">
         <div class="pw-step-dot"><span>2</span></div>
-        <span class="pw-step-label">Détails</span>
+        <span class="pw-step-label">{{ 'ADMIN.FINANCE.DETAILS' | translate }}</span>
       </div>
     </div>
 
@@ -272,7 +272,7 @@
 
       <!-- ══ ÉTAPE 1 — CHOIX DE LA MÉTHODE ══ -->
       <ng-container *ngIf="wStep === 'method'">
-        <p class="pw-step-title">Sélectionnez la méthode de retrait</p>
+        <p class="pw-step-title">{{ 'ADMIN.FINANCE.SELECTIONNEZ_LA_METHODE_DE_RETRAIT' | translate }}</p>
         <div class="pw-methods">
           <button *ngFor="let m of methods trackBy: trackByFn" type="button"
                   class="pw-method-btn"
@@ -284,7 +284,7 @@
             </div>
             <div class="pw-method-info">
               <strong>{{ m.label }}</strong>
-              <span>{{ m.description }}</span>
+              <span>{{ m.description | translate }}</span>
             </div>
             <svg class="pw-method-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -296,7 +296,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
           </svg>
-          Transactions sécurisées via EasyTransac
+          {{ 'ADMIN.FINANCE.SECURED_VIA' | translate }}
         </p>
       </ng-container>
 
@@ -319,39 +319,39 @@
         <!-- Montant -->
         <div class="pw-field">
           <label class="pw-label">
-            Montant à retirer
+            {{ 'ADMIN.FINANCE.MONTANT_A_RETIRER' | translate }}
           </label>
           <div class="pw-amount-wrap">
             <input type="number" formControlName="requestedAmount" class="pw-input"
                    [class.pw-input--error]="withdrawalForm.get('requestedAmount')?.invalid && withdrawalForm.get('requestedAmount')?.touched"
                    placeholder="Min. {{ formatCurrency(MIN_AMOUNT) }}">
             <span class="pw-currency">FCFA</span>
-            <button type="button" class="pw-max-btn" (click)="setMaxAmount()" [disabled]="isLoading">Max</button>
+            <button type="button" class="pw-max-btn" (click)="setMaxAmount()" [disabled]="isLoading">{{ 'ADMIN.FINANCE.MAX' | translate }}</button>
           </div>
           <div *ngIf="withdrawalForm.get('requestedAmount')?.invalid && withdrawalForm.get('requestedAmount')?.touched" class="pw-error">
-            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['min']">Minimum {{ formatCurrency(MIN_AMOUNT) }}</span>
-            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['max']">Montant trop élevé (max {{ formatCurrency(wMaxAmount) }})</span>
-            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['required']">Montant requis</span>
+            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['min']">{{ 'ADMIN.FINANCE.MINIMUM' | translate:{ p0: (formatCurrency(MIN_AMOUNT)) } }}</span>
+            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['max']">{{ 'ADMIN.FINANCE.MONTANT_TROP_ELEVE_MAX' | translate:{ p0: (formatCurrency(wMaxAmount)) } }}</span>
+            <span *ngIf="withdrawalForm.get('requestedAmount')?.errors?.['required']">{{ 'ADMIN.FINANCE.MONTANT_REQUIS' | translate }}</span>
           </div>
         </div>
 
         <!-- Bénéficiaire -->
         <div class="pw-field">
           <label class="pw-label">
-            Nom du bénéficiaire
+            {{ 'ADMIN.FINANCE.NOM_DU_BENEFICIAIRE' | translate }}
           </label>
           <input type="text" formControlName="recipientName" class="pw-input"
                  [class.pw-input--error]="withdrawalForm.get('recipientName')?.invalid && withdrawalForm.get('recipientName')?.touched"
-                 placeholder="Nom complet">
+                 [placeholder]="'ADMIN.FINANCE.NOM_COMPLET' | translate">
           <div *ngIf="withdrawalForm.get('recipientName')?.invalid && withdrawalForm.get('recipientName')?.touched" class="pw-error">
-            <span>Nom requis</span>
+            <span>{{ 'ADMIN.FINANCE.NOM_REQUIS' | translate }}</span>
           </div>
         </div>
 
         <!-- Numéro Mobile Money -->
         <div class="pw-field">
           <label class="pw-label">
-            Numéro {{ selectedMethodDef?.label }}
+            {{ 'ADMIN.FINANCE.NUMERO' | translate:{ p0: (selectedMethodDef?.label) } }}
           </label>
           <div class="pw-phone-wrap">
             <span class="pw-prefix">+237</span>
@@ -379,10 +379,10 @@
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <span *ngIf="selectedMethodDef?.value === 'ORANGE_MONEY'">
-              Numéros Orange : <strong>69X</strong>, <strong>65[5-9]X</strong>, <strong>66X</strong>
+              {{ 'ADMIN.FINANCE.NUMEROS_ORANGE' | translate }} <strong>{{ 'ADMIN.FINANCE.69X' | translate }}</strong>, <strong>{{ 'ADMIN.FINANCE.65_5_9_X' | translate }}</strong>, <strong>{{ 'ADMIN.FINANCE.66X' | translate }}</strong>
             </span>
             <span *ngIf="selectedMethodDef?.value === 'MTN_MONEY'">
-              Numéros MTN : <strong>67X</strong>, <strong>68X</strong>, <strong>65[0-4]X</strong>
+              {{ 'ADMIN.FINANCE.NUMEROS_MTN' | translate }} <strong>{{ 'ADMIN.FINANCE.67X' | translate }}</strong>, <strong>{{ 'ADMIN.FINANCE.68X' | translate }}</strong>, <strong>{{ 'ADMIN.FINANCE.65_0_4_X' | translate }}</strong>
             </span>
           </div>
           <div *ngIf="phoneError" class="pw-error">
@@ -392,30 +392,30 @@
 
         <!-- Récapitulatif -->
         <div class="pw-recap" *ngIf="withdrawalForm.value.requestedAmount > 0">
-          <div class="pw-recap-title">Récapitulatif</div>
+          <div class="pw-recap-title">{{ 'ADMIN.FINANCE.RECAPITULATIF' | translate }}</div>
           <div class="pw-recap-row">
-            <span>Montant demandé</span>
+            <span>{{ 'ADMIN.FINANCE.MONTANT_DEMANDE' | translate }}</span>
             <strong>{{ formatCurrency(withdrawalForm.value.requestedAmount) }}</strong>
           </div>
           <div class="pw-recap-row pw-recap-row--fee">
-            <span>Frais (0% admin)</span>
+            <span>{{ 'ADMIN.FINANCE.FRAIS_0_ADMIN' | translate }}</span>
             <span class="pw-fee">− {{ formatCurrency(0) }}</span>
           </div>
           <div class="pw-recap-divider"></div>
           <div class="pw-recap-row pw-recap-row--net">
-            <span>Net versé</span>
+            <span>{{ 'ADMIN.FINANCE.NET_VERSE' | translate }}</span>
             <strong class="pw-net">{{ formatCurrency(wNetAmount) }}</strong>
           </div>
           <div class="pw-recap-row">
-            <span>Via</span>
+            <span>{{ 'ADMIN.FINANCE.VIA' | translate }}</span>
             <strong class="pw-method-label">{{ selectedMethodDef?.label }}</strong>
           </div>
           <div class="pw-recap-row">
-            <span>Bénéficiaire</span>
+            <span>{{ 'ADMIN.FINANCE.BENEFICIAIRE' | translate }}</span>
             <strong>{{ withdrawalForm.value.recipientName || '—' }}</strong>
           </div>
           <div class="pw-recap-row">
-            <span>Téléphone</span>
+            <span>{{ 'ADMIN.FINANCE.TELEPHONE' | translate }}</span>
             <strong>+237 {{ withdrawalForm.value.recipientAccount || '—' }}</strong>
           </div>
         </div>
@@ -434,13 +434,13 @@
 
     <!-- FOOTER étape 1 -->
     <div class="pw-footer pw-footer--single" *ngIf="wStep === 'method'">
-      <button type="button" class="pw-btn pw-btn--secondary" (click)="showWithdrawalModal=false">Annuler</button>
+      <button type="button" class="pw-btn pw-btn--secondary" (click)="showWithdrawalModal=false">{{ 'ADMIN.FINANCE.ANNULER' | translate }}</button>
     </div>
 
     <!-- FOOTER étape 2 -->
     <div class="pw-footer" *ngIf="wStep === 'details'">
       <button type="button" class="pw-btn pw-btn--secondary" (click)="backToMethod()" [disabled]="isLoading">
-        Retour
+        {{ 'ADMIN.FINANCE.RETOUR' | translate }}
       </button>
       <button type="button" class="pw-btn"
               [class.pw-btn--orange]="selectedMethodDef?.value === 'ORANGE_MONEY'"
@@ -454,7 +454,7 @@
         <svg *ngIf="!isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
         </svg>
-        {{ isLoading ? 'Traitement…' : 'Effectuer le retrait' }}
+        {{ isLoading ? ('ADMIN.FINANCE.TRAITEMENT' | translate) : ('ADMIN.FINANCE.EFFECTUER_LE_RETRAIT' | translate) }}
       </button>
     </div>
 
@@ -465,18 +465,18 @@
 <div class="admin-modal-overlay" *ngIf="showApproveModal" (click)="showApproveModal=false">
   <div class="admin-modal" (click)="$event.stopPropagation()">
     <div class="admin-modal-header">
-      <h3>Approuver le retrait {{ selectedWithdrawal?.reference }}</h3>
+      <h3>{{ 'ADMIN.FINANCE.APPROUVER_LE_RETRAIT' | translate:{ p0: (selectedWithdrawal?.reference) } }}</h3>
       <button class="admin-modal-close" (click)="showApproveModal=false"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
-      <p>Montant : <strong>{{ formatCurrency(selectedWithdrawal?.requestedAmount || 0) }}</strong></p>
-      <p>Bénéficiaire : <strong>{{ selectedWithdrawal?.recipientName }}</strong> — {{ selectedWithdrawal?.recipientAccount }}</p>
-      <label class="admin-form-label" style="margin-top:12px">Notes (optionnel)</label>
+      <p>{{ 'ADMIN.FINANCE.MONTANT_2' | translate }} <strong>{{ formatCurrency(selectedWithdrawal?.requestedAmount || 0) }}</strong></p>
+      <p>{{ 'ADMIN.FINANCE.BENEFICIAIRE_2' | translate }} <strong>{{ selectedWithdrawal?.recipientName }}</strong> — {{ selectedWithdrawal?.recipientAccount }}</p>
+      <label class="admin-form-label" style="margin-top:12px">{{ 'ADMIN.FINANCE.NOTES_OPTIONNEL' | translate }}</label>
       <textarea class="admin-form-control" [(ngModel)]="approveNotes" rows="2"></textarea>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="showApproveModal=false">Annuler</button>
-      <button class="admin-btn admin-btn-success" (click)="confirmApprove()"><i class="fas fa-check"></i> Approuver</button>
+      <button class="admin-btn admin-btn-secondary" (click)="showApproveModal=false">{{ 'ADMIN.FINANCE.ANNULER' | translate }}</button>
+      <button class="admin-btn admin-btn-success" (click)="confirmApprove()"><i class="fas fa-check"></i> {{ 'ADMIN.FINANCE.APPROUVER' | translate }}</button>
     </div>
   </div>
 </div>
@@ -485,23 +485,23 @@
 <div class="admin-modal-overlay" *ngIf="showConfirmModal" (click)="showConfirmModal=false">
   <div class="admin-modal" (click)="$event.stopPropagation()">
     <div class="admin-modal-header">
-      <h3>Confirmer le virement {{ selectedWithdrawal?.reference }}</h3>
+      <h3>{{ 'ADMIN.FINANCE.CONFIRMER_LE_VIREMENT' | translate:{ p0: (selectedWithdrawal?.reference) } }}</h3>
       <button class="admin-modal-close" (click)="showConfirmModal=false"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
-      <p>Montant net versé : <strong>{{ formatCurrency(selectedWithdrawal?.netAmount || 0) }}</strong></p>
+      <p>{{ 'ADMIN.FINANCE.MONTANT_NET_VERSE' | translate }} <strong>{{ formatCurrency(selectedWithdrawal?.netAmount || 0) }}</strong></p>
       <div class="admin-form-group">
-        <label class="admin-form-label">Référence externe (bancaire/opérateur)</label>
-        <input type="text" class="admin-form-control" [(ngModel)]="confirmExternalRef" placeholder="Ex: TXN-2025-XXXXXX">
+        <label class="admin-form-label">{{ 'ADMIN.FINANCE.REFERENCE_EXTERNE_BANCAIRE_OPERATEUR' | translate }}</label>
+        <input type="text" class="admin-form-control" [(ngModel)]="confirmExternalRef" [placeholder]="'ADMIN.FINANCE.EX_TXN_2025_XXXXXX' | translate">
       </div>
       <div class="admin-form-group" style="margin-top:8px">
-        <label class="admin-form-label">Notes</label>
+        <label class="admin-form-label">{{ 'ADMIN.FINANCE.NOTES' | translate }}</label>
         <textarea class="admin-form-control" [(ngModel)]="confirmNotes" rows="2"></textarea>
       </div>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="showConfirmModal=false">Annuler</button>
-      <button class="admin-btn admin-btn-primary" (click)="submitConfirm()"><i class="fas fa-check-double"></i> Confirmer le virement</button>
+      <button class="admin-btn admin-btn-secondary" (click)="showConfirmModal=false">{{ 'ADMIN.FINANCE.ANNULER' | translate }}</button>
+      <button class="admin-btn admin-btn-primary" (click)="submitConfirm()"><i class="fas fa-check-double"></i> {{ 'ADMIN.FINANCE.CONFIRMER_LE_VIREMENT_2' | translate }}</button>
     </div>
   </div>
 </div>
@@ -510,16 +510,16 @@
 <div class="admin-modal-overlay" *ngIf="showFailModal" (click)="showFailModal=false">
   <div class="admin-modal" (click)="$event.stopPropagation()">
     <div class="admin-modal-header">
-      <h3>Marquer échoué — {{ selectedWithdrawal?.reference }}</h3>
+      <h3>{{ 'ADMIN.FINANCE.MARQUER_ECHOUE_2' | translate:{ p0: (selectedWithdrawal?.reference) } }}</h3>
       <button class="admin-modal-close" (click)="showFailModal=false"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
-      <label class="admin-form-label">Raison de l'échec *</label>
-      <textarea class="admin-form-control" [(ngModel)]="failReason" rows="3" placeholder="Ex: Compte bancaire invalide..."></textarea>
+      <label class="admin-form-label">{{ 'ADMIN.FINANCE.RAISON_DE_L_ECHEC' | translate }}</label>
+      <textarea class="admin-form-control" [(ngModel)]="failReason" rows="3" [placeholder]="'ADMIN.FINANCE.EX_COMPTE_BANCAIRE_INVALIDE' | translate"></textarea>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="showFailModal=false">Annuler</button>
-      <button class="admin-btn admin-btn-danger" (click)="submitFail()" [disabled]="!failReason.trim()"><i class="fas fa-times"></i> Confirmer l'échec</button>
+      <button class="admin-btn admin-btn-secondary" (click)="showFailModal=false">{{ 'ADMIN.FINANCE.ANNULER' | translate }}</button>
+      <button class="admin-btn admin-btn-danger" (click)="submitFail()" [disabled]="!failReason.trim()"><i class="fas fa-times"></i> {{ 'ADMIN.FINANCE.CONFIRMER_L_ECHEC' | translate }}</button>
     </div>
   </div>
 </div>
@@ -528,16 +528,16 @@
 <div class="admin-modal-overlay" *ngIf="showCancelModal" (click)="showCancelModal=false">
   <div class="admin-modal" (click)="$event.stopPropagation()">
     <div class="admin-modal-header">
-      <h3>Annuler le retrait {{ selectedWithdrawal?.reference }}</h3>
+      <h3>{{ 'ADMIN.FINANCE.ANNULER_LE_RETRAIT' | translate:{ p0: (selectedWithdrawal?.reference) } }}</h3>
       <button class="admin-modal-close" (click)="showCancelModal=false"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
-      <label class="admin-form-label">Raison (optionnel)</label>
+      <label class="admin-form-label">{{ 'ADMIN.FINANCE.RAISON_OPTIONNEL' | translate }}</label>
       <textarea class="admin-form-control" [(ngModel)]="cancelReason" rows="2"></textarea>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="showCancelModal=false">Fermer</button>
-      <button class="admin-btn admin-btn-warning" (click)="submitCancel()"><i class="fas fa-ban"></i> Annuler le retrait</button>
+      <button class="admin-btn admin-btn-secondary" (click)="showCancelModal=false">{{ 'ADMIN.FINANCE.FERMER' | translate }}</button>
+      <button class="admin-btn admin-btn-warning" (click)="submitCancel()"><i class="fas fa-ban"></i> {{ 'ADMIN.FINANCE.ANNULER_LE_RETRAIT_2' | translate }}</button>
     </div>
   </div>
 </div>
@@ -546,43 +546,43 @@
 <div class="admin-modal-overlay" *ngIf="showConfigModal" (click)="showConfigModal=false">
   <div class="admin-modal" (click)="$event.stopPropagation()">
     <div class="admin-modal-header">
-      <h3>Configuration du wallet plateforme</h3>
+      <h3>{{ 'ADMIN.FINANCE.CONFIGURATION_DU_WALLET_PLATEFORME' | translate }}</h3>
       <button class="admin-modal-close" (click)="showConfigModal=false"><i class="fas fa-times"></i></button>
     </div>
     <div class="admin-modal-body">
       <form [formGroup]="configForm">
         <div class="admin-form-grid">
           <div class="admin-form-group">
-            <label class="admin-form-label">Frais retrait utilisateurs (%)</label>
+            <label class="admin-form-label">{{ 'ADMIN.FINANCE.FRAIS_RETRAIT_UTILISATEURS' | translate }}</label>
             <input type="number" class="admin-form-control" formControlName="userWithdrawalFeePercent" min="0" max="100">
-            <small class="pf-muted">0% pour les admins (non modifiable)</small>
+            <small class="pf-muted">{{ 'ADMIN.FINANCE.0_POUR_LES_ADMINS_NON' | translate }}</small>
           </div>
           <div class="admin-form-group">
-            <label class="admin-form-label">Montant minimum retrait</label>
+            <label class="admin-form-label">{{ 'ADMIN.FINANCE.MONTANT_MINIMUM_RETRAIT' | translate }}</label>
             <input type="number" class="admin-form-control" formControlName="minWithdrawalAmount" min="0">
           </div>
           <div class="admin-form-group">
-            <label class="admin-form-label">Montant maximum retrait</label>
+            <label class="admin-form-label">{{ 'ADMIN.FINANCE.MONTANT_MAXIMUM_RETRAIT' | translate }}</label>
             <input type="number" class="admin-form-control" formControlName="maxWithdrawalAmount" min="1">
           </div>
           <div class="admin-form-group">
-            <label class="admin-form-label">Devise par défaut</label>
+            <label class="admin-form-label">{{ 'ADMIN.FINANCE.DEVISE_PAR_DEFAUT' | translate }}</label>
             <input type="text" class="admin-form-control" formControlName="defaultCurrency">
           </div>
           <div class="admin-form-group pf-full-width">
-            <label class="admin-form-label">Double validation obligatoire</label>
-            <input type="checkbox" formControlName="requireDualValidation"> Oui
+            <label class="admin-form-label">{{ 'ADMIN.FINANCE.DOUBLE_VALIDATION_OBLIGATOIRE' | translate }}</label>
+            <input type="checkbox" formControlName="requireDualValidation"> {{ 'ADMIN.FINANCE.OUI' | translate }}
           </div>
           <div class="admin-form-group pf-full-width">
-            <label class="admin-form-label">Notifications email</label>
-            <input type="checkbox" formControlName="notifyOnWithdrawal"> Activer les notifications
+            <label class="admin-form-label">{{ 'ADMIN.FINANCE.NOTIFICATIONS_EMAIL' | translate }}</label>
+            <input type="checkbox" formControlName="notifyOnWithdrawal"> {{ 'ADMIN.FINANCE.ACTIVER_LES_NOTIFICATIONS' | translate }}
           </div>
         </div>
       </form>
     </div>
     <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="showConfigModal=false">Annuler</button>
-      <button class="admin-btn admin-btn-primary" (click)="submitConfig()"><i class="fas fa-save"></i> Sauvegarder</button>
+      <button class="admin-btn admin-btn-secondary" (click)="showConfigModal=false">{{ 'ADMIN.FINANCE.ANNULER' | translate }}</button>
+      <button class="admin-btn admin-btn-primary" (click)="submitConfig()"><i class="fas fa-save"></i> {{ 'ADMIN.FINANCE.SAUVEGARDER' | translate }}</button>
     </div>
   </div>
 </div>

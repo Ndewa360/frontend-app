@@ -5,20 +5,40 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 // Models
-import { 
-  AdminPayment, 
-  AdminSubscription, 
-  AdminCoupon, 
+import {
+  AdminPayment,
+  AdminSubscription,
   PaymentStats,
   PaymentFilters,
   SubscriptionFilters,
-  CouponFilters,
-  CreateCouponDto, 
-  UpdateCouponDto
+  PaymentsExport,
 } from '../store/payments/admin-payments.model';
 
 // Shared Models
 import { ApiResultFormat } from '../../../shared/store/global/api-result-format.model';
+
+/** Paramètres de requête sans valeurs vides ; dates en ISO. */
+function toParams(filters: object): HttpParams {
+  let params = new HttpParams();
+  Object.entries(filters || {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params = params.set(key, value instanceof Date ? value.toISOString() : String(value));
+    }
+  });
+  return params;
+}
+
+function pageOf(response: any) {
+  const total = response.meta?.total ?? response.total ?? 0;
+  return {
+    total,
+    meta: {
+      page: response.meta?.page ?? response.page ?? 1,
+      limit: response.meta?.limit ?? response.limit ?? 20,
+      totalPages: response.meta?.totalPages ?? response.totalPages ?? 0,
+    },
+  };
+}
 
 @Injectable({
   providedIn: 'root'
@@ -38,173 +58,29 @@ export class AdminPaymentsService {
   }
 
   /**
-   * Obtenir la liste des paiements avec filtres
+   * Factures d'abonnement (montant > 0) avec l'utilisateur
    */
   getPayments(filters: PaymentFilters = {}): Observable<{ payments: AdminPayment[], total: number, meta: any }> {
-    let params = new HttpParams();
-    Object.keys(filters).forEach(key => {
-      const value = (filters as any)[key];
-      if (value !== undefined && value !== null && value !== '') {
-        params = params.set(key, value instanceof Date ? value.toISOString() : value.toString());
-      }
-    });
-    return this.http.get<any>(`${this.apiUrl}`, { params }).pipe(
-      map(response => ({
-        payments: response.data || [],
-        total: response.meta?.total || 0,
-        meta: response.meta || { page: 1, limit: 20, totalPages: 0 }
-      }))
+    return this.http.get<any>(`${this.apiUrl}`, { params: toParams(filters) }).pipe(
+      map(response => ({ payments: response.data || [], ...pageOf(response) }))
     );
   }
 
   /**
-   * Obtenir la liste des souscriptions avec filtres
+   * Abonnements en cours avec l'utilisateur
    */
   getSubscriptions(filters: SubscriptionFilters = {}): Observable<{ subscriptions: AdminSubscription[], total: number, meta: any }> {
-    let params = new HttpParams();
-    Object.keys(filters).forEach(key => {
-      const value = (filters as any)[key];
-      if (value !== undefined && value !== null && value !== '') {
-        params = params.set(key, value instanceof Date ? value.toISOString() : value.toString());
-      }
-    });
-    return this.http.get<any>(`${this.apiUrl}/subscriptions`, { params }).pipe(
-      map(response => ({
-        subscriptions: response.data || [],
-        total: response.meta?.total || 0,
-        meta: response.meta || { page: 1, limit: 20, totalPages: 0 }
-      }))
+    return this.http.get<any>(`${this.apiUrl}/subscriptions`, { params: toParams(filters) }).pipe(
+      map(response => ({ subscriptions: response.data || [], ...pageOf(response) }))
     );
   }
 
   /**
-   * Obtenir une souscription par ID
+   * Export CSV des factures (mêmes filtres que la liste)
    */
-  getSubscriptionById(subscriptionId: string): Observable<AdminSubscription> {
-    return this.http.get<ApiResultFormat<AdminSubscription>>(`${this.apiUrl}/subscriptions/${subscriptionId}`).pipe(
+  exportPayments(filters: PaymentFilters = {}): Observable<PaymentsExport> {
+    return this.http.post<ApiResultFormat<PaymentsExport>>(`${this.apiUrl}/export`, filters).pipe(
       map(response => response.data)
     );
   }
-
-  /**
-   * Annuler une souscription
-   */
-  cancelSubscription(subscriptionId: string, reason?: string): Observable<AdminSubscription> {
-    return this.http.put<ApiResultFormat<AdminSubscription>>(`${this.apiUrl}/subscriptions/${subscriptionId}/cancel`, { reason }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  renewSubscription(subscriptionId: string): Observable<AdminSubscription> {
-    return this.http.put<ApiResultFormat<AdminSubscription>>(`${this.apiUrl}/subscriptions/${subscriptionId}/renew`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Obtenir la liste des coupons avec filtres
-   */
-  getCoupons(filters: CouponFilters = {}): Observable<{ coupons: AdminCoupon[], total: number, meta: any }> {
-    let params = new HttpParams();
-    Object.keys(filters).forEach(key => {
-      const value = (filters as any)[key];
-      if (value !== undefined && value !== null && value !== '') {
-        params = params.set(key, value instanceof Date ? value.toISOString() : value.toString());
-      }
-    });
-    return this.http.get<any>(`${this.apiUrl}/coupons`, { params }).pipe(
-      map(response => ({
-        coupons: response.data || [],
-        total: response.meta?.total || 0,
-        meta: response.meta || { page: 1, limit: 20, totalPages: 0 }
-      }))
-    );
-  }
-
-  /**
-   * Créer un nouveau coupon
-   */
-  createCoupon(couponData: CreateCouponDto): Observable<AdminCoupon> {
-    return this.http.post<ApiResultFormat<AdminCoupon>>(`${this.apiUrl}/coupons`, couponData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Mettre à jour un coupon
-   */
-  updateCoupon(couponId: string, couponData: UpdateCouponDto): Observable<AdminCoupon> {
-    return this.http.put<ApiResultFormat<AdminCoupon>>(`${this.apiUrl}/coupons/${couponId}`, couponData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Supprimer un coupon
-   */
-  deleteCoupon(couponId: string): Observable<void> {
-    return this.http.delete<ApiResultFormat<void>>(`${this.apiUrl}/coupons/${couponId}`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Créer des coupons en masse
-   */
-  createBulkCoupons(bulkData: { count: number; template: CreateCouponDto }): Observable<{ created: number; coupons: AdminCoupon[] }> {
-    return this.http.post<ApiResultFormat<{ created: number; coupons: AdminCoupon[] }>>(`${this.apiUrl}/coupons/bulk`, bulkData).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Traiter les paiements en attente
-   */
-  processPendingPayments(): Observable<{ processed: number; failed: number }> {
-    return this.http.post<ApiResultFormat<{ processed: number; failed: number }>>(`${this.apiUrl}/process-pending`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Synchroniser avec les fournisseurs de paiement
-   */
-  syncPaymentProviders(): Observable<{ synced: number; errors: any[] }> {
-    return this.http.post<ApiResultFormat<{ synced: number; errors: any[] }>>(`${this.apiUrl}/sync-providers`, {}).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Exporter les paiements
-   */
-  exportPayments(filters: PaymentFilters = {}, format: string = 'xlsx'): Observable<{ downloadUrl: string }> {
-    let params = new HttpParams().set('format', format);
-    
-    // Ajouter les filtres aux paramètres
-    Object.keys(filters).forEach(key => {
-      const value = filters[key];
-      if (value !== undefined && value !== null && value !== '') {
-        if (value instanceof Date) {
-          params = params.set(key, value.toISOString());
-        } else {
-          params = params.set(key, value.toString());
-        }
-      }
-    });
-
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/export`, {}, { params }).pipe(
-      map(response => response.data)
-    );
-  }
-
-  /**
-   * Générer un rapport financier
-   */
-  generateFinancialReport(reportData: { type: string; dateFrom: Date; dateTo: Date }): Observable<{ downloadUrl: string }> {
-    return this.http.post<ApiResultFormat<{ downloadUrl: string }>>(`${this.apiUrl}/generate-report`, reportData).pipe(
-      map(response => response.data)
-    );
-  }
-
 }

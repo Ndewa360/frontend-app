@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, BehaviorSubject, combineLatest } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged, startWith, switchMap, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 import { RestCountriesService, RestCountry, Region } from '../../services/rest-countries.service';
 import { AdminGeographyService } from '../../services/admin-geography.service';
@@ -25,9 +25,11 @@ export interface CountrySelectionResult {
   templateUrl: './country-selection-modal.component.html',
   styleUrls: ['./country-selection-modal.component.scss'],
   standalone: true,
-  imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, AsyncPipe]
+  imports: [TranslateModule, NgIf, NgFor, FormsModule, ReactiveFormsModule, AsyncPipe]
 })
 export class CountrySelectionModalComponent implements OnInit, OnDestroy {
+  /** Traductions (textes construits dans le code). */
+  private readonly i18n = inject(TranslateService);
   private destroy$ = new Subject<void>();
 
   // États du modal
@@ -56,8 +58,8 @@ export class CountrySelectionModalComponent implements OnInit, OnDestroy {
     private toastr: ToastrService,
     private translate: TranslateService
   ) {
-    this.title = data?.title || 'Ajouter un pays';
-    this.subtitle = data?.subtitle || 'Sélectionnez une région puis un pays à ajouter';
+    this.title = data?.title || this.i18n.instant('ADMIN.COUNTRY_SELECT.TS.TITLE');
+    this.subtitle = data?.subtitle || this.i18n.instant('ADMIN.COUNTRY_SELECT.TS.SUBTITLE');
   }
 
   ngOnInit(): void {

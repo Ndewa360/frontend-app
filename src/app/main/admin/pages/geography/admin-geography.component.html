@@ -7,10 +7,10 @@
       <div class="header-content py-6">
         <div class="flex justify-between items-center">
           <div class="header-info">
-            <h1 class="text-2xl font-bold mb-1">Géographie & Localisation</h1>
+            <h1 class="text-2xl font-bold mb-1">{{ 'ADMIN.GEOGRAPHY.GEOGRAPHIE_LOCALISATION' | translate }}</h1>
             <p class="text-gray-600 flex items-center text-sm">
               <i class="fas fa-globe-americas mr-2 text-gray-400"></i>
-              Gérez les pays, villes et devises disponibles dans l'application
+              {{ 'ADMIN.GEOGRAPHY.GEREZ_LES_PAYS_VILLES_ET' | translate }}
             </p>
           </div>
           <div class="flex space-x-3">
@@ -19,14 +19,14 @@
               (click)="onRefreshData()"
               [disabled]="isRefreshing">
               <i class="fas fa-sync-alt mr-2" [class.fa-spin]="isRefreshing"></i>
-              Actualiser
+              {{ 'ADMIN.GEOGRAPHY.ACTUALISER' | translate }}
             </button>
             <button
               class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
               style="background-color: rgb(204, 140, 10);"
               (click)="onCreateItem()">
               <i class="fas fa-plus mr-2"></i>
-              Nouveau
+              {{ 'ADMIN.GEOGRAPHY.NOUVEAU' | translate }}
             </button>
           </div>
         </div>
@@ -44,7 +44,7 @@
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ (stats$ | async)?.countries?.total || 0 }}</div>
-            <div class="metric-label">Pays configurés</div>
+            <div class="metric-label">{{ 'ADMIN.GEOGRAPHY.PAYS_CONFIGURES' | translate }}</div>
           </div>
         </div>
         <div class="metric-card cities">
@@ -53,7 +53,7 @@
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ (stats$ | async)?.cities?.total || 0 }}</div>
-            <div class="metric-label">Villes disponibles</div>
+            <div class="metric-label">{{ 'ADMIN.GEOGRAPHY.VILLES_DISPONIBLES' | translate }}</div>
           </div>
         </div>
         <div class="metric-card currencies">
@@ -62,7 +62,7 @@
           </div>
           <div class="metric-content">
             <div class="metric-value">{{ (stats$ | async)?.currencies?.total || 0 }}</div>
-            <div class="metric-label">Devises supportées</div>
+            <div class="metric-label">{{ 'ADMIN.GEOGRAPHY.DEVISES_SUPPORTEES' | translate }}</div>
           </div>
         </div>
         <div class="metric-card users">
@@ -70,8 +70,8 @@
             <i class="fas fa-users"></i>
           </div>
           <div class="metric-content">
-            <div class="metric-value">{{ (stats$ | async)?.distribution?.usersByCountry?.length || 0 }}</div>
-            <div class="metric-label">Pays avec utilisateurs</div>
+            <div class="metric-value">{{ (stats$ | async)?.countries?.withProperties || 0 }}</div>
+            <div class="metric-label">{{ 'ADMIN.GEOGRAPHY.PAYS_AVEC_UTILISATEURS' | translate }}</div>
           </div>
         </div>
       </div>
@@ -81,14 +81,14 @@
   <!-- Navigation par onglets - Style identique aux détails des propriétés -->
   <div class="tabs-navigation">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <nav class="flex space-x-0" aria-label="Tabs">
+      <nav class="flex space-x-0" [attr.aria-label]="'ADMIN.GEOGRAPHY.TABS' | translate">
         <button
           class="property-tab-button"
           [class.active]="selectedTab === 'countries'"
           (click)="onTabChange('countries')">
           <div class="flex items-center">
             <i class="fas fa-flag mr-2"></i>
-            Pays
+            {{ 'ADMIN.GEOGRAPHY.PAYS' | translate }}
             <span class="ml-2 tab-count">{{ (stats$ | async)?.countries?.total || 0 }}</span>
           </div>
         </button>
@@ -99,7 +99,7 @@
           (click)="onTabChange('cities')">
           <div class="flex items-center">
             <i class="fas fa-city mr-2"></i>
-            Villes
+            {{ 'ADMIN.GEOGRAPHY.VILLES' | translate }}
             <span class="ml-2 tab-count">{{ (stats$ | async)?.cities?.total || 0 }}</span>
           </div>
         </button>
@@ -110,7 +110,7 @@
           (click)="onTabChange('currencies')">
           <div class="flex items-center">
             <i class="fas fa-coins mr-2"></i>
-            Devises
+            {{ 'ADMIN.GEOGRAPHY.DEVISES' | translate }}
             <span class="ml-2 tab-count">{{ (stats$ | async)?.currencies?.total || 0 }}</span>
           </div>
         </button>
@@ -140,20 +140,20 @@
                           <i class="fas fa-search text-gray-400"></i>
                         </div>
                         <input type="text" class="search-input block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-100 transition-all duration-200 text-sm"
-                               placeholder="Rechercher un pays par nom, code ou devise..."
+                               [placeholder]="'ADMIN.GEOGRAPHY.RECHERCHER_UN_PAYS_PAR_NOM' | translate"
                                [(ngModel)]="countrySearchTerm"
                                (input)="onCountrySearch($event)">
                       </div>
                     </div>
                     <div class="flex items-center space-x-3">
                       <button class="action-btn-secondary group" [class.active]="showCountryFilters" (click)="onToggleCountryFilters()">
-                        <i class="fas fa-filter mr-2"></i><span>Filtres</span>
+                        <i class="fas fa-filter mr-2"></i><span>{{ 'ADMIN.GEOGRAPHY.FILTRES' | translate }}</span>
                       </button>
                       <button class="action-btn-secondary group" (click)="onExportCountries()">
-                        <i class="fas fa-download mr-2"></i><span>Exporter</span>
+                        <i class="fas fa-download mr-2"></i><span>{{ 'ADMIN.GEOGRAPHY.EXPORTER' | translate }}</span>
                       </button>
                       <button class="action-btn-primary group" (click)="onCreateItem()">
-                        <i class="fas fa-plus mr-2"></i><span>Nouveau pays</span>
+                        <i class="fas fa-plus mr-2"></i><span>{{ 'ADMIN.GEOGRAPHY.NOUVEAU_PAYS' | translate }}</span>
                       </button>
                     </div>
                   </div>
@@ -164,7 +164,7 @@
                 <div class="flex items-center justify-between mb-4">
                   <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                     <i class="fas fa-sliders-h mr-2 text-yellow-500"></i>
-                    Filtres avancés
+                    {{ 'ADMIN.GEOGRAPHY.FILTRES_AVANCES' | translate }}
                   </h3>
                   <button
                     class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
@@ -178,12 +178,12 @@
                   <div class="filter-group">
                     <label class="filter-label">
                       <i class="fas fa-toggle-on mr-2 text-green-500"></i>
-                      Statut
+                      {{ 'ADMIN.GEOGRAPHY.STATUT' | translate }}
                     </label>
                     <select class="filter-select">
-                      <option value="">Tous les statuts</option>
-                      <option value="active">✅ Actifs</option>
-                      <option value="inactive">❌ Inactifs</option>
+                      <option value="">{{ 'ADMIN.GEOGRAPHY.TOUS_LES_STATUTS' | translate }}</option>
+                      <option value="active">{{ 'ADMIN.GEOGRAPHY.ACTIFS' | translate }}</option>
+                      <option value="inactive">{{ 'ADMIN.GEOGRAPHY.INACTIFS' | translate }}</option>
                     </select>
                   </div>
 
@@ -191,13 +191,13 @@
                   <div class="filter-group">
                     <label class="filter-label">
                       <i class="fas fa-coins mr-2 text-yellow-500"></i>
-                      Devise
+                      {{ 'ADMIN.GEOGRAPHY.DEVISE' | translate }}
                     </label>
                     <select class="filter-select">
-                      <option value="">Toutes les devises</option>
-                      <option value="XAF">🇨🇲 XAF - Franc CFA</option>
-                      <option value="EUR">🇪🇺 EUR - Euro</option>
-                      <option value="USD">🇺🇸 USD - Dollar</option>
+                      <option value="">{{ 'ADMIN.GEOGRAPHY.TOUTES_LES_DEVISES' | translate }}</option>
+                      <option value="XAF">{{ 'ADMIN.GEOGRAPHY.XAF_FRANC_CFA' | translate }}</option>
+                      <option value="EUR">{{ 'ADMIN.GEOGRAPHY.EUR_EURO' | translate }}</option>
+                      <option value="USD">{{ 'ADMIN.GEOGRAPHY.USD_DOLLAR' | translate }}</option>
                     </select>
                   </div>
 
@@ -205,13 +205,13 @@
                   <div class="filter-group">
                     <label class="filter-label">
                       <i class="fas fa-globe-africa mr-2 text-blue-500"></i>
-                      Région
+                      {{ 'ADMIN.GEOGRAPHY.REGION' | translate }}
                     </label>
                     <select class="filter-select">
-                      <option value="">Toutes les régions</option>
-                      <option value="africa">🌍 Afrique</option>
-                      <option value="europe">🌍 Europe</option>
-                      <option value="america">🌍 Amérique</option>
+                      <option value="">{{ 'ADMIN.GEOGRAPHY.TOUTES_LES_REGIONS' | translate }}</option>
+                      <option value="africa">{{ 'ADMIN.GEOGRAPHY.AFRIQUE' | translate }}</option>
+                      <option value="europe">{{ 'ADMIN.GEOGRAPHY.EUROPE' | translate }}</option>
+                      <option value="america">{{ 'ADMIN.GEOGRAPHY.AMERIQUE' | translate }}</option>
                     </select>
                   </div>
 
@@ -221,13 +221,13 @@
                       class="filter-btn-reset group"
                       (click)="onResetCountryFilters()">
                       <i class="fas fa-undo mr-2 group-hover:rotate-180 transition-transform duration-300"></i>
-                      Réinitialiser
+                      {{ 'ADMIN.GEOGRAPHY.REINITIALISER' | translate }}
                     </button>
                     <button
                       class="filter-btn-apply group"
                       (click)="onApplyCountryFilters()">
                       <i class="fas fa-check mr-2 group-hover:scale-110 transition-transform duration-200"></i>
-                      Appliquer
+                      {{ 'ADMIN.GEOGRAPHY.APPLIQUER' | translate }}
                     </button>
                   </div>
                 </div>
@@ -240,8 +240,8 @@
                   <div class="flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                       <i class="fas fa-flag mr-2 text-blue-500"></i>
-                      Liste des pays
-                      <span class="ml-2 text-sm font-normal text-gray-500">({{ countries.length }} pays)</span>
+                      {{ 'ADMIN.GEOGRAPHY.LISTE_DES_PAYS' | translate }}
+                      <span class="ml-2 text-sm font-normal text-gray-500">{{ 'ADMIN.GEOGRAPHY.PAYS_2' | translate:{ p0: (countries.length) } }}</span>
                     </h3>
                     <div class="flex items-center space-x-2">
                       <button class="table-view-btn active">
@@ -262,39 +262,39 @@
                         <th scope="col" class="table-header-cell sortable" (click)="onSort('name')">
                           <div class="flex items-center space-x-2">
                             <i class="fas fa-flag text-blue-500"></i>
-                            <span>Pays</span>
+                            <span>{{ 'ADMIN.GEOGRAPHY.PAYS' | translate }}</span>
                             <i class="fas fa-sort text-gray-400 sort-icon"></i>
                           </div>
                         </th>
                         <th scope="col" class="table-header-cell sortable" (click)="onSort('code')">
                           <div class="flex items-center space-x-2">
                             <i class="fas fa-code text-purple-500"></i>
-                            <span>Code ISO</span>
+                            <span>{{ 'ADMIN.GEOGRAPHY.CODE_ISO' | translate }}</span>
                             <i class="fas fa-sort text-gray-400 sort-icon"></i>
                           </div>
                         </th>
                         <th scope="col" class="table-header-cell">
                           <div class="flex items-center space-x-2">
                             <i class="fas fa-coins text-yellow-500"></i>
-                            <span>Devise</span>
+                            <span>{{ 'ADMIN.GEOGRAPHY.DEVISE' | translate }}</span>
                           </div>
                         </th>
                         <th scope="col" class="table-header-cell">
                           <div class="flex items-center space-x-2">
                             <i class="fas fa-city text-green-500"></i>
-                            <span>Villes</span>
+                            <span>{{ 'ADMIN.GEOGRAPHY.VILLES' | translate }}</span>
                           </div>
                         </th>
                         <th scope="col" class="table-header-cell">
                           <div class="flex items-center space-x-2">
                             <i class="fas fa-toggle-on text-blue-500"></i>
-                            <span>Statut</span>
+                            <span>{{ 'ADMIN.GEOGRAPHY.STATUT' | translate }}</span>
                           </div>
                         </th>
                         <th scope="col" class="table-header-cell text-center">
                           <div class="flex items-center justify-center space-x-2">
                             <i class="fas fa-cogs text-gray-500"></i>
-                            <span>Actions</span>
+                            <span>{{ 'ADMIN.GEOGRAPHY.ACTIONS' | translate }}</span>
                           </div>
                         </th>
                       </tr>
@@ -323,7 +323,7 @@
                         <!-- Colonne Devise -->
                         <td class="table-cell">
                           <div class="currency-info">
-                            <span class="currency-code">{{ country.currency || 'Non configurée' }}</span>
+                            <span class="currency-code">{{ country.currency || ('ADMIN.GEOGRAPHY.NON_CONFIGUREE' | translate) }}</span>
                           </div>
                         </td>
 
@@ -331,7 +331,7 @@
                         <td class="table-cell">
                           <div class="cities-count">
                             <span class="count-number">{{ country.cityCount || 0 }}</span>
-                            <span class="count-label">villes</span>
+                            <span class="count-label">{{ 'ADMIN.GEOGRAPHY.VILLES_2' | translate }}</span>
                           </div>
                         </td>
 
@@ -346,7 +346,7 @@
                               <span class="toggle-slider"></span>
                             </label>
                             <span class="status-label" [class]="country.isActive ? 'active' : 'inactive'">
-                              {{ country.isActive ? 'Actif' : 'Inactif' }}
+                              {{ country.isActive ? ('ADMIN.GEOGRAPHY.ACTIF' | translate) : ('ADMIN.GEOGRAPHY.INACTIF' | translate) }}
                             </span>
                           </div>
                         </td>
@@ -357,19 +357,19 @@
                             <button
                               class="action-btn view"
                               (click)="onViewCountryDetails(country)"
-                              title="Voir les détails">
+                              [title]="'ADMIN.GEOGRAPHY.VOIR_LES_DETAILS' | translate">
                               <i class="fas fa-eye"></i>
                             </button>
                             <button
                               class="action-btn edit"
                               (click)="onEditCountry(country)"
-                              title="Modifier">
+                              [title]="'ADMIN.GEOGRAPHY.MODIFIER' | translate">
                               <i class="fas fa-edit"></i>
                             </button>
                             <button
                               class="action-btn delete"
                               (click)="onDeleteCountry(country)"
-                              title="Supprimer">
+                              [title]="'ADMIN.GEOGRAPHY.SUPPRIMER' | translate">
                               <i class="fas fa-trash"></i>
                             </button>
                             <div class="action-menu-trigger">
@@ -388,13 +388,13 @@
                 <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
                   <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-700">
-                      Affichage de <span class="font-medium">1</span> à <span class="font-medium">{{ countries.length }}</span> sur <span class="font-medium">{{ countries.length }}</span> pays
+                      {{ 'ADMIN.GEOGRAPHY.AFFICHAGE_DE' | translate }} <span class="font-medium">1</span> {{ 'ADMIN.GEOGRAPHY.A' | translate }} <span class="font-medium">{{ countries.length }}</span> {{ 'ADMIN.GEOGRAPHY.SUR' | translate }} <span class="font-medium">{{ countries.length }}</span> {{ 'ADMIN.GEOGRAPHY.PAYS_3' | translate }}
                     </div>
                     <div class="flex items-center space-x-2">
                       <button class="pagination-btn" disabled>
                         <i class="fas fa-chevron-left"></i>
                       </button>
-                      <span class="pagination-info">Page 1 sur 1</span>
+                      <span class="pagination-info">{{ 'ADMIN.GEOGRAPHY.PAGE_1_SUR_1' | translate }}</span>
                       <button class="pagination-btn" disabled>
                         <i class="fas fa-chevron-right"></i>
                       </button>
@@ -412,10 +412,9 @@
                     <i class="fas fa-flag text-4xl text-gray-400"></i>
                   </div>
                 </div>
-                <h3 class="mt-2 text-lg font-medium text-gray-900">Aucun pays configuré</h3>
+                <h3 class="mt-2 text-lg font-medium text-gray-900">{{ 'ADMIN.GEOGRAPHY.AUCUN_PAYS_CONFIGURE' | translate }}</h3>
                 <p class="mt-1 text-sm text-gray-500 max-w-md mx-auto">
-                  Commencez par ajouter des pays pour organiser votre application géographiquement.
-                  Les pays permettent de structurer les villes et les devises.
+                  {{ 'ADMIN.GEOGRAPHY.COMMENCEZ_PAR_AJOUTER_DES_PAYS' | translate }}
                 </p>
                 <div class="mt-6">
                   <button
@@ -423,7 +422,7 @@
                     class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     (click)="onCreateItem()">
                     <i class="fas fa-plus mr-2"></i>
-                    Ajouter un pays
+                    {{ 'ADMIN.GEOGRAPHY.AJOUTER_UN_PAYS' | translate }}
                   </button>
                 </div>
               </div>
@@ -449,7 +448,7 @@
                       <input
                         type="text"
                         class="search-input block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-100 transition-all duration-200 text-sm"
-                        placeholder="Rechercher une ville par nom, pays ou région..."
+                        [placeholder]="'ADMIN.GEOGRAPHY.RECHERCHER_UNE_VILLE_PAR_NOM' | translate"
                         [(ngModel)]="citySearchTerm"
                         (input)="onCitySearch($event)">
                       <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
@@ -467,7 +466,7 @@
                       class="action-btn-secondary group"
                       (click)="onExportCities()">
                       <i class="fas fa-download mr-2 group-hover:scale-110 transition-transform duration-200"></i>
-                      <span>Exporter</span>
+                      <span>{{ 'ADMIN.GEOGRAPHY.EXPORTER' | translate }}</span>
                     </button>
 
                     <!-- Bouton principal - Ajouter ville -->
@@ -475,7 +474,7 @@
                       class="action-btn-primary group"
                       (click)="onCreateItem()">
                       <i class="fas fa-plus mr-2 group-hover:rotate-90 transition-transform duration-200"></i>
-                      <span>Nouvelle ville</span>
+                      <span>{{ 'ADMIN.GEOGRAPHY.NOUVELLE_VILLE' | translate }}</span>
                     </button>
                   </div>
                 </div>
@@ -495,13 +494,13 @@
                       </div>
                       <div>
                         <h3 class="text-xl font-bold text-gray-900 flex items-center">
-                          Gestion des Villes
+                          {{ 'ADMIN.GEOGRAPHY.GESTION_DES_VILLES' | translate }}
                           <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                            {{ cities.length }} ville(s)
+                            {{ 'ADMIN.GEOGRAPHY.VILLE_S' | translate:{ p0: (cities.length) } }}
                           </span>
                         </h3>
                         <p class="mt-1 text-sm text-gray-600">
-                          Gérez les villes disponibles dans votre application
+                          {{ 'ADMIN.GEOGRAPHY.GEREZ_LES_VILLES_DISPONIBLES_DANS' | translate }}
                         </p>
                       </div>
                     </div>
@@ -511,14 +510,14 @@
                         class="inline-flex items-center px-4 py-2 border border-yellow-300 shadow-sm text-sm font-medium rounded-lg text-yellow-700 bg-white hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
                         (click)="onImportCitiesFromGeonames()">
                         <i class="fas fa-download mr-2 text-yellow-600"></i>
-                        Importer depuis GeoNames
+                        {{ 'ADMIN.GEOGRAPHY.IMPORTER_DEPUIS_GEONAMES' | translate }}
                       </button>
                       <button
                         type="button"
                         class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
                         (click)="onCreateCity()">
                         <i class="fas fa-plus mr-2"></i>
-                        Ajouter une ville
+                        {{ 'ADMIN.GEOGRAPHY.AJOUTER_UNE_VILLE' | translate }}
                       </button>
                     </div>
                   </div>
@@ -533,13 +532,13 @@
                     <div>
                       <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
                         <i class="fas fa-search mr-2 text-yellow-600"></i>
-                        Rechercher une ville
+                        {{ 'ADMIN.GEOGRAPHY.RECHERCHER_UNE_VILLE' | translate }}
                       </label>
                       <div class="relative">
                         <input
                           type="text"
                           [(ngModel)]="citySearchTerm"
-                          placeholder="Tapez le nom d'une ville..."
+                          [placeholder]="'ADMIN.GEOGRAPHY.TAPEZ_LE_NOM_D_UNE' | translate"
                           class="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm transition-all duration-200">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <i class="fas fa-search text-gray-400"></i>
@@ -551,12 +550,12 @@
                     <div>
                       <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
                         <i class="fas fa-flag mr-2 text-blue-600"></i>
-                        Filtrer par pays
+                        {{ 'ADMIN.GEOGRAPHY.FILTRER_PAR_PAYS' | translate }}
                       </label>
                       <select
                         [(ngModel)]="selectedCountryFilter"
                         class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white transition-all duration-200">
-                        <option value="">🌍 Tous les pays</option>
+                        <option value="">{{ 'ADMIN.GEOGRAPHY.TOUS_LES_PAYS' | translate }}</option>
                         <option *ngFor="let country of (countries$ | async)" [value]="country._id">
                           {{ country.name }}
                         </option>
@@ -567,14 +566,14 @@
                     <div>
                       <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
                         <i class="fas fa-toggle-on mr-2 text-green-600"></i>
-                        Statut
+                        {{ 'ADMIN.GEOGRAPHY.STATUT' | translate }}
                       </label>
                       <select
                         [(ngModel)]="selectedStatusFilter"
                         class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 sm:text-sm bg-white transition-all duration-200">
-                        <option value="">📊 Tous les statuts</option>
-                        <option value="active">✅ Actives</option>
-                        <option value="inactive">❌ Inactives</option>
+                        <option value="">{{ 'ADMIN.GEOGRAPHY.TOUS_LES_STATUTS_2' | translate }}</option>
+                        <option value="active">{{ 'ADMIN.GEOGRAPHY.ACTIVES' | translate }}</option>
+                        <option value="inactive">{{ 'ADMIN.GEOGRAPHY.INACTIVES' | translate }}</option>
                       </select>
                     </div>
                   </div>
@@ -604,7 +603,7 @@
                           </h3>
                           <div class="city-country">
                             <i class="fas fa-flag"></i>
-                            <span>{{ city.country?.name || 'Pays non défini' }}</span>
+                            <span>{{ city.country?.name || ('ADMIN.GEOGRAPHY.PAYS_NON_DEFINI' | translate) }}</span>
                           </div>
                         </div>
                       </div>
@@ -612,7 +611,7 @@
                       <!-- Badge de statut avec style Ndiye -->
                       <div class="city-status-badge" [class.active]="city.isActive">
                         <div class="status-indicator"></div>
-                        <span>{{ city.isActive ? 'Active' : 'Inactive' }}</span>
+                        <span>{{ city.isActive ? ('ADMIN.GEOGRAPHY.ACTIVE' | translate) : ('ADMIN.GEOGRAPHY.INACTIVE' | translate) }}</span>
                       </div>
                     </div>
                   </div>
@@ -620,17 +619,6 @@
                   <!-- Statistiques avec style Ndiye -->
                   <div class="city-stats">
                     <div class="stats-grid">
-                      <!-- Statistique Utilisateurs -->
-                      <div class="stat-item users">
-                        <div class="stat-icon">
-                          <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-content">
-                          <div class="stat-number">{{ city.userCount || 0 }}</div>
-                          <div class="stat-label">Utilisateurs</div>
-                        </div>
-                      </div>
-
                       <!-- Statistique Propriétés -->
                       <div class="stat-item properties">
                         <div class="stat-icon">
@@ -638,7 +626,7 @@
                         </div>
                         <div class="stat-content">
                           <div class="stat-number">{{ city.propertyCount || 0 }}</div>
-                          <div class="stat-label">Propriétés</div>
+                          <div class="stat-label">{{ 'ADMIN.GEOGRAPHY.PROPRIETES' | translate }}</div>
                         </div>
                       </div>
                     </div>
@@ -649,7 +637,7 @@
                     <div class="actions-content">
                       <!-- Toggle statut moderne -->
                       <div class="status-toggle-section">
-                        <span class="toggle-label">Statut :</span>
+                        <span class="toggle-label">{{ 'ADMIN.GEOGRAPHY.STATUT_2' | translate }}</span>
                         <div class="modern-toggle" [class.active]="city.isActive" (click)="onToggleCityStatus(city)">
                           <div class="toggle-slider">
                             <div class="toggle-handle"></div>
@@ -663,21 +651,21 @@
                           type="button"
                           class="action-btn view-btn"
                           (click)="onViewCity(city)"
-                          title="Voir les détails">
+                          [title]="'ADMIN.GEOGRAPHY.VOIR_LES_DETAILS' | translate">
                           <i class="fas fa-eye"></i>
                         </button>
                         <button
                           type="button"
                           class="action-btn edit-btn"
                           (click)="onEditCity(city)"
-                          title="Modifier">
+                          [title]="'ADMIN.GEOGRAPHY.MODIFIER' | translate">
                           <i class="fas fa-edit"></i>
                         </button>
                         <button
                           type="button"
                           class="action-btn delete-btn"
                           (click)="onDeleteCity(city)"
-                          title="Supprimer">
+                          [title]="'ADMIN.GEOGRAPHY.SUPPRIMER' | translate">
                           <i class="fas fa-trash"></i>
                         </button>
                       </div>
@@ -695,11 +683,11 @@
                     <i class="fas fa-city text-6xl text-gradient bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent"></i>
                   </div>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Aucune ville configurée</h3>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">{{ 'ADMIN.GEOGRAPHY.AUCUNE_VILLE_CONFIGUREE' | translate }}</h3>
                 <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-                  Commencez par ajouter des villes pour permettre aux utilisateurs de localiser précisément leurs biens.
+                  {{ 'ADMIN.GEOGRAPHY.COMMENCEZ_PAR_AJOUTER_DES_VILLES' | translate }}
                   <br>
-                  <span class="text-sm text-gray-500">Les villes sont associées aux pays que vous avez configurés.</span>
+                  <span class="text-sm text-gray-500">{{ 'ADMIN.GEOGRAPHY.LES_VILLES_SONT_ASSOCIEES_AUX' | translate }}</span>
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
@@ -707,14 +695,14 @@
                     class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
                     (click)="onCreateCity()">
                     <i class="fas fa-plus mr-3"></i>
-                    Ajouter une ville
+                    {{ 'ADMIN.GEOGRAPHY.AJOUTER_UNE_VILLE' | translate }}
                   </button>
                   <button
                     type="button"
                     class="inline-flex items-center px-6 py-3 border border-yellow-300 text-base font-medium rounded-lg text-yellow-700 bg-white hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-all duration-200"
                     (click)="onImportCitiesFromGeonames()">
                     <i class="fas fa-download mr-3"></i>
-                    Importer depuis GeoNames
+                    {{ 'ADMIN.GEOGRAPHY.IMPORTER_DEPUIS_GEONAMES' | translate }}
                   </button>
                 </div>
               </div>
@@ -735,16 +723,16 @@
                       <i class="fas fa-search text-gray-400"></i>
                     </div>
                     <input type="text" class="search-input block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:border-yellow-500 focus:ring-2 focus:ring-yellow-100 transition-all duration-200 text-sm"
-                           placeholder="Rechercher une devise par nom, code ou symbole..."
+                           [placeholder]="'ADMIN.GEOGRAPHY.RECHERCHER_UNE_DEVISE_PAR_NOM' | translate"
                            [(ngModel)]="currencySearchTerm">
                   </div>
                 </div>
                 <div class="flex items-center space-x-3">
                   <button class="action-btn-secondary" (click)="onExportCurrencies()">
-                    <i class="fas fa-download mr-2"></i> Exporter
+                    <i class="fas fa-download mr-2"></i> {{ 'ADMIN.GEOGRAPHY.EXPORTER' | translate }}
                   </button>
                   <button class="action-btn-primary" (click)="onCreateCurrency()">
-                    <i class="fas fa-plus mr-2"></i> Nouvelle devise
+                    <i class="fas fa-plus mr-2"></i> {{ 'ADMIN.GEOGRAPHY.NOUVELLE_DEVISE' | translate }}
                   </button>
                 </div>
               </div>
@@ -755,8 +743,8 @@
               <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
                 <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                   <i class="fas fa-coins mr-2 text-yellow-500"></i>
-                  Liste des devises
-                  <span class="ml-2 text-sm font-normal text-gray-500">({{ getFilteredCurrencies(allCurrencies).length }} devise(s))</span>
+                  {{ 'ADMIN.GEOGRAPHY.LISTE_DES_DEVISES' | translate }}
+                  <span class="ml-2 text-sm font-normal text-gray-500">{{ 'ADMIN.GEOGRAPHY.DEVISE_S' | translate:{ p0: (getFilteredCurrencies(allCurrencies).length) } }}</span>
                 </h3>
               </div>
 
@@ -764,13 +752,13 @@
                 <table class="min-w-full divide-y divide-gray-200" *ngIf="getFilteredCurrencies(allCurrencies).length > 0; else emptyCurrencies">
                   <thead class="bg-gray-50">
                     <tr>
-                      <th class="table-header-cell">Devise</th>
-                      <th class="table-header-cell">Code</th>
-                      <th class="table-header-cell">Symbole</th>
-                      <th class="table-header-cell">Taux de change</th>
-                      <th class="table-header-cell">Par défaut</th>
-                      <th class="table-header-cell">Statut</th>
-                      <th class="table-header-cell text-center">Actions</th>
+                      <th class="table-header-cell">{{ 'ADMIN.GEOGRAPHY.DEVISE' | translate }}</th>
+                      <th class="table-header-cell">{{ 'ADMIN.GEOGRAPHY.CODE' | translate }}</th>
+                      <th class="table-header-cell">{{ 'ADMIN.GEOGRAPHY.SYMBOLE' | translate }}</th>
+                      <th class="table-header-cell">{{ 'ADMIN.GEOGRAPHY.TAUX_DE_CHANGE' | translate }}</th>
+                      <th class="table-header-cell">{{ 'ADMIN.GEOGRAPHY.PAR_DEFAUT' | translate }}</th>
+                      <th class="table-header-cell">{{ 'ADMIN.GEOGRAPHY.STATUT' | translate }}</th>
+                      <th class="table-header-cell text-center">{{ 'ADMIN.GEOGRAPHY.ACTIONS' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody class="bg-white divide-y divide-gray-100">
@@ -792,10 +780,10 @@
                       </td>
                       <td class="table-cell">
                         <span *ngIf="currency.isDefault" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          <i class="fas fa-star mr-1"></i> Par défaut
+                          <i class="fas fa-star mr-1"></i> {{ 'ADMIN.GEOGRAPHY.PAR_DEFAUT' | translate }}
                         </span>
                         <button *ngIf="!currency.isDefault" class="text-xs text-gray-400 hover:text-yellow-600 transition-colors" (click)="onSetDefaultCurrency(currency)">
-                          Définir par défaut
+                          {{ 'ADMIN.GEOGRAPHY.DEFINIR_PAR_DEFAUT' | translate }}
                         </button>
                       </td>
                       <td class="table-cell">
@@ -805,16 +793,16 @@
                             <span class="toggle-slider"></span>
                           </label>
                           <span class="status-label" [class]="currency.isActive ? 'active' : 'inactive'">
-                            {{ currency.isActive ? 'Actif' : 'Inactif' }}
+                            {{ currency.isActive ? ('ADMIN.GEOGRAPHY.ACTIF' | translate) : ('ADMIN.GEOGRAPHY.INACTIF' | translate) }}
                           </span>
                         </div>
                       </td>
                       <td class="table-cell">
                         <div class="action-buttons">
-                          <button class="action-btn edit" (click)="onEditCurrency(currency)" title="Modifier">
+                          <button class="action-btn edit" (click)="onEditCurrency(currency)" [title]="'ADMIN.GEOGRAPHY.MODIFIER' | translate">
                             <i class="fas fa-edit"></i>
                           </button>
-                          <button class="action-btn delete" (click)="onDeleteCurrency(currency)" title="Supprimer" [disabled]="currency.isDefault">
+                          <button class="action-btn delete" (click)="onDeleteCurrency(currency)" [title]="'ADMIN.GEOGRAPHY.SUPPRIMER' | translate" [disabled]="currency.isDefault">
                             <i class="fas fa-trash"></i>
                           </button>
                         </div>
@@ -828,10 +816,10 @@
                     <div class="h-24 w-24 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
                       <i class="fas fa-coins text-4xl text-purple-400"></i>
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900">Aucune devise configurée</h3>
-                    <p class="text-sm text-gray-500 max-w-md mx-auto mt-1">Configurez les devises pour la gestion des prix et paiements.</p>
+                    <h3 class="text-lg font-medium text-gray-900">{{ 'ADMIN.GEOGRAPHY.AUCUNE_DEVISE_CONFIGUREE' | translate }}</h3>
+                    <p class="text-sm text-gray-500 max-w-md mx-auto mt-1">{{ 'ADMIN.GEOGRAPHY.CONFIGUREZ_LES_DEVISES_POUR_LA' | translate }}</p>
                     <button class="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700" (click)="onCreateCurrency()">
-                      <i class="fas fa-plus mr-2"></i> Ajouter une devise
+                      <i class="fas fa-plus mr-2"></i> {{ 'ADMIN.GEOGRAPHY.AJOUTER_UNE_DEVISE' | translate }}
                     </button>
                   </div>
                 </ng-template>
@@ -857,17 +845,17 @@
   <div class="admin-modal-overlay" *ngIf="showDeleteCurrencyModal" (click)="cancelDeleteCurrency()">
     <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:440px;width:100%">
       <div class="admin-modal-header">
-        <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> Supprimer la devise</h3>
+        <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> {{ 'ADMIN.GEOGRAPHY.SUPPRIMER_LA_DEVISE' | translate }}</h3>
         <button class="admin-modal-close" (click)="cancelDeleteCurrency()"><i class="fas fa-times"></i></button>
       </div>
       <div class="admin-modal-body">
-        <p>Supprimer la devise <strong>{{ currencyToDelete?.name }} ({{ currencyToDelete?.code }})</strong> ?</p>
-        <p style="font-size:12px;color:#9ca3af;margin-top:8px">Cette action est irréversible.</p>
+        <p>{{ 'ADMIN.GEOGRAPHY.SUPPRIMER_LA_DEVISE' | translate }} <strong>{{ currencyToDelete?.name }} ({{ currencyToDelete?.code }})</strong> ?</p>
+        <p style="font-size:12px;color:var(--adm-text-faint);margin-top:8px">{{ 'ADMIN.GEOGRAPHY.CETTE_ACTION_EST_IRREVERSIBLE' | translate }}</p>
       </div>
       <div class="admin-modal-footer">
-        <button type="button" class="admin-btn admin-btn-secondary" (click)="cancelDeleteCurrency()">Annuler</button>
+        <button type="button" class="admin-btn admin-btn-secondary" (click)="cancelDeleteCurrency()">{{ 'ADMIN.GEOGRAPHY.ANNULER' | translate }}</button>
         <button type="button" class="admin-btn admin-btn-primary" style="background:#ef4444;border-color:#ef4444" (click)="confirmDeleteCurrency()">
-          <i class="fas fa-trash"></i> Supprimer
+          <i class="fas fa-trash"></i> {{ 'ADMIN.GEOGRAPHY.SUPPRIMER' | translate }}
         </button>
       </div>
     </div>

@@ -57,38 +57,38 @@ export class RestCountriesService {
     return [
       {
         name: 'Africa',
-        label: 'Afrique',
+        label: 'ADMIN.REGIONS.AFRICA',
         icon: 'fas fa-globe-africa',
         color: '#10b981',
-        description: 'Pays du continent africain'
+        description: 'ADMIN.REGIONS.AFRICA_DESC'
       },
       {
         name: 'Americas',
-        label: 'Amériques',
+        label: 'ADMIN.REGIONS.AMERICAS',
         icon: 'fas fa-globe-americas',
         color: '#3b82f6',
-        description: 'Pays d\'Amérique du Nord et du Sud'
+        description: 'ADMIN.REGIONS.AMERICAS_DESC'
       },
       {
         name: 'Asia',
-        label: 'Asie',
+        label: 'ADMIN.REGIONS.ASIA',
         icon: 'fas fa-globe-asia',
         color: '#f59e0b',
-        description: 'Pays du continent asiatique'
+        description: 'ADMIN.REGIONS.ASIA_DESC'
       },
       {
         name: 'Europe',
-        label: 'Europe',
+        label: 'ADMIN.REGIONS.EUROPE',
         icon: 'fas fa-globe-europe',
         color: '#8b5cf6',
-        description: 'Pays du continent européen'
+        description: 'ADMIN.REGIONS.EUROPE_DESC'
       },
       {
         name: 'Oceania',
-        label: 'Océanie',
+        label: 'ADMIN.REGIONS.OCEANIA',
         icon: 'fas fa-globe',
         color: '#06b6d4',
-        description: 'Pays d\'Océanie et du Pacifique'
+        description: 'ADMIN.REGIONS.OCEANIA_DESC'
       }
     ];
   }

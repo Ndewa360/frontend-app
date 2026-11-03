@@ -1,10 +1,12 @@
+import { UserProfileState } from '../../../../shared/store/user-profile/user-profile.state';
+import { isSuperAdmin } from '../../utils/admin-roles';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AdminRolesService } from '../../services/admin-roles.service';
 
 import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
@@ -18,9 +20,11 @@ import { NgIf, NgFor, AsyncPipe, DecimalPipe, TitleCasePipe } from '@angular/com
   templateUrl: './admin-roles.component.html',
   styleUrls: ['./admin-roles.component.scss'],
   standalone: true,
-  imports: [NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, TitleCasePipe]
+  imports: [TranslateModule, NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, TitleCasePipe]
 })
 export class AdminRolesComponent implements OnInit, OnDestroy {
+  /** Modifier les rôles et permissions : réservé au super-admin (le serveur refuse sinon). */
+  superAdmin = false;
   private destroy$ = new Subject<void>();
 
   roles$       = this.store.select(AdminRolesState.selectRoles);
@@ -78,6 +82,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.superAdmin = isSuperAdmin(this.store.selectSnapshot(UserProfileState.selectStateUserProfile));
     this.initRoleForm();
     this.loadData();
     // Réactivité de l'onglet permissions via observable
@@ -446,7 +451,7 @@ export class AdminRolesComponent implements OnInit, OnDestroy {
   getSystemPermissionsCount(): number { return this.systemPermissionsCount; }
   getCustomPermissionsCount(): number { return this.customPermissionsCount; }
 
-  getPermissionDisplayName(p: AdminPermission): string { return p.displayName || p.name || 'Permission sans nom'; }
+  getPermissionDisplayName(p: AdminPermission): string { return p.displayName || p.name || this.translate.instant('ADMIN.ROLES.TS.UNNAMED_PERMISSION'); }
 
   getModuleIcon(moduleName: string): string {
     const icons: { [k: string]: string } = {

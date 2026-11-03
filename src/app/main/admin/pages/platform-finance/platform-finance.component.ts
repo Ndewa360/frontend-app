@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { Subject, interval, Observable, fromEvent } from 'rxjs';
 import { takeUntil, debounceTime, skip } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Store, Select } from '@ngxs/store';
 import {
   AdminPlatformFinanceService,
@@ -52,7 +52,7 @@ export interface PlatformWithdrawalMethodDef {
   templateUrl: './platform-finance.component.html',
   styleUrls: ['./platform-finance.component.scss'],
   standalone: true,
-  imports: [
+  imports: [TranslateModule, 
     NgIf,
     FormsModule,
     NgFor,
@@ -150,7 +150,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     {
       value: 'ORANGE_MONEY',
       label: 'Orange Money',
-      description: 'Retrait vers un compte Orange Money',
+      description: 'ADMIN.FINANCE.TS.METHOD_ORANGE',
       badge: 'OM',
       badgeClass: 'pw-badge--orange',
       placeholder: '6XXXXXXXX',
@@ -159,7 +159,7 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
     {
       value: 'MTN_MONEY',
       label: 'MTN Mobile Money',
-      description: 'Retrait vers un compte MTN MoMo',
+      description: 'ADMIN.FINANCE.TS.METHOD_MTN',
       badge: 'MTN',
       badgeClass: 'pw-badge--mtn',
       placeholder: '6XXXXXXXX',
@@ -357,16 +357,16 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
   get phoneError(): string | null {
     const ctrl = this.withdrawalForm.get('recipientAccount');
     if (!ctrl?.invalid || !ctrl?.touched) return null;
-    if (ctrl.errors?.['required']) return 'Ce champ est requis.';
+    if (ctrl.errors?.['required']) return this.translate.instant('ADMIN.FINANCE.TS.REQUIRED');
     if (ctrl.errors?.['minlength'] || ctrl.errors?.['maxlength'])
-      return 'Le numéro doit contenir exactement 9 chiffres (ex : 6XXXXXXXX).';
+      return this.translate.instant('ADMIN.FINANCE.TS.PHONE_LENGTH');
     if (ctrl.errors?.['pattern']) {
       if (this.selectedMethodDef?.value === 'ORANGE_MONEY')
-        return 'Numéro invalide pour Orange Money. Les numéros Orange commencent par 69, 655-659 ou 66 (ex : 691234567).';
+        return this.translate.instant('ADMIN.FINANCE.TS.PHONE_ORANGE');
       if (this.selectedMethodDef?.value === 'MTN_MONEY')
-        return 'Numéro invalide pour MTN MoMo. Les numéros MTN commencent par 67, 68 ou 650-654 (ex : 671234567).';
+        return this.translate.instant('ADMIN.FINANCE.TS.PHONE_MTN');
     }
-    return 'Numéro invalide.';
+    return this.translate.instant('ADMIN.FINANCE.TS.PHONE_INVALID');
   }
 
   get wMaxAmount(): number {
@@ -553,10 +553,10 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
 
   getPeriodLabel(period: number): string {
     if (this.selectedPeriod === 'monthly') {
-      return ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'][period - 1] || `M${period}`;
+      return new Intl.DateTimeFormat(this.translate.currentLang === 'en' ? 'en-US' : 'fr-FR', { month: 'short' }).format(new Date(2000, period - 1, 1));
     }
-    if (this.selectedPeriod === 'quarterly') return `T${period}`;
-    return `S${period}`;
+    if (this.selectedPeriod === 'quarterly') return this.translate.instant('ADMIN.FINANCE.TS.QUARTER', { n: period });
+    return this.translate.instant('ADMIN.FINANCE.TS.SEMESTER', { n: period });
   }
 
   getStatusClass(status: string): string {
@@ -573,14 +573,14 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      PENDING:    'En attente',
-      APPROVED:   'Approuvé',
-      PROCESSING: 'En cours',
-      CONFIRMED:  'Confirmé',
-      FAILED:     'Échoué',
-      CANCELLED:  'Annulé'
+      PENDING:    'PENDING',
+      APPROVED:   'APPROVED',
+      PROCESSING: 'PROCESSING',
+      CONFIRMED:  'CONFIRMED',
+      FAILED:     'FAILED',
+      CANCELLED:  'CANCELLED'
     };
-    return map[status] || status;
+    return map[status] ? this.translate.instant(`ADMIN.FINANCE.TS.STATUS_${map[status]}`) : status;
   }
 
   getMaxBarHeight(data: PlatformRevenuePeriod[]): number {
@@ -617,9 +617,9 @@ export class PlatformFinanceComponent implements OnInit, OnDestroy {
    */
   private buildSlices(d: PlatformRevenuePeriod): PfPieSlice[] {
     const entries = [
-      { label: 'Souscriptions',    value: d.subscriptions.revenue,  color: CATEGORY_COLORS.subscriptions },
-      { label: 'Accès premium',    value: d.premiumAccess.revenue,  color: CATEGORY_COLORS.premiumAccess },
-      { label: 'Frais de retrait', value: d.withdrawalFees.revenue, color: CATEGORY_COLORS.withdrawalFees }
+      { label: this.translate.instant('ADMIN.FINANCE.TS.CAT_SUBSCRIPTIONS'),    value: d.subscriptions.revenue,  color: CATEGORY_COLORS.subscriptions },
+      { label: this.translate.instant('ADMIN.FINANCE.TS.CAT_PREMIUM'),    value: d.premiumAccess.revenue,  color: CATEGORY_COLORS.premiumAccess },
+      { label: this.translate.instant('ADMIN.FINANCE.TS.CAT_FEES'), value: d.withdrawalFees.revenue, color: CATEGORY_COLORS.withdrawalFees }
     ];
 
     const slices: PfPieSlice[] = [];

@@ -1,319 +1,159 @@
-// Variables du thème Ndiye
-$ndiye-primary: rgb(204, 140, 10);
-$ndiye-primary-light: rgba(204, 140, 10, 0.1);
-$ndiye-primary-dark: rgb(184, 126, 9);
-$ndiye-secondary: rgb(39, 122, 252);
-$ndiye-success: #24a148;
-$ndiye-warning: #f1c21b;
-$ndiye-danger: #da1e28;
-$ndiye-info: #0f62fe;
-$ndiye-white: #ffffff;
-$ndiye-light: #f4f4f4;
-$ndiye-medium: #6f6f6f;
-$ndiye-dark: #161616;
+// Couleurs : variables de styles/admin-theme.scss (clair / sombre).
 
-.admin-settings {
-  padding: 0;
-  background-color: $ndiye-light;
-  min-height: 100vh;
+.adm-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: var(--adm-text);
 
-  // Header
-  .admin-settings-header {
+  &__header {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
-    padding: 0 24px;
-
-    .admin-settings-title {
-      h2 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: $ndiye-dark;
-        margin: 0 0 8px;
-      }
-
-      .admin-settings-subtitle {
-        color: $ndiye-medium;
-        font-size: 0.875rem;
-        margin: 0;
-      }
-    }
-
-    .admin-settings-actions {
-      display: flex;
-      gap: 12px;
-    }
-  }
-
-  // System Info Cards
-  .admin-system-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    justify-content: space-between;
     gap: 16px;
-    margin-bottom: 24px;
-    padding: 0 24px;
+    flex-wrap: wrap;
 
-    .admin-info-card {
-      background: $ndiye-white;
-      border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba($ndiye-primary, 0.1);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-
-      .admin-info-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-
-        &.version {
-          background: rgba($ndiye-info, 0.1);
-          color: $ndiye-info;
-        }
-
-        &.uptime {
-          background: rgba($ndiye-success, 0.1);
-          color: $ndiye-success;
-        }
-
-        &.memory {
-          background: rgba($ndiye-warning, 0.1);
-          color: $ndiye-warning;
-        }
-
-        &.users {
-          background: rgba($ndiye-primary, 0.1);
-          color: $ndiye-primary;
-        }
-      }
-
-      .admin-info-content {
-        h3 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: $ndiye-dark;
-          margin: 0 0 4px;
-        }
-
-        p {
-          color: $ndiye-medium;
-          font-size: 0.75rem;
-          margin: 0;
-        }
-      }
-    }
+    h2 { margin: 0; font-size: 24px; font-weight: 700; }
+    p { margin: 4px 0 0; color: var(--adm-text-muted); }
   }
 
-  // Settings Form
-  .admin-settings-form {
-    background: $ndiye-white;
-    border-radius: 8px;
-    margin: 0 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba($ndiye-primary, 0.1);
-    overflow: hidden;
+  &__notice {
     display: flex;
-    min-height: 600px;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--adm-info-soft);
+    border-radius: 10px;
+    background: var(--adm-info-soft);
+    color: var(--adm-text-2);
+    line-height: 1.5;
 
-    // Navigation
-    .admin-settings-nav {
-      width: 280px;
-      background: rgba($ndiye-primary, 0.02);
-      border-right: 1px solid rgba($ndiye-primary, 0.1);
-      padding: 24px 0;
+    > i { margin-top: 3px; color: var(--adm-info); }
+    a { color: var(--adm-primary-dark); font-weight: 600; text-decoration: underline; }
+  }
 
-      .admin-nav-items {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
+  &__system {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
 
-        .admin-nav-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 24px;
-          border: none;
-          background: transparent;
-          color: $ndiye-medium;
-          font-size: 0.875rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          text-align: left;
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    background: var(--adm-surface);
+    box-shadow: var(--adm-shadow);
 
-          &:hover {
-            background: rgba($ndiye-primary, 0.05);
-            color: $ndiye-dark;
-          }
+    span { color: var(--adm-text-muted); font-size: 13px; }
+    strong { font-size: 18px; }
+  }
 
-          &.active {
-            background: rgba($ndiye-primary, 0.1);
-            color: $ndiye-primary-dark;
-            border-right: 3px solid $ndiye-primary;
+  &__body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
 
-            svg {
-              color: $ndiye-primary;
-            }
-          }
+  &__tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    background: var(--adm-surface);
+  }
 
-          svg {
-            flex-shrink: 0;
-          }
-        }
-      }
-    }
+  &__tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--adm-text-2);
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
 
-    // Content
-    .admin-settings-content {
-      flex: 1;
-      padding: 32px;
-      overflow-y: auto;
-
-      .admin-settings-section {
-        h3 {
-          font-size: 1.25rem;
-          font-weight: 600;
-          color: $ndiye-dark;
-          margin: 0 0 24px;
-          padding-bottom: 12px;
-          border-bottom: 2px solid rgba($ndiye-primary, 0.1);
-        }
-
-        // Form Grid
-        .admin-form-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 24px;
-          margin-bottom: 32px;
-
-          .admin-form-group {
-            label {
-              display: block;
-              font-size: 0.875rem;
-              font-weight: 600;
-              color: $ndiye-dark;
-              margin-bottom: 8px;
-            }
-          }
-        }
-
-        // Form Toggles
-        .admin-form-toggles {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          margin-bottom: 32px;
-
-          .admin-toggle-group {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            background: rgba($ndiye-primary, 0.02);
-            border-radius: 8px;
-            border: 1px solid rgba($ndiye-primary, 0.1);
-
-            label {
-              font-size: 0.875rem;
-              font-weight: 500;
-              color: $ndiye-dark;
-              margin-left: 12px;
-            }
-          }
-        }
-
-        // Form Actions
-        .admin-form-actions {
-          display: flex;
-          gap: 12px;
-          flex-wrap: wrap;
-          padding-top: 24px;
-          border-top: 1px solid rgba($ndiye-primary, 0.1);
-        }
-      }
+    i { width: 18px; color: var(--adm-text-faint); }
+    &:hover { background: var(--adm-surface-2); }
+    &:focus-visible { outline: 2px solid var(--adm-primary); outline-offset: 1px; }
+    &.is-active {
+      background: var(--adm-primary-soft);
+      color: var(--adm-primary-dark);
+      font-weight: 600;
+      i { color: var(--adm-primary); }
     }
   }
-}
 
-// Responsive Design
-@media (max-width: 1024px) {
-  .admin-settings {
-    .admin-system-info {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    }
+  &__panel {
+    padding: 8px 20px 20px;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    background: var(--adm-surface);
+    box-shadow: var(--adm-shadow);
+    min-width: 0;
+  }
 
-    .admin-settings-form {
-      .admin-form-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+  &__state {
+    padding: 16px 0;
+    color: var(--adm-text-muted);
+    &--error { color: var(--adm-danger); }
+  }
+
+  &__list { margin: 0; }
+
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) 2fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--adm-border);
+
+    dt { color: var(--adm-text-muted); font-size: 14px; }
+    dd { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; word-break: break-word; }
+  }
+
+  &__empty { color: var(--adm-text-faint); font-style: italic; }
+
+  &__table {
+    width: 100%;
+    margin-top: 16px;
+    border-collapse: collapse;
+    font-size: 14px;
+
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--adm-border); text-align: left; }
+    th { color: var(--adm-text-muted); font-weight: 600; font-size: 13px; }
+  }
+
+  &__test {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  &__result {
+    margin: 0;
+    &.is-success { color: var(--adm-success); }
+    &.is-error { color: var(--adm-danger); }
   }
 }
 
 @media (max-width: 768px) {
-  .admin-settings {
-    .admin-settings-header {
-      flex-direction: column;
-      gap: 16px;
-      align-items: stretch;
-
-      .admin-settings-actions {
-        justify-content: flex-end;
-      }
-    }
-
-    .admin-system-info {
-      grid-template-columns: 1fr;
-    }
-
-    .admin-settings-form {
-      flex-direction: column;
-      min-height: auto;
-
-      .admin-settings-nav {
-        width: 100%;
-        padding: 16px 0;
-
-        .admin-nav-items {
-          flex-direction: row;
-          overflow-x: auto;
-          padding: 0 16px;
-
-          .admin-nav-item {
-            flex-shrink: 0;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border-right: none;
-
-            &.active {
-              border-right: none;
-              border-radius: 20px;
-            }
-
-            span {
-              white-space: nowrap;
-            }
-          }
-        }
-      }
-
-      .admin-settings-content {
-        padding: 24px 16px;
-      }
-    }
-
-    .admin-form-actions {
-      flex-direction: column;
-
-      button {
-        width: 100%;
-      }
-    }
+  .adm-settings {
+    &__body { grid-template-columns: 1fr; }
+    &__tabs { flex-direction: row; overflow-x: auto; }
+    &__tab { flex: 0 0 auto; }
+    &__row { grid-template-columns: 1fr; gap: 4px; }
+    &__panel { padding: 4px 14px 16px; }
   }
 }

@@ -89,6 +89,15 @@ export class AdminGeographyService {
   }
 
   /**
+   * Biens et villes rattachés à un pays (la suppression est refusée s'il y a des biens)
+   */
+  getCountryUsage(countryId: string): Observable<{ properties: number; cities: number }> {
+    return this.http.get<ApiResultFormat<{ properties: number; cities: number }>>(`${this.apiUrl}/countries/${countryId}/usage`).pipe(
+      map(response => response.data || { properties: 0, cities: 0 })
+    );
+  }
+
+  /**
    * Obtenir les villes d'un pays
    */
   getCitiesByCountry(countryId: string): Observable<AdminCity[]> {
