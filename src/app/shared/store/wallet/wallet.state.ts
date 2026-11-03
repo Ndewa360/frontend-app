@@ -185,9 +185,9 @@ export class WalletState implements OnDestroy, NgxsOnInit {
   }
 
   @Action(WalletAction.RequestWithdrawal)
-  requestWithdrawal(ctx: StateContext<WalletStateModel>, { amount, method, recipient }: WalletAction.RequestWithdrawal) {
+  requestWithdrawal(ctx: StateContext<WalletStateModel>, { amount, method, recipient, idempotencyKey }: WalletAction.RequestWithdrawal) {
     ctx.patchState({ withdrawLoading: true, error: null });
-    return this.walletService.requestWithdrawal(amount, method, recipient).pipe(
+    return this.walletService.requestWithdrawal(amount, method, recipient, idempotencyKey).pipe(
       tap((res) => {
         ctx.patchState({ withdrawLoading: false });
         const withdrawal = res.data;

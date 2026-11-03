@@ -11,7 +11,7 @@ import { NgIf, NgFor, NgClass } from '@angular/common';
 
 const FEE_RATE  = 0.015; // frais Mobile Money refacturés au coût (agrégateur), sans marge Ndewa360
 const MIN_AMOUNT = 500;
-const MAX_AMOUNT = 5_000_000;
+const MAX_AMOUNT = 500_000; // plafond de l'agrégateur Mobile Money par retrait
 
 // Cameroun — 9 chiffres sans indicatif pays (+237 non inclus)
 // Orange : 69X (prefixe 2 chiffres + 7) | 655-659 (prefixe 3 chiffres + 6) | 66X (prefixe 2 chiffres + 7)
@@ -187,8 +187,13 @@ export class WithdrawalModalComponent implements OnInit, OnDestroy {
     if (this.form.invalid || this.loading) return;
     this.error = null;
     const { amount, method, recipient } = this.form.value;
-    this.store.dispatch(new WalletAction.RequestWithdrawal(amount, method, recipient));
+    this.store.dispatch(new WalletAction.RequestWithdrawal(amount, method, recipient, this.requestId));
   }
+
+  /** Une clé par ouverture de la fenêtre : un nouvel essai après une erreur réseau ne crée pas un second retrait. */
+  private readonly requestId = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID().replace(/-/g, '')
+    : `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`;
 
   close(): void { this.dialogRef.close(); }
 

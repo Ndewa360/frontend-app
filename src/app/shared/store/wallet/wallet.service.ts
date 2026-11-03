@@ -31,8 +31,9 @@ export class WalletHttpService {
     return this.http.get<any>(`${this.api}/withdrawals?page=${page}&limit=${limit}`);
   }
 
-  requestWithdrawal(amount: number, method: WithdrawalMethod, recipient: string): Observable<{ data: WithdrawalRequest }> {
-    return this.http.post<{ data: WithdrawalRequest }>(`${this.api}/withdraw`, { amount, method, recipient });
+  /** `idempotencyKey` : une demande rejouée renvoie le même retrait (jamais deux débits). */
+  requestWithdrawal(amount: number, method: WithdrawalMethod, recipient: string, idempotencyKey?: string): Observable<{ data: WithdrawalRequest }> {
+    return this.http.post<{ data: WithdrawalRequest }>(`${this.api}/withdraw`, { amount, method, recipient, idempotencyKey });
   }
 
   /**

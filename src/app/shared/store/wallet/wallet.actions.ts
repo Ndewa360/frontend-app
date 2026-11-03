@@ -26,7 +26,7 @@ export namespace WalletAction {
   }
   export class RequestWithdrawal {
     static readonly type = '[Wallet] Request Withdrawal';
-    constructor(public amount: number, public method: WithdrawalMethod, public recipient: string) {}
+    constructor(public amount: number, public method: WithdrawalMethod, public recipient: string, public idempotencyKey?: string) {}
   }
   export class PollWithdrawalStatus {
     static readonly type = '[Wallet] Poll Withdrawal Status';
