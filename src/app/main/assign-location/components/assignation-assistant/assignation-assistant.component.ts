@@ -190,9 +190,15 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
 
   private initializeSelectors(): void {
     if (this.property?._id) {
-      // S'assurer que les données sont chargées
-      this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.property._id));
-      this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.property._id));
+      // Unités et locataires déjà en mémoire (fiche du bien) : rechargés
+      // seulement s'ils manquent (deux requêtes à chaque ouverture sinon).
+      const id = this.property._id;
+      if (!this.store.selectSnapshot(RoomState.selectStateRoomByPropertyId(id))?.length) {
+        this.store.dispatch(new RoomAction.FetchRoomsByPropertyID(id));
+      }
+      if (!this.store.selectSnapshot(LocataireState.selectStateLocataireByPropertyId(id))?.length) {
+        this.store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(id));
+      }
 
       // Initialiser les sélecteurs avec le propertyId
       this.rooms$ = this.store.select(RoomState.selectStateRoomByPropertyId(this.property._id));

@@ -1,3 +1,4 @@
+import { translationChunksResolver } from '../shared/services/localization/translation-chunks.service';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
@@ -40,27 +41,37 @@ const routes: Routes = [
       {
         path: 'privacy-policy',
         component: PrivacyPolicyComponent,
-        pathMatch: 'full'
+        pathMatch: 'full',
+        data: { translationChunks: ['legal'] },
+        resolve: { translations: translationChunksResolver }
       },
       {
         path: 'terms',
         component: TermsComponent,
-        pathMatch: 'full'
+        pathMatch: 'full',
+        data: { translationChunks: ['legal'] },
+        resolve: { translations: translationChunksResolver }
       },
       {
         path: 'cookies',
         component: CookiesComponent,
-        pathMatch: 'full'
+        pathMatch: 'full',
+        data: { translationChunks: ['legal'] },
+        resolve: { translations: translationChunksResolver }
       },
       {
         path: 'mentions-legales',
         component: MentionsLegalesComponent,
-        pathMatch: 'full'
+        pathMatch: 'full',
+        data: { translationChunks: ['legal'] },
+        resolve: { translations: translationChunksResolver }
       },
       {
         path: 'remboursement',
         component: RemboursementComponent,
-        pathMatch: 'full'
+        pathMatch: 'full',
+        data: { translationChunks: ['legal'] },
+        resolve: { translations: translationChunksResolver }
       },
       {
         path: '**',

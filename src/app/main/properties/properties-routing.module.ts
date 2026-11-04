@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { PropertyDetailsResolver } from '../../shared/resolvers/loading-property-data/property-details-resolver.service';
 import { ListPropertyComponent } from './list-property/list-property.component';
 import { HomePropertyComponent } from './home-property/home-property.component';
 import { PropertyDetailsCompleteComponent } from './property-details-complete/property-details-complete.component';
@@ -19,8 +18,10 @@ const routes: Routes = [
   },
   {
     path: 'details/:id',
+    // Pas de résolveur : la page s'ouvre aussitôt (en-tête tiré de la liste,
+    // indicateurs de chargement) et charge elle-même le détail. Le résolveur
+    // bloquait la navigation jusqu'à la réponse complète du serveur.
     component: PropertyDetailsCompleteComponent,
-    resolve: { "propertyDetailsData": PropertyDetailsResolver },
     data: { breadcrumb: 'Détails complets' },
   },
   {

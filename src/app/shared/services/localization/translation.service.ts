@@ -41,10 +41,11 @@ export class TranslationService {
     const languageCodes = this.supportedLanguages.map(lang => lang.code);
 
     this.translateService.addLangs(languageCodes);
-    this.translateService.setDefaultLang('fr');
 
-    // Déterminer la langue initiale
+    // Déterminer la langue initiale ; elle sert aussi de langue par défaut
+    // (« fr » forcé faisait charger le français en plus pour un anglophone).
     const initialLanguage = await this.determineInitialLanguage();
+    if (!this.translateService.defaultLang) this.translateService.setDefaultLang(initialLanguage);
 
     // Écouter les changements de profil utilisateur
     this.userProfile$.subscribe(profile => {

@@ -12,8 +12,9 @@ import { AppComponent } from './app.component';
 // carbon-components-angular default imports
 import { IconModule, ThemeModule } from 'carbon-components-angular';
 
-// Icons
-import { SharedModule } from './shared/shared.module';
+// Socle : états, toasts, persistance du jeton. Les composants graphiques
+// (SharedModule) sont chargés avec les modules à la demande.
+import { AppCoreModule } from './core/app-core.module';
 import { NgxsModule } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
 import { AuthTokenInterceptor, CorrelationIdInterceptor } from './shared/interceptors';
@@ -51,7 +52,7 @@ export function getDynamicLocale(): string {
 		IconModule,
 		HttpClientModule,
 		ThemeModule,
-		SharedModule,
+		AppCoreModule,
 		NgxsModule.forRoot(
 			[] , {
 			  developmentMode: !environment.production

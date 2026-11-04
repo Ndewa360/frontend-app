@@ -2,8 +2,8 @@ import { trackByFn } from '../../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subject, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, throwError, timer } from 'rxjs';
+import { retry, takeUntil } from 'rxjs/operators';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 
 import {
@@ -52,7 +52,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   pollingAttempts = 0;
   /** Compteur d'erreurs réseau consécutives pendant le polling (Fix #8) */
   networkErrors = 0;
-  readonly MAX_POLLING = 24;
+  /** 15 contrôles à 4 s puis 15 à 8 s : environ 3 min, comme avant. */
+  readonly MAX_POLLING = 30;
   readonly MAX_NETWORK_ERRORS = 5;
   /** Code USSD affiché pour Mobile Money */
   ussdCode: string | null = null;
@@ -413,11 +414,11 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     // Le polling reste nécessaire : chaque vérification interroge aussi
     // l'opérateur côté serveur, au cas où son callback n'arriverait jamais.
     // Il est ralenti quand le socket est connecté.
-    // Fix #3 : backoff exponentiel — Tentatives 1-4 : 5s | 5-8 : 8s | 9+ : 12s
-    const getDelay = (attempt: number): number => {
-      const base = attempt <= 4 ? 5_000 : attempt <= 8 ? 8_000 : 12_000;
-      return this.realtime.connected$.value ? base * 2 : base;
-    };
+    // Toutes les 4 s pendant la première minute (validation sur le téléphone),
+    // puis toutes les 8 s. Le délai n'est plus doublé quand le temps réel est
+    // connecté : un événement manqué (réseau mobile instable) retardait
+    // l'affichage du succès jusqu'à 24 s.
+    const getDelay = (attempt: number): number => (attempt <= 15 ? 4_000 : 8_000);
 
     const poll = () => {
       if (this.paymentStatus === 'success' || this.paymentStatus === 'failed') return;
@@ -454,8 +455,8 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
         });
     };
 
-    // Premier tick après 5s (immédiat pour « Vérifier à nouveau »)
-    timer(firstStart ? 5_000 : 0).pipe(takeUntil(this.destroy$)).subscribe(() => poll());
+    // Premier contrôle après 3 s (immédiat pour « Vérifier à nouveau »)
+    timer(firstStart ? 3_000 : 0).pipe(takeUntil(this.destroy$)).subscribe(() => poll());
   }
 
   // ─── Retour Stripe ────────────────────────────────────────────────────────
@@ -577,7 +578,12 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     this.receiptError = null;
 
     this.locationPaymentService.downloadReceiptByTransaction(this.externalRef)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        // 409 : paiement confirmé, reçu encore en préparation → nouvel essai
+        // toutes les 2 s (jusqu'à environ 20 s).
+        retry({ count: 10, delay: (err) => (err?.status === 409 || err?.status === 404 ? timer(2_000) : throwError(() => err)) }),
+        takeUntil(this.destroy$),
+      )
       .subscribe({
         next: (blob: Blob) => {
           const url = URL.createObjectURL(blob);

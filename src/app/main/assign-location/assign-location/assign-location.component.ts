@@ -1,12 +1,13 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, Inject, OnInit, Optional } from '@angular/core';
+import { Component, OnDestroy, Input, OnChanges, SimpleChanges, ViewChild, ViewEncapsulation, Inject, OnInit, Optional } from '@angular/core';
 import { Actions, ofActionCompleted, ofActionErrored, ofActionSuccessful, Store } from '@ngxs/store';
 import { AppSidenavContainerComponent } from 'src/@youpez/components/app-sidenav/app-sidenav-container/app-sidenav-container.component';
-import { INITIAL_LOCATION_FINANCIAL_STATE, LocataireModel, LocataireState, LocataireAction, LocationAction, PropertyModel, PropertyState, RoomModel, RoomState, RoomAction, LocationPaymentAction, HistoryLocationPaymentAction } from 'src/app/shared/store';
+import { INITIAL_LOCATION_FINANCIAL_STATE, LocataireModel, LocataireState, LocataireAction, LocationAction, PropertyModel, PropertyState, RoomModel, RoomState, RoomAction } from 'src/app/shared/store';
 import { AssignLocationFormComponent } from '../assign-location-form/assign-location-form.component';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AssignationConfig } from 'src/app/shared/models/assignation-assistant.model';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AssignLocationModalData, AssignLocationModalResult } from '../services/assign-location-modal.service';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,7 +29,19 @@ import { toLocalIsoDate } from 'src/app/shared/utils/local-date';
   standalone: true,
   imports: [NgIf, NgTemplateOutlet, FlexModule, NgScrollbar, AppContentSimpleComponent, AssignLocationFormComponent, ButtonModule, LoadingModule, AssignationAssistantComponent, TranslatePipe]
 })
-export class AssignLocationComponent implements OnInit, OnChanges {
+export class AssignLocationComponent implements OnInit, OnChanges, OnDestroy {
+  /**
+   * Fin des abonnements au flux d'actions (global) : sans désabonnement,
+   * chaque ouverture de la fenêtre ajoutait des abonnés qui survivaient à sa
+   * fermeture, et une assignation déclenchait N rechargements et N redirections.
+   */
+  private readonly destroy$ = new Subject<void>();
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
 
   locataireForm:{
     locataire?: any,
@@ -99,29 +112,29 @@ export class AssignLocationComponent implements OnInit, OnChanges {
       }
     }
 
-    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation)).subscribe((value) => {
+    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateLocation), takeUntil(this.destroy$)).subscribe((value) => {
       this.waittingResponse=false;
       this.handleAssignationSuccess(value);
     });
 
-    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateAssignationWithAssistant)).subscribe((value) => {
+    this._ngxsAction.pipe(ofActionSuccessful(LocationAction.CreateAssignationWithAssistant), takeUntil(this.destroy$)).subscribe((value) => {
       this.waittingResponse=false;
       this.handleAssignationSuccess(value);
     });
 
-    this._ngxsAction.pipe(ofActionCompleted(LocationAction.CreateLocation)).subscribe(
+    this._ngxsAction.pipe(ofActionCompleted(LocationAction.CreateLocation), takeUntil(this.destroy$)).subscribe(
       (value) => {
         this.waittingResponse=false;
       }
     );
 
-    this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateLocation)).subscribe(
+    this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateLocation), takeUntil(this.destroy$)).subscribe(
       (error) => {
         this.waittingResponse = false;
         this.handleAssignationError(error);
       });
 
-    this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateAssignationWithAssistant)).subscribe(
+    this._ngxsAction.pipe(ofActionErrored(LocationAction.CreateAssignationWithAssistant), takeUntil(this.destroy$)).subscribe(
       (error) => {
         this.waittingResponse = false;
         this.handleAssignationError(error);
@@ -326,35 +339,18 @@ export class AssignLocationComponent implements OnInit, OnChanges {
    * Gérer le succès de l'assignation
    */
   private handleAssignationSuccess(value: any): void {
-    // Rafraîchir toutes les données liées dans le store
-    if (this.property?._id) {
-
-      // Rafraîchir les chambres
-      this._store.dispatch(new RoomAction.FetchRoomsByPropertyID(this.property._id));
-
-      // Rafraîchir les locations
-      this._store.dispatch(new LocationAction.FetchLocationsByPropertyId(this.property._id));
-
-      // Rafraîchir les locataires
-      this._store.dispatch(new LocataireAction.FetchLocatairesByPropertyId(this.property._id));
-
-      // Rafraichir les paiements et l'historique
-      this._store.dispatch(new LocationPaymentAction.FetchLocationPaymentsByPropertyId(this.property._id));
-      this._store.dispatch(new HistoryLocationPaymentAction.RefreshHistoryLocationPaymentsByPropertyId(this.property._id));
-    }
-
-    // Attendre un peu pour que les données se rafraîchissent avant de fermer/naviguer
-    setTimeout(() => {
-      if (this.isModalMode) {
-        this.closeModal(true, value);
-      } else {
-        this.closeSideNav();
-        // Rediriger vers la liste des locations si on est sur une page autonome
-        if (!this.sideNavBarElement && this.property) {
-          this.router.navigate(['/app/properties', this.property._id, 'locations']);
-        }
+    // L'écran du bien est déjà mis à jour par l'état (unité, locataire, puis
+    // une seule requête GET /property/:id/details) : plus de cinq rechargements
+    // en double ni d'attente fixe de 500 ms avant de fermer.
+    if (this.isModalMode) {
+      this.closeModal(true, value);
+    } else {
+      this.closeSideNav();
+      // Rediriger vers la liste des locations si on est sur une page autonome
+      if (!this.sideNavBarElement && this.property) {
+        this.router.navigate(['/app/properties', this.property._id, 'locations']);
       }
-    }, 500); // Délai pour permettre le rafraîchissement
+    }
   }
 
   /**

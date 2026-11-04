@@ -228,11 +228,12 @@ export class PropertyState{
     @Action(PropertyDetailsAction.Loaded)
     propertyDetailsLoaded(ctx:StateContext<PropertyStateModel>,{propertyId,details}:PropertyDetailsAction.Loaded)
     {
-        const others = ctx.getState().properties.filter(p => p._id !== propertyId);
-        ctx.patchState({
-            loadingProperty: false,
-            properties: [...others, details.property]
-        });
+        // Remplacement à sa place : le bien ouvert passait à la fin de la liste.
+        const properties = [...ctx.getState().properties];
+        const index = properties.findIndex(p => p._id === propertyId);
+        if (index > -1) properties[index] = details.property;
+        else properties.push(details.property);
+        ctx.patchState({ loadingProperty: false, properties });
     }
 
     @Action(PropertyAction.RemoveFile)

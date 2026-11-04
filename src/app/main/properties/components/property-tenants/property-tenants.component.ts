@@ -67,7 +67,7 @@ export class PropertyTenantsComponent implements OnInit, OnDestroy, OnChanges {
     this.loadLocations();
     this.loadPropertyData();
     this.filterTenants();
-    // Paiements du bien : chargés par PropertyDetailsResolver avec le reste de l'écran
+    // Paiements du bien : chargés par la fiche du bien (PropertyDetailsAction.Fetch) avec le reste de l'écran
   }
 
   /**

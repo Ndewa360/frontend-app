@@ -110,8 +110,10 @@ export class AppComponent implements OnInit, OnDestroy {
       });
     }
     // Traductions — langue extraite depuis l'URL (prioritaire) ou le navigateur
-    this.translateService.setDefaultLang('fr');
+    // Langue par défaut = langue affichée : un visiteur anglophone ne
+    // télécharge plus aussi les traductions françaises (environ 270 Ko).
     const lang = this.getLanguageFromUrl();
+    this.translateService.setDefaultLang(lang);
     this.translateService.use(lang);
 
     // Overlay Angular piloté par DataDrivenLoaderService

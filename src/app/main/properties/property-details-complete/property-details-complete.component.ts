@@ -110,14 +110,29 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentUser = this.store.selectSnapshot((state: any) => state.userprofile?.userProfile);
     this.isAgent = this.currentUser?.userType === 'AGENT';
-    this.propertyId = this.route.snapshot.paramMap.get('id');
-    if (this.propertyId) this.initializeSubscriptions();
+    // Suivi de l'identifiant : passer d'un bien à un autre réutilise ce
+    // composant (ngOnInit n'est pas rappelé) et affichait l'ancien bien.
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const id = params.get('id');
+      if (!id || id === this.propertyId) return;
+      this.propertyId = id;
+      this.subscriptions$.next();
+      this.initializeSubscriptions();
+      // Détail chargé ici (et non plus par un résolveur bloquant) : toujours
+      // rechargé pour afficher des données à jour.
+      this.store.dispatch(new PropertyDetailsAction.Fetch(id));
+    });
   }
 
   ngOnDestroy(): void {
+    this.subscriptions$.next();
+    this.subscriptions$.complete();
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  /** Abonnements liés au bien affiché (renouvelés quand l'identifiant change). */
+  private readonly subscriptions$ = new Subject<void>();
 
   private initializeSubscriptions(): void {
     if (!this.propertyId) return;
@@ -128,30 +143,30 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
     this.locations$ = this.store.select(LocationState.selectStateLocationByPropertyId(this.propertyId));
     this.history$ = this.propertyDataService.getPropertyHistory(this.propertyId);
     this.loadingStates$ = this.propertyDataService.getLoadingStates();
-    // Données chargées par PropertyDetailsResolver ; les statistiques sont
+    // Données chargées à l'ouverture (PropertyDetailsAction.Fetch) ; les statistiques sont
     // chargées par l'onglet Finances, pour l'année qu'il affiche.
 
     this.updateTabCounts();
 
-    this.property$.pipe(takeUntil(this.destroy$)).subscribe(property => {
+    this.property$.pipe(takeUntil(this.subscriptions$), takeUntil(this.destroy$)).subscribe(property => {
       this.currentProperty = property;
       this.updateTabsForUserRole();
     });
   }
 
   private updateTabCounts(): void {
-    this.units$.pipe(takeUntil(this.destroy$)).subscribe(units => {
+    this.units$.pipe(takeUntil(this.subscriptions$), takeUntil(this.destroy$)).subscribe(units => {
       const unitsTab = this.tabs.find(tab => tab.id === 'units');
       if (unitsTab) unitsTab.count = units.length;
       this.calculateMetrics(units);
     });
 
-    this.tenants$.pipe(takeUntil(this.destroy$)).subscribe(tenants => {
+    this.tenants$.pipe(takeUntil(this.subscriptions$), takeUntil(this.destroy$)).subscribe(tenants => {
       const tenantsTab = this.tabs.find(tab => tab.id === 'tenants');
       if (tenantsTab) tenantsTab.count = tenants.length;
     });
 
-    this.history$.pipe(takeUntil(this.destroy$)).subscribe(history => {
+    this.history$.pipe(takeUntil(this.subscriptions$), takeUntil(this.destroy$)).subscribe(history => {
       const historyTab = this.tabs.find(tab => tab.id === 'history');
       if (historyTab) historyTab.count = history.length;
     });
@@ -273,9 +288,9 @@ export class PropertyDetailsCompleteComponent implements OnInit, OnDestroy {
       roomId: room._id,
       assistant: true,
       returnUrl: this.router.url
-    }).subscribe(result => {
-      if (result?.success) this.reloadPropertyData();
-    });
+    }).subscribe();
+    // Pas de rechargement ici : l'assignation recharge déjà l'écran du bien
+    // (refreshPropertyScreen), il était demandé une seconde fois.
   }
 
   private onTerminateLease(room: RoomModel): void {

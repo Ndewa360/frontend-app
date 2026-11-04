@@ -1,3 +1,4 @@
+import { translationChunksResolver } from './shared/services/localization/translation-chunks.service';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { InitialLoadingDataResolver, PublicDataResolver } from './shared/resolvers';
@@ -64,10 +65,12 @@ const routes: Routes = [
 				path: 'admin',
 				data:{
 					breadcrumb: 'Accueil',
-					preload: false
+					preload: false,
+					translationChunks: ['admin', 'legal']
 				},
 				resolve:{
-					"initialData":LoadingAdminDataResolver
+					"initialData":LoadingAdminDataResolver,
+					"translations": translationChunksResolver
 				},
 				loadChildren: () => import('./main/admin/admin.module').then(m => m.AdminModule)
 			},

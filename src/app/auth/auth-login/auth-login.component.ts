@@ -20,6 +20,9 @@ import { InputModule, CheckboxModule } from 'carbon-components-angular';
 import { LinkModule } from 'carbon-components-angular/link';
 import { AppLogoComponent } from '../../../@youpez/components/app-logo/app-logo.component';
 import { ExtendedModule } from '@angular/flex-layout/extended';
+import { loadScriptOnce } from 'src/app/shared/utils/load-script';
+
+const GOOGLE_GSI_URL = 'https://accounts.google.com/gsi/client';
 
 @Component({
   selector: 'app-auth-login',
@@ -51,6 +54,9 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // SDK Google chargé avec cette page seulement (et non plus sur tout le site),
+    // dès son ouverture pour être prêt au clic.
+    if (environment.googleClientId) loadScriptOnce(GOOGLE_GSI_URL).catch(() => undefined);
     this.formGroup = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -154,17 +160,24 @@ export class AuthLoginComponent implements OnInit, OnDestroy {
   }
 
   goToSearchPage() {
-    this.languagePreservation.navigateWithLanguage('/search/index', { minPrice: 0, maxPrix: 100000, ville: 'Bangangté' });
+    // Recherche sans filtre imposé (Bangangté et 100 000 FCFA étaient forcés).
+    this.languagePreservation.navigateWithLanguage('/search/index');
   }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
-  loginWithGoogle(): void {
+  async loginWithGoogle(): Promise<void> {
     const clientId = environment.googleClientId;
     if (!clientId) {
       this._toastrService.error(this.translate.instant('NOTIFICATIONS.GOOGLE_NOT_CONFIGURED'), 'Ndewa360°');
+      return;
+    }
+    try {
+      await loadScriptOnce(GOOGLE_GSI_URL);
+    } catch {
+      this._toastrService.error(this.translate.instant('NOTIFICATIONS.GENERIC_ERROR'), 'Ndewa360°');
       return;
     }
     (window as any).google.accounts.id.initialize({

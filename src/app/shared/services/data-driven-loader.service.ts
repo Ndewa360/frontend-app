@@ -43,7 +43,9 @@ private _overlayVisible = new BehaviorSubject<boolean>(false);
     // Noms de state RÉELS : `locatairelist` / `locationlist`. Les anciens noms
     // (`locataires`, `locations`) n'existaient pas → `undefined` → l'overlay
     // tournait les 12 s complètes sur chaque fiche de bien.
-    '/app/properties/details': { route: '/app/properties/details', requiredStores: ['userprofile.initLoadingState', 'properties.initLoadingState', 'rooms.initLoadingState', 'locatairelist.initLoadingState', 'locationlist.initLoadingState'], customMessage: 'Chargement des détails…', minLoadingTime: 0 },
+    // Fiche d'un bien : la page s'affiche aussitôt avec ses propres indicateurs
+    // de chargement (plus de surcouche plein écran en attendant le détail).
+    '/app/properties/details': { route: '/app/properties/details', requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement des détails…', minLoadingTime: 0 },
     '/app/contract':           { route: '/app/contract',           requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement des contrats…',        minLoadingTime: 0 },
     '/app/contract-templates': { route: '/app/contract-templates', requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement des modèles…',         minLoadingTime: 0 },
     '/app/facturation':        { route: '/app/facturation',        requiredStores: ['userprofile.initLoadingState'], customMessage: 'Chargement de la facturation…',   minLoadingTime: 0 },

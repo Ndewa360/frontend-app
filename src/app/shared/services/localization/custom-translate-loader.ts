@@ -1,23 +1,17 @@
 import { TranslateLoader } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export class CustomTranslateLoader implements TranslateLoader {
   constructor(private http: HttpClient) {}
 
+  /**
+   * Traductions de base seulement. L'administration (ADMIN) et les textes
+   * juridiques (LEGAL) sont chargés par les pages qui en ont besoin
+   * (TranslationChunksService) : environ 120 Ko de moins au démarrage.
+   */
   getTranslation(lang: string): Observable<any> {
-    return forkJoin([
-      this.http.get(`./assets/i18n/${lang}.json`),
-      this.http.get(`./assets/i18n/${lang}-legal.json`).pipe(
-        catchError(() => of({}))
-      ),
-      // Espace d'administration : clé ADMIN complète (fusion superficielle).
-      this.http.get(`./assets/i18n/${lang}-admin.json`).pipe(
-        catchError(() => of({}))
-      )
-    ]).pipe(
-      map(([base, legal, admin]) => ({ ...base, ...legal, ...admin }))
-    );
+    return this.http.get(`./assets/i18n/${lang}.json`).pipe(catchError(() => of({})));
   }
 }

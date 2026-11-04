@@ -1060,7 +1060,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     }
 
     this.loadingPayments = true;
-    // Historique chargé par PropertyDetailsResolver avec le reste de l'écran
+    // Historique chargé par la fiche du bien (PropertyDetailsAction.Fetch) avec le reste de l'écran
 
     // S'abonner aux paiements
     this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments)
