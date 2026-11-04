@@ -7,6 +7,10 @@ import { environment } from "src/environments/environment";
 
 export interface AdvancedSearchFilters {
     city?: string;
+    /** Recherche texte (nom du bien, quartier, description, code, type). */
+    q?: string;
+    /** Favoris : identifiants d'unités séparés par des virgules. */
+    ids?: string;
     district?: string;
     propertyType?: string;
     priceMin?: number;
@@ -67,16 +71,6 @@ export interface PaginatedSearchResponse {
 })
 export class SearchService {
     constructor(private _httpClient: HttpClient) {}
-
-    getSearch(city: string, page: number = 1, pageSize: number = 10000): Observable<ApiResultFormat<PaginatedSearchResponse>> {
-        const params = new HttpParams()
-            .set('page', page.toString())
-            .set('limit', pageSize.toString());
-        return this._httpClient.get<ApiResultFormat<PaginatedSearchResponse>>(
-            `${environment.apiUrl}/search/by-city/${city}`,
-            { params }
-        );
-    }
 
     advancedSearch(filters: AdvancedSearchFilters): Observable<ApiResultFormat<PaginatedSearchResponse>> {
         let params = new HttpParams();

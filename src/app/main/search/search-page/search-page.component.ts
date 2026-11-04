@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule }
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subject, debounceTime, distinctUntilChanged, shareReplay } from 'rxjs';
-import { takeUntil, map, filter, take, finalize } from 'rxjs/operators';
+import { Observable, Subject, debounceTime, distinctUntilChanged, shareReplay, of } from 'rxjs';
+import { takeUntil, map, filter, take, switchMap, catchError } from 'rxjs/operators';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { ViewContainerRef } from '@angular/core';
@@ -18,6 +18,7 @@ import { GeolocationService, LocationInfo } from 'src/app/shared/services/geoloc
 import { TranslationService } from 'src/app/shared/services/localization/translation.service';
 import { CityResolverService } from 'src/app/shared/services/city-resolver.service';
 import { SmartFiltersService } from 'src/app/shared/services/smart-filters.service';
+import { FavoritesService } from 'src/app/shared/services/favorites.service';
 import { UnitDetailDialogComponent } from '../components/unit-detail-dialog/unit-detail-dialog.component';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SelectModule } from 'carbon-components-angular';
@@ -102,7 +103,6 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   isUnitDetailVisible = false;
 
   // Protection contre les recherches en boucle
-  private isPerformingSearch = false;
 
   // Protection contre les rechargements répétitifs
   private hasTriedReloading = false;
@@ -122,8 +122,12 @@ export class SearchPageComponent implements OnInit, OnDestroy {
   paginatedResults: SearchPropertyModel[] = [];
   allResults: SearchPropertyModel[] = [];
 
-  // Gestion des favoris (stockage local)
+  // Favoris (compte si connecté, sinon navigateur) et affichage « Mes favoris »
   favoriteIds: Set<string> = new Set();
+  favoritesOnly = false;
+
+  /** Recherches lancées : seule la dernière compte (les réponses périmées sont abandonnées). */
+  private readonly searchRequests$ = new Subject<AdvancedSearchFilters>();
 
   // Géolocalisation
   userLocation: LocationInfo | null = null;
@@ -154,7 +158,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     private cityResolver: CityResolverService,
     private smartFiltersService: SmartFiltersService,
     private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef
+    private viewContainerRef: ViewContainerRef,
+    private favoritesService: FavoritesService
   ) {
     this.initializeForm();
     this.initializeQuickFilters();
@@ -166,6 +171,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.initializeSmartFilters();
     this.setupFormAutoApply();       // UN seul abonnement valueChanges
     this.setupSearchSubscriptions();
+    this.setupSearchPipeline();
     this.loadInitialData();
     this.loadFavorites();
     this.loadCities();
@@ -288,22 +294,29 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       district: params['district'] || '',
       roomType: params['roomType'] || '',
       priceMin: params['priceMin'] ? parseInt(params['priceMin']) : 0,
-      priceMax: params['priceMax'] ? parseInt(params['priceMax']) : 500000,
+      // Pas de plafond implicite : sans priceMax, tous les prix (500 000 FCFA cachait villas et grands appartements).
+      priceMax: params['priceMax'] ? parseInt(params['priceMax']) : 0,
       minArea: params['minArea'] ? parseInt(params['minArea']) : 0,
       hasKitchen: params['hasKitchen'] === 'true',
       isInternalKitchen: params['isInternalKitchen'] === 'true',
       hasPrivateShower: params['hasPrivateShower'] === 'true',
       hasParking: params['hasParking'] === 'true',
+      hasClosure: params['hasClosure'] === 'true',
       furnished: params['furnished'] === 'true',
+      numberOfBathroom: params['numberOfBathroom'] || '',
+      numberOfShower: params['numberOfShower'] || '',
+      numberOfLivingRoom: params['numberOfLivingRoom'] || '',
       sortBy: params['sortBy'] || 'createdAt',
       sortOrder: params['sortOrder'] || 'desc'
     };
+    const text = params['search'] || params['q'] || '';
+    if (text) this.searchControl.setValue(text, { emitEvent: false });
 
     // Charger les filtres dans le service intelligent
     this.smartFiltersService.loadFiltersFromUrl(urlFilters);
 
     // Mettre à jour les filtres actuels pour compatibilité
-    this.currentFilters = { ...this.currentFilters, ...urlFilters };
+    this.currentFilters = { ...this.currentFilters, ...urlFilters, q: text || undefined };
 
     // Mettre à jour la pagination
     this.currentPage = params['page'] ? parseInt(params['page']) : 1;
@@ -354,7 +367,8 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       { key: 'hasKitchen',      label: 'SEARCH_MODULE.FILTERS.KITCHEN',       icon: 'restaurant',    active: false },
       { key: 'hasPrivateShower', label: 'SEARCH_MODULE.FILTERS.PRIVATE_SHOWER', icon: 'shower',        active: false },
       { key: 'hasParking',      label: 'SEARCH_MODULE.FILTERS.PARKING',        icon: 'local_parking', active: false },
-      { key: 'furnished',       label: 'SEARCH_MODULE.FILTERS.FURNISHED',      icon: 'chair',         active: false }
+      { key: 'furnished',       label: 'SEARCH_MODULE.FILTERS.FURNISHED',      icon: 'chair',         active: false },
+      { key: 'favoritesOnly',   label: 'SEARCH_MODULE.FILTERS.FAVORITES_ONLY', icon: 'favorite',      active: false }
     ];
   }
 
@@ -604,8 +618,11 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       this.searchForm.patchValue({ city: suggestion.value._id }, { emitEvent: false });
       this.searchControl.setValue(suggestion.label);
       
-      // Mettre à jour les filtres actuels
+      // Mettre à jour les filtres actuels (le texte devient le nom de la ville, pas un mot-clé)
       this.currentFilters.city = suggestion.value._id;
+      this.currentFilters.q = undefined;
+      this.favoritesOnly = false;
+      this.currentPage = 1;
       
       // Synchroniser l'affichage de géolocalisation
       this.syncLocationDisplayWithCity(suggestion.value._id);
@@ -629,7 +646,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       city: cityId || '',
       roomType: filters.roomType || '',
       priceMin: filters.priceMin || 0,
-      priceMax: filters.priceMax || 500000,
+      priceMax: filters.priceMax || 0,
       hasKitchen: filters.hasKitchen || false,
       hasParking: filters.hasParking || false,
       hasPrivateShower: filters.hasPrivateShower || false,
@@ -699,6 +716,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
 
   clearSearch(): void {
     this.searchControl.setValue('');
+    this.favoritesOnly = false;
     this.searchForm.reset();
     this.quickFilters.forEach(f => f.active = false);
     this.currentFilters = {};
@@ -712,57 +730,83 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.mediasCache.clear();
   }
 
+  /**
+   * Lance la recherche avec les filtres courants. Un changement de filtre
+   * pendant un chargement remplace la recherche en cours (elle était ignorée,
+   * et la page montrait des résultats ne correspondant plus aux filtres).
+   */
   private performSearch(): void {
-    if (this.isPerformingSearch) return;
-
     const activeFilters = this.smartFiltersService.getActiveFilters();
-    const filtersToUse = Object.keys(activeFilters).length > 0 ? activeFilters : this.currentFilters;
+    const filtersToUse: any = Object.keys(activeFilters).length > 0 ? { ...activeFilters } : { ...this.currentFilters };
+    // Le texte libre part sous `q` (recherche serveur sur bien, quartier, code).
+    delete filtersToUse.searchText;
+    const q = (this.currentFilters.q || '').trim();
 
-    if (Object.keys(filtersToUse).length === 0 && !this.searchControl.value) return;
+    const filters: AdvancedSearchFilters = this.favoritesOnly
+      ? { ids: this.favoritesService.list().join(','), page: this.currentPage, limit: this.ITEMS_PER_PAGE }
+      : { ...filtersToUse, q: q || undefined, page: this.currentPage, limit: this.ITEMS_PER_PAGE };
 
-    this.isPerformingSearch = true;
     this.isLoading = true;
     this.hasSearched = true;
     // Invalider le cache des médias lors d'une nouvelle recherche
     this.mediasCache.clear();
     this.cdr.markForCheck();
+    this.searchRequests$.next(filters);
+  }
 
-    const filters: AdvancedSearchFilters = {
-      ...filtersToUse,
-      page: this.currentPage,
-      limit: this.ITEMS_PER_PAGE
-    };
-
-    this.searchService.advancedSearch(filters)
+  private setupSearchPipeline(): void {
+    this.searchRequests$
       .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => {
-          this.isLoading = false;
-          this.isPerformingSearch = false;
-          this.cdr.markForCheck();
-        })
+        switchMap(filters => {
+          // Aucun favori : rien à demander au serveur.
+          if (this.favoritesOnly && !filters.ids) return of({ statusCode: 200, data: { data: [], pagination: { page: 1, limit: this.ITEMS_PER_PAGE, total: 0, totalPages: 0 } } } as any);
+          return this.searchService.advancedSearch(filters).pipe(catchError(() => of(null)));
+        }),
+        takeUntil(this.destroy$)
       )
-      .subscribe({
-        next: (response) => {
-          if (response.statusCode === 200) {
-            const payload = response.data as any;
-            this.allResults = Array.isArray(payload?.data) ? payload.data : (Array.isArray(payload) ? payload : []);
-            this.paginatedResults = this.allResults;
-            this.searchResults = this.allResults;
-            const pagination = payload?.pagination;
-            if (pagination) {
-              this.totalResults = pagination.total ?? this.allResults.length;
-              this.totalPages = pagination.totalPages ?? 1;
-              this.currentPage = pagination.page ?? this.currentPage;
-            } else {
-              this.totalResults = this.allResults.length;
-              this.totalPages = 1;
-            }
-            this.currentImageIndexes = {};
+      .subscribe(response => {
+        this.isLoading = false;
+        if (response?.statusCode === 200) {
+          const payload = response.data as any;
+          this.allResults = Array.isArray(payload?.data) ? payload.data : (Array.isArray(payload) ? payload : []);
+          this.paginatedResults = this.allResults;
+          this.searchResults = this.allResults;
+          const pagination = payload?.pagination;
+          if (pagination) {
+            this.totalResults = pagination.total ?? this.allResults.length;
+            this.totalPages = Math.max(1, pagination.totalPages ?? 1);
+            this.currentPage = pagination.page ?? this.currentPage;
+          } else {
+            this.totalResults = this.allResults.length;
+            this.totalPages = 1;
           }
-        },
-        error: () => {}
+          this.currentImageIndexes = {};
+        }
+        this.cdr.markForCheck();
       });
+  }
+
+  /** Validation du texte saisi : ville connue → filtre ville, sinon recherche texte. */
+  onSearchSubmit(): void {
+    const text = (this.searchControl.value || '').trim();
+    this.showSuggestions = false;
+    this.cities$$.pipe(take(1)).subscribe(cities => {
+      const key = this.normalize(text);
+      const city = key ? (cities || []).find(c => this.normalize(c.fullName) === key) : undefined;
+      if (city) {
+        this.onSuggestionClick({ type: 'city', label: city.fullName, value: city, icon: 'location_on' } as any);
+        return;
+      }
+      this.favoritesOnly = false;
+      this.currentFilters = { ...this.currentFilters, q: text || undefined };
+      this.currentPage = 1;
+      this.performSearch();
+      this.updateUrl();
+    });
+  }
+
+  private normalize(value: string): string {
+    return (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   }
 
   /**
@@ -791,60 +835,36 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Bascule le statut favori d'un logement
    */
   toggleFavorite(result: SearchPropertyModel): void {
-    if (this.favoriteIds.has(result._id)) {
-      this.favoriteIds.delete(result._id);
-    } else {
-      this.favoriteIds.add(result._id);
-    }
-
-    // Sauvegarder dans le localStorage
-    localStorage.setItem('ndiye_favorites', JSON.stringify(Array.from(this.favoriteIds)));
-
-    // Ici vous pouvez ajouter l'appel API pour sauvegarder le favori
+    this.favoritesService.toggle(result._id);
   }
 
-  /**
-   * Charge les favoris depuis le localStorage
-   */
+  /** Favoris : enregistrés sur le compte quand l'utilisateur est connecté. */
   private loadFavorites(): void {
-    try {
-      const saved = localStorage.getItem('ndiye_favorites');
-      if (saved) {
-        const favoriteArray = JSON.parse(saved);
-        this.favoriteIds = new Set(favoriteArray);
-      }
-    } catch (error) {
-      this.favoriteIds = new Set();
-    }
+    this.favoritesService.favorites()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(ids => {
+        this.favoriteIds = ids;
+        // Vue « Mes favoris » : un favori retiré disparaît de la liste.
+        if (this.favoritesOnly) this.performSearch();
+        this.cdr.markForCheck();
+      });
   }
 
   /**
-   * Détecte la localisation de l'utilisateur
+   * Détecte la localisation de l'utilisateur. Sans position ou sans ville
+   * couverte : toutes les villes (Bangangté était imposée par défaut).
    */
   private detectUserLocation(): void {
     this.isDetectingLocation = true;
 
     this.geolocationService.getUserLocation()
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (location) => {
-          this.userLocation = location;
-          this.locationDetected = true;
-          this.isDetectingLocation = false;
-
-          // Lancer la recherche automatique pour la ville détectée
-          this.searchByUserLocation();
-        },
-        error: (error) => {
-          this.isDetectingLocation = false;
-
-          // Fallback vers Bangangté
-          this.userLocation = this.geolocationService.getDefaultLocation();
-          this.locationDetected = false;
-
-          // Lancer la recherche pour Bangangté
-          this.searchByUserLocation();
-        }
+      .subscribe(location => {
+        this.isDetectingLocation = false;
+        this.userLocation = location;
+        this.locationDetected = !!location;
+        this.searchByUserLocation();
+        this.cdr.markForCheck();
       });
   }
 
@@ -852,29 +872,31 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Lance une recherche basée sur la localisation de l'utilisateur
    */
   private searchByUserLocation(): void {
-    if (!this.userLocation) return;
     // La position arrive parfois après que l'utilisateur a choisi une ville :
     // son choix prime, la recherche n'est pas relancée sur la ville détectée.
     if (this.userChoseCity) return;
 
-    // Utiliser le service de résolution pour convertir le nom en ID
+    if (!this.userLocation) {
+      this.searchAllCities();
+      return;
+    }
+
     this.cityResolver.getCityIdByName(this.userLocation.city).subscribe(cityId => {
       if (this.userChoseCity) return;
-      const finalCityId = cityId || this.userLocation!.city;
-      this.updateCurrentCityName(cityId || '');
-      if (!cityId) this.currentCityName = this.userLocation!.city;
-
-      this.currentFilters = {
-        city: finalCityId,
-        page: 1,
-        limit: this.ITEMS_PER_PAGE
-      };
+      // Ville détectée mais pas encore couverte : toutes les villes.
+      if (!cityId) {
+        this.locationDetected = false;
+        this.searchAllCities();
+        return;
+      }
+      this.updateCurrentCityName(cityId);
+      this.currentFilters = { city: cityId, page: 1, limit: this.ITEMS_PER_PAGE };
 
       // Mettre à jour le formulaire SANS déclencher les événements
-      this.searchForm.patchValue({ city: finalCityId }, { emitEvent: false });
+      this.searchForm.patchValue({ city: cityId }, { emitEvent: false });
 
       // Mettre à jour les filtres intelligents
-      this.smartFiltersService.updateFilter('city', finalCityId);
+      this.smartFiltersService.updateFilter('city', cityId);
       this.smartFiltersService.markFieldAsModified('city');
 
       this.currentPage = 1;
@@ -884,10 +906,18 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       if (this.locationDetected && !this.isFromUrl) {
         this.updateUrl();
       }
-      
+
       // S'assurer que le sélecteur affiche la bonne ville
       this.ensureCitySelectorSync();
     });
+  }
+
+  /** Recherche sans filtre de ville (position inconnue ou ville non couverte). */
+  private searchAllCities(): void {
+    this.updateCurrentCityName('');
+    this.currentFilters = { page: 1, limit: this.ITEMS_PER_PAGE };
+    this.currentPage = 1;
+    this.performSearch();
   }
 
   /**
@@ -899,15 +929,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     this.detectUserLocation();
   }
 
-  /**
-   * Utilise Bangangté comme ville par défaut
-   */
+  /** Affiche les logements de toutes les villes. */
   useDefaultLocation(): void {
     this.userChoseCity = false;
-    this.userLocation = this.geolocationService.getDefaultLocation();
+    this.userLocation = null;
     this.locationDetected = false;
-    this.searchByUserLocation();
+    this.searchAllCities();
   }
+
 
   applyFilters(): void {
     this.closeFilters();
@@ -942,6 +971,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    */
   toggleQuickFilter(filter: any): void {
     filter.active = !filter.active;
+
+    // « Mes favoris » : vue à part, sans toucher aux autres filtres.
+    if (filter.key === 'favoritesOnly') {
+      this.favoritesOnly = filter.active;
+      this.currentPage = 1;
+      this.performSearch();
+      return;
+    }
 
     // Mettre à jour le filtre intelligent
     this.smartFiltersService.updateFilter(filter.key, filter.active);
@@ -1066,7 +1103,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    */
   shouldShowEmptyState(): boolean {
     const hasResults = this.allResults && this.allResults.length > 0;
-    const isCurrentlyLoading = this.isLoading || this.isLoadingMore || this.isPerformingSearch;
+    const isCurrentlyLoading = this.isLoading || this.isLoadingMore;
 
     // Critères de recherche plus larges
     const hasSearchCriteria = !!(
@@ -1461,9 +1498,9 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       queryParams.district = this.currentFilters.district;
     }
 
-    // Recherche textuelle
-    if (this.searchControl.value) {
-      queryParams.search = this.searchControl.value;
+    // Recherche textuelle (mot-clé appliqué, pas le nom d'une ville choisie)
+    if (this.currentFilters.q) {
+      queryParams.search = this.currentFilters.q;
     }
 
     // Type de logement
@@ -1476,7 +1513,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       queryParams.priceMin = this.currentFilters.priceMin;
     }
 
-    if (this.currentFilters.priceMax && this.currentFilters.priceMax < 500000) {
+    if (this.currentFilters.priceMax && this.currentFilters.priceMax > 0) {
       queryParams.priceMax = this.currentFilters.priceMax;
     }
 
@@ -1513,6 +1550,14 @@ export class SearchPageComponent implements OnInit, OnDestroy {
     // Équipements de la propriété
     if (this.currentFilters.hasParking) {
       queryParams.hasParking = this.currentFilters.hasParking;
+    }
+
+    if (this.currentFilters.hasClosure) {
+      queryParams.hasClosure = this.currentFilters.hasClosure;
+    }
+
+    if (this.currentFilters.furnished) {
+      queryParams.furnished = this.currentFilters.furnished;
     }
 
     // Tri

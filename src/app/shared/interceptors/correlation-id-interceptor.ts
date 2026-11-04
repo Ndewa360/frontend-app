@@ -1,3 +1,4 @@
+import { environment } from 'src/environments/environment';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
@@ -20,6 +21,9 @@ export class CorrelationIdInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // En-têtes propres à l'API Ndewa360 : envoyés à un service tiers (ex.
+    // géocodage), ils déclenchaient une vérification CORS refusée et l'appel échouait.
+    if (!this.isApiRequest(req.url)) return next.handle(req);
     const correlationId = this.generateUuid();
     CorrelationIdInterceptor.lastCorrelationId = correlationId;
 
@@ -50,6 +54,12 @@ export class CorrelationIdInterceptor implements HttpInterceptor {
         }
       )
     );
+  }
+
+  private isApiRequest(url: string): boolean {
+    const apiUrl = (environment.apiUrl || '').replace(/\/$/, '');
+    // URL relative (même origine) ou URL de l'API.
+    return !/^https?:\/\//i.test(url) || (!!apiUrl && (url === apiUrl || url.startsWith(`${apiUrl}/`)));
   }
 
   private generateUuid(): string {

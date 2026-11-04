@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 import { Store } from "@ngxs/store";
-import { combineLatest, Observable, of, skipWhile, tap} from "rxjs";
-import { CountryAction, SearchAction, UserAction } from "../../store";
+import { Observable, of } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+import { SearchAction } from "../../store";
 
 
 @Injectable({
@@ -28,20 +29,13 @@ export class SearchRoomDataResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-
-        let roomID = route.paramMap.get('roomID');
-        if(!roomID) return of(false);
-
-        combineLatest(
-            this._store.dispatch([
-                new SearchAction.FetchSearchByIdRoom(roomID)
-            ]),
-        ).pipe(
-            tap((error)=> of(true))
-        ).subscribe((error)=>{})
-
-        return of(true);
-
-        
+        const roomID = route.paramMap.get('roomID');
+        if (!roomID) return of(false);
+        // La page s'affiche une fois le logement chargé (ou introuvable) :
+        // la requête était lancée sans être attendue.
+        return this._store.dispatch(new SearchAction.FetchSearchByIdRoom(roomID)).pipe(
+            map(() => true),
+            catchError(() => of(true)),
+        );
     }
 }

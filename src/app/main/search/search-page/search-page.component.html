@@ -13,6 +13,7 @@
           [formControl]="searchControl"
           (focus)="onSearchFocus()"
           (blur)="onSearchBlur()"
+          (keydown.enter)="onSearchSubmit()"
           [placeholder]="'SEARCH_MODULE.SEARCH_BAR.PLACEHOLDER' | translate"
           class="search-input">
         <button *ngIf="searchControl.value" (click)="clearSearch()" class="clear-btn" type="button">
@@ -26,10 +27,11 @@
           <div class="spinner"></div>
           <span>{{ 'COMMON.LOADING' | translate }}</span>
         </div>
-        <div *ngIf="!isDetectingLocation && userLocation" class="location-status detected">
+        <div *ngIf="!isDetectingLocation" class="location-status detected">
           <youpez-ibm-icon [iconName]="'location_on'" iconSize="16"></youpez-ibm-icon>
-          <span>{{ userLocation.city }}</span>
-          <button *ngIf="!locationDetected" (click)="retryLocationDetection()" class="retry-btn">
+          <span>{{ locationDetected && userLocation ? userLocation.city : ('SEARCH_MODULE.FILTERS.ALL_CITIES' | translate) }}</span>
+          <button *ngIf="!locationDetected" (click)="retryLocationDetection()" class="retry-btn"
+            [title]="'SEARCH_MODULE.SEARCH_BAR.RETRY_LOCATION' | translate">
             <youpez-ibm-icon iconName="refresh" iconSize="16"></youpez-ibm-icon>
           </button>
         </div>
@@ -93,8 +95,8 @@
         <span>{{ getCurrentCityName() }}, Cameroun</span>
       </div>
 
-      <!-- Informative message for default Bangangté -->
-      <div *ngIf="!locationDetected && !userChoseCity && userLocation?.city === 'Bangangté'" class="fallback-message mt-2">
+      <!-- Position inconnue ou ville non couverte : toutes les villes -->
+      <div *ngIf="!locationDetected && !userChoseCity && !currentFilters.city && !favoritesOnly && !isDetectingLocation" class="fallback-message mt-2">
         <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
           <div class="flex items-start gap-2">
             <youpez-ibm-icon iconName="info" iconSize="16" class="text-orange-600 mt-0.5"></youpez-ibm-icon>

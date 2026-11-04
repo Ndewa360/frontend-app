@@ -7,8 +7,6 @@ import { CountryAction } from "../country/country.actions"
 import { of, throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
-import { DefaultCoordCity } from "../../utils";
-import { SearchAction } from "../search";
 import { TranslateService } from "@ngx-translate/core";
 
 export class CityStateModel {
@@ -115,12 +113,6 @@ export class CityState{
                 cities:[...state.cities,...cities]
             }
         )
-            cities.forEach((city)=>{
-              if(city.lat== DefaultCoordCity.latitude && city.long== DefaultCoordCity.longitude) 
-              {
-                ctx.dispatch(new SearchAction.FetchSearch(city._id))
-              }
-            })
         return of(true)
     }
 

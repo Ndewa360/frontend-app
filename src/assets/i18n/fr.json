@@ -2175,8 +2175,8 @@
     "SELECT_DISTRICT": "Sélectionner un quartier",
     "AVAILABLE": "Disponible",
     "PER_MONTH": "/mois",
-    "FALLBACK_TITLE": "Résultats pour Bangangté",
-    "FALLBACK_MESSAGE": "Nous n'avons pas pu détecter votre localisation ou votre ville n'est pas encore couverte. Voici les logements disponibles à Bangangté.",
+    "FALLBACK_TITLE": "Logements de toutes les villes",
+    "FALLBACK_MESSAGE": "Nous n'avons pas pu détecter votre ville, ou elle n'est pas encore couverte. Voici les logements disponibles dans toutes les villes : choisissez une ville dans les filtres pour affiner.",
     "RETRY_LOCATION": "Réessayer la géolocalisation",
     "VIEW_GRID": "Vue grille",
     "VIEW_LIST": "Vue liste",
@@ -2953,7 +2953,8 @@
       "PARKING_TEXT": "Parking",
       "FENCED_TEXT": "Clôturé",
       "FURNISHED": "Meublé",
-      "DISTRICT": "Quartier"
+      "DISTRICT": "Quartier",
+      "FAVORITES_ONLY": "Mes favoris"
     },
     "RESULTS": {
       "EQUIPPED_KITCHEN": "Cuisine équipée",

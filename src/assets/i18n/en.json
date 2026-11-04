@@ -2175,8 +2175,8 @@
     "SELECT_DISTRICT": "Select a neighborhood",
     "AVAILABLE": "Available",
     "PER_MONTH": "/month",
-    "FALLBACK_TITLE": "Results for Bangangté",
-    "FALLBACK_MESSAGE": "We could not detect your location or your city is not yet covered. Here are the accommodations available in Bangangté.",
+    "FALLBACK_TITLE": "Homes in all cities",
+    "FALLBACK_MESSAGE": "We could not detect your city, or it is not covered yet. Here are the homes available in all cities: pick a city in the filters to narrow the results.",
     "RETRY_LOCATION": "Try geolocation again",
     "VIEW_GRID": "Grid view",
     "VIEW_LIST": "List view",
@@ -2953,7 +2953,8 @@
       "PARKING_TEXT": "Parking",
       "FENCED_TEXT": "Fence",
       "FURNISHED": "Furniture",
-      "DISTRICT": "Neighborhood"
+      "DISTRICT": "Neighborhood",
+      "FAVORITES_ONLY": "My favourites"
     },
     "RESULTS": {
       "EQUIPPED_KITCHEN": "Equipped kitchen",

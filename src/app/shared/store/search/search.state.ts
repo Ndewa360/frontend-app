@@ -3,7 +3,6 @@ import { SearchPropertyModel } from "./search.model";
 import { Injectable } from "@angular/core";
 import { SearchAction } from "./search.actions";
 import { SearchService } from "./search.service";
-import { RoomType } from './../rooms';
 
 // import { ToastrService } from "ngx-toastr";
 import { of, throwError } from "rxjs";
@@ -173,91 +172,6 @@ export class SearchState{
         return createSelector([SearchState],(state)=> state.searchProperties.filter((city)=>city.country==countryID))
     } 
 
-    @Action(SearchAction.ApplyFilter)
-    applyFilter(ctx:StateContext<SearchStateModel>,{filter,isNewLocation}:SearchAction.ApplyFilter)
-    {
-        let state = ctx.getState();
-        let dataRooms = [...state.searchProperties];
-        if(!isNewLocation)
-        {
-            if(!filter.ville) {
-                dataRooms= dataRooms.filter((room)=> (
-                    room.price>=filter.minPrice && 
-                    room.price<=filter.maxPrice 
-                ));    
-            }
-            else dataRooms= dataRooms.filter((room)=> (
-                room.property.geolocationCity?._id==filter.ville &&
-                room.price>=filter.minPrice && 
-                room.price<=filter.maxPrice 
-            ));
-
-            if(filter.specifity?.hasClosure) dataRooms = dataRooms.filter((room)=>filter.specifity.hasClosure==room.property.hasClosure)
-            if(filter.specifity?.hasParking) dataRooms = dataRooms.filter((room)=>filter.specifity.hasParking==room.property.hasParking)
-
-            if(filter.type) dataRooms= dataRooms.filter((room)=> room.type==filter.type);
-
-            if(filter.type==RoomType.STUDIO && filter.specifity) dataRooms= dataRooms.filter((room)=> room.specifity.hasKitchen==filter.specifity.hasKitchen && room.specifity.isInternalShower==filter.specifity.isInternalShower);
-            
-            if(filter.type==RoomType.SIMPLE_APARTMENT && filter.specifity) dataRooms= dataRooms.filter((room)=> (
-                room.specifity.hasKitchen==filter.specifity.hasKitchen && 
-                room.specifity.isInternalShower==filter.specifity.isInternalShower && 
-                room.specifity.numberOfShower>=filter.specifity.numberOfShower &&
-                room.specifity.numberOfBathroom>=filter.specifity.numberOfBathroom &&
-                room.specifity.numberOfLivingRoom>=filter.specifity.numberOfLivingRoom 
-            ));
-            ctx.patchState({
-                filteredSearchedProperties: [...dataRooms],
-            })
-        }
-        else  ctx.dispatch(new SearchAction.FetchSearch(filter.ville)) 
-
-        ctx.patchState({
-            criteriaFinder:{
-                ...filter
-            },
-        })
-    }
-
-
-    @Action(SearchAction.FetchSearch)
-    fetchSearch(ctx:StateContext<SearchStateModel>,{city, page = 1, pageSize = 10000}:SearchAction.FetchSearch)
-    {
-        const state = ctx.getState();
-
-        let searchProperties = state.searchProperties.findIndex((prop)=>prop.property.geolocationCity?._id==city);
-        if(searchProperties>-1 && page === 1) return of(true);
-
-        ctx.patchState({
-            loadingSearch:true
-        })
-        return this._searchPropertiesService.getSearch(city, page, pageSize).pipe(
-            tap(
-                result => {
-                    ctx.patchState({
-                        loadingSearch:false,
-                        loadingSearchItem:false,
-                        searchProperties:[...state.searchProperties, ...(Array.isArray(result.data?.data) ? result.data.data : Array.isArray(result.data) ? result.data : [])]
-                    })
-                    // this.applyFilter(ctx,{ville:city})
-                    if(!state.criteriaFinder) ctx.dispatch(new SearchAction.ApplyFilter({
-                            ville:city,
-                            maxPrice:100000,
-                            minPrice:0,
-                        },false))
-                    else ctx.dispatch(new SearchAction.ApplyFilter(state.criteriaFinder,false))
-                }
-            ),
-            catchError((error)=>{
-                ctx.patchState({
-                    loadingSearch: false,
-                    loadingSearchItem:false
-                })
-                return of(null);
-            })
-        )
-    }
-
     @Action(SearchAction.FetchSearchByIdRoom)
     fetchSearchByIdRoom(ctx:StateContext<SearchStateModel>,{idRoom}:SearchAction.FetchSearchByIdRoom)
     {
@@ -296,7 +210,7 @@ export class SearchState{
         const searchFilters = {
             ...filters,
             page: filters.page || 1,
-            limit: filters.limit || 10000 // Limite backend élevée
+            limit: filters.limit || 20 // le serveur plafonne à 100
         };
 
         ctx.patchState({
@@ -321,7 +235,7 @@ export class SearchState{
                     currentPage: pagination?.page || 1,
                     totalPages: pagination?.totalPages || 1,
                     totalResults: pagination?.total || properties.length,
-                    pageSize: pagination?.limit || 10000
+                    pageSize: pagination?.limit || 20
                 });
             }),
             catchError(error => {

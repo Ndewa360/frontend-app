@@ -21,7 +21,6 @@ export interface LocationInfo {
   providedIn: 'root'
 })
 export class GeolocationService {
-  private readonly DEFAULT_CITY = 'Bangangté';
   private readonly DEFAULT_COUNTRY = 'Cameroun';
   private readonly GEOLOCATION_TIMEOUT = 10000; // 10 secondes
   
@@ -64,51 +63,35 @@ export class GeolocationService {
   }
 
   /**
-   * Obtient les informations de localisation à partir des coordonnées
+   * Ville correspondant aux coordonnées (service BigDataCloud), ou null.
+   * Les coordonnées sont arrondies à 0,01° (environ 1 km) : la position précise
+   * de l'utilisateur n'est pas transmise au service tiers.
    */
-  getLocationInfo(latitude: number, longitude: number): Observable<LocationInfo> {
-    // Utilisation de l'API de géocodage inverse gratuite
-    const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=fr`;
-    
+  getLocationInfo(latitude: number, longitude: number): Observable<LocationInfo | null> {
+    const lat = Math.round(latitude * 100) / 100;
+    const lng = Math.round(longitude * 100) / 100;
+    const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=fr`;
+
     return this.http.get<any>(url).pipe(
-      map((response) => ({
-        city: response.city || response.locality || response.principalSubdivision || this.DEFAULT_CITY,
-        country: response.countryName || this.DEFAULT_COUNTRY,
-        region: response.principalSubdivision || '',
-        latitude,
-        longitude
-      })),
-      catchError((error) => {
-        // Fallback vers Bangangté
-        return of({
-          city: this.DEFAULT_CITY,
-          country: this.DEFAULT_COUNTRY,
-          region: 'Ouest',
-          latitude,
-          longitude
-        });
-      })
+      map((response) => {
+        const city = response?.city || response?.locality || '';
+        return city
+          ? { city, country: response.countryName || this.DEFAULT_COUNTRY, region: response.principalSubdivision || '', latitude: lat, longitude: lng }
+          : null;
+      }),
+      catchError(() => of(null))
     );
   }
 
   /**
-   * Obtient la localisation complète de l'utilisateur avec fallback
+   * Ville de l'utilisateur, ou null si la position est refusée ou introuvable
+   * (la recherche porte alors sur toutes les villes, au lieu d'une ville
+   * imposée présentée comme « détectée »).
    */
-  getUserLocation(): Observable<LocationInfo> {
+  getUserLocation(): Observable<LocationInfo | null> {
     return this.getCurrentPosition().pipe(
-      switchMap((position) => 
-        this.getLocationInfo(position.latitude, position.longitude)
-      ),
-      catchError((error) => {
-        // Fallback vers Bangangté (coordonnées approximatives)
-        return of({
-          city: this.DEFAULT_CITY,
-          country: this.DEFAULT_COUNTRY,
-          region: 'Ouest',
-          latitude: 5.1439,
-          longitude: 10.4897
-        });
-      })
+      switchMap((position) => this.getLocationInfo(position.latitude, position.longitude)),
+      catchError(() => of(null))
     );
   }
 
@@ -133,18 +116,5 @@ export class GeolocationService {
    */
   isGeolocationAvailable(): boolean {
     return 'geolocation' in navigator;
-  }
-
-  /**
-   * Obtient la ville par défaut (Bangangté)
-   */
-  getDefaultLocation(): LocationInfo {
-    return {
-      city: this.DEFAULT_CITY,
-      country: this.DEFAULT_COUNTRY,
-      region: 'Ouest',
-      latitude: 5.1439,
-      longitude: 10.4897
-    };
   }
 }

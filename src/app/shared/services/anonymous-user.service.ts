@@ -23,9 +23,10 @@ export class AnonymousUserService {
     let id = localStorage.getItem(STORAGE_KEY);
     if (!id) {
       // Identifiant non devinable : il sert de preuve d'achat pour l'accès premium.
-      const random = typeof crypto !== 'undefined' && 'randomUUID' in crypto
-        ? crypto.randomUUID().replace(/-/g, '')
-        : Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+      // randomUUID n'existe qu'en contexte sécurisé (HTTPS) ; getRandomValues partout.
+      const bytes = new Uint8Array(16);
+      globalThis.crypto.getRandomValues(bytes);
+      const random = Array.from(bytes, (b: number) => b.toString(16).padStart(2, '0')).join('');
       id = 'visitor_' + Date.now() + '_' + random;
       localStorage.setItem(STORAGE_KEY, id);
     }
