@@ -75,13 +75,18 @@ export class UploadFilesState{
     {
         const state = ctx.getState();
         
-        let fileFound = state.filesState.findIndex((f)=>f.name==uploadFiles.file.name);
-        if(fileFound>-1) return this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.FILE_ALREADY_EXISTS', { fileName: uploadFiles.file.name }), 'Ndewa360°');
+        // Seul un envoi EN COURS du même fichier est refusé. Un envoi terminé
+        // ou en échec ne bloque plus un nouvel essai (il fallait recharger la
+        // page, ou renommer le fichier, pour pouvoir réessayer).
+        const existing = state.filesState.find((f)=>f.name==uploadFiles.file.name);
+        if (existing && ['PENDING', 'IN_PROGRESS'].includes(existing.state?.state)) {
+            return this._toastrService.warning(this._translateService.instant('NOTIFICATIONS.FILE_ALREADY_EXISTS', { fileName: uploadFiles.file.name }), 'Ndewa360°');
+        }
 
         let newFile = {name:uploadFiles.file.name,state:null};
         newFile.state = { state: 'PENDING', progress: 0 }
 
-        let files = [...state.filesState,newFile]
+        let files = [...state.filesState.filter((f)=>f.name!=uploadFiles.file.name),newFile]
 
         ctx.patchState({
             filesState: files,
@@ -117,11 +122,18 @@ export class UploadFilesState{
                 }
             ),
             catchError((error) => {
-                ctx.patchState({
-                    loadingUploadFiles: false
-                })
-                return throwError(error);
-                
+                // Échec visible (motif du serveur) et fichier de nouveau envoyable.
+                const message = (() => {
+                    const m = error?.error?.message;
+                    const text = Array.isArray(m) ? m[0] : m;
+                    return typeof text === 'string' && text ? text : this._translateService.instant('NOTIFICATIONS.FILE_UPLOAD_ERROR', { fileName: uploadFiles.file.name });
+                })();
+                const data = [...ctx.getState().filesState];
+                const index = data.findIndex((u)=>u.name==uploadFiles.file.name);
+                if (index > -1) data[index] = { name: uploadFiles.file.name, state: { state: 'FAILED', progress: 0, data: null, error: message } };
+                ctx.patchState({ filesState: data, loadingUploadFiles: false });
+                this._toastrService.error(message, 'Ndewa360°');
+                return throwError(() => error);
             })
         )
     }

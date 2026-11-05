@@ -1,3 +1,4 @@
+import { TranslatePipe } from '@ngx-translate/core';
 import { trackByFn } from '../../../shared/utils/track-by.util';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,6 +10,7 @@ import { WalletState, WalletAction, WalletSummary, WalletTransaction, Withdrawal
 import { WithdrawalModalComponent } from '../components/withdrawal-modal/withdrawal-modal.component';
 import { DepositModalComponent } from '../components/deposit-modal/deposit-modal.component';
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 @Component({
   selector: 'app-wallet-dashboard',
   templateUrl: './wallet-dashboard.component.html',
@@ -18,8 +20,7 @@ import { NgIf, NgFor, AsyncPipe } from '@angular/common';
   imports: [
     NgIf,
     NgFor,
-    AsyncPipe
-  ]
+    AsyncPipe, ConfirmDeleteComponent, TranslatePipe]
 })
 export class WalletDashboardComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;

@@ -939,7 +939,9 @@
       "TS": {
         "WARNING": "La ville sera supprimée. Refusé si des biens y sont situés : désactivez-la plutôt.",
         "DANGER_HIGH": "Des biens sont situés dans cette ville : la suppression sera refusée. Désactivez-la plutôt.",
-        "DANGER_MEDIUM": "Cette ville est active : la supprimer la retire des choix proposés aux utilisateurs."
+        "DANGER_MEDIUM": "Cette ville est active : la supprimer la retire des choix proposés aux utilisateurs.",
+        "COUNTRY": "Pays",
+        "STATUS": "Statut"
       }
     },
     "CITY_SELECT": {

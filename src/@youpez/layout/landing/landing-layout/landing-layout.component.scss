@@ -121,3 +121,11 @@ $gray-80: #393939;
 :host-context(body.filters-panel-open) .cookie-banner--minimal {
   display: none !important;
 }
+
+/* Contenu sous l'en-tête fixe : décalage égal à sa hauteur réelle (mesurée,
+   variable --landing-header-h). La marge fixe de 64 px laissait l'en-tête
+   (99 à 109 px selon la largeur) masquer le haut des pages, dont la barre de
+   la recherche. */
+:host .landing-content {
+  top: var(--landing-header-h, 100px);
+}

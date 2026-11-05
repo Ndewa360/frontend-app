@@ -45,30 +45,48 @@ export class LandingHeaderComponent implements OnInit {
 
   navigateToSearchPage()
   {
-    this.router.navigate(
-      [`/${this.getCurrentLanguage()}/search/index`],
-      { queryParams: { ville:'Bangangté'} }
-    );
+    // Toutes les villes : la recherche choisit la ville (position ou filtre).
+    this.router.navigate([`/${this.getCurrentLanguage()}/search/index`]);
   }
 
   scrollToProfiles(): void {
+    this.scrollToHomeSection('profiles-section');
+  }
+
+  /**
+   * Menu « Tarifs » : section tarifs de la page d'accueil. Le lien
+   * `/home#tarifs` ne faisait qu'ouvrir l'accueil : la page défile dans un
+   * conteneur ngx-scrollbar, que le défilement par fragment d'URL ignore.
+   */
+  scrollToPricing(): void {
+    this.scrollToHomeSection('tarifs');
+  }
+
+  /** Ouvre l'accueil si besoin, puis fait défiler jusqu'à la section [id]. */
+  private scrollToHomeSection(id: string): void {
     const isOnHome = this.router.url.includes('/home') && !this.router.url.includes('/home/');
 
     if (isOnHome) {
-      // Déjà sur la landing — scroll direct vers la section profils
-      this.scrollToProfilesSection();
+      this.scrollToSection(id);
     } else {
-      // Naviguer vers la landing puis scroller
+      // Naviguer vers la landing puis scroller (la section peut mettre un
+      // instant à être rendue : quelques essais espacés).
       this.router.navigate([`/${this.getCurrentLanguage()}/home`]).then(() => {
-        setTimeout(() => this.scrollToProfilesSection(), 400);
+        let attempts = 0;
+        const tryScroll = () => {
+          if (this.scrollToSection(id) || ++attempts >= 10) return;
+          setTimeout(tryScroll, 150);
+        };
+        setTimeout(tryScroll, 200);
       });
     }
   }
 
-  private scrollToProfilesSection(): void {
-    const el = document.getElementById('profiles-section');
-    if (!el) return;
-    const offset = 80; // hauteur du header fixe
+  private scrollToSection(id: string): boolean {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    // Le contenu commence sous l'en-tête fixe (décalage du layout) : petite marge seulement.
+    const offset = 16;
 
     // La landing rend son contenu dans un conteneur ngx-scrollbar : le scroll
     // se fait sur `.ng-scroll-viewport`, pas sur le `window` (sinon rien ne bouge).
@@ -81,6 +99,7 @@ export class LandingHeaderComponent implements OnInit {
       const top = el.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: 'smooth' });
     }
+    return true;
   }
 
   getCurrentLanguage(): string {

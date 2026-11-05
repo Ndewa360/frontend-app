@@ -19,30 +19,28 @@
 }
 
 /* Team Members Section */
+/* Membres centrés, quel que soit leur nombre (deux fiches d'un tiers de
+   largeur restaient calées à gauche) ; passage à la ligne sur petit écran. */
 .team-members-section {
-  padding: 0 5%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px 48px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 16px;
 }
 
 .team-member-card {
+  flex: 0 1 360px;
+  max-width: 100%;
   padding: 20px;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 400px;
-}
-
-.team-member-card.first {
-  padding-left: 10%;
-}
-
-.team-member-card.second {
-  padding-left: 7%;
-  padding-right: 7%;
-}
-
-.team-member-card.third {
-  padding-right: 10%;
 }
 
 /* Member Photo */
@@ -277,18 +275,6 @@
 
 /* Responsive Design */
 @media only screen and (max-width: 1500px) {
-  .team-member-card.first {
-    padding-left: 4%;
-  }
-
-  .team-member-card.second {
-    padding-left: 2%;
-    padding-right: 2%;
-  }
-
-  .team-member-card.third {
-    padding-right: 4%;
-  }
 }
 
 @media only screen and (max-width: 900px) {
@@ -301,12 +287,6 @@
     margin-bottom: 50px;
   }
 
-  .team-member-card.first,
-  .team-member-card.second,
-  .team-member-card.third {
-    padding-left: 5%;
-    padding-right: 5%;
-  }
 
   .member-photo-wrapper {
     width: 180px;
@@ -331,12 +311,6 @@
     padding: 10px;
   }
 
-  .team-member-card.first,
-  .team-member-card.second,
-  .team-member-card.third {
-    padding-left: 0;
-    padding-right: 0;
-  }
 
   .member-photo-wrapper {
     width: 150px;

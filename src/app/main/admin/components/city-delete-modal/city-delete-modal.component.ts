@@ -4,7 +4,8 @@ import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
 import { AdminGeographyState } from '../../store/geography/admin-geography.state';
-import { NgIf, AsyncPipe, DecimalPipe } from '@angular/common';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { ConfirmDeleteComponent, ConfirmDeleteDetail } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 export interface CityToDelete {
   _id: string;
@@ -21,10 +22,32 @@ export interface CityToDelete {
 
 @Component({
   selector: 'app-city-delete-modal',
-  templateUrl: './city-delete-modal.component.html',
-  styleUrls: ['./city-delete-modal.component.scss'],
   standalone: true,
-  imports: [TranslateModule, NgIf, AsyncPipe, DecimalPipe]
+  imports: [TranslateModule, NgIf, AsyncPipe, ConfirmDeleteComponent],
+  template: `
+    <div *ngIf="isOpen" class="cdm-overlay" (click)="onOverlayClick($event)" (keydown)="onKeyDown($event)" tabindex="0">
+      <app-confirm-delete *ngIf="city"
+        [title]="'ADMIN.CITY_DELETE.SUPPRIMER_LA_VILLE' | translate"
+        [subtitle]="'ADMIN.CITY_DELETE.CETTE_ACTION_EST_IRREVERSIBLE' | translate"
+        [subject]="city.fullName"
+        [details]="details"
+        [consequences]="consequences"
+        [note]="getWarningMessage()"
+        [busy]="(isDeleting$ | async) || false"
+        [error]="deleteError$ | async"
+        [cancelLabel]="'ADMIN.CITY_DELETE.ANNULER' | translate"
+        [confirmLabel]="'ADMIN.CITY_DELETE.SUPPRIMER_DEFINITIVEMENT' | translate"
+        [busyLabel]="'ADMIN.CITY_DELETE.SUPPRESSION_EN_COURS' | translate"
+        (cancel)="onCancel()"
+        (confirm)="onConfirmDelete()">
+      </app-confirm-delete>
+    </div>
+  `,
+  styles: [`
+    .cdm-overlay { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+      padding: 16px; background: rgba(15, 23, 42, .55); }
+    .cdm-overlay app-confirm-delete { width: min(520px, 100%); box-shadow: 0 20px 50px rgba(0,0,0,.3); border-radius: 14px; }
+  `]
 })
 export class CityDeleteModalComponent implements OnInit {
   /** Traductions (textes construits dans le code). */
@@ -44,15 +67,40 @@ export class CityDeleteModalComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  /** Détails de la ville (pays, statut, comptes et biens rattachés, population). */
+  get details(): ConfirmDeleteDetail[] {
+    const c = this.city;
+    if (!c) return [];
+    const t = (k: string) => this.i18n.instant(k);
+    return [
+      { label: t('ADMIN.CITY_DELETE.TS.COUNTRY'), value: c.country?.fullName },
+      { label: t('ADMIN.CITY_DELETE.TS.STATUS'), value: c.isActive ? t('ADMIN.CITY_DELETE.ACTIVE') : t('ADMIN.CITY_DELETE.INACTIVE') },
+      { label: t('ADMIN.CITY_DELETE.UTILISATEURS'), value: c.userCount || null },
+      { label: t('ADMIN.CITY_DELETE.PROPRIETES'), value: c.propertyCount || null },
+      { label: t('ADMIN.CITY_DELETE.POPULATION'), value: c.population ? c.population.toLocaleString() : null },
+    ];
+  }
+
+  /** Conséquences selon l'état de la ville. */
+  get consequences(): string[] {
+    const c = this.city;
+    if (!c) return [];
+    const list = [
+      this.i18n.instant('ADMIN.CITY_DELETE.LA_VILLE_SERA_MARQUEE_COMME'),
+      this.i18n.instant('ADMIN.CITY_DELETE.LA_VILLE_SERA_RETIREE_DE'),
+    ];
+    if (c.isActive) list.push(this.i18n.instant('ADMIN.CITY_DELETE.LES_NOUVEAUX_UTILISATEURS_NE_POURRONT'));
+    if ((c.userCount || 0) > 0) list.push(this.i18n.instant('ADMIN.CITY_DELETE.LES_UTILISATEUR_S_EXISTANT_S', { p0: c.userCount }));
+    return list;
+  }
+
   /**
    * Fermer le modal
    */
   onClose(): void {
-    this.isDeleting$.pipe().subscribe(isDeleting => {
-      if (!isDeleting) {
-        this.closeModal.emit();
-      }
-    });
+    if (!this.store.selectSnapshot(AdminGeographyState.isDeleting)) {
+      this.closeModal.emit();
+    }
   }
 
   /**

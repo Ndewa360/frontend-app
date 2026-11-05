@@ -338,20 +338,17 @@
   </div>
 </div>
 
-<!-- Suppression (super-admin) -->
-<div class="adm-confirm-overlay" *ngIf="showDeleteModal" (click)="cancelDeleteUser()">
-  <div class="adm-confirm" role="alertdialog" aria-modal="true" aria-labelledby="delete-user-title" (click)="$event.stopPropagation()">
-    <h3 id="delete-user-title">{{ 'ADMIN.USERS.DELETE_TITLE' | translate }}</h3>
-    <p>{{ 'ADMIN.USERS.DELETE_TEXT' | translate:{ name: userToDelete?.name } }}</p>
-    <p>{{ 'ADMIN.USERS.DELETE_RULES' | translate }}</p>
-    <div class="adm-confirm-actions">
-      <button type="button" class="adm-btn" (click)="cancelDeleteUser()">{{ 'ADMIN.COMMON.CANCEL' | translate }}</button>
-      <button type="button" class="adm-btn adm-btn--danger" (click)="confirmDeleteUser()">
-        <i class="fas fa-trash" aria-hidden="true"></i> {{ 'ADMIN.COMMON.DELETE' | translate }}
-      </button>
-    </div>
-  </div>
-</div>
+<!-- Suppression (super-admin) : modèle commun, nom à recopier pour confirmer -->
+<app-confirm-delete *ngIf="showDeleteModal" [overlay]="true"
+  [title]="'ADMIN.USERS.DELETE_TITLE' | translate"
+  [lead]="'ADMIN.USERS.DELETE_TEXT' | translate:{ name: userToDelete?.name }"
+  [note]="'ADMIN.USERS.DELETE_RULES' | translate"
+  [confirmText]="userToDelete?.name"
+  [cancelLabel]="'ADMIN.COMMON.CANCEL' | translate"
+  [confirmLabel]="'ADMIN.COMMON.DELETE' | translate"
+  (cancel)="cancelDeleteUser()"
+  (confirm)="confirmDeleteUser()">
+</app-confirm-delete>
 
 <!-- Réinitialisation du mot de passe -->
 <div class="adm-confirm-overlay" *ngIf="showResetPwdModal" (click)="cancelResetPassword()">

@@ -1570,7 +1570,8 @@
     "TRANSACTION_DATA_MISSING": "Transaction information missing.",
     "UNIT_CREATED_SUCCESS": "Unit created.",
     "UNIT_MODIFIED_SUCCESS": "Unit updated.",
-    "UNIT_NOT_FOUND": "Unit not found."
+    "UNIT_NOT_FOUND": "Unit not found.",
+    "FILE_UPLOAD_ERROR": "The file {{fileName}} could not be uploaded. Please try again."
   },
   "DEBUG": {
     "TOKEN_REFRESH_SUCCESS": "Refresh token test successful!",
@@ -5816,6 +5817,73 @@
       "OPEN_BILLING": "View billing",
       "OPEN_WALLET": "View wallet",
       "OPEN_DOCUMENT": "Open document"
+    }
+  },
+  "DELETE_DIALOG": {
+    "CLOSE": "Close",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Delete permanently",
+    "IN_PROGRESS": "Deleting…",
+    "IRREVERSIBLE": "This action cannot be undone",
+    "LEAD": "You are about to permanently delete",
+    "CONSEQUENCES": "Consequences",
+    "TYPE_TO_CONFIRM": "To confirm, type “{{text}}”",
+    "GENERIC_ERROR": "The deletion failed. Please try again.",
+    "UNIT": {
+      "TITLE": "Delete unit",
+      "CODE": "Unit",
+      "TYPE": "Type",
+      "PRICE": "Rent",
+      "STATUS": "Status",
+      "FREE": "Vacant",
+      "OCCUPIED": "Occupied",
+      "PROPERTY": "Property",
+      "CONSEQ_1": "The unit, its details and its photos are deleted.",
+      "CONSEQ_2": "Its rental history will no longer be shown.",
+      "NOTE": "An occupied unit cannot be deleted: end the tenant's lease first.",
+      "ERROR": "The unit could not be deleted."
+    },
+    "TENANT": {
+      "TITLE": "Delete tenant",
+      "NAME": "Tenant",
+      "EMAIL": "Email",
+      "PHONE": "Phone",
+      "PROPERTY": "Property",
+      "CONSEQ_1": "The tenant's record and personal details are deleted.",
+      "NOTE": "A tenant who occupies a unit cannot be deleted: end their lease first.",
+      "ERROR": "The tenant could not be deleted."
+    },
+    "PAYMENT": {
+      "TITLE": "Delete payment",
+      "TENANT": "Tenant",
+      "UNIT": "Unit",
+      "AMOUNT": "Amount",
+      "DATE": "Date",
+      "TYPE": "Type",
+      "REFERENCE": "Reference",
+      "REASON": "Reason",
+      "RENT": "Rent",
+      "DEPOSIT": "Deposit",
+      "OTHER": "Other",
+      "SUBJECT": "payment {{ref}}"
+    },
+    "PROPERTY": {
+      "CONSEQ_1": "The property, its units and its photos are deleted.",
+      "CONSEQ_2": "Its statistics and history will no longer be shown.",
+      "NOTE": "A property with ongoing leases cannot be deleted: end the leases first."
+    },
+    "TEMPLATE": {
+      "SUBTITLE": "Contract template"
+    },
+    "MANAGER": {
+      "MANAGER": "Manager",
+      "EMAIL": "Email",
+      "PROPERTY": "Property",
+      "PERMISSIONS": "Rights removed"
+    },
+    "WITHDRAWAL": {
+      "TITLE": "Delete this withdrawal",
+      "LEAD": "The entry will be permanently removed from your history."
     }
   }
 }

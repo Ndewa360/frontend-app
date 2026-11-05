@@ -207,9 +207,9 @@ export class GaleryComponent implements OnInit, AfterViewInit, OnDestroy {
   private mapStateToStatus(state: string): UploadItem['status'] {
     switch (state) {
     case 'PENDING': return 'pending';
-    case 'UPLOADING': return 'uploading';
+    case 'IN_PROGRESS': return 'uploading';
     case 'DONE': return 'success';
-    case 'ERROR': return 'error';
+    case 'FAILED': return 'error';
     default: return 'pending';
     }
   }

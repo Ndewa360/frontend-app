@@ -841,24 +841,15 @@
     (cityDeleted)="onCityDeleted($event)">
   </app-city-delete-modal>
 
-  <!-- Modal de confirmation suppression devise -->
-  <div class="admin-modal-overlay" *ngIf="showDeleteCurrencyModal" (click)="cancelDeleteCurrency()">
-    <div class="admin-modal" (click)="$event.stopPropagation()" style="max-width:440px;width:100%">
-      <div class="admin-modal-header">
-        <h3><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> {{ 'ADMIN.GEOGRAPHY.SUPPRIMER_LA_DEVISE' | translate }}</h3>
-        <button class="admin-modal-close" (click)="cancelDeleteCurrency()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="admin-modal-body">
-        <p>{{ 'ADMIN.GEOGRAPHY.SUPPRIMER_LA_DEVISE' | translate }} <strong>{{ currencyToDelete?.name }} ({{ currencyToDelete?.code }})</strong> ?</p>
-        <p style="font-size:12px;color:var(--adm-text-faint);margin-top:8px">{{ 'ADMIN.GEOGRAPHY.CETTE_ACTION_EST_IRREVERSIBLE' | translate }}</p>
-      </div>
-      <div class="admin-modal-footer">
-        <button type="button" class="admin-btn admin-btn-secondary" (click)="cancelDeleteCurrency()">{{ 'ADMIN.GEOGRAPHY.ANNULER' | translate }}</button>
-        <button type="button" class="admin-btn admin-btn-primary" style="background:#ef4444;border-color:#ef4444" (click)="confirmDeleteCurrency()">
-          <i class="fas fa-trash"></i> {{ 'ADMIN.GEOGRAPHY.SUPPRIMER' | translate }}
-        </button>
-      </div>
-    </div>
-  </div>
+  <!-- Confirmation de suppression d'une devise (modèle commun) -->
+  <app-confirm-delete *ngIf="showDeleteCurrencyModal" [overlay]="true"
+    [title]="'ADMIN.GEOGRAPHY.SUPPRIMER_LA_DEVISE' | translate"
+    [subtitle]="'ADMIN.GEOGRAPHY.CETTE_ACTION_EST_IRREVERSIBLE' | translate"
+    [subject]="currencyToDelete ? currencyToDelete.name + ' (' + currencyToDelete.code + ')' : ''"
+    [cancelLabel]="'ADMIN.GEOGRAPHY.ANNULER' | translate"
+    [confirmLabel]="'ADMIN.GEOGRAPHY.SUPPRIMER' | translate"
+    (cancel)="cancelDeleteCurrency()"
+    (confirm)="confirmDeleteCurrency()">
+  </app-confirm-delete>
 
 </div>

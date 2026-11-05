@@ -14,13 +14,14 @@ import { AdminRolesState } from '../../store/roles/admin-roles.state';
 import { AdminRole, AdminPermission, MatrixPermission, PermissionsMatrix } from '../../store/roles/admin-roles.model';
 import { SelectModule } from 'carbon-components-angular';
 import { NgIf, NgFor, AsyncPipe, DecimalPipe, TitleCasePipe } from '@angular/common';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 @Component({
   selector: 'app-admin-roles',
   templateUrl: './admin-roles.component.html',
   styleUrls: ['./admin-roles.component.scss'],
   standalone: true,
-  imports: [TranslateModule, NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, TitleCasePipe]
+  imports: [TranslateModule, NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, TitleCasePipe, ConfirmDeleteComponent]
 })
 export class AdminRolesComponent implements OnInit, OnDestroy {
   /** Modifier les rôles et permissions : réservé au super-admin (le serveur refuse sinon). */

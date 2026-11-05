@@ -14,7 +14,7 @@ import {
   HistoryLocationPaymentModel,
   StatisticAction
 } from 'src/app/shared/store';
-import { NgIf } from '@angular/common';
+import { ConfirmDeleteComponent, deleteErrorMessage } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 export interface DeletePaymentModalData {
   transaction: LocationPaymentModel;
@@ -23,13 +23,38 @@ export interface DeletePaymentModalData {
 
 @Component({
   selector: 'app-modern-delete-payment-modal',
-  templateUrl: './modern-delete-payment-modal.component.html',
-  styleUrls: ['./modern-delete-payment-modal.component.scss'],
   standalone: true,
-  imports: [NgIf, TranslatePipe]
+  imports: [TranslatePipe, ConfirmDeleteComponent],
+  template: `
+    <app-confirm-delete
+      [title]="'MODALS.DELETE_PAYMENT.TITLE' | translate"
+      [subtitle]="'MODALS.DELETE_PAYMENT.SUBTITLE' | translate"
+      [subject]="'DELETE_DIALOG.PAYMENT.SUBJECT' | translate: { ref: getBillingRef() }"
+      [details]="[
+        { label: ('DELETE_DIALOG.PAYMENT.TENANT' | translate), value: getTenantName() },
+        { label: ('DELETE_DIALOG.PAYMENT.UNIT' | translate), value: getRoomCode() },
+        { label: ('DELETE_DIALOG.PAYMENT.AMOUNT' | translate), value: getPaymentAmount() },
+        { label: ('DELETE_DIALOG.PAYMENT.TYPE' | translate), value: (getPaymentTypeKey() | translate) },
+        { label: ('DELETE_DIALOG.PAYMENT.DATE' | translate), value: getPaymentDate() },
+        { label: ('DELETE_DIALOG.PAYMENT.REASON' | translate), value: data.transaction?.reason }
+      ]"
+      [consequences]="[
+        'MODALS.DELETE_PAYMENT.CONSEQUENCE_1' | translate,
+        'MODALS.DELETE_PAYMENT.CONSEQUENCE_2' | translate,
+        'MODALS.DELETE_PAYMENT.CONSEQUENCE_3' | translate
+      ]"
+      [confirmLabel]="'MODALS.DELETE_PAYMENT.CONFIRM_DELETE' | translate"
+      [busyLabel]="'MODALS.DELETE_PAYMENT.DELETING' | translate"
+      [busy]="isLoading"
+      [error]="errorMessage"
+      (cancel)="onCancel()"
+      (confirm)="onConfirmDelete()">
+    </app-confirm-delete>
+  `
 })
 export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
   isLoading = false;
+  errorMessage: string | null = null;
   
   private destroy$ = new Subject<void>();
 
@@ -72,8 +97,8 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe((ctx) => {
       this.isLoading = false;
-      const errorMessage = this.getErrorMessage(ctx);
-      this.toastr.error(errorMessage, 'Ndewa360°');
+      // Erreur affichée dans la fenêtre, qui reste ouverte.
+      this.errorMessage = deleteErrorMessage((ctx as any)?.result?.error ?? (ctx as any)?.error, this.translate.instant('NOTIFICATIONS.UNEXPECTED_DELETE_ERROR'));
     });
   }
 
@@ -86,6 +111,7 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
+    this.errorMessage = null;
 
 
     // Utiliser l'action de suppression corrigée
@@ -157,6 +183,18 @@ export class ModernDeletePaymentModalComponent implements OnInit, OnDestroy {
       month: 'long',
       year: 'numeric'
     });
+  }
+
+  /** Clé de traduction du type de paiement. */
+  getPaymentTypeKey(): string {
+    switch (this.data.transaction?.paymentLocationType) {
+    case LocationPaymentType.LOCATION:
+      return 'DELETE_DIALOG.PAYMENT.RENT';
+    case LocationPaymentType.CAUTION:
+      return 'DELETE_DIALOG.PAYMENT.DEPOSIT';
+    default:
+      return 'DELETE_DIALOG.PAYMENT.OTHER';
+    }
   }
 
   getPaymentType(): string {

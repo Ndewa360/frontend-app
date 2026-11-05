@@ -21,6 +21,7 @@ import { AdminGeographyService } from '../../services/admin-geography.service';
 import { ExportService, ExportColumn } from '../../../properties/services/export.service';
 import { SelectModule } from 'carbon-components-angular';
 import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 @Component({
   selector: 'app-admin-geography',
@@ -28,7 +29,7 @@ import { NgIf, NgFor, AsyncPipe, DecimalPipe } from '@angular/common';
   styleUrls: ['./admin-geography.component.scss', '../../styles/admin-design-system.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [TranslateModule, NgIf, FormsModule, SelectModule, NgFor, CityDeleteModalComponent, AsyncPipe, DecimalPipe]
+  imports: [TranslateModule, NgIf, FormsModule, SelectModule, NgFor, CityDeleteModalComponent, AsyncPipe, DecimalPipe, ConfirmDeleteComponent]
 })
 export class AdminGeographyComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

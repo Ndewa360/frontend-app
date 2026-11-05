@@ -28,6 +28,7 @@ import { SelectModule } from 'carbon-components-angular';
 import { NgIf } from '@angular/common';
 import { IbmIconComponent } from '../../../../../@youpez/components/ibm-icon/ibm-icon.component';
 import { WhatsappNotificationsToggleComponent } from './whatsapp-notifications-toggle.component';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 const COOKIE_KEY = 'ndewa_cookie_consent';
 
@@ -37,7 +38,7 @@ const COOKIE_KEY = 'ndewa_cookie_consent';
   styleUrls: ['./user-profile-infos.component.css', './phone-input.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, IbmIconComponent, NgIf, SelectModule, LocalizationSettingsComponent, AgentContactDisplaySettingsComponent, TranslatePipe, WhatsappNotificationsToggleComponent]
+  imports: [FormsModule, ReactiveFormsModule, IbmIconComponent, NgIf, SelectModule, LocalizationSettingsComponent, AgentContactDisplaySettingsComponent, TranslatePipe, WhatsappNotificationsToggleComponent, ConfirmDeleteComponent]
 })
 export class UserProfileInfosComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
@@ -456,6 +457,12 @@ export class UserProfileInfosComponent implements OnInit, OnDestroy {
   canConfirmDelete(): boolean {
     const confirmWord = this.translate.instant('USER_PROFILE.DELETE_CONFIRM_WORD');
     return this.deleteConfirmText?.toUpperCase() === confirmWord.toUpperCase();
+  }
+
+  /** Mot de confirmation déjà vérifié par la fenêtre commune. */
+  onConfirmDeleteAccount(): void {
+    this.deleteConfirmText = this.translate.instant('USER_PROFILE.DELETE_CONFIRM_WORD');
+    this.confirmDeleteAccount();
   }
 
   confirmDeleteAccount(): void {

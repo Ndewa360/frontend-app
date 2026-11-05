@@ -1570,7 +1570,8 @@
     "TRANSACTION_DATA_MISSING": "Informations de la transaction manquantes.",
     "UNIT_CREATED_SUCCESS": "Unité créée.",
     "UNIT_MODIFIED_SUCCESS": "Unité modifiée.",
-    "UNIT_NOT_FOUND": "Unité introuvable."
+    "UNIT_NOT_FOUND": "Unité introuvable.",
+    "FILE_UPLOAD_ERROR": "Le fichier {{fileName}} n'a pas pu être envoyé. Réessayez."
   },
   "DEBUG": {
     "TOKEN_REFRESH_SUCCESS": "Test refresh token réussi !",
@@ -5816,6 +5817,73 @@
       "OPEN_BILLING": "Voir la facturation",
       "OPEN_WALLET": "Voir le portefeuille",
       "OPEN_DOCUMENT": "Ouvrir le document"
+    }
+  },
+  "DELETE_DIALOG": {
+    "CLOSE": "Fermer",
+    "CANCEL": "Annuler",
+    "CONFIRM": "Supprimer définitivement",
+    "IN_PROGRESS": "Suppression…",
+    "IRREVERSIBLE": "Cette action est irréversible",
+    "LEAD": "Vous allez supprimer définitivement",
+    "CONSEQUENCES": "Conséquences",
+    "TYPE_TO_CONFIRM": "Pour confirmer, saisissez « {{text}} »",
+    "GENERIC_ERROR": "La suppression n'a pas abouti. Réessayez.",
+    "UNIT": {
+      "TITLE": "Supprimer l'unité",
+      "CODE": "Unité",
+      "TYPE": "Type",
+      "PRICE": "Loyer",
+      "STATUS": "Statut",
+      "FREE": "Libre",
+      "OCCUPIED": "Occupée",
+      "PROPERTY": "Bien",
+      "CONSEQ_1": "L'unité, ses informations et ses photos sont supprimées.",
+      "CONSEQ_2": "Son historique de locations n'apparaîtra plus.",
+      "NOTE": "Une unité occupée ne peut pas être supprimée : résiliez d'abord le bail du locataire.",
+      "ERROR": "L'unité n'a pas pu être supprimée."
+    },
+    "TENANT": {
+      "TITLE": "Supprimer le locataire",
+      "NAME": "Locataire",
+      "EMAIL": "E-mail",
+      "PHONE": "Téléphone",
+      "PROPERTY": "Bien",
+      "CONSEQ_1": "La fiche du locataire et ses informations personnelles sont supprimées.",
+      "NOTE": "Un locataire qui occupe une unité ne peut pas être supprimé : résiliez d'abord son bail.",
+      "ERROR": "Le locataire n'a pas pu être supprimé."
+    },
+    "PAYMENT": {
+      "TITLE": "Supprimer le paiement",
+      "TENANT": "Locataire",
+      "UNIT": "Unité",
+      "AMOUNT": "Montant",
+      "DATE": "Date",
+      "TYPE": "Type",
+      "REFERENCE": "Référence",
+      "REASON": "Motif",
+      "RENT": "Loyer",
+      "DEPOSIT": "Caution",
+      "OTHER": "Autre",
+      "SUBJECT": "le paiement {{ref}}"
+    },
+    "PROPERTY": {
+      "CONSEQ_1": "Le bien, ses unités et ses photos sont supprimés.",
+      "CONSEQ_2": "Ses statistiques et son historique n'apparaîtront plus.",
+      "NOTE": "Un bien avec des locations en cours ne peut pas être supprimé : résiliez d'abord les baux."
+    },
+    "TEMPLATE": {
+      "SUBTITLE": "Modèle de contrat"
+    },
+    "MANAGER": {
+      "MANAGER": "Gérant",
+      "EMAIL": "E-mail",
+      "PROPERTY": "Bien",
+      "PERMISSIONS": "Droits retirés"
+    },
+    "WITHDRAWAL": {
+      "TITLE": "Supprimer ce retrait",
+      "LEAD": "L'entrée sera définitivement retirée de votre historique."
     }
   }
 }

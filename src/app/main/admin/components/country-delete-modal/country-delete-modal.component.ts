@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, OnDestroy, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, EMPTY } from 'rxjs';
 import { takeUntil, catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { Store } from '@ngxs/store';
@@ -9,7 +9,8 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AdminGeographyService } from '../../services/admin-geography.service';
 import { AdminCountry } from '../../store/geography/admin-geography.model';
 import { AdminGeographyAction } from '../../store/geography/admin-geography.actions';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
+import { ConfirmDeleteComponent, ConfirmDeleteDetail, deleteErrorMessage } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 export interface CountryDeleteModalData {
   country: AdminCountry;
@@ -17,10 +18,26 @@ export interface CountryDeleteModalData {
 
 @Component({
   selector: 'app-country-delete-modal',
-  templateUrl: './country-delete-modal.component.html',
-  styleUrls: ['./country-delete-modal.component.scss'],
   standalone: true,
-  imports: [TranslateModule, NgIf, AsyncPipe]
+  imports: [TranslateModule, AsyncPipe, ConfirmDeleteComponent],
+  template: `
+    <app-confirm-delete
+      [title]="'ADMIN.COUNTRY_DELETE.SUPPRIMER_LE_PAYS' | translate"
+      [subtitle]="'ADMIN.COUNTRY_DELETE.ACTION_IRREVERSIBLE' | translate"
+      [lead]="'ADMIN.COUNTRY_DELETE.ETES_VOUS_SUR_DE_VOULOIR' | translate"
+      [subject]="data.country.name"
+      [details]="details"
+      [note]="(isLoading$ | async) ? ('ADMIN.COUNTRY_DELETE.VERIFICATION_DES_DONNEES_ASSOCIEES' | translate) : (getWarningMessage() || null)"
+      [blocked]="isBlocked()"
+      [busy]="(isLoading$ | async) || false"
+      [error]="errorMessage"
+      [cancelLabel]="'ADMIN.COUNTRY_DELETE.ANNULER' | translate"
+      [confirmLabel]="'ADMIN.COUNTRY_DELETE.SUPPRIMER_DEFINITIVEMENT' | translate"
+      [busyLabel]="'ADMIN.COUNTRY_DELETE.SUPPRESSION' | translate"
+      (cancel)="onCancel()"
+      (confirm)="onConfirm()">
+    </app-confirm-delete>
+  `
 })
 export class CountryDeleteModalComponent implements OnInit, OnDestroy {
   /** Traductions (textes construits dans le code). */
@@ -31,6 +48,16 @@ export class CountryDeleteModalComponent implements OnInit, OnDestroy {
   citiesCount = 0;
   /** Biens situés dans ce pays : la suppression est alors refusée par le serveur. */
   propertiesCount = 0;
+  errorMessage: string | null = null;
+
+  /** Détails affichés (code, devise, villes et biens rattachés). */
+  get details(): ConfirmDeleteDetail[] {
+    return [
+      { label: 'Code', value: this.data.country.code },
+      { label: this.i18n.instant('ADMIN.COUNTRY_DELETE.CITIES_LABEL', { count: this.citiesCount }), value: this.citiesCount },
+      { label: this.i18n.instant('ADMIN.COUNTRY_DELETE.PROPERTIES_LABEL', { count: this.propertiesCount }), value: this.propertiesCount },
+    ];
+  }
 
   constructor(
     private dialogRef: MatDialogRef<CountryDeleteModalComponent>,
@@ -73,16 +100,17 @@ export class CountryDeleteModalComponent implements OnInit, OnDestroy {
   onConfirm(): void {
     if (this.isBlocked()) return;
     this.isLoading$.next(true);
+    this.errorMessage = null;
 
     // Utiliser le store pour la suppression
     this.store.dispatch(new AdminGeographyAction.DeleteCountry(this.data.country._id)).pipe(
       takeUntil(this.destroy$),
       catchError(error => {
-        const serverMessage = error?.error?.message;
-        const message = Array.isArray(serverMessage) ? serverMessage[0] : serverMessage;
-        this.toastr.error(message || this.translate.instant('GEOGRAPHY.COUNTRY.DELETE_ERROR'), this.translate.instant('COMMON.ERROR'));
+        // Erreur affichée dans la fenêtre, qui reste ouverte (plus d'erreur
+        // relancée : elle remontait non gérée dans la console).
+        this.errorMessage = deleteErrorMessage(error, this.translate.instant('GEOGRAPHY.COUNTRY.DELETE_ERROR'));
         this.isLoading$.next(false);
-        throw error;
+        return EMPTY;
       })
     ).subscribe(() => {
       this.isLoading$.next(false);

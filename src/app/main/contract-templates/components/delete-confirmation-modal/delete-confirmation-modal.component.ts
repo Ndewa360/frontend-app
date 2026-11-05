@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
-import { NgIf } from '@angular/common';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 export interface DeleteConfirmationData {
   title: string;
@@ -13,10 +13,20 @@ export interface DeleteConfirmationData {
 
 @Component({
   selector: 'app-delete-confirmation-modal',
-  templateUrl: './delete-confirmation-modal.component.html',
-  styleUrls: ['./delete-confirmation-modal.component.scss'],
   standalone: true,
-  imports: [NgIf, TranslatePipe]
+  imports: [TranslatePipe, ConfirmDeleteComponent],
+  template: `
+    <app-confirm-delete
+      [title]="data.title | translate"
+      [subtitle]="'CONTRACT_TEMPLATES.MODALS.DELETE_CONFIRMATION.SUBTITLE' | translate"
+      [lead]="data.message | translate"
+      [note]="data.warning ? (data.warning | translate) : null"
+      [confirmLabel]="data.confirmText | translate"
+      [cancelLabel]="data.cancelText | translate"
+      (cancel)="cancel()"
+      (confirm)="confirm()">
+    </app-confirm-delete>
+  `
 })
 export class DeleteConfirmationModalComponent {
 

@@ -1,6 +1,6 @@
 import { lastValueFrom } from 'rxjs';
 import { Component, Inject } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { ConfirmDeleteComponent, deleteErrorMessage } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
@@ -18,40 +18,20 @@ export interface DeletePropertyModalData {
 @Component({
   selector: 'app-delete-property-modal',
   standalone: true,
-  imports: [NgIf, TranslatePipe],
+  imports: [TranslatePipe, ConfirmDeleteComponent],
   template: `
-    <div class="dpm">
-      <div class="dpm__icon"><i class="fas fa-trash-alt"></i></div>
-      <h2 class="dpm__title">{{ 'PROPERTIES.DELETE.TITLE' | translate }}</h2>
-      <p class="dpm__text">
-        {{ 'PROPERTIES.DELETE.CONFIRM' | translate: { name: data.property?.name || '' } }}
-      </p>
-      <p class="dpm__warning">{{ 'PROPERTIES.DELETE.WARNING' | translate }}</p>
-      <p *ngIf="errorMessage" class="dpm__error">{{ errorMessage }}</p>
-      <div class="dpm__actions">
-        <button type="button" class="dpm__btn dpm__btn--cancel" (click)="onCancel()" [disabled]="isDeleting">
-          {{ 'COMMON.CANCEL' | translate }}
-        </button>
-        <button type="button" class="dpm__btn dpm__btn--danger" (click)="onConfirm()" [disabled]="isDeleting">
-          {{ (isDeleting ? 'PROPERTIES.DELETE.IN_PROGRESS' : 'PROPERTIES.DELETE.BUTTON') | translate }}
-        </button>
-      </div>
-    </div>
+    <app-confirm-delete
+      [title]="'PROPERTIES.DELETE.TITLE' | translate"
+      [subject]="data.property?.name"
+      [consequences]="['DELETE_DIALOG.PROPERTY.CONSEQ_1' | translate, 'DELETE_DIALOG.PROPERTY.CONSEQ_2' | translate]"
+      [note]="'DELETE_DIALOG.PROPERTY.NOTE' | translate"
+      [confirmText]="data.property?.name"
+      [busy]="isDeleting"
+      [error]="errorMessage"
+      (cancel)="onCancel()"
+      (confirm)="onConfirm()">
+    </app-confirm-delete>
   `,
-  styles: [`
-    .dpm { padding: 24px; text-align: center; max-width: 480px; }
-    .dpm__icon { width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%; background: #fee2e2; color: #dc2626;
-      display: flex; align-items: center; justify-content: center; font-size: 22px; }
-    .dpm__title { font-size: 1.25rem; font-weight: 600; margin: 0 0 8px; }
-    .dpm__text { margin: 0 0 8px; }
-    .dpm__warning { font-size: .875rem; color: #6b7280; margin: 0 0 16px; }
-    .dpm__error { font-size: .875rem; color: #dc2626; background: #fef2f2; border-radius: 8px; padding: 8px 12px; margin: 0 0 16px; }
-    .dpm__actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .dpm__btn { min-height: 44px; padding: 0 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
-    .dpm__btn:disabled { opacity: .6; cursor: not-allowed; }
-    .dpm__btn--cancel { background: #fff; border-color: #d1d5db; color: #374151; }
-    .dpm__btn--danger { background: #dc2626; color: #fff; }
-  `],
 })
 export class DeletePropertyModalComponent {
   isDeleting = false;
@@ -78,8 +58,8 @@ export class DeletePropertyModalComponent {
       this.toastr.success(this.translate.instant('PROPERTIES.DELETE.SUCCESS'), 'Ndewa360°');
       this.dialogRef.close(true);
     } catch (error: any) {
-      const message = error?.error?.message;
-      this.errorMessage = (Array.isArray(message) ? message[0] : message) || this.translate.instant('PROPERTIES.DELETE.ERROR');
+      // Motif du serveur (ex. locations en cours) affiché dans la fenêtre.
+      this.errorMessage = deleteErrorMessage(error, this.translate.instant('PROPERTIES.DELETE.ERROR'));
       this.isDeleting = false;
     }
   }

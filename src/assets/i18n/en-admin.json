@@ -939,7 +939,9 @@
       "TS": {
         "WARNING": "The city will be deleted. Refused if properties are located there: deactivate it instead.",
         "DANGER_HIGH": "Properties are located in this city: deletion will be refused. Deactivate it instead.",
-        "DANGER_MEDIUM": "This city is active: deleting it removes it from the choices offered to users."
+        "DANGER_MEDIUM": "This city is active: deleting it removes it from the choices offered to users.",
+        "COUNTRY": "Country",
+        "STATUS": "Status"
       }
     },
     "CITY_SELECT": {

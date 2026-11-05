@@ -3,9 +3,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LocataireModel, LocataireAction } from 'src/app/shared/store';
-import { NgIf } from '@angular/common';
+import { ConfirmDeleteComponent, deleteErrorMessage } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 export interface DeleteTenantModalData {
   tenant: LocataireModel;
@@ -14,13 +14,31 @@ export interface DeleteTenantModalData {
 
 @Component({
   selector: 'app-modern-delete-tenant-modal',
-  templateUrl: './modern-delete-tenant-modal.component.html',
-  styleUrls: ['./modern-delete-tenant-modal.component.scss'],
   standalone: true,
-  imports: [NgIf]
+  imports: [TranslatePipe, ConfirmDeleteComponent],
+  template: `
+    <app-confirm-delete
+      [title]="'DELETE_DIALOG.TENANT.TITLE' | translate"
+      [subtitle]="data.propertyName"
+      [subject]="getTenantDisplayName()"
+      [details]="[
+        { label: ('DELETE_DIALOG.TENANT.NAME' | translate), value: getTenantDisplayName() },
+        { label: ('DELETE_DIALOG.TENANT.EMAIL' | translate), value: data.tenant?.email },
+        { label: ('DELETE_DIALOG.TENANT.PHONE' | translate), value: data.tenant?.phoneNumber },
+        { label: ('DELETE_DIALOG.TENANT.PROPERTY' | translate), value: data.propertyName }
+      ]"
+      [consequences]="['DELETE_DIALOG.TENANT.CONSEQ_1' | translate]"
+      [note]="'DELETE_DIALOG.TENANT.NOTE' | translate"
+      [busy]="isDeleting"
+      [error]="errorMessage"
+      (cancel)="onCancel()"
+      (confirm)="onConfirmDelete()">
+    </app-confirm-delete>
+  `
 })
 export class ModernDeleteTenantModalComponent implements OnInit {
   isDeleting = false;
+  errorMessage: string | null = null;
 
   constructor(
     public dialogRef: MatDialogRef<ModernDeleteTenantModalComponent>,
@@ -39,12 +57,14 @@ export class ModernDeleteTenantModalComponent implements OnInit {
   async onConfirmDelete(): Promise<void> {
     if (this.isDeleting) return;
     this.isDeleting = true;
+    this.errorMessage = null;
     try {
       await lastValueFrom(this.store.dispatch(new LocataireAction.DeleteLocataire(this.data.tenant._id)), { defaultValue: undefined });
       this.toastr.success(this.translate.instant('NOTIFICATIONS.TENANT_DELETED_SUCCESS'), 'Ndewa360°');
       this.dialogRef.close(true);
     } catch (error) {
-      this.toastr.error(this.translate.instant('NOTIFICATIONS.TENANT_DELETE_ERROR'), 'Ndewa360°');
+      // Erreur affichée dans la fenêtre (motif du serveur), qui reste ouverte.
+      this.errorMessage = deleteErrorMessage(error, this.translate.instant('DELETE_DIALOG.TENANT.ERROR'));
       this.isDeleting = false;
     }
   }

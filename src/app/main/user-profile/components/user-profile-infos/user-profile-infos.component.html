@@ -420,26 +420,23 @@
               </li>
             </ul>
           </div>
-          <button type="button" class="btn btn-danger" (click)="toggleDeleteConfirm()" *ngIf="!showDeleteConfirm">
+          <button type="button" class="btn btn-danger" (click)="toggleDeleteConfirm()">
             <youpez-ibm-icon iconName="trash-can" iconSize="16"></youpez-ibm-icon>
             {{ 'PROFILE.DANGER.DELETE_BUTTON' | translate }}
           </button>
 
-          <div class="delete-confirm" *ngIf="showDeleteConfirm">
-            <p class="delete-confirm__warning">{{ 'PROFILE.DANGER.CONFIRM_WARNING' | translate }} <strong>{{ 'USER_PROFILE.DELETE_CONFIRM_WORD' | translate }}</strong> ci-dessous :</p>
-            <input
-              type="text"
-              class="field-input"
-              [(ngModel)]="deleteConfirmText"
-              [ngModelOptions]="{standalone: true}"
-              [placeholder]="'USER_PROFILE.DELETE_CONFIRM_WORD' | translate">
-            <div class="delete-confirm__actions">
-              <button type="button" class="btn btn-secondary" (click)="toggleDeleteConfirm()">{{ 'PROFILE.PRIVACY.CANCEL' | translate }}</button>
-              <button type="button" class="btn btn-danger" (click)="confirmDeleteAccount()" [disabled]="!canConfirmDelete() || isDeletingAccount">
-                {{ isDeletingAccount ? ('PROFILE.DANGER.DELETING' | translate) : ('PROFILE.DANGER.CONFIRM_BUTTON' | translate) }}
-              </button>
-            </div>
-          </div>
+          <!-- Confirmation (modèle commun) : mot de confirmation à recopier -->
+          <app-confirm-delete *ngIf="showDeleteConfirm" [overlay]="true"
+            [title]="'PROFILE.DANGER.DELETE_BUTTON' | translate"
+            [lead]="'PROFILE.DANGER.CONFIRM_WARNING' | translate"
+            [confirmText]="'USER_PROFILE.DELETE_CONFIRM_WORD' | translate"
+            [confirmLabel]="'PROFILE.DANGER.CONFIRM_BUTTON' | translate"
+            [busyLabel]="'PROFILE.DANGER.DELETING' | translate"
+            [cancelLabel]="'PROFILE.PRIVACY.CANCEL' | translate"
+            [busy]="isDeletingAccount"
+            (cancel)="toggleDeleteConfirm()"
+            (confirm)="onConfirmDeleteAccount()">
+          </app-confirm-delete>
         </div>
 
       </div>

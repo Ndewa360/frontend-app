@@ -18,6 +18,7 @@ import { AdminRolesState } from '../../store/roles/admin-roles.state';
 import { AdminRolesAction } from '../../store/roles/admin-roles.actions';
 import { SelectModule } from 'carbon-components-angular';
 import { NgIf, NgFor, AsyncPipe, DecimalPipe, DatePipe } from '@angular/common';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 @Component({
   selector: 'app-admin-users',
@@ -25,7 +26,7 @@ import { NgIf, NgFor, AsyncPipe, DecimalPipe, DatePipe } from '@angular/common';
   styleUrls: ['./admin-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, DatePipe, TranslateModule]
+  imports: [NgIf, FormsModule, SelectModule, NgFor, ReactiveFormsModule, AsyncPipe, DecimalPipe, DatePipe, TranslateModule, ConfirmDeleteComponent]
 })
 export class AdminUsersComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;

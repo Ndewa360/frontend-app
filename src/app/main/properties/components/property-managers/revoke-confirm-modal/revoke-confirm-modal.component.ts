@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
-import { NgIf, NgFor } from '@angular/common';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 export interface RevokeConfirmModalData {
   managerName: string;
@@ -12,14 +12,27 @@ export interface RevokeConfirmModalData {
 
 @Component({
   selector: 'app-revoke-confirm-modal',
-  templateUrl: './revoke-confirm-modal.component.html',
-  styleUrls: ['./revoke-confirm-modal.component.scss'],
   standalone: true,
-  imports: [
-    NgIf,
-    NgFor,
-    TranslatePipe
-  ]
+  imports: [TranslatePipe, ConfirmDeleteComponent],
+  template: `
+    <app-confirm-delete
+      icon="fas fa-user-slash"
+      tone="warning"
+      [title]="'PROPERTY_MANAGERS.REVOKE_MODAL.TITLE' | translate"
+      [subtitle]="'PROPERTY_MANAGERS.REVOKE_MODAL.SUBTITLE' | translate"
+      [lead]="'PROPERTY_MANAGERS.REVOKE_MODAL.WARNING' | translate"
+      [details]="[
+        { label: ('DELETE_DIALOG.MANAGER.MANAGER' | translate), value: data.managerName },
+        { label: ('DELETE_DIALOG.MANAGER.EMAIL' | translate), value: data.managerEmail },
+        { label: ('DELETE_DIALOG.MANAGER.PROPERTY' | translate), value: data.propertyName },
+        { label: ('DELETE_DIALOG.MANAGER.PERMISSIONS' | translate), value: data.permissions?.join(', ') }
+      ]"
+      [cancelLabel]="'PROPERTY_MANAGERS.REVOKE_MODAL.CANCEL' | translate"
+      [confirmLabel]="'PROPERTY_MANAGERS.REVOKE_MODAL.CONFIRM' | translate"
+      (cancel)="cancel()"
+      (confirm)="confirm()">
+    </app-confirm-delete>
+  `
 })
 export class RevokeConfirmModalComponent {
   constructor(

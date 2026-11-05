@@ -16,6 +16,7 @@ import { LanguageUrlService } from 'src/app/shared/services/language-url.service
 import { FormsModule } from '@angular/forms';
 import { ExtendedModule } from '@angular/flex-layout/extended';
 import { NgIf, NgClass, NgFor, NgStyle, JsonPipe } from '@angular/common';
+import { ConfirmDeleteComponent } from 'src/app/shared/components/confirm-delete/confirm-delete.component';
 
 interface SubscriptionPeriodSummary {
   _id: string;
@@ -136,7 +137,7 @@ interface UserDetails {
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.scss'],
   standalone: true,
-  imports: [TranslateModule, NgIf, NgClass, ExtendedModule, NgFor, FormsModule, NgStyle, JsonPipe]
+  imports: [TranslateModule, NgIf, NgClass, ExtendedModule, NgFor, FormsModule, NgStyle, JsonPipe, ConfirmDeleteComponent]
 })
 export class UserDetailsComponent implements OnInit, OnDestroy {
   /** Confirmation forcée d'un paiement : réservée au super-admin (le serveur refuse sinon). */

@@ -762,27 +762,14 @@
   </div>
 </div>
 
-<!-- Modal Suppression transaction -->
-<div class="admin-modal-overlay" *ngIf="showDeleteTxModal" (click)="cancelDeleteTx()">
-  <div class="admin-modal-container" (click)="$event.stopPropagation()" style="max-width:440px">
-    <div class="admin-modal-header">
-      <h3 class="admin-modal-title"><i class="fas fa-trash" style="color:#DC2626"></i> {{ 'ADMIN.USER_DETAILS.SUPPRIMER_LA_TRANSACTION' | translate }}</h3>
-      <button class="admin-modal-close" (click)="cancelDeleteTx()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="admin-modal-content">
-      <div style="background:var(--adm-danger-soft);border:1px solid #FECACA;border-radius:8px;padding:12px;font-size:13px;color:var(--adm-danger)">
-        <i class="fas fa-exclamation-triangle" style="margin-right:6px"></i>
-        <strong>{{ 'ADMIN.USER_DETAILS.CETTE_ACTION_EST_IRREVERSIBLE' | translate }}</strong> {{ 'ADMIN.USER_DETAILS.LA_TRANSACTION_SERA_DEFINITIVEMENT_SUPPRIMEE' | translate }}
-      </div>
-      <p style="margin-top:12px;font-size:13px;color:var(--adm-text-2)">
-        {{ 'ADMIN.USER_DETAILS.SEULES_LES_TRANSACTIONS' | translate }} <strong>{{ 'ADMIN.USER_DETAILS.ECHOUEES' | translate }}</strong>, <strong>{{ 'ADMIN.USER_DETAILS.ANNULEES' | translate }}</strong> {{ 'ADMIN.USER_DETAILS.OU' | translate }} <strong>{{ 'ADMIN.USER_DETAILS.EXPIREES' | translate }}</strong> {{ 'ADMIN.USER_DETAILS.PEUVENT_ETRE_SUPPRIMEES' | translate }}
-      </p>
-    </div>
-    <div class="admin-modal-footer">
-      <button class="admin-btn admin-btn-secondary" (click)="cancelDeleteTx()">{{ 'ADMIN.USER_DETAILS.ANNULER' | translate }}</button>
-      <button class="admin-btn admin-btn-danger" (click)="confirmDeleteTx()">
-        <i class="fas fa-trash"></i> {{ 'ADMIN.USER_DETAILS.CONFIRMER_LA_SUPPRESSION' | translate }}
-      </button>
-    </div>
-  </div>
-</div>
+<!-- Confirmation de suppression d'une transaction (modèle commun) -->
+<app-confirm-delete *ngIf="showDeleteTxModal" [overlay]="true"
+  [title]="'ADMIN.USER_DETAILS.SUPPRIMER_LA_TRANSACTION' | translate"
+  [subtitle]="'ADMIN.USER_DETAILS.CETTE_ACTION_EST_IRREVERSIBLE' | translate"
+  [lead]="'ADMIN.USER_DETAILS.LA_TRANSACTION_SERA_DEFINITIVEMENT_SUPPRIMEE' | translate"
+  [note]="('ADMIN.USER_DETAILS.SEULES_LES_TRANSACTIONS' | translate) + ' ' + ('ADMIN.USER_DETAILS.ECHOUEES' | translate) + ', ' + ('ADMIN.USER_DETAILS.ANNULEES' | translate) + ' ' + ('ADMIN.USER_DETAILS.OU' | translate) + ' ' + ('ADMIN.USER_DETAILS.EXPIREES' | translate) + ' ' + ('ADMIN.USER_DETAILS.PEUVENT_ETRE_SUPPRIMEES' | translate)"
+  [cancelLabel]="'ADMIN.USER_DETAILS.ANNULER' | translate"
+  [confirmLabel]="'ADMIN.USER_DETAILS.CONFIRMER_LA_SUPPRESSION' | translate"
+  (cancel)="cancelDeleteTx()"
+  (confirm)="confirmDeleteTx()">
+</app-confirm-delete>

@@ -36,6 +36,11 @@ import { SubscriptionPaymentService } from '../../services/subscription-payment.
     </div>
   `,
   styles: [`
+    /* Au-dessus du conteneur de la mise en page (positionné en absolu depuis
+       le haut) : sans cela, il recouvrait le bandeau et le bouton
+       « Régler mes factures » ne recevait jamais le clic. Même règle que le
+       bandeau de confirmation d'e-mail. */
+    :host { display: block; position: sticky; top: 0; z-index: 1000; }
     .sab { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 16px;
       background: #fef3c7; color: #78350f; border-bottom: 1px solid #fcd34d; font-size: .875rem; }
     .sab__icon { flex-shrink: 0; }
