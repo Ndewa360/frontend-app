@@ -213,9 +213,11 @@
 
           <div class="card-features">
             <!-- Surface first if available -->
-            <span *ngIf="result.property?.totalSurface" class="feature feature-surface">
+            <!-- Surface du BIEN entier : une unité n'a pas de surface propre. -->
+            <span *ngIf="result.property?.totalSurface" class="feature feature-surface"
+              [attr.title]="'SEARCH_MODULE.RESULTS.PROPERTY_SURFACE_HINT' | translate">
               <youpez-ibm-icon iconName="square_foot" iconSize="16"></youpez-ibm-icon>
-              {{ result.property.totalSurface }} m²
+              {{ 'SEARCH_MODULE.RESULTS.PROPERTY_SURFACE' | translate: { surface: result.property.totalSurface } }}
             </span>
             <span *ngIf="result.specifity?.hasKitchen" class="feature">
               <youpez-ibm-icon iconName="restaurant" iconSize="16"></youpez-ibm-icon>

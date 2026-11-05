@@ -2976,7 +2976,9 @@
       "VIEW_GRID": "Vue grille",
       "VIEW_LIST": "Vue liste",
       "LOAD_MORE": "Charger plus",
-      "NO_MORE_RESULTS": "Plus de résultats"
+      "NO_MORE_RESULTS": "Plus de résultats",
+      "PROPERTY_SURFACE": "Bien : {{surface}} m²",
+      "PROPERTY_SURFACE_HINT": "Surface totale du bien qui contient ce logement"
     },
     "EMPTY_STATE": {
       "TITLE": "Aucun logement trouvé",
@@ -2995,7 +2997,15 @@
       "PROPERTIES": "Propriétés",
       "STUDIOS": "Studios",
       "ROOMS": "Chambres",
-      "IN": "à"
+      "IN": "à",
+      "APARTMENTS": "Appartements",
+      "FURNISHED_APARTMENTS": "Appartements meublés",
+      "FEATURES": {
+        "KITCHEN": "cuisine",
+        "PARKING": "parking",
+        "PRIVATE_SHOWER": "douche privée",
+        "FURNISHED": "meublé"
+      }
     },
     "UNIT_DETAIL": {
       "SHARE_BUTTON": "Partager",

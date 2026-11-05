@@ -2976,7 +2976,9 @@
       "VIEW_GRID": "Grid view",
       "VIEW_LIST": "List view",
       "LOAD_MORE": "Load more",
-      "NO_MORE_RESULTS": "More results"
+      "NO_MORE_RESULTS": "More results",
+      "PROPERTY_SURFACE": "Property: {{surface}} m²",
+      "PROPERTY_SURFACE_HINT": "Total area of the property that contains this unit"
     },
     "EMPTY_STATE": {
       "TITLE": "No accommodation found",
@@ -2995,7 +2997,15 @@
       "PROPERTIES": "Properties",
       "STUDIOS": "Studios",
       "ROOMS": "Rooms",
-      "IN": "in"
+      "IN": "in",
+      "APARTMENTS": "Apartments",
+      "FURNISHED_APARTMENTS": "Furnished apartments",
+      "FEATURES": {
+        "KITCHEN": "kitchen",
+        "PARKING": "parking",
+        "PRIVATE_SHOWER": "private shower",
+        "FURNISHED": "furnished"
+      }
     },
     "UNIT_DETAIL": {
       "SHARE_BUTTON": "Share",

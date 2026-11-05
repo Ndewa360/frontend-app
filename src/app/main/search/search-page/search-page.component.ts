@@ -469,26 +469,24 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    * Construire le label d'une recherche populaire
    */
   private buildSearchLabel(search: any): string {
-    let label = '';
-
-    if (search.roomType) {
-      // Normaliser en majuscules pour la comparaison (le backend stocke en minuscules)
-      const roomTypeUpper = search.roomType.toUpperCase();
-      const roomTypeLabel =
-        roomTypeUpper === 'STUDIO' ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.STUDIOS') :
-          roomTypeUpper === 'ROOM'   ? this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS') :
-            this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
-      label += roomTypeLabel;
-    } else {
-      label += this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES');
-    }
+    const t = (key: string) => this.translationService.instant(`SEARCH_MODULE.POPULAR_SEARCHES.${key}`);
+    const typeKeys: Record<string, string> = {
+      STUDIO: 'STUDIOS',
+      ROOM: 'ROOMS',
+      SIMPLE_APARTMENT: 'APARTMENTS',
+      FURNISHED_APARTMENT: 'FURNISHED_APARTMENTS',
+    };
+    // Le backend stocke le type en minuscules (« studio », « simple_apartment »).
+    let label = t(typeKeys[String(search.roomType || '').toUpperCase()] ?? 'PROPERTIES');
 
     if (search.cityName) {
-      label += ` ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} ${search.cityName}`;
+      label += ` ${t('IN')} ${search.cityName}`;
     }
 
-    if (search.features && search.features.length > 0) {
-      label += ` (${search.features.join(', ')})`;
+    // Équipements : codes du serveur (KITCHEN, PARKING…) traduits ici.
+    const features: string[] = (search.features || []).map((code: string) => t(`FEATURES.${code}`));
+    if (features.length > 0) {
+      label += ` (${features.join(', ')})`;
     }
 
     return label;
@@ -529,55 +527,28 @@ export class SearchPageComponent implements OnInit, OnDestroy {
    */
   private buildSearchFilters(search: any): any {
     const filters: any = {};
+    // Le serveur renvoie le prix dans `priceRange` et les équipements en codes
+    // (`features`) : ils étaient lus dans des champs absents de la réponse, et
+    // la recherche ouverte n'avait ni prix ni équipements (plus de résultats
+    // que le nombre annoncé sur la carte).
+    const features: string[] = search.features || [];
     if (search.cityId) filters.city = search.cityId;
     if (search.roomType) filters.roomType = search.roomType;
-    if (search.priceMin) filters.priceMin = search.priceMin;
-    if (search.priceMax) filters.priceMax = search.priceMax;
-    if (search.hasKitchen) filters.hasKitchen = search.hasKitchen;
-    if (search.hasParking) filters.hasParking = search.hasParking;
-    if (search.hasPrivateShower) filters.hasPrivateShower = search.hasPrivateShower;
-    // Utiliser furnished (boolean) — le backend accepte les deux formats
-    if (search.furnished) filters.furnished = true;
+    if (search.priceRange?.min) filters.priceMin = search.priceRange.min;
+    if (search.priceRange?.max) filters.priceMax = search.priceRange.max;
+    if (features.includes('KITCHEN')) filters.hasKitchen = true;
+    if (features.includes('PARKING')) filters.hasParking = true;
+    if (features.includes('PRIVATE_SHOWER')) filters.hasPrivateShower = true;
+    if (features.includes('FURNISHED')) filters.furnished = true;
     return filters;
   }
 
   /**
-   * Charge les recherches populaires par défaut en cas d'erreur
+   * Recherches populaires indisponibles : section masquée. Des cartes de
+   * secours affichaient des nombres de logements inventés (45, 32, 28).
    */
   private loadDefaultPopularSearches(): void {
-    // Données par défaut avec les principales villes du Cameroun
-    this.popularSearches = [
-      {
-        label: `${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.PROPERTIES')} ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} Douala`,
-        filters: { city: 'douala' },
-        count: 150,
-        searchCount: 150,
-        resultsCount: 45,
-        lastSearchDate: new Date(),
-        cityId: 'douala',
-        cityName: 'Douala'
-      },
-      {
-        label: `${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.STUDIOS')} ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} Yaoundé`,
-        filters: { city: 'yaounde', roomType: 'STUDIO' },
-        count: 120,
-        searchCount: 120,
-        resultsCount: 32,
-        lastSearchDate: new Date(),
-        cityId: 'yaounde',
-        cityName: 'Yaoundé'
-      },
-      {
-        label: `${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.ROOMS')} ${this.translationService.instant('SEARCH_MODULE.POPULAR_SEARCHES.IN')} Bangangté`,
-        filters: { city: 'bangangte', roomType: 'ROOM' },
-        count: 80,
-        searchCount: 80,
-        resultsCount: 28,
-        lastSearchDate: new Date(),
-        cityId: 'bangangte',
-        cityName: 'Bangangté'
-      }
-    ];
+    this.popularSearches = [];
   }
 
   private updateCitySuggestions(cities: CityModel[]): void {
@@ -650,6 +621,7 @@ export class SearchPageComponent implements OnInit, OnDestroy {
       hasKitchen: filters.hasKitchen || false,
       hasParking: filters.hasParking || false,
       hasPrivateShower: filters.hasPrivateShower || false,
+      furnished: filters.furnished || false,
       sortBy: 'createdAt',
       sortOrder: 'desc'
     };
