@@ -3,3 +3,42 @@
     background-color: #fafafa;
 }
 
+/* Total de la période et reste dû, alignés à droite. */
+.invoice-amounts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px 32px;
+    margin: 0;
+    text-align: right;
+}
+.invoice-amounts dt { margin-bottom: 4px; }
+.invoice-amounts dd { margin: 0; }
+.invoice-amounts__due { color: #b91c1c; }
+
+/* « Régler la facture » : icône à gauche du libellé (elle était positionnée
+   en absolu et chevauchait le texte), cible de 48 px, texte foncé sur or
+   (contraste ≈ 5:1, le blanc sur or n'atteignait pas 4,5:1). */
+.pay-invoice-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: 8px;
+    background: rgb(204, 140, 10);
+    color: #111111;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background-color .15s ease;
+}
+.pay-invoice-btn:hover:not(:disabled) { background: rgb(224, 160, 20); }
+.pay-invoice-btn:focus-visible { outline: 3px solid #111111; outline-offset: 2px; }
+.pay-invoice-btn:disabled { background: #e0e0e0; color: #525252; cursor: not-allowed; }
+.pay-invoice-btn youpez-ibm-icon { display: inline-flex; flex-shrink: 0; }
+@media (max-width: 480px) {
+    .pay-invoice-btn { width: 100%; justify-content: center; }
+}

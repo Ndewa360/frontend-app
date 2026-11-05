@@ -2,9 +2,22 @@
 .app-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+// Conteneur principal sous les bandeaux (e-mail à confirmer, compte suspendu).
+// Son contenu est positionné en absolu depuis le haut de ce conteneur : sans
+// cette règle, il partait du haut de la page et passait sous ou sur les
+// bandeaux, masquant les boutons du haut des pages (Galerie média, Modifier,
+// Déposer, Retirer…). Les bandeaux réservent ainsi leur hauteur.
+:host ::ng-deep .app-layout > youpez-sidenav-container {
+  display: block;
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 // Header fixe en haut — ne scroll pas avec la page

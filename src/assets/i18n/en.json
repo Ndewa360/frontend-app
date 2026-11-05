@@ -1671,7 +1671,7 @@
     "NO_SUBSCRIPTION_MESSAGE": "No subscription is active on your account. See our pricing: the plan applies automatically based on your properties and your rent.",
     "SUBSCRIBE_TO_PREMIUM": "See pricing",
     "UNPAID_INVOICES": "Unpaid invoices",
-    "UNPAID_INVOICES_MESSAGE": "You have {{count}} unpaid invoice(s) for a total amount of {{amount}}",
+    "UNPAID_INVOICES_MESSAGE": "Overdue unpaid invoices: {{count}}. Amount due: {{amount}}.",
     "VIEW_DETAILS": "See details",
     "SUBSCRIPTION_HISTORY": "Subscription history",
     "LOADING_HISTORY": "Loading...",
@@ -1682,10 +1682,15 @@
     "NO_HISTORY": "No history",
     "NO_HISTORY_MESSAGE": "Your subscription history will appear here.",
     "ACCOUNT_SUSPENDED_TITLE": "Account suspended — Restricted access",
-    "ACCOUNT_SUSPENDED_DETAIL": "You have {{count}} unpaid invoice(s) totalling {{amount}}. Settle your outstanding balance to restore full access.",
+    "ACCOUNT_SUSPENDED_DETAIL": "Overdue unpaid invoices: {{count}}. Amount due: {{amount}}. Pay them to regain full access.",
     "DEPOSIT_WALLET": "Top up my wallet",
     "REACTIVATE_ACCOUNT": "Reactivate my account",
-    "ACCOUNT_SUSPENDED_MESSAGE": "Your account is suspended for non-payment. It remains available in read-only mode; pay your invoices to add, edit or delete again."
+    "ACCOUNT_SUSPENDED_MESSAGE": "Your account is suspended for non-payment. It remains available in read-only mode; pay your invoices to add, edit or delete again.",
+    "AUTO_REACTIVATION": "Your account is reactivated automatically as soon as every overdue invoice is paid.",
+    "PAY_UNPAID": "Pay my invoices ({{amount}})",
+    "PERIOD_TOTAL": "Period total",
+    "PERIOD_REMAINING_DUE": "Amount due for this period",
+    "PERIOD_NOT_YET_DUE": "Not due yet: pay before {{date}}."
   },
   "ROOM_TYPES": {
     "ROOM": "Bedroom",
@@ -2863,7 +2868,9 @@
       "SUBMIT": "Send request",
       "SUBMITTING": "Sending...",
       "SUCCESS_TITLE": "Request sent!",
-      "SUCCESS_MSG": "Our team will contact you within 24h."
+      "SUCCESS_MSG": "Our team will contact you within 24h.",
+      "ERROR_TITLE": "Your request could not be sent",
+      "ERROR_MSG": "Check your connection and try again, or message us on WhatsApp at {{phone}}."
     },
     "MANAGE_SECTION": {
       "TITLE": "Manage your properties with ease",
@@ -2883,6 +2890,75 @@
     "TABS": {
       "RENT": "Rent",
       "MANAGE": "Manage"
+    },
+    "ABOUT": {
+      "HERO": {
+        "EYEBROW": "About Ndewa360",
+        "TITLE": "Property management, simple and transparent",
+        "LEAD": "Ndewa360 is a Cameroonian platform for rental management and home search. It helps owners, their managers and real estate agents keep track of their properties, tenants and rent, and lets people find a verified home, 360° tour included.",
+        "CTA_START": "Start for free",
+        "CTA_SEARCH": "Find a home"
+      },
+      "MISSION": {
+        "EYEBROW": "Our mission",
+        "TITLE": "Bringing clarity back to renting",
+        "P1": "Simplify and digitise rental management: know at any time who has paid, who is late, and what your caretaker or relative collects for you.",
+        "P2": "Ndewa360 brings properties, units, leases, payments, receipts and contracts together in one place. Rent can be paid by Mobile Money through the tenant’s payment link, and every payment leaves a reliable record."
+      },
+      "OFFER": {
+        "EYEBROW": "Who it is for",
+        "TITLE": "One platform, three uses",
+        "OWNERS": {
+          "TITLE": "Owners",
+          "TEXT": "Rent tracking, receipts, contracts, wallet and monthly reports. Free for 1 property and up to 4 occupied units, then a fixed-price Pro plan from 3,000 FCFA per month."
+        },
+        "AGENTS": {
+          "TITLE": "Real estate agents",
+          "TEXT": "A verified agency profile and professional tools to manage your clients’ mandates, with the same pricing as owners."
+        },
+        "SEEKERS": {
+          "TITLE": "Home seekers",
+          "TEXT": "Free search among available homes, with photos and 360° tours. Owners’ contact details are available for 1,000 FCFA for 24 hours."
+        }
+      },
+      "VALUES": {
+        "EYEBROW": "Our commitments",
+        "TITLE": "What guides our work",
+        "TRANSPARENCY": {
+          "TITLE": "Transparency",
+          "TEXT": "Fixed, published prices with no hidden fees. Only occupied units are billed."
+        },
+        "SIMPLICITY": {
+          "TITLE": "Simplicity",
+          "TEXT": "An app that works on phone, tablet or computer, with nothing to install."
+        },
+        "PRIVACY": {
+          "TITLE": "Privacy",
+          "TEXT": "Your data is never sold; you can export it or ask for its deletion at any time."
+        },
+        "PROXIMITY": {
+          "TITLE": "Proximity",
+          "TEXT": "A team based in Cameroon, reachable by WhatsApp and email, who know the local context."
+        }
+      },
+      "COMPANY": {
+        "EYEBROW": "The company",
+        "TITLE": "Who we are",
+        "NAME_LABEL": "Company name",
+        "NAME": "Ndewa360 SARL (being incorporated)",
+        "HQ_LABEL": "Head office",
+        "HQ": "Tchougo, Bangangté, West Region, Cameroon",
+        "WEBSITE_LABEL": "Website",
+        "LEGAL": "Legal notice",
+        "TEAM": "Meet the team"
+      },
+      "CONTACT": {
+        "TITLE": "Contact us",
+        "WHATSAPP": "WhatsApp",
+        "SUPPORT": "User support",
+        "BUSINESS": "Partnerships and Gold plan",
+        "FORM": "Write to us via the contact form"
+      }
     }
   },
   "SEARCH_MODULE": {
@@ -4946,7 +5022,10 @@
         "FREE": "Free"
       },
       "PERIOD_UNDEFINED": "Period undefined",
-      "DAYS_SUFFIX": "days"
+      "DAYS_SUFFIX": "days",
+      "PERIOD_TOTAL": "Period total",
+      "REMAINING_DUE": "Amount due",
+      "PAY_INVOICE_AMOUNT": "Pay the invoice ({{amount}})"
     }
   },
   "TENANT_DETAILS": {
@@ -5804,7 +5883,7 @@
   },
   "SUSPENDED_BANNER": {
     "MESSAGE": "Your account is suspended for non-payment and is read-only. You can view your properties and download your documents, but not add, edit or delete.",
-    "UNPAID": "{{count}} unpaid invoice(s): {{amount}} FCFA to pay.",
+    "UNPAID": "Overdue unpaid invoices: {{count}}. Amount due: {{amount}} FCFA.",
     "ACTION": "Pay my invoices"
   },
   "NOTIFICATION_DETAIL": {
@@ -5894,6 +5973,16 @@
     "WITHDRAWAL": {
       "TITLE": "Delete this withdrawal",
       "LEAD": "The entry will be permanently removed from your history."
+    }
+  },
+  "WALLET": {
+    "LOADING": "Loading your wallet…",
+    "LOAD_ERROR": {
+      "TITLE": "Your wallet could not be loaded",
+      "TIMEOUT": "The server is taking too long to respond. Please try again in a moment.",
+      "NETWORK": "Unable to connect. Check your Internet connection and try again.",
+      "GENERIC": "Something went wrong while loading. Please try again in a moment.",
+      "RETRY": "Try again"
     }
   }
 }

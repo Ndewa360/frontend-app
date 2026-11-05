@@ -1,484 +1,240 @@
-// About Hero Section
-.about-hero {
-  .hero-badge {
-    .badge-text {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      backdrop-filter: blur(10px);
-    }
-  }
-  
-  .about-title {
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 24px;
-  }
-  
-  .about-subtitle {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    opacity: 0.9;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .about-metrics {
-    .metric-item {
-      text-align: center;
-      
-      .metric-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #fbbf24;
-        display: block;
-      }
-      
-      .metric-label {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 0.9rem;
-        margin-top: 8px;
-      }
-    }
-  }
+// Page « À propos » — charte du logo Ndewa360 : or, noir, blanc cassé.
+:host {
+  --ab-gold: rgb(204, 140, 10);
+  --ab-gold-light: #e9b949;
+  --ab-gold-dark: #8a5f05;
+  --ab-ink: #121212;
+  --ab-ink-2: #1e1e1e;
+  --ab-paper: #faf7f0;
+  --ab-muted: #4f4f4f;
+  --ab-line: #e9e2d2;
+  display: block;
+  background: var(--ab-paper);
+  color: var(--ab-ink);
 }
 
-// Mission & Vision Section
-.mission-vision {
-  .section-icon {
-    .icon-wrapper {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      &.mission-icon {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-      }
-      
-      &.vision-icon {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-      }
-    }
-  }
-  
-  .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 24px;
-  }
-  
-  .section-description {
-    font-size: 1.1rem;
-    color: #6b7280;
-    line-height: 1.7;
-  }
-  
-  .mission-points {
-    .point-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #374151;
-      
-      .point-icon {
-        color: #10b981;
-      }
-    }
-  }
-  
-  .vision-goals {
-    .goal-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      
-      .goal-number {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #f59e0b;
-        min-width: 80px;
-      }
-      
-      .goal-text {
-        color: #374151;
-        font-weight: 500;
-      }
-    }
-  }
+.ab-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-// Story Timeline
-.our-story {
-  .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1f2937;
-  }
-  
-  .section-subtitle {
-    font-size: 1.1rem;
-    color: #6b7280;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .story-timeline {
-    max-width: 800px;
-    margin: 0 auto;
-    
-    .timeline-container {
-      position: relative;
-      
-      &::before {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: linear-gradient(to bottom, #667eea, #764ba2);
-        transform: translateX(-50%);
-      }
-      
-      .timeline-item {
-        position: relative;
-        margin-bottom: 48px;
-        
-        &:nth-child(odd) {
-          .timeline-content {
-            margin-right: 50%;
-            padding-right: 40px;
-            text-align: right;
-          }
-        }
-        
-        &:nth-child(even) {
-          .timeline-content {
-            margin-left: 50%;
-            padding-left: 40px;
-            text-align: left;
-          }
-        }
-        
-        .timeline-marker {
-          position: absolute;
-          left: 50%;
-          top: 0;
-          transform: translateX(-50%);
-          z-index: 2;
-          
-          .marker-dot {
-            width: 20px;
-            height: 20px;
-            background: #667eea;
-            border-radius: 50%;
-            border: 4px solid white;
-            box-shadow: 0 0 0 4px #667eea;
-            
-            &.future {
-              background: #f59e0b;
-              box-shadow: 0 0 0 4px #f59e0b;
-            }
-          }
-        }
-        
-        .timeline-content {
-          background: white;
-          padding: 24px;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e5e7eb;
-          
-          .timeline-date {
-            font-size: 0.9rem;
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 8px;
-          }
-          
-          .timeline-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 12px;
-          }
-          
-          .timeline-description {
-            color: #6b7280;
-            line-height: 1.6;
-          }
-        }
-      }
-    }
-  }
+.ab-eyebrow {
+  margin: 0 0 10px;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ab-gold-light);
+
+  &--dark { color: var(--ab-gold-dark); }
 }
 
-// Values Section
-.our-values {
-  .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1f2937;
-  }
-  
-  .section-subtitle {
-    font-size: 1.1rem;
-    color: #6b7280;
-  }
-  
-  .value-card {
-    text-align: center;
-    padding: 32px 24px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e5e7eb;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    
-    &:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
-    }
-    
-    .value-icon-container {
-      .value-icon {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-        color: white;
-        
-        &.innovation {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        &.transparency {
-          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-        
-        &.accessibility {
-          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-        
-        &.excellence {
-          background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-        }
-      }
-    }
-    
-    .value-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #1f2937;
-    }
-    
-    .value-description {
-      color: #6b7280;
-      line-height: 1.6;
-    }
-  }
+.ab-h2 {
+  margin: 0 0 28px;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  line-height: 1.2;
+  font-weight: 800;
+
+  &--light { color: #fff; }
 }
 
-// Tech Stack Section
-.tech-stack {
-  .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-  }
-  
-  .section-subtitle {
-    font-size: 1.1rem;
-  }
-  
-  .tech-category {
-    text-align: center;
-    
-    .tech-category-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #fbbf24;
-    }
-    
-    .tech-items {
-      .tech-item {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        margin-bottom: 16px;
-        padding: 12px 20px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        backdrop-filter: blur(10px);
-        
-        .tech-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 700;
-          color: white;
-          
-          &.angular { background: #dd0031; }
-          &.typescript { background: #3178c6; }
-          &.carbon { background: #161616; }
-          &.spring { background: #6db33f; }
-          &.postgres { background: #336791; }
-          &.redis { background: #dc382d; }
-          &.ai { background: linear-gradient(45deg, #667eea, #764ba2); }
-          &.vr { background: linear-gradient(45deg, #f093fb, #f5576c); }
-          &.mobile { background: linear-gradient(45deg, #4facfe, #00f2fe); }
-        }
-        
-        span {
-          color: white;
-          font-weight: 500;
-        }
-      }
-    }
-  }
+// ── Boutons ─────────────────────────────────────────────────────────────────
+.ab-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
 }
 
-// Join CTA Section
-.join-cta {
-  .cta-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 24px;
-  }
-  
-  .cta-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    max-width: 700px;
-    margin: 0 auto 32px;
-    line-height: 1.6;
-  }
-  
-  .cta-actions {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
+.ab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color .15s ease, color .15s ease;
+
+  &:focus-visible { outline: 3px solid var(--ab-gold-light); outline-offset: 3px; }
+
+  // Texte noir sur or : contraste ≈ 5:1.
+  &--gold { background: var(--ab-gold); color: var(--ab-ink); }
+  &--gold:hover { background: var(--ab-gold-light); }
+
+  &--ghost { border: 2px solid rgba(255, 255, 255, .7); color: #fff; }
+  &--ghost:hover { background: rgba(255, 255, 255, .1); }
 }
 
-// Responsive Design - Style Ndewa360
-@media (max-width: 1300px) {
-  .about-hero,
-  .mission-vision,
-  .our-story,
-  .our-values,
-  .tech-stack,
-  .join-cta {
-    margin-bottom: 45px;
-  }
+// ── En-tête ─────────────────────────────────────────────────────────────────
+.ab-hero {
+  background:
+    radial-gradient(circle at 80% 0%, rgba(204, 140, 10, .22), transparent 45%),
+    linear-gradient(160deg, var(--ab-ink) 0%, var(--ab-ink-2) 100%);
+  color: #fff;
+  padding: 80px 0 72px;
+  text-align: center;
 }
 
-@media (max-width: 768px) {
-  .about-title {
-    font-size: 50px !important;
-  }
-  
-  .about-subtitle {
-    font-size: 24px !important;
-  }
-  
-  .section-title {
-    font-size: 28px !important;
-  }
-  
-  .section-description,
-  .section-subtitle {
-    font-size: 18px !important;
-  }
-  
-  .story-timeline {
-    .timeline-container {
-      &::before {
-        left: 20px;
-      }
-      
-      .timeline-item {
-        &:nth-child(odd),
-        &:nth-child(even) {
-          .timeline-content {
-            margin-left: 60px;
-            margin-right: 0;
-            padding-left: 20px;
-            padding-right: 20px;
-            text-align: left;
-          }
-        }
-        
-        .timeline-marker {
-          left: 20px;
-        }
-      }
-    }
-  }
-  
-  .cta-title {
-    font-size: 28px !important;
-  }
-  
-  .cta-actions {
-    flex-direction: column;
-    align-items: center;
-    
-    .cta-careers,
-    .cta-contact {
-      width: 100%;
-      max-width: 300px;
-      justify-content: center;
-    }
-  }
-  
-  .hero-badge,
-  .section-badge {
-    text-align: center;
-  }
+.ab-hero__inner { max-width: 820px; }
+
+.ab-hero__logo {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  padding: 10px;
+  border-radius: 24px;
+  background: var(--ab-paper);
+  object-fit: contain;
 }
 
-@media (max-width: 600px) {
-  .about-hero {
-    padding: 40px 10px;
-  }
-  
-  .about-title {
-    font-size: 40px !important;
-  }
-  
-  .about-subtitle {
-    font-size: 20px !important;
-  }
-  
-  .section-title {
-    font-size: 24px !important;
-  }
-  
-  .mission-vision,
-  .our-values,
-  .tech-stack,
-  .join-cta {
-    padding: 30px 10px;
-  }
-  
-  .our-story {
-    padding: 30px 10px;
-  }
+.ab-hero__title {
+  margin: 0 0 18px;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.12;
+  font-weight: 800;
+  color: #fff;
+}
+
+.ab-hero__lead {
+  margin: 0 auto;
+  max-width: 680px;
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: #e6e1d6;
+}
+
+// ── Sections ────────────────────────────────────────────────────────────────
+.ab-section {
+  padding: 72px 0;
+
+  &--paper { background: #fff; border-top: 1px solid var(--ab-line); border-bottom: 1px solid var(--ab-line); }
+  &--dark { background: var(--ab-ink); color: #fff; }
+}
+
+.ab-mission {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 40px;
+  align-items: start;
+
+  .ab-h2 { margin-bottom: 0; }
+}
+
+.ab-mission__text p {
+  margin: 0 0 16px;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ab-muted);
+
+  &:first-child { border-left: 4px solid var(--ab-gold); padding-left: 16px; color: var(--ab-ink); font-weight: 600; }
+}
+
+.ab-grid {
+  display: grid;
+  gap: 20px;
+
+  &--3 { grid-template-columns: repeat(3, 1fr); }
+  &--4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+.ab-card {
+  padding: 28px 24px;
+  border: 1px solid var(--ab-line);
+  border-radius: 14px;
+  background: var(--ab-paper);
+}
+
+.ab-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  background: var(--ab-ink);
+  color: var(--ab-gold);
+  font-size: 1.3rem;
+}
+
+.ab-card__title { margin: 0 0 10px; font-size: 1.2rem; font-weight: 800; }
+.ab-card__text { margin: 0; line-height: 1.65; color: var(--ab-muted); }
+
+.ab-value {
+  padding: 24px 20px;
+  border-top: 3px solid var(--ab-gold);
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+
+  i { font-size: 1.4rem; color: var(--ab-gold-dark); }
+  h3 { margin: 14px 0 8px; font-size: 1.05rem; font-weight: 800; }
+  p { margin: 0; line-height: 1.6; color: var(--ab-muted); }
+}
+
+// ── Société et contacts ─────────────────────────────────────────────────────
+.ab-contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.ab-facts {
+  margin: 0;
+
+  div { padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, .12); }
+  dt { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ab-gold-light); }
+  dd { margin: 4px 0 0; font-size: 1.05rem; color: #fff; }
+  a { color: #fff; }
+}
+
+.ab-legal {
+  margin: 20px 0 0;
+  color: #bdb7aa;
+
+  a { color: #e6e1d6; text-decoration: underline; text-underline-offset: 3px; }
+}
+
+.ab-contact__title { margin: 0 0 16px; font-size: 1.2rem; font-weight: 800; color: #fff; }
+
+.ab-contact__list { display: flex; flex-direction: column; gap: 12px; }
+
+.ab-contact__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .04);
+  color: #fff;
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+
+  &:hover { border-color: var(--ab-gold); background: rgba(204, 140, 10, .08); }
+  &:focus-visible { outline: 3px solid var(--ab-gold-light); outline-offset: 2px; }
+
+  i { width: 28px; font-size: 1.4rem; text-align: center; color: var(--ab-gold); }
+  strong { display: block; font-size: .95rem; }
+  span span { color: #e6e1d6; }
+}
+
+.ab-contact__form { align-self: flex-start; margin-top: 8px; }
+
+// ── Petits écrans ───────────────────────────────────────────────────────────
+@media (max-width: 960px) {
+  .ab-grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .ab-grid--3 { grid-template-columns: 1fr; }
+  .ab-mission, .ab-contact { grid-template-columns: 1fr; gap: 24px; }
+}
+
+@media (max-width: 560px) {
+  .ab-wrap { padding: 0 16px; }
+  .ab-hero { padding: 56px 0 48px; }
+  .ab-section { padding: 52px 0; }
+  .ab-grid--4 { grid-template-columns: 1fr; }
+  .ab-actions .ab-btn, .ab-contact__form { width: 100%; }
 }

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { State, Action, StateContext, Selector, NgxsOnInit } from '@ngxs/store';
-import { tap, catchError, switchMap, takeUntil, filter, debounceTime } from 'rxjs/operators';
-import { throwError, interval, Subject, forkJoin, merge, Subscription } from 'rxjs';
+import { tap, catchError, switchMap, takeUntil, filter, debounceTime, timeout } from 'rxjs/operators';
+import { throwError, interval, Subject, forkJoin, merge, Subscription, Observable, of } from 'rxjs';
 import { RealtimeEvent, RealtimeService } from '../../../core/realtime';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,6 +11,14 @@ import { WalletHttpService } from './wallet.service';
 
 const POLLING_INTERVAL_MS = 5000;  // 5 secondes
 const MAX_POLLING_ATTEMPTS = 72;   // 6 minutes max (72 × 5s) — EasyTransact peut prendre plusieurs minutes
+const LOAD_TIMEOUT_MS = 20_000;    // au-delà, le chargement est considéré en échec
+
+/** Message affiché quand le solde n'a pas pu être chargé. */
+function walletLoadError(err: any): string {
+  if (err?.name === 'TimeoutError') return 'WALLET.LOAD_ERROR.TIMEOUT';
+  if (err?.status === 0) return 'WALLET.LOAD_ERROR.NETWORK';
+  return 'WALLET.LOAD_ERROR.GENERIC';
+}
 
 @State<WalletStateModel>({
   name: 'wallet',
@@ -104,31 +112,42 @@ export class WalletState implements OnDestroy, NgxsOnInit {
       .slice(0, 5);
   }
 
+  /**
+   * Chargement du portefeuille. Chaque requête est indépendante et bornée
+   * dans le temps : le solde s'affiche dès qu'il arrive, et une liste en
+   * échec n'empêche plus l'affichage du reste. Auparavant, une seule requête
+   * en échec ou sans réponse laissait l'écran « Chargement de votre
+   * portefeuille… » sans fin ni message.
+   */
   @Action(WalletAction.LoadAll)
   loadAll(ctx: StateContext<WalletStateModel>, { rentPage, depositPage, withdrawalPage, pageSize }: WalletAction.LoadAll) {
     ctx.patchState({ loading: true, error: null });
-    return forkJoin([
-      this.walletService.getSummary(),
-      this.walletService.getRentPayments(rentPage, pageSize),
-      this.walletService.getDeposits(depositPage, pageSize),
-      this.walletService.getWithdrawals(withdrawalPage, pageSize),
-    ]).pipe(
-      tap(([summaryRes, rentRes, depositsRes, withdrawalsRes]) => {
-        ctx.patchState({
-          summary:           summaryRes.data,
-          rentPayments:      rentRes.data.payments,
-          totalRentPayments: rentRes.data.total,
-          deposits:          depositsRes.data.deposits,
-          totalDeposits:     depositsRes.data.total,
-          withdrawals:       withdrawalsRes.data.withdrawals,
-          totalWithdrawals:  withdrawalsRes.data.total,
-          loading:           false,
-        });
-      }),
+    const bounded = <T>(request: Observable<T>) => request.pipe(timeout(LOAD_TIMEOUT_MS));
+
+    const summary$ = bounded(this.walletService.getSummary()).pipe(
+      tap(res => ctx.patchState({ summary: res.data, loading: false })),
       catchError(err => {
-        ctx.patchState({ loading: false, error: err.message });
-        return throwError(err);
+        // Sans solde, rien d'utile à afficher : message d'erreur et « Réessayer ».
+        ctx.patchState({ loading: false, error: walletLoadError(err) });
+        return of(null);
       }),
+    );
+    // Une liste en échec reste vide sans bloquer le reste du portefeuille.
+    const optional = <T>(list$: Observable<T>) => list$.pipe(catchError(() => of(null)));
+    const lists$ = [
+      optional(bounded(this.walletService.getRentPayments(rentPage, pageSize)).pipe(
+        tap(res => ctx.patchState({ rentPayments: res.data.payments, totalRentPayments: res.data.total })),
+      )),
+      optional(bounded(this.walletService.getDeposits(depositPage, pageSize)).pipe(
+        tap(res => ctx.patchState({ deposits: res.data.deposits, totalDeposits: res.data.total })),
+      )),
+      optional(bounded(this.walletService.getWithdrawals(withdrawalPage, pageSize)).pipe(
+        tap(res => ctx.patchState({ withdrawals: res.data.withdrawals, totalWithdrawals: res.data.total })),
+      )),
+    ];
+
+    return forkJoin([summary$, ...lists$]).pipe(
+      tap(() => ctx.patchState({ loading: false })),
     );
   }
 

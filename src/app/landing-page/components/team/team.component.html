@@ -18,7 +18,15 @@
       <!-- Member Photo -->
       <div class="member-photo-container text-center mb-4">
         <div class="member-photo-wrapper">
-          <img loading="lazy" [src]="member.image" [alt]="member.name" class="member-photo">
+          <img *ngIf="!failedPhotos.has(member.id); else initialsAvatar"
+               loading="lazy" [src]="member.image" [alt]="member.name" class="member-photo"
+               (error)="failedPhotos.add(member.id)">
+          <!-- Photo absente ou illisible : initiales plutôt qu'un cercle vide. -->
+          <ng-template #initialsAvatar>
+            <div class="member-photo member-initials" role="img" [attr.aria-label]="member.name">
+              {{ initials(member.name) }}
+            </div>
+          </ng-template>
           <div class="photo-overlay">
             <div class="social-links">
               <a *ngIf="member.socialLinks.linkedin" 

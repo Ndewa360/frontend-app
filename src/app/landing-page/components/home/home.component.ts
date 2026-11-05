@@ -39,9 +39,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('modalVideo') modalVideo!: ElementRef<HTMLVideoElement>;
 
   isVideoModalOpen    = false;
-  isAgentDemoModalOpen = false;
   isDemoSubmitting    = false;
   demoSubmitted       = false;
+  demoError           = false;
 
   activeProfile: 'owner' | 'agent' | 'seeker' | null = null;
 
@@ -207,7 +207,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       if (this.isVideoModalOpen) this.closeVideoModal();
-      if (this.isAgentDemoModalOpen) this.closeAgentDemoModal();
     }
   }
 
@@ -244,22 +243,41 @@ export class HomeComponent implements OnInit, OnDestroy {
     document.body.style.overflow = '';
   }
 
-  // ── Modale démo agent ─────────────────────────────────────────────────────
+  // ── Démo agent ────────────────────────────────────────────────────────────
 
-  openAgentDemoModal() {
-    this.isAgentDemoModalOpen = true;
+  /**
+   * « Demander une démo personnalisée » : défilement jusqu'au formulaire de la
+   * page (il ouvrait une modale, et l'utilisateur devait remonter lui-même),
+   * puis focus sur le premier champ. La page défile dans le conteneur
+   * ngx-scrollbar, sous l'en-tête fixe : le décalage en tient compte.
+   */
+  scrollToAgentDemoForm(): void {
+    const form = document.getElementById('agent-demo-form');
+    if (!form) return;
     this.demoSubmitted = false;
-    document.body.style.overflow = 'hidden';
-  }
-
-  closeAgentDemoModal() {
-    this.isAgentDemoModalOpen = false;
-    document.body.style.overflow = '';
+    this.demoError = false;
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const behavior: ScrollBehavior = reduceMotion ? 'auto' : 'smooth';
+    const margin = 24;
+    const viewport = form.closest<HTMLElement>('.ng-scroll-viewport');
+    if (viewport) {
+      const top = form.getBoundingClientRect().top - viewport.getBoundingClientRect().top + viewport.scrollTop - margin;
+      viewport.scrollTo({ top, behavior });
+    } else {
+      const header = document.querySelector<HTMLElement>('app-landing-header > *');
+      const offset = (header?.getBoundingClientRect().bottom ?? 0) + margin;
+      window.scrollTo({ top: form.getBoundingClientRect().top + window.scrollY - offset, behavior });
+    }
+    // Le formulaire apparaît en fondu au défilement : on l'affiche tout de suite.
+    form.classList.add('animate');
+    setTimeout(() => document.getElementById('agent-demo-name')?.focus({ preventScroll: true }), reduceMotion ? 0 : 600);
   }
 
   submitAgentDemoRequest() {
     if (!this.agentDemoForm.name || !this.agentDemoForm.email || !this.agentDemoForm.phone) return;
     this.isDemoSubmitting = true;
+    this.demoSubmitted = false;
+    this.demoError = false;
     this.http.post(`${environment.apiUrl}/prospection/new-contact`, {
       name: this.agentDemoForm.name,
       email: this.agentDemoForm.email,
@@ -268,7 +286,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       message: `Portefeuille : ${this.agentDemoForm.portfolio || 'non renseigné'}\nAgence : ${this.agentDemoForm.agency || 'non renseignée'}\nTéléphone : ${this.agentDemoForm.phone}`
     }).subscribe({
       next: () => this.onDemoSuccess(),
-      error: () => this.onDemoSuccess()
+      // Un échec affichait « Demande envoyée ! » : la demande était perdue.
+      error: () => {
+        this.isDemoSubmitting = false;
+        this.demoError = true;
+      }
     });
   }
 

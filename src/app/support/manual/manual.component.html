@@ -1,52 +1,90 @@
-<div fxFill fxLayout="row wrap" fxLayoutAlign="center start">
-  <div fxFlex="100%" fxFlex.gt-md="80%" fxFlexOffset.gt-md="20%" fxFlex.gt-lg="70%" fxFlexOffset.gt-lg="30%"
-       class="app-bg-container relative h-full">
-    <div class="app-docs-list-holder absolute top-0 bottom-0 z-10" style=""
-         [class.app-bg-container]="ltLg"
-         [class.app-docs-list-holder--opened]="ltLg && opened"
-         [class.app-border-r]="ltLg && opened">
-      <div class="app-a-box app-scrollbar-fix">
-        <ng-scrollbar>
-          <div class="app-nav-list app-content app-content--default">
-            <div class="flex justify-between items-center mb-4">
-              <div>
-                <youpez-logo class="cursor-pointer" logoWidth="120px"></youpez-logo>
-              </div>
-              <button ibmButton="ghost" size="sm" class="cds--btn--icon-only" (click)="onToggle()" fxHide fxShow.lt-lg>
-                <svg class="cds--btn__icon" ibmIconClose size="32"></svg>
-              </button>
-            </div>
-            <ng-container *ngFor="let section of sections;">
-              <div class="app-nav-list__item">
-                <div class="app-nav-list__item__group">{{section.name}}</div>
-                <div class="app-nav-list__children">
-                  <ng-container *ngFor="let section of section.children">
-                    <div class="app-nav-list__item__text"
-                         [ngClass]="{'app-nav-list__item__text--selected':section.selected}">{{section.name}}</div>
-                  </ng-container>
-                </div>
-              </div>
-            </ng-container>
-          </div>
-        </ng-scrollbar>
-      </div>
+<div class="manual app-a-box">
+  <!-- Sommaire -->
+  <nav class="manual__nav" [class.manual__nav--open]="menuOpen" [attr.aria-label]="ui.menu">
+    <div class="manual__nav-head">
+      <span class="manual__nav-title">{{ ui.menu }}</span>
+      <button type="button" class="manual__icon-btn manual__nav-close" (click)="menuOpen = false" [attr.aria-label]="ui.closeMenu">
+        <i class="fas fa-times" aria-hidden="true"></i>
+      </button>
     </div>
-    <div class="app-a-box app-scrollbar-fix">
-      <ng-scrollbar>
-        <div fxLayout="row" fxLayoutAlign="start start">
-          <div fxFlex="90%" fxFlex.gt-md="80%" fxFlex.gt-lg="70%" class="app-content app-content--default">
-            <button (click)="onToggle()" ibmButton="ghost"
-                    fxHide fxShow.lt-lg
-                    size="sm" class="cds--btn__icon--left -ml-2">
-              <svg class="cds--btn__icon" ibmIconArrowLeft size="20"></svg>
-              Show menu
-            </button>
-            <!-- <markdown  class="app-markdown ">
-              {{mdContent}}
-            </markdown > -->
-          </div>
+    <ng-scrollbar class="manual__nav-scroll">
+      <div *ngFor="let section of sections" class="manual__group">
+        <div class="manual__group-title">
+          <i class="fas {{ section.icon }}" aria-hidden="true"></i>
+          {{ section.title }}
         </div>
-      </ng-scrollbar>
-    </div>
-  </div>
+        <button *ngFor="let item of section.articles"
+                type="button"
+                class="manual__item"
+                [class.manual__item--active]="item.id === article.id"
+                [attr.aria-current]="item.id === article.id ? 'page' : null"
+                (click)="open(item)">
+          {{ item.title }}
+        </button>
+      </div>
+    </ng-scrollbar>
+  </nav>
+  <div class="manual__backdrop" *ngIf="menuOpen" (click)="menuOpen = false"></div>
+
+  <!-- Article -->
+  <section class="manual__content">
+    <ng-scrollbar>
+      <article class="manual__article">
+        <button type="button" class="manual__menu-btn" (click)="menuOpen = true">
+          <i class="fas fa-list" aria-hidden="true"></i> {{ ui.menu }}
+        </button>
+
+        <header class="manual__header">
+          <p class="manual__eyebrow">{{ ui.title }} · {{ sectionOf(article)?.title }}</p>
+          <h1 class="manual__title">{{ article.title }}</h1>
+          <p class="manual__summary">{{ article.summary }}</p>
+        </header>
+
+        <ng-container *ngFor="let block of article.blocks">
+          <ng-container [ngSwitch]="block.type">
+            <p *ngSwitchCase="'p'" class="manual__p">{{ $any(block).text }}</p>
+
+            <div *ngSwitchCase="'steps'" class="manual__steps">
+              <h2 class="manual__h2">{{ ui.steps }}</h2>
+              <ol>
+                <li *ngFor="let step of $any(block).items">{{ step }}</li>
+              </ol>
+            </div>
+
+            <ul *ngSwitchCase="'list'" class="manual__list">
+              <li *ngFor="let item of $any(block).items">{{ item }}</li>
+            </ul>
+
+            <aside *ngSwitchCase="'note'" class="manual__note">
+              <i class="fas fa-lightbulb" aria-hidden="true"></i>
+              <div><strong>{{ ui.good }}</strong> {{ $any(block).text }}</div>
+            </aside>
+          </ng-container>
+        </ng-container>
+
+        <div *ngIf="article.links?.length" class="manual__links">
+          <a *ngFor="let link of article.links" class="manual__link" [routerLink]="linkTo(link.path)">
+            {{ link.label }} <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+
+        <footer class="manual__pager">
+          <button *ngIf="previous as prev" type="button" class="manual__pager-btn" (click)="open(prev)">
+            <span class="manual__pager-label"><i class="fas fa-arrow-left" aria-hidden="true"></i> {{ ui.previous }}</span>
+            <span class="manual__pager-title">{{ prev.title }}</span>
+          </button>
+          <button *ngIf="next as nxt" type="button" class="manual__pager-btn manual__pager-btn--next" (click)="open(nxt)">
+            <span class="manual__pager-label">{{ ui.next }} <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+            <span class="manual__pager-title">{{ nxt.title }}</span>
+          </button>
+        </footer>
+
+        <div class="manual__help">
+          <span>{{ ui.stillStuck }}</span>
+          <a [routerLink]="linkTo(['support', 'faq'])">{{ ui.faq }}</a>
+          <a [routerLink]="linkTo(['support', 'support'])" class="manual__help-primary">{{ ui.contactSupport }}</a>
+        </div>
+      </article>
+    </ng-scrollbar>
+  </section>
 </div>

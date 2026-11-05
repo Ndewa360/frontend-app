@@ -659,7 +659,7 @@
           </div>
 
           <!-- Colonne droite : formulaire -->
-          <div class="agent-demo-form-card scroll-animate-right">
+          <div id="agent-demo-form" class="agent-demo-form-card scroll-animate-right">
             <div class="agent-demo-form-header">
               <div class="agent-demo-form-icon"><i class="fas fa-calendar-check"></i></div>
               <h3>{{ t('LANDING.AGENT_DEMO.FORM_TITLE') }}</h3>
@@ -668,7 +668,7 @@
             <form (ngSubmit)="submitAgentDemoRequest()" class="demo-form">
               <div class="form-row">
                 <label>{{ t('LANDING.AGENT_DEMO.FIELD_NAME') }} *</label>
-                <input type="text" [(ngModel)]="agentDemoForm.name" name="agentNameInline"
+                <input id="agent-demo-name" type="text" [(ngModel)]="agentDemoForm.name" name="agentNameInline"
                        required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_NAME_PLACEHOLDER')" class="form-input">
               </div>
               <div class="form-row">
@@ -705,10 +705,15 @@
                 </svg>
                 {{ isDemoSubmitting ? t('LANDING.AGENT_DEMO.SUBMITTING') : t('LANDING.AGENT_DEMO.SUBMIT') }}
               </button>
-              <div *ngIf="demoSubmitted" class="demo-success">
+              <div *ngIf="demoSubmitted" class="demo-success" role="status">
                 <i class="fas fa-check-circle"></i>
                 <strong>{{ t('LANDING.AGENT_DEMO.SUCCESS_TITLE') }}</strong>
                 <p>{{ t('LANDING.AGENT_DEMO.SUCCESS_MSG') }}</p>
+              </div>
+              <div *ngIf="demoError" class="demo-error" role="alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <strong>{{ t('LANDING.AGENT_DEMO.ERROR_TITLE') }}</strong>
+                <p>{{ t('LANDING.AGENT_DEMO.ERROR_MSG', { phone: pricingContact.whatsapp }) }}</p>
               </div>
             </form>
           </div>
@@ -766,7 +771,7 @@
           <a [routerLink]="['/' + getCurrentLanguage() + '/onboarding']" [queryParams]="{type:'agent'}" class="cta-btn-main cta-btn--agent">
             <i class="fas fa-id-badge"></i> {{ t('LANDING.CTA.AGENT.BTN_REGISTER') }}
           </a>
-          <button (click)="openAgentDemoModal()" class="cta-btn-outline">
+          <button type="button" (click)="scrollToAgentDemoForm()" class="cta-btn-outline">
             <i class="fas fa-calendar-alt"></i> {{ t('LANDING.CTA.AGENT.BTN_DEMO') }}
           </button>
         </div>
@@ -984,58 +989,6 @@
   </div>
 </section>
 
-
-<!-- MODALE DÉMO AGENT -->
-<div class="modal-overlay" [class.modal-overlay--open]="isAgentDemoModalOpen" (click)="closeAgentDemoModal()">
-  <div class="demo-modal" (click)="$event.stopPropagation()">
-    <button class="demo-modal__close" (click)="closeAgentDemoModal()"><i class="fas fa-times"></i></button>
-    <div class="demo-modal__header">
-      <div class="demo-modal__icon"><i class="fas fa-calendar-alt text-agent"></i></div>
-      <h3>{{ t('LANDING.AGENT_DEMO.SECTION_TITLE') }}</h3>
-      <p>{{ t('LANDING.AGENT_DEMO.MODAL_SUBTITLE') }}</p>
-    </div>
-    <form class="demo-form" (ngSubmit)="submitAgentDemoRequest()">
-      <div class="form-row">
-        <label>{{ t('LANDING.AGENT_DEMO.FIELD_NAME') }} *</label>
-        <input type="text" [(ngModel)]="agentDemoForm.name" name="name" required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_NAME_PLACEHOLDER')" class="form-input">
-      </div>
-      <div class="form-row">
-        <label>{{ t('LANDING.AGENT_DEMO.FIELD_EMAIL') }} *</label>
-        <input type="email" [(ngModel)]="agentDemoForm.email" name="email" required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_EMAIL_PLACEHOLDER')" class="form-input">
-      </div>
-      <div class="form-row">
-        <label>{{ t('LANDING.AGENT_DEMO.FIELD_PHONE') }} *</label>
-        <input type="tel" [(ngModel)]="agentDemoForm.phone" name="phone" required [placeholder]="t('LANDING.AGENT_DEMO.FIELD_PHONE_PLACEHOLDER')" class="form-input">
-      </div>
-      <div class="form-row">
-        <label>{{ t('LANDING.AGENT_DEMO.FIELD_AGENCY') }}</label>
-        <input type="text" [(ngModel)]="agentDemoForm.agency" name="agency" [placeholder]="t('LANDING.AGENT_DEMO.FIELD_AGENCY_PLACEHOLDER')" class="form-input">
-      </div>
-      <div class="form-row">
-        <label>{{ t('LANDING.AGENT_DEMO.FIELD_PORTFOLIO') }}</label>
-        <select [(ngModel)]="agentDemoForm.portfolio" name="portfolio" class="form-input">
-          <option value="">{{ t('LANDING.AGENT_DEMO.FIELD_PORTFOLIO_PLACEHOLDER') }}</option>
-          <option value="1-5">1 – 5 {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
-          <option value="5-20">5 – 20 {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
-          <option value="20+">20+ {{ t('LANDING.AGENT_DEMO.PORTFOLIO_UNIT') }}</option>
-        </select>
-      </div>
-      <button type="submit" [disabled]="isDemoSubmitting" class="demo-submit-btn">
-        <i class="fas fa-paper-plane" *ngIf="!isDemoSubmitting"></i>
-        <svg *ngIf="isDemoSubmitting" class="spin-icon" fill="none" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
-          <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" class="opacity-75"></path>
-        </svg>
-        {{ isDemoSubmitting ? t('LANDING.AGENT_DEMO.SUBMITTING') : t('LANDING.AGENT_DEMO.SUBMIT') }}
-      </button>
-      <div *ngIf="demoSubmitted" class="demo-success">
-        <i class="fas fa-check-circle"></i>
-        <strong>{{ t('LANDING.AGENT_DEMO.SUCCESS_TITLE') }}</strong>
-        <p>{{ t('LANDING.AGENT_DEMO.SUCCESS_MSG') }}</p>
-      </div>
-    </form>
-  </div>
-</div>
 
 <!-- MODAL VIDÉO -->
 <div class="modal-overlay video-modal-overlay" [class.modal-overlay--open]="isVideoModalOpen" (click)="closeVideoModal()">

@@ -350,6 +350,13 @@ export class ShowFactureCurrentComponent implements OnInit, OnDestroy {
     return this.currentPeriod?.calculatedAmount || 0;
   }
 
+  /** Reste à payer sur cette période : 0 si elle est réglée ou non facturée. */
+  getRemainingDue(): number {
+    const state = this.currentPeriod?.state;
+    if (state === 'payed' || state === 'should_not_payed') return 0;
+    return this.getTotalServiceFees();
+  }
+
   getOccupiedUnitsCount(): number {
     return this.currentPeriod?.occupiedUnitsCount || 0;
   }

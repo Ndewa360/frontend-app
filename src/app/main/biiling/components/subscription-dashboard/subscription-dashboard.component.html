@@ -7,15 +7,16 @@
     <div class="suspension-banner__content">
       <strong>{{ 'SUBSCRIPTION_DASHBOARD.ACCOUNT_SUSPENDED_TITLE' | translate }}</strong>
       <p>{{ 'SUBSCRIPTION_DASHBOARD.ACCOUNT_SUSPENDED_DETAIL' | translate : { count: getUnpaidPeriodsCount(), amount: formatCurrency(getUnpaidTotal()) } }}</p>
+      <p class="suspension-banner__hint">{{ 'SUBSCRIPTION_DASHBOARD.AUTO_REACTIVATION' | translate }}</p>
     </div>
     <div class="suspension-banner__actions">
-      <button (click)="goToWalletDeposit()" class="btn btn-outline-light">
-        <i class="fas fa-wallet"></i>
-        {{ 'SUBSCRIPTION_DASHBOARD.DEPOSIT_WALLET' | translate }}
+      <button type="button" (click)="goToUnpaidInvoices()" class="btn btn-light">
+        <i class="fas fa-credit-card" aria-hidden="true"></i>
+        {{ 'SUBSCRIPTION_DASHBOARD.PAY_UNPAID' | translate : { amount: formatCurrency(getUnpaidTotal()) } }}
       </button>
-      <button (click)="reactivateAccount()" class="btn btn-light">
-        <i class="fas fa-redo"></i>
-        {{ 'SUBSCRIPTION_DASHBOARD.REACTIVATE_ACCOUNT' | translate }}
+      <button type="button" (click)="goToWalletDeposit()" class="btn btn-link-light">
+        <i class="fas fa-wallet" aria-hidden="true"></i>
+        {{ 'SUBSCRIPTION_DASHBOARD.DEPOSIT_WALLET' | translate }}
       </button>
     </div>
   </div>
@@ -61,15 +62,7 @@
             </p>
           </div>
           <div class="subscription-actions">
-            <!-- Compte suspendu : afficher alerte + bouton réactivation -->
-            <div *ngIf="currentSubscription.accountStatus === 'suspended'" class="alert alert-danger">
-              <i class="fas fa-ban"></i>
-              {{ 'SUBSCRIPTION_DASHBOARD.ACCOUNT_SUSPENDED_MESSAGE' | translate }}
-              <button (click)="reactivateAccount()" class="btn btn-warning ml-2">
-                <i class="fas fa-redo"></i>
-                {{ 'SUBSCRIPTION_DASHBOARD.REACTIVATE_ACCOUNT' | translate }}
-              </button>
-            </div>
+            <!-- Compte suspendu : l'alerte et l'action sont dans le bandeau du haut. -->
             <!-- Plan FREE actif : bouton upgrade -->
             <button *ngIf="currentSubscription.plan === 'free' && currentSubscription.accountStatus === 'active'"
                     (click)="upgradeToPremium()"
@@ -77,7 +70,7 @@
               <i class="fas fa-arrow-up"></i>
               {{ 'SUBSCRIPTION_DASHBOARD.UPGRADE_TO_PREMIUM' | translate }}
             </button>
-            <span *ngIf="currentSubscription.plan === 'premium'" class="premium-badge">
+            <span *ngIf="currentSubscription.plan === 'premium' && currentSubscription.accountStatus === 'active'" class="premium-badge">
               <i class="fas fa-check"></i>
               {{ 'SUBSCRIPTION_DASHBOARD.PREMIUM_PLAN_ACTIVE' | translate }}
             </span>
@@ -100,8 +93,15 @@
                 <span>{{ formatDateShort(currentPeriod.startedAt) }} - {{ formatDateShort(currentPeriod.endedAt) }}</span>
               </div>
               <div class="info-item">
-                <label>{{ 'SUBSCRIPTION_DASHBOARD.AMOUNT_LABEL' | translate }}</label>
+                <label>{{ 'SUBSCRIPTION_DASHBOARD.PERIOD_TOTAL' | translate }}</label>
                 <span class="amount">{{ formatCurrency(currentPeriod?.calculatedAmount) }}</span>
+              </div>
+              <div class="info-item">
+                <label>{{ 'SUBSCRIPTION_DASHBOARD.PERIOD_REMAINING_DUE' | translate }}</label>
+                <span class="amount">{{ formatCurrency(getPeriodRemainingDue()) }}</span>
+                <small *ngIf="getPeriodRemainingDue() > 0 && currentPeriod?.state === 'waiting'" class="info-note">
+                  {{ 'SUBSCRIPTION_DASHBOARD.PERIOD_NOT_YET_DUE' | translate : { date: formatDateShort(currentPeriod?.endedAt) } }}
+                </small>
               </div>
               <div class="info-item">
                 <label>{{ 'SUBSCRIPTION_DASHBOARD.BILLED_PROPERTIES' | translate }}</label>
@@ -131,7 +131,8 @@
             <!-- Actions de paiement -->
             <div *ngIf="canPayCurrentPeriod()" class="payment-actions">
               <button (click)="payCurrentPeriod()"
-                      class="btn btn-success"
+                      class="btn"
+                      [ngClass]="isSuspended ? 'btn-secondary' : 'btn-success'"
                       [disabled]="stripeLoading">
                 <i class="fas fa-credit-card" *ngIf="!stripeLoading"></i>
                 <i class="fas fa-spinner fa-spin" *ngIf="stripeLoading"></i>
@@ -204,7 +205,7 @@
     </div>
 
     <!-- Résumé des impayés depuis l'API -->
-    <div *ngIf="(unpaidInvoices$ | async)?.length > 0" class="unpaid-summary">
+    <div *ngIf="!isSuspended && (unpaidInvoices$ | async)?.length > 0" class="unpaid-summary">
       <div class="summary-card warning">
         <div class="summary-icon"><i class="fas fa-exclamation-circle"></i></div>
         <div class="summary-content">

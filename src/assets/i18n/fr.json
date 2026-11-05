@@ -1671,7 +1671,7 @@
     "NO_SUBSCRIPTION_MESSAGE": "Aucun abonnement n'est actif sur votre compte. Consultez nos tarifs : le forfait s'applique automatiquement selon vos biens et vos loyers.",
     "SUBSCRIBE_TO_PREMIUM": "Voir les tarifs",
     "UNPAID_INVOICES": "Factures impayées",
-    "UNPAID_INVOICES_MESSAGE": "Vous avez {{count}} facture(s) impayée(s) pour un montant total de {{amount}}",
+    "UNPAID_INVOICES_MESSAGE": "Factures échues impayées : {{count}}. Reste dû : {{amount}}.",
     "VIEW_DETAILS": "Voir les détails",
     "SUBSCRIPTION_HISTORY": "Historique des souscriptions",
     "LOADING_HISTORY": "Chargement...",
@@ -1682,10 +1682,15 @@
     "NO_HISTORY": "Aucun historique",
     "NO_HISTORY_MESSAGE": "Votre historique de souscriptions apparaîtra ici.",
     "ACCOUNT_SUSPENDED_TITLE": "Compte suspendu — Accès restreint",
-    "ACCOUNT_SUSPENDED_DETAIL": "Vous avez {{count}} facture(s) impayée(s) pour un total de {{amount}}. Réglez vos impayés pour retrouver un accès complet.",
-    "DEPOSIT_WALLET": "Alimenter mon wallet",
+    "ACCOUNT_SUSPENDED_DETAIL": "Factures échues impayées : {{count}}. Reste dû : {{amount}}. Réglez-les pour retrouver un accès complet.",
+    "DEPOSIT_WALLET": "Alimenter mon portefeuille",
     "REACTIVATE_ACCOUNT": "Réactiver mon compte",
-    "ACCOUNT_SUSPENDED_MESSAGE": "Votre compte est suspendu pour impayé. Il reste consultable en lecture seule ; réglez vos factures pour pouvoir à nouveau ajouter, modifier ou supprimer."
+    "ACCOUNT_SUSPENDED_MESSAGE": "Votre compte est suspendu pour impayé. Il reste consultable en lecture seule ; réglez vos factures pour pouvoir à nouveau ajouter, modifier ou supprimer.",
+    "AUTO_REACTIVATION": "Votre compte est réactivé automatiquement dès que toutes les factures échues sont réglées.",
+    "PAY_UNPAID": "Régler mes factures ({{amount}})",
+    "PERIOD_TOTAL": "Total de la période",
+    "PERIOD_REMAINING_DUE": "Reste dû pour cette période",
+    "PERIOD_NOT_YET_DUE": "Pas encore échue : à régler avant le {{date}}."
   },
   "ROOM_TYPES": {
     "ROOM": "Chambre",
@@ -2463,28 +2468,28 @@
       },
       "OWNER_SUBTITLE": "Sachez exactement ce que votre gardien ou votre proche encaisse pour vous, mois par mois : qui est à jour, qui est en retard et de combien, qui est en avance.",
       "AGENT_SUBTITLE": "La même grille que les propriétaires : gratuit pour démarrer, puis un prix fixe selon les loyers gérés.",
-      "SEEKER_SUBTITLE": "La recherche est entierement gratuite. Les coordonnees du proprietaire sont disponibles via un acces premium ponctuel.",
+      "SEEKER_SUBTITLE": "La recherche est entièrement gratuite. Les coordonnées du propriétaire sont disponibles via un accès premium ponctuel.",
       "AGENT_PLAN": {
         "TITLE": "Plan Agent",
         "PRICE": "Gratuit pour démarrer",
         "DESCRIPTION": "Pour les agents immobiliers : gratuit pour 1 bien et {{units}} logements occupés, puis forfait Pro à prix fixe selon les loyers gérés.",
         "FEATURES": {
           "MAX_PROPERTIES": "Pro dès {{minPrice}} / mois, Gold au-delà de {{gold}} de loyers",
-          "ALL_FEATURES": "100% des fonctionnalites de gestion",
-          "VERIFIED_PROFILE": "Profil agence verifie et visible",
+          "ALL_FEATURES": "100% des fonctionnalités de gestion",
+          "VERIFIED_PROFILE": "Profil agence vérifié et visible",
           "EMAIL_SUPPORT": "Support par email"
         },
-        "BUTTON": "Creer mon profil agent"
+        "BUTTON": "Créer mon profil agent"
       },
       "SEEKER_PLAN": {
-        "TITLE": "Acces Standard",
+        "TITLE": "Accès Standard",
         "PRICE": "Gratuit",
-        "DESCRIPTION": "La recherche et les visites 360 sont entierement gratuites.",
+        "DESCRIPTION": "La recherche et les visites 360° sont entièrement gratuites.",
         "FEATURES": {
-          "FREE_SEARCH": "Recherche illimitee et gratuite",
-          "TOURS_360": "Visites 360 gratuites",
-          "VERIFIED_LISTINGS": "Annonces verifiees",
-          "PREMIUM_ACCESS": "Coordonnees proprietaire : 1000 FCFA / 24 heures"
+          "FREE_SEARCH": "Recherche illimitée et gratuite",
+          "TOURS_360": "Visites 360° gratuites",
+          "VERIFIED_LISTINGS": "Annonces vérifiées",
+          "PREMIUM_ACCESS": "Coordonnées propriétaire : 1000 FCFA / 24 heures"
         },
         "BUTTON": "Rechercher un logement"
       }
@@ -2518,28 +2523,28 @@
           "ANSWER": "Oui, Ndewa360 fonctionne dans tous les pays. Les devises, formats de dates et réglementations locales sont pris en compte. Nous avons des utilisateurs au Sénégal, Côte d'Ivoire, Mali, Burkina Faso, Cameroun et bien d'autres pays."
         },
         "AGENT_REGISTER": {
-          "QUESTION": "Comment m inscrire en tant qu agent ?",
-          "ANSWER": "Cliquez sur Creer mon profil agent, renseignez vos informations et les details de votre agence. Vous pouvez soumettre vos documents de verification (CNI, carte professionnelle) lors de l inscription."
+          "QUESTION": "Comment m'inscrire en tant qu'agent ?",
+          "ANSWER": "Cliquez sur « Créer mon profil agent », renseignez vos informations et les détails de votre agence. Vous pouvez soumettre vos documents de vérification (CNI, carte professionnelle) lors de l'inscription."
         },
         "AGENT_VALIDATION": {
           "QUESTION": "Combien de temps prend la validation du profil agent ?",
-          "ANSWER": "Notre equipe examine votre dossier sous 24 a 48h ouvrables. Vous recevrez un email de confirmation des que votre profil est approuve. En attendant votre compte est en mode limite."
+          "ANSWER": "Notre équipe examine votre dossier sous 24 à 48 h ouvrables. Vous recevrez un e-mail de confirmation dès que votre profil sera approuvé. En attendant, votre compte est en mode limité."
         },
         "AGENT_PAYMENT": {
-          "QUESTION": "Combien ca coute pour un agent immobilier ?",
+          "QUESTION": "Combien ça coûte pour un agent immobilier ?",
           "ANSWER": "La même grille que pour les propriétaires : gratuit pour 1 bien et jusqu'à 4 logements occupés, puis forfait Pro à prix fixe selon le total des loyers gérés, de 3 000 à 20 000 FCFA par mois. Au-delà de 2 500 000 FCFA de loyers, le forfait Gold est sur mesure."
         },
         "SEEKER_SEARCH": {
           "QUESTION": "Comment chercher un logement sur Ndewa360 ?",
-          "ANSWER": "Depuis la page de recherche, utilisez les filtres (ville, quartier, type, prix, equipements). Tous les logements affiches sont disponibles et geres par des proprietaires ou agents verifies."
+          "ANSWER": "Depuis la page de recherche, utilisez les filtres (ville, quartier, type, prix, équipements). Tous les logements affichés sont disponibles et gérés par des propriétaires ou agents vérifiés."
         },
         "SEEKER_360": {
           "QUESTION": "Est-ce que je dois payer pour la visite 360 ?",
-          "ANSWER": "Non, les visites immersives 360 sont entierement gratuites. Vous pouvez explorer chaque piece d un logement depuis n importe ou dans le monde."
+          "ANSWER": "Non, les visites immersives 360° sont entièrement gratuites. Vous pouvez explorer chaque pièce d'un logement depuis n'importe où dans le monde."
         },
         "SEEKER_PAYMENT": {
-          "QUESTION": "Comment contacter le proprietaire ?",
-          "ANSWER": "Pour 1000 FCFA vous accedez aux coordonnees completes (telephone, WhatsApp, email) de tous les proprietaires pendant 24 heures. Un seul paiement pour un acces global."
+          "QUESTION": "Comment contacter le propriétaire ?",
+          "ANSWER": "Pour 1000 FCFA vous accédez aux coordonnées complètes (téléphone, WhatsApp, email) de tous les propriétaires pendant 24 heures. Un seul paiement pour un accès global."
         }
       }
     },
@@ -2560,27 +2565,27 @@
         "RATING": "4.9/5 étoiles",
         "USERS": "20+ utilisateurs satisfaits"
       },
-      "OWNER_BTN": "Je suis proprietaire",
+      "OWNER_BTN": "Je suis propriétaire",
       "AGENT_BTN": "Je suis agent",
       "SEEKER_BTN": "Je cherche un logement",
       "OWNER": {
-        "TITLE": "Pret a reprendre le controle de vos loyers ?",
-        "SUBTITLE": "Rejoignez des centaines de proprietaires qui ont transforme leur gestion immobiliere.",
+        "TITLE": "Prêt à reprendre le contrôle de vos loyers ?",
+        "SUBTITLE": "Rejoignez des centaines de propriétaires qui ont transformé leur gestion immobilière.",
         "BTN": "Commencer mon onboarding gratuit",
         "NOTE": "30 jours d'essai gratuit, aucune carte requise"
       },
       "AGENT": {
-        "TITLE": "Developpez votre activite avec Ndewa360",
-        "SUBTITLE": "Creez votre profil agent verifie et gerez votre portefeuille professionnellement.",
-        "BTN_REGISTER": "Creer mon compte agent",
-        "BTN_DEMO": "Demander une demo personnalisee",
-        "NOTE": "Validation sous 24-48h apres soumission des documents"
+        "TITLE": "Développez votre activité avec Ndewa360",
+        "SUBTITLE": "Créez votre profil agent vérifié et gérez votre portefeuille professionnellement.",
+        "BTN_REGISTER": "Créer mon compte agent",
+        "BTN_DEMO": "Demander une démo personnalisée",
+        "NOTE": "Validation sous 24-48h après soumission des documents"
       },
       "SEEKER": {
-        "TITLE": "Trouvez votre logement ideal maintenant",
-        "SUBTITLE": "Des centaines de logements verifies avec visites 360 gratuites.",
+        "TITLE": "Trouvez votre logement idéal maintenant",
+        "SUBTITLE": "Des centaines de logements vérifiés avec visites 360° gratuites.",
         "BTN": "Explorer les logements",
-        "NOTE": "Acces gratuit. Contacts proprietaires : 1000 FCFA / 24 heures"
+        "NOTE": "Accès gratuit. Contacts propriétaires : 1000 FCFA / 24 heures"
       }
     },
     "VIDEO_MODAL": {
@@ -2788,15 +2793,15 @@
     "SEEKER_SECTION": {
       "BADGE": "Pour les chercheurs",
       "TITLE": "Trouvez votre logement",
-      "SUBTITLE": "Annonces verifiees et visites 360.",
-      "FEAT_1_TITLE": "Recherche avancee",
-      "FEAT_1_DESC": "Filtres ville quartier type budget.",
+      "SUBTITLE": "Annonces vérifiées et visites 360°.",
+      "FEAT_1_TITLE": "Recherche avancée",
+      "FEAT_1_DESC": "Filtres : ville, quartier, type, budget.",
       "FEAT_2_TITLE": "Visites 360",
       "FEAT_2_DESC": "Visitez depuis chez vous.",
       "FEAT_3_TITLE": "Annonces filtrees",
-      "FEAT_3_DESC": "Biens verifies.",
-      "FEAT_4_TITLE": "Contact proprietaire",
-      "FEAT_4_DESC": "1000 FCFA pour 24 heures acces.",
+      "FEAT_3_DESC": "Biens vérifiés.",
+      "FEAT_4_TITLE": "Contact propriétaire",
+      "FEAT_4_DESC": "1 000 FCFA pour 24 heures d'accès.",
       "PREMIUM_BADGE": "PREMIUM ACCESS",
       "CTA": "Rechercher un logement",
       "CTA_SUB": "Gratuit"
@@ -2846,7 +2851,7 @@
       "FIELD_NAME_PLACEHOLDER": "Jean Dupont",
       "FIELD_EMAIL": "Email",
       "FIELD_EMAIL_PLACEHOLDER": "jean@agence.com",
-      "FIELD_PHONE": "Telephone",
+      "FIELD_PHONE": "Téléphone",
       "FIELD_PHONE_PLACEHOLDER": "+237 6XX XXX XXX",
       "FIELD_AGENCY": "Agence (optionnel)",
       "FIELD_AGENCY_PLACEHOLDER": "Agence Immo",
@@ -2855,14 +2860,16 @@
       "PORTFOLIO_UNIT": "biens",
       "SUBMIT": "Envoyer",
       "SUBMITTING": "Envoi...",
-      "SUCCESS_TITLE": "Demande envoyee !",
-      "SUCCESS_MSG": "Notre equipe vous contacte sous 24h."
+      "SUCCESS_TITLE": "Demande envoyée !",
+      "SUCCESS_MSG": "Notre équipe vous contacte sous 24h.",
+      "ERROR_TITLE": "La demande n'a pas pu être envoyée",
+      "ERROR_MSG": "Vérifiez votre connexion puis réessayez, ou écrivez-nous sur WhatsApp au {{phone}}."
     },
     "OWNER_SECTION": {
-      "BADGE": "Pour les proprietaires",
-      "TITLE": "Tout pour gerer votre patrimoine",
+      "BADGE": "Pour les propriétaires",
+      "TITLE": "Tout pour gérer votre patrimoine",
       "SUBTITLE": "Automatisez votre gestion locative.",
-      "CTA": "Demarrer mon onboarding",
+      "CTA": "Démarrer mon onboarding",
       "CTA_SUB": "Gratuit - Aucune carte requise"
     },
     "MANAGE_SECTION": {
@@ -2883,6 +2890,75 @@
     "TABS": {
       "RENT": "Louer",
       "MANAGE": "Gérer"
+    },
+    "ABOUT": {
+      "HERO": {
+        "EYEBROW": "À propos de Ndewa360",
+        "TITLE": "La gestion locative, simple et transparente",
+        "LEAD": "Ndewa360 est une plateforme camerounaise de gestion locative et de recherche de logements. Elle aide les propriétaires, leurs gestionnaires et les agents immobiliers à suivre leurs biens, leurs locataires et leurs loyers, et permet de trouver un logement vérifié, visite 360° comprise.",
+        "CTA_START": "Commencer gratuitement",
+        "CTA_SEARCH": "Rechercher un logement"
+      },
+      "MISSION": {
+        "EYEBROW": "Notre mission",
+        "TITLE": "Remettre de la clarté dans la location",
+        "P1": "Simplifier et digitaliser la gestion locative : savoir à tout moment qui a payé, qui est en retard, et ce que votre gardien ou votre proche encaisse pour vous.",
+        "P2": "Ndewa360 réunit au même endroit les biens, les logements, les baux, les paiements, les reçus et les contrats. Les loyers peuvent être réglés par Mobile Money grâce au lien de paiement du locataire, et chaque paiement laisse une trace fiable."
+      },
+      "OFFER": {
+        "EYEBROW": "Pour qui",
+        "TITLE": "Une plateforme, trois usages",
+        "OWNERS": {
+          "TITLE": "Propriétaires",
+          "TEXT": "Suivi des loyers, reçus, contrats, portefeuille et rapports mensuels. Gratuit pour 1 bien et jusqu’à 4 logements occupés, puis forfait Pro à prix fixe dès 3 000 FCFA par mois."
+        },
+        "AGENTS": {
+          "TITLE": "Agents immobiliers",
+          "TEXT": "Un profil d’agence vérifié et des outils professionnels pour gérer les mandats de vos clients, avec la même grille tarifaire que les propriétaires."
+        },
+        "SEEKERS": {
+          "TITLE": "Chercheurs de logement",
+          "TEXT": "Une recherche gratuite parmi des logements disponibles, avec photos et visites 360°. Les coordonnées des propriétaires sont accessibles pour 1 000 FCFA pendant 24 heures."
+        }
+      },
+      "VALUES": {
+        "EYEBROW": "Nos engagements",
+        "TITLE": "Ce qui guide notre travail",
+        "TRANSPARENCY": {
+          "TITLE": "Transparence",
+          "TEXT": "Des prix fixes et publiés, sans frais cachés. Seuls les logements occupés sont facturés."
+        },
+        "SIMPLICITY": {
+          "TITLE": "Simplicité",
+          "TEXT": "Une application utilisable sur téléphone, tablette ou ordinateur, sans installation."
+        },
+        "PRIVACY": {
+          "TITLE": "Confidentialité",
+          "TEXT": "Vos données ne sont jamais vendues ; vous pouvez les exporter ou en demander la suppression à tout moment."
+        },
+        "PROXIMITY": {
+          "TITLE": "Proximité",
+          "TEXT": "Une équipe basée au Cameroun, joignable par WhatsApp et par e-mail, qui connaît le contexte local."
+        }
+      },
+      "COMPANY": {
+        "EYEBROW": "La société",
+        "TITLE": "Qui sommes-nous",
+        "NAME_LABEL": "Dénomination",
+        "NAME": "Ndewa360 SARL (en cours de constitution)",
+        "HQ_LABEL": "Siège",
+        "HQ": "Tchougo, Bangangté, Région de l’Ouest, Cameroun",
+        "WEBSITE_LABEL": "Site web",
+        "LEGAL": "Mentions légales",
+        "TEAM": "Découvrir l’équipe"
+      },
+      "CONTACT": {
+        "TITLE": "Nous contacter",
+        "WHATSAPP": "WhatsApp",
+        "SUPPORT": "Assistance aux utilisateurs",
+        "BUSINESS": "Partenariats et offre Gold",
+        "FORM": "Écrire via le formulaire de contact"
+      }
     }
   },
   "SEARCH_MODULE": {
@@ -4459,10 +4535,10 @@
     "DATE_NOT_USED_CALCULATION": "Cette date ne sera pas utilisée dans les calculs",
     "FINANCIAL_SITUATION_PREVIEW": "Aperçu de la situation financière",
     "CALCULATION_BASED_ON_TODAY": "Calcul basé sur la date d'aujourd'hui comme référence",
-    "DEPOSIT_ALREADY_PAID_CHECKBOX": "La caution a deja ete versee",
-    "DEPOSIT_WILL_BE_RECORDED": "Caution enregistree :",
-    "DEPOSIT_NOT_YET_PAID": "La caution n a pas encore ete versee — aucune ecriture ne sera generee",
-    "DEPOSIT_ALREADY_PAID_CONFIRMED": "Caution deja versee et enregistree",
+    "DEPOSIT_ALREADY_PAID_CHECKBOX": "La caution a déjà été versée",
+    "DEPOSIT_WILL_BE_RECORDED": "Caution enregistrée :",
+    "DEPOSIT_NOT_YET_PAID": "La caution n'a pas encore été versée — aucune écriture ne sera générée",
+    "DEPOSIT_ALREADY_PAID_CONFIRMED": "Caution déjà versée et enregistrée",
     "DEPOSIT": "Caution"
   },
   "UNIT_PAYMENTS": {
@@ -4946,7 +5022,10 @@
         "FREE": "Gratuit"
       },
       "PERIOD_UNDEFINED": "Période non définie",
-      "DAYS_SUFFIX": "jours"
+      "DAYS_SUFFIX": "jours",
+      "PERIOD_TOTAL": "Total de la période",
+      "REMAINING_DUE": "Reste dû",
+      "PAY_INVOICE_AMOUNT": "Régler la facture ({{amount}})"
     }
   },
   "TENANT_DETAILS": {
@@ -5141,7 +5220,7 @@
         },
         "MONTHLY_REVENUE_TRACKING": {
           "QUESTION": "Où puis-je suivre mes revenus mensuels ?",
-          "ANSWER": "Le tableau de bord financier vous affiche tous les paiements, répartis par mois et par propriété. Un recapitulatif des biens de propriétés est tout d'abord disponible sur l'espace de l'ensemble des biens (menu « Biens immobilier »), mais un tableau de bord financier complet est disponible sur le menu « Finances » de chaque bien immobilier"
+          "ANSWER": "Le tableau de bord financier vous affiche tous les paiements, répartis par mois et par propriété. Un récapitulatif des biens de propriétés est tout d'abord disponible sur l'espace de l'ensemble des biens (menu « Biens immobilier »), mais un tableau de bord financier complet est disponible sur le menu « Finances » de chaque bien immobilier"
         },
         "DOWNLOAD_DOCUMENTS": {
           "QUESTION": "Est-ce que je peux télécharger un contrat ou une facture ?",
@@ -5234,7 +5313,7 @@
           "INFO": "Présentation général de l'application."
         },
         "ACCOUNT_CREATION": {
-          "TITLE": "Creation de compte",
+          "TITLE": "Création de compte",
           "TOPIC": "Gestion du profil",
           "PAGE": "Création de compte & Connexion",
           "INFO": "Processus complet de création de compte avec confirmation de l'adresse email",
@@ -5258,7 +5337,7 @@
             "Cliquer sur 'Nouveau'",
             "Remplir le formulaire",
             "Soumettre le formulaire",
-            "Acceder au panel de gestion du bien"
+            "Accéder au panel de gestion du bien"
           ]
         },
         "UNIT_ADDITION": {
@@ -5322,7 +5401,7 @@
       },
       "LABELS": {
         "SUBJECT": "SUJET",
-        "VIDEO": "VIDEO",
+        "VIDEO": "VIDÉO",
         "DESCRIPTION": "Description",
         "PAGE": "page",
         "DETAILS": "Détails"
@@ -5516,7 +5595,7 @@
       "SUMMARY_UNITS": "unité(s) locative(s)",
       "SUMMARY_TENANTS": "locataire(s)",
       "SUMMARY_EMPTY": "Aucune donnée immobilière (vous pourrez tout ajouter depuis le tableau de bord)",
-      "SUBMIT_BUTTON": "Creer mon compte",
+      "SUBMIT_BUTTON": "Créer mon compte",
       "SUBMITTING": "Création en cours..."
     },
     "NAVIGATION": {
@@ -5804,7 +5883,7 @@
   },
   "SUSPENDED_BANNER": {
     "MESSAGE": "Votre compte est suspendu pour impayé : il est en lecture seule. Vous pouvez consulter vos biens et télécharger vos documents, mais pas ajouter, modifier ni supprimer.",
-    "UNPAID": "{{count}} facture(s) impayée(s) : {{amount}} FCFA à régler.",
+    "UNPAID": "Factures échues impayées : {{count}}. Reste dû : {{amount}} FCFA.",
     "ACTION": "Régler mes factures"
   },
   "NOTIFICATION_DETAIL": {
@@ -5894,6 +5973,16 @@
     "WITHDRAWAL": {
       "TITLE": "Supprimer ce retrait",
       "LEAD": "L'entrée sera définitivement retirée de votre historique."
+    }
+  },
+  "WALLET": {
+    "LOADING": "Chargement de votre portefeuille…",
+    "LOAD_ERROR": {
+      "TITLE": "Impossible de charger votre portefeuille",
+      "TIMEOUT": "Le serveur met trop de temps à répondre. Réessayez dans un instant.",
+      "NETWORK": "Connexion impossible. Vérifiez votre connexion Internet puis réessayez.",
+      "GENERIC": "Une erreur est survenue pendant le chargement. Réessayez dans un instant.",
+      "RETRY": "Réessayer"
     }
   }
 }

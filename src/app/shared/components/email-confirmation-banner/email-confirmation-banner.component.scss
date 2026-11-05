@@ -1,7 +1,10 @@
+// Dans le flux, au-dessus du conteneur principal : le bandeau pousse le
+// contenu au lieu de le recouvrir (voir layout.component.scss).
+:host { display: block; flex-shrink: 0; }
+
 .email-confirmation-banner {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  position: relative;
+  z-index: 1;
   animation: slideDown 0.3s ease-out;
 }
 

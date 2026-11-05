@@ -73,6 +73,18 @@
   border-radius: 50%;
 }
 
+.member-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2b2b2b 100%);
+  color: rgb(204, 140, 10);
+  font-size: 3.5rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
 .photo-overlay {
   position: absolute;
   top: 0;

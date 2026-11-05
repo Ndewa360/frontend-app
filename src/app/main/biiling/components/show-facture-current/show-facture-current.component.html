@@ -69,31 +69,31 @@
                 </div>
             </div>
             <div fxFlex="100%" fxFlex.gt-md="50%" class="app-card__block">
-                <div class="flex justify-end">
+                <!-- Total de la période et reste dû : deux montants distincts. -->
+                <dl class="invoice-amounts">
                     <div>
-                        <div class="app-label-01 mb-2">{{ 'BILLING.INVOICE.TOTAL_FCFA' | translate }}</div>
-                        <div class="app-productive-heading-03 fond-extrabold ">
-                            <span *ngIf="getTotalServiceFees() === 0; else hasMoney">0</span>
-                            <ng-template #hasMoney>{{ getTotalServiceFees() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }} </ng-template>
-                        </div>
-    
+                        <dt class="app-label-01">{{ 'BILLING.INVOICE.PERIOD_TOTAL' | translate }}</dt>
+                        <dd class="app-productive-heading-03">{{ getTotalServiceFees() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }}</dd>
                     </div>
-                </div>
+                    <div>
+                        <dt class="app-label-01">{{ 'BILLING.INVOICE.REMAINING_DUE' | translate }}</dt>
+                        <dd class="app-productive-heading-03 font-bold" [class.invoice-amounts__due]="getRemainingDue() > 0">
+                            {{ getRemainingDue() | currency : getDefaultCurrency(): 'symbol' : '1.0-0' }}
+                        </dd>
+                    </div>
+                </dl>
             </div>
         </div>
-    
+
         <div fxLayout="row wrap" class="app-card__blocks app-border-t p-2 header-footer-billing">
             <div fxFlex="100%"  class="app-card__block">
                 <div class="flex justify-end">
-                    <div>
-                        <button type="submit" size="lg"
-                            [disabled]="currentPeriod?.state === 'payed' || currentPeriod?.state === 'should_not_payed' || !currentPeriod?.calculatedAmount"
-                            (click)="payCurrentPeriod()"
-                            class="custom-primary-button" ibmButton="primary">
-                              <span class="btn-text">{{ 'BILLING.INVOICE.PAY_INVOICE' | translate }}</span>
-                              <youpez-ibm-icon iconClass="cds--btn__icon" iconName="money" iconSize="20"></youpez-ibm-icon>
-                          </button>
-                    </div>
+                    <button type="button" class="pay-invoice-btn"
+                        [disabled]="getRemainingDue() === 0"
+                        (click)="payCurrentPeriod()">
+                        <youpez-ibm-icon iconName="money" iconSize="20" aria-hidden="true"></youpez-ibm-icon>
+                        <span>{{ 'BILLING.INVOICE.PAY_INVOICE_AMOUNT' | translate: { amount: (getRemainingDue() | currency : getDefaultCurrency(): 'symbol' : '1.0-0') } }}</span>
+                    </button>
                 </div>
             </div>
         </div>

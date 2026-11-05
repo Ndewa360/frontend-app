@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AsyncPipe, DecimalPipe, NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
-import { catchError, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, filter, map, startWith, switchMap } from 'rxjs/operators';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SouscriptionState } from '../../store/souscription/souscription.state';
 import { SouscriptionAction } from '../../store/souscription/souscription.actions';
@@ -30,17 +30,16 @@ import { SubscriptionPaymentService } from '../../services/subscription-payment.
           {{ 'SUSPENDED_BANNER.UNPAID' | translate: { count: unpaid.count, amount: (unpaid.totalAmount | number:'1.0-0':'fr') } }}
         </strong>
       </span>
-      <a class="sab__action" [routerLink]="['/', lang, 'app', 'facturation', 'plan', 'dashboard']">
+      <!-- Sur les pages de facturation, l'action est dans la page : un seul bouton par écran. -->
+      <a *ngIf="!(onBillingPage$ | async)" class="sab__action" [routerLink]="['/', lang, 'app', 'facturation', 'plan', 'dashboard']">
         {{ 'SUSPENDED_BANNER.ACTION' | translate }}
       </a>
     </div>
   `,
   styles: [`
-    /* Au-dessus du conteneur de la mise en page (positionné en absolu depuis
-       le haut) : sans cela, il recouvrait le bandeau et le bouton
-       « Régler mes factures » ne recevait jamais le clic. Même règle que le
-       bandeau de confirmation d'e-mail. */
-    :host { display: block; position: sticky; top: 0; z-index: 1000; }
+    /* Dans le flux, au-dessus du conteneur principal (layout.component.scss) :
+       le bandeau réserve sa hauteur et pousse le contenu, sans le recouvrir. */
+    :host { display: block; flex-shrink: 0; position: relative; z-index: 1; }
     .sab { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 16px;
       background: #fef3c7; color: #78350f; border-bottom: 1px solid #fcd34d; font-size: .875rem; }
     .sab__icon { flex-shrink: 0; }
@@ -65,11 +64,19 @@ export class SuspendedAccountBannerComponent implements OnInit {
     )),
   );
 
+  /** Pages de facturation : elles portent leur propre bouton « Régler mes factures ». */
+  readonly onBillingPage$ = this.router.events.pipe(
+    filter((event) => event instanceof NavigationEnd),
+    startWith(null),
+    map(() => this.router.url.includes('/app/facturation/')),
+    distinctUntilChanged(),
+  );
+
   get lang(): string {
     return currentAppLanguage();
   }
 
-  constructor(private store: Store, private payments: SubscriptionPaymentService) {}
+  constructor(private store: Store, private payments: SubscriptionPaymentService, private router: Router) {}
 
   ngOnInit(): void {
     // Statut d'abonnement chargé dès l'entrée dans l'application (il ne

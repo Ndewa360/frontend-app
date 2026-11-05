@@ -33,7 +33,7 @@ const routes: Routes = [
         path: 'manual',
         component: ManualComponent,
         data: {
-          breadcrumb: 'Manual'
+          breadcrumb: 'Documentation'
         },
       },
       {

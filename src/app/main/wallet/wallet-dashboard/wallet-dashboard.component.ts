@@ -32,6 +32,7 @@ export class WalletDashboardComponent implements OnInit, OnDestroy {
   @Select(WalletState.deposits)        deposits$: Observable<WalletTransaction[]>;
   @Select(WalletState.withdrawals)     withdrawals$: Observable<WithdrawalRequest[]>;
   @Select(WalletState.loading)         loading$: Observable<boolean>;
+  @Select(WalletState.error)           error$: Observable<string | null>;
   @Select(WalletState.totalRentPayments) totalRentPayments$: Observable<number>;
   @Select(WalletState.totalDeposits)   totalDeposits$: Observable<number>;
   @Select(WalletState.pollingWithdrawalId) pollingWithdrawalId$: Observable<string | null>;

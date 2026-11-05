@@ -177,8 +177,9 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate([`/${this.lang}/app/facturation/choix-plan`]);
   }
 
-  reactivateAccount(): void {
-    this.store.dispatch(new SubscriptionLimitAction.ReactivateAccount());
+  /** Factures impayées, payables une à une (la réactivation suit le paiement). */
+  goToUnpaidInvoices(): void {
+    this.router.navigate([`/${this.lang}/app/facturation/plan/plan-list`]);
   }
 
   downloadInvoice(periodId: string): void {
@@ -256,7 +257,7 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
   }
 
   getAccountStatusColor(status: string): string {
-    const colors: Record<string, string> = { active: 'success', suspended: 'warning', disabled: 'danger' };
+    const colors: Record<string, string> = { active: 'success', suspended: 'danger', disabled: 'danger' };
     return colors[status?.toLowerCase()] || 'secondary';
   }
 
@@ -312,6 +313,13 @@ export class SubscriptionDashboardComponent implements OnInit, OnDestroy {
 
   getProgressPercentage(): number {
     return this.progressPercentage;
+  }
+
+  /** Reste à payer sur la période en cours (0 si réglée ou non facturée). */
+  getPeriodRemainingDue(): number {
+    const p = this.currentPeriod;
+    if (!p || p.state === SouscriptionPayementState.PAYED || p.state === SouscriptionPayementState.SHOULD_NOT_PAYED) return 0;
+    return p.calculatedAmount || 0;
   }
 
   getUnpaidTotal(): number {
