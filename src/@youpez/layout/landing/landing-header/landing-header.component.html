@@ -47,7 +47,7 @@
             </a>
           </li>
           <li>
-            <a [routerLink]="['/', getCurrentLanguage(), 'home', 'tarifs']" routerLinkActive="active" class="nav-link">
+            <a [routerLink]="['/' + getCurrentLanguage() + '/home/tarifs']"  routerLinkActive="active-nav-link" class="nav-link">
               <span>{{ 'HEADER.PRICING' | translate }}</span>
             </a>
           </li>

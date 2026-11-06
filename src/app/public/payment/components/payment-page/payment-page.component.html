@@ -518,11 +518,11 @@
   </main>
 
   <footer class="ndewa-payment__footer">
-    <span>&copy; 2024 Ndewa360&deg;</span>
+    <span>&copy; {{currentDate | date: 'yyyy'}} Ndewa360&deg;</span>
     <div class="ndewa-payment__footer-links">
-      <a href="#">{{ 'PAYMENT_PAGE.FOOTER.TERMS' | translate }}</a>
-      <a href="#">{{ 'PAYMENT_PAGE.FOOTER.PRIVACY' | translate }}</a>
-      <a href="#">{{ 'PAYMENT_PAGE.FOOTER.SUPPORT' | translate }}</a>
+      <a [routerLink]="'/' + lang + '/home/terms'">{{ 'PAYMENT_PAGE.FOOTER.TERMS' | translate }}</a>
+      <a [routerLink]="'/' + lang + '/home/privacy'">{{ 'PAYMENT_PAGE.FOOTER.PRIVACY' | translate }}</a>
+      <a [routerLink]="'/' + lang + '/home/support'">{{ 'PAYMENT_PAGE.FOOTER.SUPPORT' | translate }}</a>
     </div>
   </footer>
 

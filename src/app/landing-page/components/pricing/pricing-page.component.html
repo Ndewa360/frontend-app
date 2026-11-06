@@ -24,7 +24,8 @@
           <tr *ngFor="let p of profiles">
             <th scope="row">
               <button type="button" class="pp-table__profile" (click)="select(p.id)">
-                <i [class]="p.icon" aria-hidden="true"></i> {{ 'LANDING.PRICING_PAGE.PROFILES.' + p.key | translate }}
+                <!-- <i [class]="p.icon" aria-hidden="true"></i>  -->
+                {{ 'LANDING.PRICING_PAGE.PROFILES.' + p.key | translate }}
               </button>
             </th>
             <td>{{ 'LANDING.PRICING_PAGE.TABLE.' + p.key + '_FREE' | translate: params }}</td>

@@ -5,6 +5,7 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators, 
 import { Subject, throwError, timer } from 'rxjs';
 import { retry, takeUntil } from 'rxjs/operators';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { RouterLink } from '@angular/router';
 
 import {
   UnifiedPaymentService,
@@ -25,14 +26,16 @@ import { isAllowedRedirect } from 'src/app/shared/utils/safe-redirect';
   templateUrl: './payment-page.component.html',
   styleUrls: ['./payment-page.component.scss'],
   standalone: true,
-  imports: [NgIf, NgClass, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule, NgFor, UpperCasePipe, SlicePipe, DatePipe, DecimalPipe, TranslatePipe]
+  imports: [RouterLink,NgIf, NgClass, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule, NgFor, UpperCasePipe, SlicePipe, DatePipe, DecimalPipe, TranslatePipe]
 })
 export class PaymentPageComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
+  currentDate = new Date();
 
 
   private destroy$ = new Subject<void>();
-  private lang = 'fr';
+  lang = 'fr';
+  
 
   token = '';
   paymentDetails: PaymentLinkDetails | null = null;

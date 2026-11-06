@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PaymentLinkService } from '../../services/payment-link.service';
 import { NgIf, DatePipe } from '@angular/common';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-payment-success',
   templateUrl: './payment-success.component.html',
   styleUrls: ['./payment-success.component.scss'],
   standalone: true,
-  imports: [NgIf, DatePipe]
+  imports: [RouterLink, NgIf, DatePipe,TranslatePipe]
 })
 export class PaymentSuccessComponent implements OnInit {
   token: string = '';
@@ -16,10 +18,14 @@ export class PaymentSuccessComponent implements OnInit {
   loading = true;
   paymentDetails: any = null;
   error: string | null = null;
+  currentDate = new Date();
+  lang = 'fr';
+
 
   constructor(
     private route: ActivatedRoute,
-    private paymentService: PaymentLinkService
+    private paymentService: PaymentLinkService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {

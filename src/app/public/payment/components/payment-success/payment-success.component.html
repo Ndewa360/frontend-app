@@ -120,11 +120,11 @@
   <!-- Footer -->
   <footer class="success-footer">
     <div class="footer-content">
-      <span>&copy; 2024 Ndewa360°</span>
+      <span>&copy; {{currentDate | date: 'yyyy'}} Ndewa360°</span>
       <div class="footer-links">
-        <a href="#">Conditions</a>
-        <a href="#">Confidentialité</a>
-        <a href="#">Support</a>
+        <a [routerLink]="'/' + lang + '/home/terms'">{{ 'PAYMENT_PAGE.FOOTER.TERMS' | translate }}</a>
+        <a [routerLink]="'/' + lang + '/home/privacy'">{{ 'PAYMENT_PAGE.FOOTER.PRIVACY' | translate }}</a>
+        <a [routerLink]="'/' + lang + '/home/support'">{{ 'PAYMENT_PAGE.FOOTER.SUPPORT' | translate }}</a>
       </div>
     </div>
   </footer>
