@@ -17,11 +17,12 @@
     <youpez-ibm-icon iconName="home" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <!-- Facturation -->
-  <button class="app-layout__header__btn app-layout__header__btn--icon"
-          (click)="navigateToBilling()"
-          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/facturation')}">
-    <youpez-ibm-icon iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
+  <!-- Modèles de contrats (masqué pour les agents) -->
+  <button *ngIf="!isAgent"
+          class="app-layout__header__btn app-layout__header__btn--icon"
+          (click)="navigateToContractTemplates()"
+          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/contract-templates')}">
+    <youpez-ibm-icon iconName="document" iconSize="24"></youpez-ibm-icon>
   </button>
 
   <!-- Portefeuille -->
@@ -31,12 +32,11 @@
     <youpez-ibm-icon iconName="money" iconSize="24"></youpez-ibm-icon>
   </button>
 
-  <!-- Modèles de contrats (masqué pour les agents) -->
-  <button *ngIf="!isAgent"
-          class="app-layout__header__btn app-layout__header__btn--icon"
-          (click)="navigateToContractTemplates()"
-          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/contract-templates')}">
-    <youpez-ibm-icon iconName="document" iconSize="24"></youpez-ibm-icon>
+  <!-- Facturation -->
+  <button class="app-layout__header__btn app-layout__header__btn--icon"
+          (click)="navigateToBilling()"
+          [ngClass]="{'app-mini-sidebar__list__item__active': isRouteActive('/app/facturation')}">
+    <youpez-ibm-icon iconName="dashboardReference" iconSize="24"></youpez-ibm-icon>
   </button>
 
   <!-- Notifications (masquées sur mobile pour éviter le panneau qui cache le site) -->

@@ -62,7 +62,7 @@
           <div class="kpi-card__body">
             <p class="kpi-card__label">Total attendu</p>
             <p class="kpi-card__value">{{ formatPrice(globalMetrics.totalExpected) }}</p>
-            <p class="kpi-card__sub">Loyers théoriques {{ selectedYear }}</p>
+            <p class="kpi-card__sub">Loyers échus en {{ selectedYear }}{{ selectedYear === currentYear ? ' à ce jour' : '' }}</p>
           </div>
         </div>
 
@@ -81,6 +81,7 @@
           <div class="kpi-card__body">
             <p class="kpi-card__label">Taux de recouvrement</p>
             <p class="kpi-card__value">{{ formatPercent(globalMetrics.collectionRate) }}</p>
+            <p class="kpi-card__sub">Couvert : {{ formatPrice(globalMetrics.totalCovered) }} (paiements depuis l'entrée)</p>
             <div class="kpi-card__bar">
               <div class="kpi-card__bar-fill"
                 [style.width.%]="Math.min(globalMetrics.collectionRate, 100)"
@@ -101,7 +102,7 @@
           <div class="kpi-card__body">
             <p class="kpi-card__label">Manque à gagner</p>
             <p class="kpi-card__value">{{ formatPrice(globalMetrics.shortfall) }}</p>
-            <p class="kpi-card__sub">Attendu non encaissé</p>
+            <p class="kpi-card__sub">Attendu non couvert</p>
           </div>
         </div>
 

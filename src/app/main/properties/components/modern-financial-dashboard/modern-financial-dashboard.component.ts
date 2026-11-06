@@ -16,6 +16,7 @@ export interface GlobalFinancialMetrics {
   // Bloc 1 — Performance financière
   totalReceived: number;
   totalExpected: number;
+  totalCovered: number;        // part de l'attendu payée (base du taux de recouvrement)
   collectionRate: number;
   shortfall: number;
   averageRevenuePerProperty: number;
@@ -157,16 +158,14 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Les données arrivent par l'abonnement ci-dessus. Ici, seulement la fin
+    // du chargement : sans données ou en cas d'erreur, le chargement restait
+    // affiché indéfiniment (et les données étaient traitées deux fois).
     this.store.dispatch(
       new StatisticAction.FetchStatisticPaymentRecapitulationAccountOfAllPropertyByYear(this.selectedYear)
-    ).subscribe(() => {
-      const cached = this.store.selectSnapshot(
-        StatisticState.selectStateStatisticRecapitulationPaymentBydYear(this.selectedYear)
-      );
-      if (cached && cached.length > 0) {
-        this.isLoading = false;
-        this.process(cached);
-      }
+    ).pipe(takeUntil(this.subscriptionReset$), takeUntil(this.destroy$)).subscribe({
+      next:  () => { this.isLoading = false; },
+      error: () => { this.isLoading = false; },
     });
   }
 
@@ -309,6 +308,7 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
     this.globalMetrics = {
       totalReceived,
       totalExpected,
+      totalCovered: Math.round(totalCoveredGlobal),
       collectionRate,
       // shortfall depuis paymentYear.totalAmountRelicat (maintenant = max(0, expected - received) backend)
       // shortfall global = max(0, totalExpected - totalCoveredGlobal) — même base que collectionRate (projection)
@@ -446,9 +446,11 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
   getMaxMonthlyReceived(): number { return this.getMaxMonthly(); }
 
   getBestMonth(): MonthlyParkData | null {
-    if (!this.monthlyParkData.length) return null;
-    // Meilleur mois = celui avec le plus d'encaissements réels
-    return this.monthlyParkData.reduce((best, m) =>
+    // Meilleur mois = celui avec le plus d'encaissements réels (aucun si rien
+    // n'a été encaissé : janvier sortait « meilleur mois » à 0 FCFA)
+    const withRevenue = this.monthlyParkData.filter(m => m.totalReceived > 0);
+    if (!withRevenue.length) return null;
+    return withRevenue.reduce((best, m) =>
       m.totalReceived > best.totalReceived ? m : best
     );
   }

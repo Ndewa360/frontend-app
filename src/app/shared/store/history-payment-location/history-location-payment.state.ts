@@ -67,7 +67,9 @@ export class HistoryLocationPaymentState{
     {
         return createSelector([HistoryLocationPaymentState],(state)=> state.historyLocationPayments.filter((historyLocationPayment)=>{
             //console.log("History ",historyLocationPayment,historyLocationPayment.property._id,propertyID)
-            return historyLocationPayment.room._id==roomID
+            // room peuplé, simple id, ou absent (unité supprimée)
+            const room: any = historyLocationPayment.room;
+            return (typeof room === 'object' ? room?._id : room) == roomID
         }))
     }
 

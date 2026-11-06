@@ -15,7 +15,7 @@ import { ModernDeleteUnitModalComponent } from '../modern-delete-unit-modal/mode
 
 // Anciens modals (à garder temporairement pour certaines fonctionnalités)
 import { ContractViewerModalComponent } from '../contract-viewer-modal/contract-viewer-modal.component';
-import { Observable, Subject, combineLatest } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   RoomModel,
@@ -115,6 +115,7 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
   availableTenants: LocataireModel[] = [];
 
   private destroy$ = new Subject<void>();
+  private roomPaymentsSub?: Subscription;
 
   // Options de filtrage
   statusOptions = [
@@ -759,6 +760,16 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
    * Calcule la date du prochain paiement pour une unité occupée
    * Réutilise la même logique que UnitDetailsService
    */
+  /**
+   * Historique rattaché à l'unité. `room` peut être peuplé, un simple id, ou
+   * absent (unité supprimée) : `h.room._id` faisait planter l'affichage.
+   */
+  private isHistoryOfRoom(history: any, roomId: string): boolean {
+    const room = history?.room;
+    const id = typeof room === 'object' ? room?._id : room;
+    return !!id && String(id) === String(roomId);
+  }
+
   getNextPaymentDate(room: RoomModel): Date | null {
     if (!room || room.isFree !== false) return null;
 
@@ -766,7 +777,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
     if (!location?.startedAt) return null;
 
     const allPaymentHistory = this.store.selectSnapshot(HistoryLocationPaymentState.selectStateHistoryLocationPayments);
-    const roomHistory = allPaymentHistory?.find(h => h.room._id === room._id);
+    // Historique du bail en cours (une entrée par bail : la première trouvée
+    // pour l'unité pouvait être celle de l'ancien locataire)
+    const roomHistory = allPaymentHistory?.find(h => String((h.location as any)?._id ?? h.location) === String(location._id))
+      ?? allPaymentHistory?.find(h => this.isHistoryOfRoom(h, room._id));
     const payments = roomHistory?.transactions || [];
 
     return this.unitDetailsService.computeNextPaymentDate(location, payments, room.price || 0);
@@ -1080,8 +1094,10 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Récupérer l'historique des paiements pour cette chambre
-    this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments)
+    // Un seul abonnement : chaque appel en ajoutait un, lié à l'unité de ce
+    // moment, et les anciens réécrivaient les paiements d'une autre unité.
+    this.roomPaymentsSub?.unsubscribe();
+    this.roomPaymentsSub = this.store.select(HistoryLocationPaymentState.selectStateHistoryLocationPayments)
       .pipe(takeUntil(this.destroy$))
       .subscribe(allPaymentHistory => {
 
@@ -1091,10 +1107,9 @@ export class PropertyUnitsListComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // Trouver l'historique pour cette chambre
-        this.paymentHistory = allPaymentHistory.find(history =>
-          history.room._id === selectedRoom._id
-        ) || null;
+        // Historique de l'unité, bail en cours de préférence (une entrée par bail)
+        const histories = allPaymentHistory.filter(history => this.isHistoryOfRoom(history, selectedRoom._id));
+        this.paymentHistory = histories.find(h => !(h.location as any)?.endedAt) ?? histories[0] ?? null;
 
         // Extraire les paiements individuels
         this.roomPayments = this.paymentHistory?.transactions || [];
