@@ -44,7 +44,7 @@ export class TeamComponent implements OnInit {
       id: 'konguep-elvira',
       name: 'Konguep Elvira',
       position: 'CFO',
-      image: 'assets/team/konguep-elvira.jpg',
+      image: 'assets/team/konguep-elvira.jpeg',
       socialLinks: {
         linkedin: 'https://www.linkedin.com/in/elvira-konguep-43951422a/',
         facebook: 'https://www.facebook.com/elvira.konguep'
