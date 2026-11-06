@@ -11,7 +11,7 @@ import { MultilingualNotificationService } from '../../../shared/services/notifi
 import { LanguageUrlService } from '../../../shared/services/language-url.service';
 import { environment } from '../../../../environments/environment';
 import { TranslatePipe } from '@ngx-translate/core';
-import { EditorComponent } from '@tinymce/tinymce-angular';
+import { EditorComponent, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { DropdownModule } from 'carbon-components-angular/dropdown';
 import { ComboBoxModule } from 'carbon-components-angular';
 import { ExtendedModule } from '@angular/flex-layout/extended';
@@ -22,7 +22,11 @@ import { ButtonModule } from 'carbon-components-angular/button';
   templateUrl: './contract-template-editor.component.html',
   styleUrls: ['./contract-template-editor.component.scss'],
   standalone: true,
-  imports: [ButtonModule, NgIf, NgClass, ExtendedModule, FormsModule, ComboBoxModule, DropdownModule, NgFor, EditorComponent, TranslatePipe]
+  imports: [ButtonModule, NgIf, NgClass, ExtendedModule, FormsModule, ComboBoxModule, DropdownModule, NgFor, EditorComponent, TranslatePipe],
+  // TinyMCE auto-hébergé (copié dans /tinymce/ au build, voir angular.json).
+  // Sans clé Tiny Cloud, l'éditeur partait sur cdn.tiny.cloud/1/no-api-key,
+  // que Tiny bloque : éditeur inutilisable. Avec TINYMCE_API_KEY, Tiny Cloud.
+  providers: [{ provide: TINYMCE_SCRIPT_SRC, useFactory: () => environment.tinyMceApiKey ? undefined : '/tinymce/tinymce.min.js' }]
 })
 export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   trackByFn = trackByFn;
@@ -31,6 +35,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
   isEditMode = false;
   templateId: string | null = null;
   readonly apiKey = environment.tinyMceApiKey;
+  // 'gpl' (licence open source) ou clé commerciale Tiny pour l'auto-hébergé
+  readonly licenseKey = environment.tinyMceLicenseKey;
 
   // Template properties
   templateName = '';
@@ -104,7 +110,7 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
         'insertdatetime', 'media', 'table', 'help', 'wordcount'
       ],
       toolbar1: 'undo redo | cut copy paste | bold italic underline strikethrough | ' +
-      'fontselect fontsizeselect | forecolor backcolor | removeformat',
+      'fontfamily fontsize | forecolor backcolor | removeformat',
       toolbar2: 'alignleft aligncenter alignright alignjustify | ' +
       'bullist numlist outdent indent | blockquote | ' +
       'link unlink | image media table | code',
@@ -159,7 +165,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       content_style: this.getContentStyle(),
 
       // Permettre l'interprétation complète du CSS
-      content_css: true, // Ne pas charger le CSS par défaut
+      // Feuille de base de TinyMCE (`true` n'est pas une valeur admise : avertissement, puis même résultat)
+      content_css: 'default',
       body_class: 'template-editor-content',
 
       // Configuration des styles
@@ -339,8 +346,7 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     {
       name: 'Informations du locataire',
       variables: [
-        { name: 'Nom du locataire', label: 'Nom du locataire', code: '{{TENANT_NAME}}', description: 'Nom de famille du locataire' },
-        { name: 'Prénom du locataire', label: 'Prénom du locataire', code: '{{TENANT_FIRSTNAME}}', description: 'Prénom du locataire' },
+        { name: 'Nom du locataire', label: 'Nom complet du locataire', code: '{{TENANT_NAME}}', description: 'Nom et prénom du locataire' },
         { name: 'Adresse du locataire', label: 'Adresse du locataire', code: '{{TENANT_ADDRESS}}', description: 'Adresse complète du locataire' },
         { name: 'Téléphone du locataire', label: 'Téléphone du locataire', code: '{{TENANT_PHONE}}', description: 'Numéro de téléphone du locataire' },
         { name: 'Email du locataire', label: 'Email du locataire', code: '{{TENANT_EMAIL}}', description: 'Adresse email du locataire' }
@@ -349,8 +355,7 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
     {
       name: 'Informations du propriétaire',
       variables: [
-        { name: 'Nom du propriétaire', label: 'Nom du propriétaire', code: '{{OWNER_NAME}}', description: 'Nom de famille du propriétaire' },
-        { name: 'Prénom du propriétaire', label: 'Prénom du propriétaire', code: '{{OWNER_FIRSTNAME}}', description: 'Prénom du propriétaire' },
+        { name: 'Nom du propriétaire', label: 'Nom complet du propriétaire', code: '{{OWNER_NAME}}', description: 'Nom et prénom du propriétaire' },
         { name: 'Adresse du propriétaire', label: 'Adresse du propriétaire', code: '{{OWNER_ADDRESS}}', description: 'Adresse complète du propriétaire' },
         { name: 'Téléphone du propriétaire', label: 'Téléphone du propriétaire', code: '{{OWNER_PHONE}}', description: 'Numéro de téléphone du propriétaire' },
         { name: 'Email du propriétaire', label: 'Email du propriétaire', code: '{{OWNER_EMAIL}}', description: 'Adresse email du propriétaire' }
@@ -361,10 +366,8 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       variables: [
         { name: 'Adresse du bien', label: 'Adresse du bien', code: '{{PROPERTY_ADDRESS}}', description: 'Adresse complète du bien immobilier' },
         { name: 'Type de bien', label: 'Type de bien', code: '{{PROPERTY_TYPE}}', description: 'Type de bien (appartement, maison, etc.)' },
-        { name: 'Surface', label: 'Surface', code: '{{PROPERTY_SURFACE}}', description: 'Surface du bien en m²' },
-        { name: 'Nombre de pièces', label: 'Nombre de pièces', code: '{{PROPERTY_ROOMS}}', description: 'Nombre de pièces du bien' },
+        { name: 'Nombre de pièces', label: 'Nombre de pièces', code: '{{PROPERTY_ROOMS}}', description: "Nombre de chambres de l'unité" },
         { name: 'Loyer mensuel', label: 'Loyer mensuel', code: '{{MONTHLY_RENT}}', description: 'Montant du loyer mensuel' },
-        { name: 'Charges', label: 'Charges', code: '{{CHARGES}}', description: 'Montant des charges mensuelles' },
         { name: 'Dépôt de garantie', label: 'Dépôt de garantie', code: '{{SECURITY_DEPOSIT}}', description: 'Montant du dépôt de garantie' }
       ]
     },
@@ -752,35 +755,31 @@ export class ContractTemplateEditorComponent implements OnInit, OnDestroy {
       return '<p>Aucun contenu à prévisualiser</p>';
     }
 
-    // Remplacer les variables par des exemples pour la prévisualisation
-    let previewContent = this.templateContent;
+    // Exemples pour l'aperçu : variables de l'éditeur ({{TENANT_NAME}}…) et
+    // celles du modèle par défaut ({{nomPrenomLocataire}}…), toutes deux
+    // remplies à la génération du contrat (backend, contract.service.ts).
+    const today = new Date().toLocaleDateString('fr-FR');
+    const samples: Record<string, string> = {
+      TENANT_NAME: 'Marie NGO', TENANT_FIRSTNAME: '', TENANT_ADDRESS: 'Bonamoussadi, Douala',
+      TENANT_PHONE: '+237 6 90 00 00 00', TENANT_EMAIL: 'locataire@exemple.cm',
+      OWNER_NAME: 'Jean MBARGA', OWNER_FIRSTNAME: '', OWNER_ADDRESS: 'Bastos, Yaoundé',
+      OWNER_PHONE: '+237 6 77 00 00 00', OWNER_EMAIL: 'proprietaire@exemple.cm',
+      PROPERTY_ADDRESS: 'A12 - Rue 1.234, Yaoundé, Cameroun', PROPERTY_TYPE: 'Studio',
+      PROPERTY_SURFACE: '', PROPERTY_ROOMS: '2',
+      MONTHLY_RENT: '50 000 FCFA', CHARGES: '', SECURITY_DEPOSIT: '100 000 FCFA',
+      CURRENT_DATE: today, START_DATE: '01/01/2026', END_DATE: '', SIGNATURE_DATE: today,
+      nomPrenomBailleur: 'Jean MBARGA', recidenceBailleur: 'Bastos, Yaoundé',
+      emailBailleur: 'proprietaire@exemple.cm', phoneBailleur: '+237 6 77 00 00 00', cniBailleur: '000000000',
+      nomPrenomLocataire: 'Marie NGO', emailMandataire: 'locataire@exemple.cm',
+      phoneMandataire: '+237 6 90 00 00 00', phoneMandataireRef: '+237 6 99 00 00 00',
+      addressLogement: 'A12 - Rue 1.234, Yaoundé, Cameroun', typeLogement: 'Studio',
+      caracteristicLogement: '1 chambre, 1 douche interne, cuisine',
+      dateContrat: '01/01/2026', dureContrat: '1 an',
+      montantLocation: '50 000', monai: 'FCFA', montantCaution: '100 000',
+    };
 
-    // Variables du propriétaire
-    previewContent = previewContent.replace(/\{\{OWNER_FIRSTNAME\}\}/g, 'Jean');
-    previewContent = previewContent.replace(/\{\{OWNER_NAME\}\}/g, 'DUPONT');
-    previewContent = previewContent.replace(/\{\{OWNER_ADDRESS\}\}/g, '123 Rue de la Paix, 75001 Paris');
-
-    // Variables du locataire
-    previewContent = previewContent.replace(/\{\{TENANT_FIRSTNAME\}\}/g, 'Marie');
-    previewContent = previewContent.replace(/\{\{TENANT_NAME\}\}/g, 'MARTIN');
-    previewContent = previewContent.replace(/\{\{TENANT_ADDRESS\}\}/g, '456 Avenue des Champs, 75008 Paris');
-
-    // Variables de la propriété
-    previewContent = previewContent.replace(/\{\{PROPERTY_ADDRESS\}\}/g, '789 Boulevard Saint-Germain, 75007 Paris');
-    previewContent = previewContent.replace(/\{\{PROPERTY_SURFACE\}\}/g, '65');
-    previewContent = previewContent.replace(/\{\{PROPERTY_ROOMS\}\}/g, '3');
-    previewContent = previewContent.replace(/\{\{MONTHLY_RENT\}\}/g, '1 200 €');
-    previewContent = previewContent.replace(/\{\{CHARGES\}\}/g, '150 €');
-    previewContent = previewContent.replace(/\{\{SECURITY_DEPOSIT\}\}/g, '2 400 €');
-
-    // Variables de dates
-    const today = new Date();
-    previewContent = previewContent.replace(/\{\{CURRENT_DATE\}\}/g, today.toLocaleDateString('fr-FR'));
-    previewContent = previewContent.replace(/\{\{START_DATE\}\}/g, '01/01/2024');
-    previewContent = previewContent.replace(/\{\{END_DATE\}\}/g, '31/12/2024');
-    previewContent = previewContent.replace(/\{\{SIGNATURE_DATE\}\}/g, today.toLocaleDateString('fr-FR'));
-
-    return previewContent;
+    return this.templateContent.replace(/\{\{\{?\s*([A-Za-z_]+)\s*\}?\}\}/g,
+      (match, key) => key in samples ? samples[key] : match);
   }
 
   /**

@@ -10,7 +10,10 @@
  * clé d'API TinyMCE (embarquée dans la page), Google Client ID.
  *
  * Variables lues par `src/environments/environment*.ts` :
- *   API_URL, APP_URL, STRIPE_PUBLIC_KEY, TINYMCE_API_KEY, GOOGLE_CLIENT_ID
+ *   API_URL, APP_URL, STRIPE_PUBLIC_KEY, TINYMCE_API_KEY, TINYMCE_LICENSE_KEY, GOOGLE_CLIENT_ID
+ *
+ * TinyMCE : laisser TINYMCE_API_KEY vide utilise la copie auto-hébergée
+ * (/tinymce/). TINYMCE_LICENSE_KEY : 'gpl' par défaut, ou clé commerciale Tiny.
  */
 (function () {
   'use strict';
@@ -19,6 +22,7 @@
     APP_URL: '',
     STRIPE_PUBLIC_KEY: '',
     TINYMCE_API_KEY: '',
+    TINYMCE_LICENSE_KEY: '',
     GOOGLE_CLIENT_ID: ''
   };
 })();

@@ -10,6 +10,7 @@ export const environment = {
 	url: 'https://ndewa-360.com',
 	stripePublicKey: envVars['STRIPE_PUBLIC_KEY'] || '',
   tinyMceApiKey: envVars['TINYMCE_API_KEY'] || '',
+  tinyMceLicenseKey: envVars['TINYMCE_LICENSE_KEY'] || 'gpl',
   googleClientId: envVars['GOOGLE_CLIENT_ID'] || '293692850952-cba58thne3gjki7r4l678p9lcvftvav7.apps.googleusercontent.com',
   version: '2.0.0',
   // KundAi — mode proxy

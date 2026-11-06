@@ -223,6 +223,7 @@
           <div class="editor-area" *ngIf="!isContentLoading">
             <editor
               [apiKey]="apiKey"
+              [licenseKey]="licenseKey"
               [init]="editorConfig"
               [(ngModel)]="templateContent"
               (ngModelChange)="onContentChange($event)"

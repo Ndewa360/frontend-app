@@ -213,9 +213,10 @@ export class ModernFinancialDashboardComponent implements OnInit, OnDestroy {
       const lateTenants     = tenantsSummary?.lateTenants     ?? 0;
       const advanceTenants  = tenantsSummary?.aheadTenants    ?? 0;
       const upToDateTenants = tenantsSummary?.upToDateTenants ?? Math.max(0, totalTenants - lateTenants - advanceTenants);
-      // Dettes et avances : source unique = tenantsAnalysis (depuis calculatePaymentStatus, cumul depuis entrée)
-      const totalArrears  = tenantsSummary?.totalAmountBehind  ?? 0;
-      const totalAdvances = tenantsSummary?.totalAdvanceAmount ?? 0;
+      // Dettes et avances : mêmes montants que la page du bien (cumul exact
+      // depuis l'entrée, y compris un locataire parti sans avoir soldé)
+      const totalArrears  = metrics?.totalDebts    ?? tenantsSummary?.totalAmountBehind  ?? 0;
+      const totalAdvances = metrics?.totalAdvances ?? tenantsSummary?.totalAdvanceAmount ?? 0;
 
       const monthlyData: MonthlyRevenue[] = (pp.amountMonth || []).map((m: any) => ({
         monthIndex: m.month - 1,

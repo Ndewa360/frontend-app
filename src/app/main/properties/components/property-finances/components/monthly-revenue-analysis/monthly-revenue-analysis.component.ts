@@ -117,7 +117,9 @@ export class MonthlyRevenueAnalysisComponent implements OnInit, OnChanges, OnDes
     let bestMonth = { month: 0, rate: 0 };
     let worstMonth = { month: 0, rate: 100 };
 
-    this.monthlyData.forEach((month) => {
+    // Mois sans loyer attendu (avant l'entrée, unité vide) : ni meilleur ni
+    // pire mois, comme le backend (ils sortaient en « pire mois » à 0 %).
+    this.monthlyData.filter((month) => month.expected > 0).forEach((month) => {
       if (month.rate > bestMonth.rate) bestMonth = { month: month.monthIndex, rate: month.rate };
       if (month.rate < worstMonth.rate) worstMonth = { month: month.monthIndex, rate: month.rate };
     });
