@@ -1,41 +1,28 @@
 import { TranslateLoader } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { join } from 'path';
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+// Traductions intégrées au bundle serveur à la compilation (chemins
+// littéraux). L'ancien chargeur cherchait les fichiers JSON sur le disque
+// avec un chemin calculé : dans le bundle, ce require dynamique échouait et
+// renvoyait {}, et sur Vercel les fichiers de dist/app/browser ne sont pas
+// dans la fonction serveur. Les pages rendues côté serveur (accueil,
+// recherche, tarifs, centre d'aide) contenaient donc des clés
+// (« HEADER.HOME », « LANDING.HERO.TITLE »…) au lieu des textes : c'est ce
+// que lisaient les moteurs de recherche et les assistants IA.
+const TRANSLATIONS: Record<string, any> = {
+  fr: { ...require('../../../assets/i18n/fr.json'), ...require('../../../assets/i18n/fr-legal.json') },
+  en: { ...require('../../../assets/i18n/en.json'), ...require('../../../assets/i18n/en-legal.json') },
+};
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 /**
- * Loader de traduction pour Angular Universal (SSR / Prerender).
- * Lit les fichiers JSON directement depuis le filesystem Node.js
- * au lieu de faire des requêtes HTTP — ce qui est impossible côté serveur
- * car le serveur HTTP n'est pas encore démarré au moment du rendu.
- *
- * Utilisé uniquement dans AppServerModule.
+ * Chargeur de traductions du rendu serveur (SSR), utilisé uniquement dans
+ * AppServerModule. Textes de base et textes juridiques (pages légales) ;
+ * l'administration n'est jamais rendue côté serveur.
  */
 export class TranslateUniversalLoader implements TranslateLoader {
   getTranslation(lang: string): Observable<any> {
-    try {
-      // En prerender/SSR, process.cwd() pointe vers la racine du projet
-      // Les assets sont dans dist/app/browser/assets/i18n/ après le build
-      // ou dans src/assets/i18n/ en développement
-      const possiblePaths = [
-        join(process.cwd(), `dist/app/browser/assets/i18n/${lang}.json`),
-        join(process.cwd(), `src/assets/i18n/${lang}.json`),
-      ];
-
-      // Utiliser require() pour lire le fichier de façon synchrone
-      // (fs.readFileSync serait aussi valable)
-      for (const filePath of possiblePaths) {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          const translations = require(filePath);
-          return of(translations);
-        } catch {
-          // Essayer le chemin suivant
-        }
-      }
-
-      return of({});
-    } catch (err) {
-      return of({});
-    }
+    return of(TRANSLATIONS[lang] ?? TRANSLATIONS['fr']);
   }
 }

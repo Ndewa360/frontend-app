@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://ndewa-360.com/fr/home</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/search/index</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/search/index"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/search/index"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/search/index"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/search/index</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/search/index"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/search/index"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/search/index"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/tarifs</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/tarifs</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/tarifs?profil=proprietaire</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs?profil=proprietaire"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs?profil=proprietaire"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs?profil=proprietaire"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/tarifs?profil=proprietaire</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs?profil=proprietaire"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs?profil=proprietaire"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs?profil=proprietaire"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/tarifs?profil=agent</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs?profil=agent"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs?profil=agent"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs?profil=agent"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/tarifs?profil=agent</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs?profil=agent"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs?profil=agent"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs?profil=agent"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/tarifs?profil=chercheur</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs?profil=chercheur"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs?profil=chercheur"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs?profil=chercheur"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/tarifs?profil=chercheur</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/tarifs?profil=chercheur"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/tarifs?profil=chercheur"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/tarifs?profil=chercheur"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/welcome</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/welcome"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/welcome"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/welcome"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/welcome</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/welcome"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/welcome"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/welcome"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/faq</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/faq"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/faq"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/faq</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/faq"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/faq"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/faq"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=account</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=account"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=account"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=account"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=account</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=account"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=account"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=account"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=navigation</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=navigation"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=navigation"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=navigation"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=navigation</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=navigation"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=navigation"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=navigation"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=add-property</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=add-property"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=add-property"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=add-property"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=add-property</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=add-property"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=add-property"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=add-property"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=add-unit</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=add-unit"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=add-unit"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=add-unit"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=add-unit</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=add-unit"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=add-unit"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=add-unit"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=media</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=media"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=media"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=media"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=media</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=media"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=media"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=media"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=add-tenant</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=add-tenant"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=add-tenant"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=add-tenant"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=add-tenant</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=add-tenant"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=add-tenant"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=add-tenant"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=assign</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=assign"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=assign"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=assign"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=assign</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=assign"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=assign"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=assign"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=contracts</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=contracts"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=contracts"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=contracts"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=contracts</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=contracts"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=contracts"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=contracts"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=record-payment</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=record-payment"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=record-payment"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=record-payment"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=record-payment</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=record-payment"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=record-payment"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=record-payment"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=payment-link</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=payment-link"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=payment-link"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=payment-link"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=payment-link</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=payment-link"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=payment-link"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=payment-link"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=receipts</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=receipts"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=receipts"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=receipts"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=receipts</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=receipts"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=receipts"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=receipts"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=monthly-reports</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=monthly-reports"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=monthly-reports"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=monthly-reports"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=monthly-reports</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=monthly-reports"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=monthly-reports"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=monthly-reports"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=deposit</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=deposit"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=deposit"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=deposit"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=deposit</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=deposit"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=deposit"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=deposit"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=withdraw</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=withdraw"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=withdraw"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=withdraw"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=withdraw</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=withdraw"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=withdraw"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=withdraw"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=pricing</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=pricing"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=pricing"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=pricing</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=pricing"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=pricing"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=invoices</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=invoices"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=invoices"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=invoices"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=invoices</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=invoices"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=invoices"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=invoices"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=suspension</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=suspension"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=suspension"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=suspension"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=suspension</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=suspension"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=suspension"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=suspension"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=managers</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=managers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=managers"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=managers"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=managers</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=managers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=managers"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=managers"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/manual?article=agent</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=agent"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=agent"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=agent"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/manual?article=agent</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/manual?article=agent"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/manual?article=agent"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/manual?article=agent"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/getting-started</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/getting-started"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/getting-started"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/getting-started"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/getting-started</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/getting-started"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/getting-started"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/getting-started"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/support/support</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/support"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/support"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/support"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/support/support</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/support/support"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/support/support"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/support/support"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/about</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/about"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/about"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/about"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/about</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/about"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/about"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/about"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/contact"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/contact</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/contact"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/team</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/team"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/team"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/team"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/team</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/team"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/team"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/team"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/mentions-legales</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/mentions-legales"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/mentions-legales"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/mentions-legales"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/mentions-legales</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/mentions-legales"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/mentions-legales"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/mentions-legales"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/privacy-policy"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/privacy-policy</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/privacy-policy"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/terms</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/terms"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/terms</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/terms"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/terms"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/cookies"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/cookies"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/cookies"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/cookies"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/fr/home/remboursement</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/remboursement"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/remboursement"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/remboursement"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://ndewa-360.com/en/home/remboursement</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://ndewa-360.com/fr/home/remboursement"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ndewa-360.com/en/home/remboursement"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ndewa-360.com/fr/home/remboursement"/>
+    <lastmod>2026-11-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

@@ -1,6 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { RoomModel, RoomType } from '../../store/rooms/room.model';
@@ -42,6 +42,7 @@ export class SeoService {
     private roomService: RoomService,
     private propertyService: PropertyService,
     @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   // ── Méthode principale appelée par AppComponent sur chaque navigation ──────
@@ -68,7 +69,21 @@ export class SeoService {
     const langMatch = url.match(/^\/(fr|en)\//);
     const lang = (langMatch ? langMatch[1] : 'fr') as 'fr' | 'en';
 
-    if (path.includes('/home')) {
+    // Pages précises d'abord : « /home/about » contient aussi « /home » et
+    // recevait les métadonnées de l'accueil.
+    if (path.includes('/home/tarifs')) {
+      this.setupPricingPageMetaTags(lang, params.get('profil'));
+    } else if (path.includes('/support')) {
+      this.setupSupportPageMetaTags(lang, path, params.get('article'));
+    } else if (path.includes('/home/about')) {
+      this.setupAboutPageMetaTags(lang);
+    } else if (path.includes('/home/contact')) {
+      this.setupContactPageMetaTags(lang);
+    } else if (path.includes('/home/privacy-policy')) {
+      this.setupPrivacyPageMetaTags(lang);
+    } else if (path.includes('/home/terms')) {
+      this.setupTermsPageMetaTags(lang);
+    } else if (path.includes('/home')) {
       this.setLandingPageSeo(lang);
     } else if (path.includes('/search/room/')) {
       const roomId = path.split('/search/room/')[1];
@@ -84,16 +99,6 @@ export class SeoService {
       // ?unit=<id> → meta tags de l'unité spécifique
       if (unitId) this.setupRoomPageMetaTags(unitId, lang);
       else this.setSearchPageSeo(lang);
-    } else if (path.includes('/support')) {
-      this.setupSupportPageMetaTags();
-    } else if (path.includes('/about')) {
-      this.setupAboutPageMetaTags(lang);
-    } else if (path.includes('/contact')) {
-      this.setupContactPageMetaTags(lang);
-    } else if (path.includes('/privacy-policy')) {
-      this.setupPrivacyPageMetaTags(lang);
-    } else if (path.includes('/terms')) {
-      this.setupTermsPageMetaTags(lang);
     } else if (url === '/') {
       this.setLandingPageSeo(lang);
     }
@@ -119,8 +124,8 @@ export class SeoService {
         ? 'Ndewa360 — Gérez vos loyers et locataires en toute simplicité'
         : 'Ndewa360 — Manage your rents and tenants effortlessly',
       ogDescription: isFr
-        ? 'Plateforme SaaS de gestion immobilière. Suivi des paiements, contrats PDF, alertes automatiques, visites 360°. Gratuit jusqu\'à 8 biens.'
-        : 'SaaS rental property management. Payment tracking, PDF contracts, automatic alerts, 360° tours. Free up to 8 properties.',
+        ? 'Plateforme de gestion immobilière. Suivi des paiements, contrats PDF, alertes automatiques, visites 360°. Gratuit pour 1 bien et 4 logements occupés.'
+        : 'Rental property management platform. Payment tracking, PDF contracts, automatic alerts, 360° tours. Free for 1 property and 4 occupied units.',
       ogImage: DEFAULT_IMAGE,
       ogUrl: canonicalUrl,
       lang,
@@ -253,13 +258,78 @@ export class SeoService {
     });
   }
 
-  setupSupportPageMetaTags(): void {
+  /**
+   * Pages du support (accessibles sans connexion) : titre et description
+   * propres à chaque page, en français et en anglais, adresse canonique réelle
+   * (« /support » seul n'existe pas). Un article de documentation a sa propre
+   * adresse (?article=…).
+   */
+  setupSupportPageMetaTags(lang: 'fr' | 'en' = 'fr', path = '', article?: string | null): void {
+    const isFr = lang === 'fr';
+    const page = (path.split('/support/')[1] || 'welcome').split('/')[0];
+    const pages: Record<string, { fr: [string, string]; en: [string, string] }> = {
+      welcome: {
+        fr: ['Centre d\'aide Ndewa360 — Support, FAQ et documentation', 'Centre d\'aide de Ndewa360 : guides vidéo, questions fréquentes, documentation pas à pas et contact du support (WhatsApp, e-mail) pour gérer vos biens, locataires et loyers.'],
+        en: ['Ndewa360 Help Center — Support, FAQ and documentation', 'Ndewa360 help center: video guides, FAQ, step-by-step documentation and support contact (WhatsApp, email) to manage your properties, tenants and rent.'],
+      },
+      faq: {
+        fr: ['Questions fréquentes — Ndewa360', 'Réponses aux questions sur Ndewa360 : tarifs (gratuit pour 1 bien et 4 logements occupés, Pro de 3 000 à 20 000 FCFA/mois), loyers, reçus, contrats, agents, visites 360° et support.'],
+        en: ['Frequently asked questions — Ndewa360', 'Answers about Ndewa360: pricing (free for 1 property and 4 occupied units, Pro from 3,000 to 20,000 FCFA/month), rent, receipts, contracts, agents, 360° tours and support.'],
+      },
+      manual: {
+        fr: ['Documentation Ndewa360 — Guides pas à pas', 'Documentation de Ndewa360 : ajouter un bien et des logements, assigner un locataire, enregistrer un loyer, reçus, portefeuille, abonnement et gestionnaires.'],
+        en: ['Ndewa360 Documentation — Step-by-step guides', 'Ndewa360 documentation: add a property and units, assign a tenant, record rent, receipts, wallet, subscription and managers.'],
+      },
+      'getting-started': {
+        fr: ['Guide de démarrage — Ndewa360', 'Vidéos et étapes pour démarrer avec Ndewa360 : création de compte, ajout d\'un bien, d\'une unité et d\'un locataire, assignation et analyse financière.'],
+        en: ['Getting started — Ndewa360', 'Videos and steps to get started with Ndewa360: account creation, adding a property, a unit and a tenant, assignment and financial analysis.'],
+      },
+      support: {
+        fr: ['Contacter le support — Ndewa360', 'Contactez le support Ndewa360 : formulaire, WhatsApp +237 698 29 53 68 ou support@ndewa-360.com. Assistance gratuite en français.'],
+        en: ['Contact support — Ndewa360', 'Contact Ndewa360 support: form, WhatsApp +237 698 29 53 68 or support@ndewa-360.com. Free assistance in French and English.'],
+      },
+    };
+    const known = pages[page] ?? pages['welcome'];
+    const [title, description] = isFr ? known.fr : known.en;
+    const query = page === 'manual' && article ? `?article=${encodeURIComponent(article)}` : '';
+    const canonicalUrl = `${BASE_URL}/${lang}/support/${pages[page] ? page : 'welcome'}${query}`;
     this.apply({
-      title: 'Support et aide | Ndewa360',
-      description: 'Besoin d\'aide ? Consultez notre centre de support pour trouver des réponses à vos questions sur Ndewa360.',
-      keywords: 'support, aide, FAQ, questions fréquentes, contact, assistance',
-      ogUrl: `${BASE_URL}/support`,
-    }, `${BASE_URL}/support`);
+      title,
+      description,
+      keywords: isFr
+        ? 'aide Ndewa360, support, FAQ, documentation, gestion locative, loyer, locataire, reçu, contrat de location, Cameroun'
+        : 'Ndewa360 help, support, FAQ, documentation, rental management, rent, tenant, receipt, lease, Cameroon',
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl);
+  }
+
+  /** Page Tarifs, par profil (?profil=proprietaire|agent|chercheur). */
+  setupPricingPageMetaTags(lang: 'fr' | 'en', profile?: string | null): void {
+    const isFr = lang === 'fr';
+    const query = profile && ['proprietaire', 'agent', 'chercheur'].includes(profile) ? `?profil=${profile}` : '';
+    const canonicalUrl = `${BASE_URL}/${lang}/home/tarifs${query}`;
+    this.apply({
+      title: isFr ? 'Tarifs Ndewa360 — Propriétaires, agents et chercheurs de logement' : 'Ndewa360 pricing — Owners, agents and home seekers',
+      description: isFr
+        ? 'Tarifs Ndewa360 : gratuit pour 1 bien et 4 logements occupés, forfait Pro de 3 000 à 20 000 FCFA/mois selon les loyers, Gold sur mesure. Recherche gratuite, contacts propriétaires 1 000 FCFA / 24 h.'
+        : 'Ndewa360 pricing: free for 1 property and 4 occupied units, Pro plan from 3,000 to 20,000 FCFA/month based on rent, tailored Gold. Free search, owner contacts 1,000 FCFA / 24 h.',
+      keywords: isFr
+        ? 'tarif Ndewa360, prix gestion locative, abonnement, forfait Pro, Gold, gratuit, agent immobilier, chercheur de logement, FCFA'
+        : 'Ndewa360 pricing, rental management price, subscription, Pro plan, Gold, free, real estate agent, home seeker, FCFA',
+      ogUrl: canonicalUrl,
+      lang,
+    }, canonicalUrl, {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      'name': 'Ndewa360 — Loyers sous contrôle',
+      'brand': { '@type': 'Brand', 'name': 'Ndewa360' },
+      'offers': [
+        { '@type': 'Offer', 'name': isFr ? 'Gratuit' : 'Free', 'price': '0', 'priceCurrency': 'XAF' },
+        { '@type': 'AggregateOffer', 'name': 'Pro', 'lowPrice': '3000', 'highPrice': '20000', 'priceCurrency': 'XAF' },
+        { '@type': 'Offer', 'name': isFr ? 'Accès coordonnées propriétaires (24 h)' : 'Owner contact access (24 h)', 'price': '1000', 'priceCurrency': 'XAF' },
+      ],
+    });
   }
 
   setupAboutPageMetaTags(lang: 'fr' | 'en'): void {
@@ -332,24 +402,34 @@ export class SeoService {
     this.meta.removeTag("name='twitter:title'");
     this.meta.removeTag("name='twitter:description'");
     this.meta.removeTag("name='twitter:image'");
-    if (isPlatformBrowser(this.platformId)) {
-      document.getElementById('structured-data')?.remove();
-    }
+    this.removeStructuredData();
   }
 
-  addStructuredData(data: any): void {
-    if (isPlatformBrowser(this.platformId)) {
-      document.getElementById('structured-data')?.remove();
-      const script = document.createElement('script');
-      script.id = 'structured-data';
-      script.type = 'application/ld+json';
-      script.text = JSON.stringify(data);
-      document.head.appendChild(script);
-    }
-    // SSR : injecter via Meta service (Angular Universal sérialise le head)
-    else {
-      this.meta.updateTag({ id: 'structured-data-ld', name: 'ld+json', content: JSON.stringify(data) });
-    }
+  /**
+   * Données structurées (JSON-LD) dans le <head>, y compris au rendu serveur :
+   * une balise <script type="application/ld+json"> est lue par les moteurs de
+   * recherche (l'ancienne balise <meta name="ld+json"> du rendu serveur ne
+   * l'était pas). [slot] distingue les données d'une page (« main », remplacées
+   * à chaque navigation) de celles d'un composant (« faq »).
+   */
+  addStructuredData(data: any, slot = 'main'): void {
+    const head = this.document?.head;
+    if (!head) return;
+    this.removeStructuredData(slot);
+    const script = this.document.createElement('script');
+    script.id = this.structuredDataId(slot);
+    script.setAttribute('type', 'application/ld+json');
+    // « </ » échappé : un texte saisi ne peut pas fermer la balise script.
+    script.textContent = JSON.stringify(data).replace(/<\//g, '<\\/');
+    head.appendChild(script);
+  }
+
+  removeStructuredData(slot = 'main'): void {
+    this.document?.getElementById(this.structuredDataId(slot))?.remove();
+  }
+
+  private structuredDataId(slot: string): string {
+    return slot === 'main' ? 'structured-data' : `structured-data-${slot}`;
   }
 
   getPropertyDetails(propertyId: string): Observable<PropertyModel> {
@@ -399,22 +479,40 @@ export class SeoService {
     this.meta.updateTag({ name: 'twitter:description', content: config.ogDescription || config.description });
     this.meta.updateTag({ name: 'twitter:image',       content: config.ogImage || DEFAULT_IMAGE });
 
-    // Canonical : fonctionne en SSR et browser
-    this.meta.updateTag({ name: 'canonical-url', content: canonicalUrl });
-    if (isPlatformBrowser(this.platformId)) {
-      this.setCanonical(canonicalUrl);
-    }
+    // Canonique et versions FR/EN : balises <link>, au rendu serveur comme
+    // dans le navigateur (au rendu serveur, seule une balise meta non
+    // standard était posée).
+    this.setCanonical(canonicalUrl);
+    this.setAlternates(canonicalUrl);
     if (structuredData) this.addStructuredData(structuredData);
   }
 
   private setCanonical(url: string): void {
-    let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    this.setLink('canonical', url);
+  }
+
+  /** <link rel="alternate" hreflang="fr|en|x-default"> de la page courante. */
+  private setAlternates(canonicalUrl: string): void {
+    const match = canonicalUrl.match(/^(https?:\/\/[^/]+)\/(fr|en)(\/.*)?$/);
+    this.document?.head?.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
+    if (!match) return;
+    const [, origin, , rest = ''] = match;
+    for (const lang of ['fr', 'en']) this.setLink('alternate', `${origin}/${lang}${rest}`, lang);
+    this.setLink('alternate', `${origin}/fr${rest}`, 'x-default');
+  }
+
+  private setLink(rel: string, href: string, hreflang?: string): void {
+    const head = this.document?.head;
+    if (!head) return;
+    const selector = hreflang ? `link[rel="${rel}"][hreflang="${hreflang}"]` : `link[rel="${rel}"]:not([hreflang])`;
+    let link = head.querySelector(selector) as HTMLLinkElement | null;
     if (!link) {
-      link = document.createElement('link');
-      link.setAttribute('rel', 'canonical');
-      document.head.appendChild(link);
+      link = this.document.createElement('link');
+      link.setAttribute('rel', rel);
+      if (hreflang) link.setAttribute('hreflang', hreflang);
+      head.appendChild(link);
     }
-    link.setAttribute('href', url);
+    link.setAttribute('href', href);
   }
 
   private getLandingStructuredData(isFr: boolean): any {

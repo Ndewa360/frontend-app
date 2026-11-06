@@ -1,0 +1,200 @@
+<!-- En-tête -->
+<section class="pp-hero">
+  <div class="pp-wrap">
+    <p class="pp-eyebrow">{{ 'LANDING.PRICING.OFFER_NAME' | translate }}</p>
+    <h1 class="pp-title">{{ 'LANDING.PRICING_PAGE.TITLE' | translate }}</h1>
+    <p class="pp-lead">{{ 'LANDING.PRICING_PAGE.LEAD' | translate: params }}</p>
+  </div>
+</section>
+
+<!-- Comparatif par profil (toujours visible : lisible par les moteurs de recherche) -->
+<section class="pp-section">
+  <div class="pp-wrap">
+    <h2 class="pp-h2">{{ 'LANDING.PRICING_PAGE.TABLE.TITLE' | translate }}</h2>
+    <div class="pp-table-wrap">
+      <table class="pp-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'LANDING.PRICING_PAGE.TABLE.PROFILE' | translate }}</th>
+            <th scope="col">{{ 'LANDING.PRICING_PAGE.TABLE.FREE' | translate }}</th>
+            <th scope="col">{{ 'LANDING.PRICING_PAGE.TABLE.PAID' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of profiles">
+            <th scope="row">
+              <button type="button" class="pp-table__profile" (click)="select(p.id)">
+                <i [class]="p.icon" aria-hidden="true"></i> {{ 'LANDING.PRICING_PAGE.PROFILES.' + p.key | translate }}
+              </button>
+            </th>
+            <td>{{ 'LANDING.PRICING_PAGE.TABLE.' + p.key + '_FREE' | translate: params }}</td>
+            <td>{{ 'LANDING.PRICING_PAGE.TABLE.' + p.key + '_PAID' | translate: params }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Détail par profil -->
+<section class="pp-section pp-section--paper">
+  <div class="pp-wrap">
+    <div class="pp-tabs" role="tablist" [attr.aria-label]="'LANDING.PRICING_PAGE.TABLE.PROFILE' | translate">
+      <button *ngFor="let p of profiles" type="button" role="tab" class="pp-tab"
+              [class.pp-tab--active]="profile === p.id" [attr.aria-selected]="profile === p.id"
+              (click)="select(p.id)">
+        <i [class]="p.icon" aria-hidden="true"></i>
+        {{ 'LANDING.PRICING_PAGE.PROFILES.' + p.key | translate }}
+      </button>
+    </div>
+
+    <!-- Propriétaires -->
+    <div *ngIf="profile === 'proprietaire'" role="tabpanel">
+      <p class="pp-intro">{{ 'LANDING.PRICING.OWNER_SUBTITLE' | translate }}</p>
+      <div class="pp-grid pp-grid--3">
+        <article class="pp-card">
+          <h3 class="pp-card__name">{{ 'LANDING.PRICING.FREEMIUM.TITLE' | translate }}</h3>
+          <p class="pp-card__price">{{ 'LANDING.PRICING.FREEMIUM.PRICE' | translate }}</p>
+          <p class="pp-card__desc">{{ 'LANDING.PRICING.FREEMIUM.DESCRIPTION' | translate: params }}</p>
+          <ul class="pp-list">
+            <li>{{ 'LANDING.PRICING.FREEMIUM.FEATURES.PROPERTIES' | translate }}</li>
+            <li>{{ 'LANDING.PRICING.FREEMIUM.FEATURES.UNITS' | translate: params }}</li>
+            <li>{{ 'LANDING.PRICING.FREEMIUM.FEATURES.ALL_FEATURES' | translate }}</li>
+            <li>{{ 'LANDING.PRICING.FREEMIUM.FEATURES.EMAIL_SUPPORT' | translate }}</li>
+          </ul>
+          <a class="pp-btn pp-btn--ghost" [routerLink]="['/', lang, 'auth', 'signup']" [queryParams]="{ plan: 'free' }">
+            {{ 'LANDING.PRICING.FREEMIUM.BUTTON' | translate }}
+          </a>
+        </article>
+
+        <article class="pp-card pp-card--featured">
+          <span class="pp-badge">{{ 'LANDING.PRICING.PREMIUM.BADGE' | translate }}</span>
+          <h3 class="pp-card__name">{{ 'LANDING.PRICING.PREMIUM.TITLE' | translate }}</h3>
+          <p class="pp-card__price"><small>{{ 'LANDING.PRICING.PREMIUM.FROM' | translate }}</small> {{ fcfa(proTiers[0].price) }}</p>
+          <p class="pp-card__desc">{{ 'LANDING.PRICING.PREMIUM.DESCRIPTION' | translate: params }}</p>
+          <table class="pp-tiers">
+            <tr *ngFor="let tier of proTiers; let first = first">
+              <td>
+                <ng-container *ngIf="first">{{ 'LANDING.PRICING.PREMIUM.RANGE_UP_TO' | translate: { max: fcfa(tier.maxRent) } }}</ng-container>
+                <ng-container *ngIf="!first">{{ 'LANDING.PRICING.PREMIUM.RANGE_BETWEEN' | translate: { min: fcfa(tier.minRent), max: fcfa(tier.maxRent) } }}</ng-container>
+              </td>
+              <td class="pp-tiers__price">{{ fcfa(tier.price) }}<small>{{ 'LANDING.PRICING.PREMIUM.PER_MONTH' | translate }}</small></td>
+            </tr>
+          </table>
+          <p class="pp-note">{{ 'LANDING.PRICING.PREMIUM.SUBTITLE_1' | translate: params }}</p>
+          <a class="pp-btn pp-btn--gold" [routerLink]="['/', lang, 'onboarding']" [queryParams]="{ type: 'owner', plan: 'trial' }">
+            {{ 'LANDING.PRICING.PREMIUM.BUTTON' | translate: params }}
+          </a>
+        </article>
+
+        <article class="pp-card">
+          <h3 class="pp-card__name">{{ 'LANDING.PRICING.GOLD.TITLE' | translate }}</h3>
+          <p class="pp-card__price pp-card__price--text">{{ 'LANDING.PRICING.GOLD.PRICE' | translate }}</p>
+          <p class="pp-card__desc">{{ 'LANDING.PRICING.GOLD.DESCRIPTION' | translate: params }}</p>
+          <ul class="pp-list">
+            <li>{{ 'LANDING.PRICING.GOLD.FEATURES.CUSTOM_PRICE' | translate }}</li>
+            <li>{{ 'LANDING.PRICING.GOLD.FEATURES.DELEGATION' | translate }}</li>
+            <li>{{ 'LANDING.PRICING.GOLD.FEATURES.DEDICATED' | translate }}</li>
+            <li>{{ 'LANDING.PRICING.GOLD.FEATURES.ALL_PRO' | translate }}</li>
+          </ul>
+          <a class="pp-btn pp-btn--ghost" [href]="goldMailto">{{ 'LANDING.PRICING.GOLD.EMAIL_BUTTON' | translate }}</a>
+          <a class="pp-btn pp-btn--link" [href]="contact.whatsappLink" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i> {{ contact.whatsapp }}
+          </a>
+        </article>
+      </div>
+
+      <p class="pp-rule"><i class="fas fa-circle-info" aria-hidden="true"></i> {{ 'LANDING.PRICING.RULE' | translate: params }}</p>
+
+      <h3 class="pp-h3">{{ 'LANDING.PRICING.BONUSES.TITLE' | translate }}</h3>
+      <div class="pp-grid pp-grid--3">
+        <div *ngFor="let bonus of bonuses" class="pp-bonus">
+          <i [class]="bonus.icon" aria-hidden="true"></i>
+          <div>
+            <strong>{{ 'LANDING.PRICING.BONUSES.' + bonus.key + '.TITLE' | translate }}</strong>
+            <p>{{ 'LANDING.PRICING.BONUSES.' + bonus.key + '.DESCRIPTION' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pp-guarantee">
+        <i class="fas fa-clock" aria-hidden="true"></i>
+        <div>
+          <strong>{{ 'LANDING.PRICING.GUARANTEE.TITLE' | translate }}</strong>
+          <p>{{ 'LANDING.PRICING.GUARANTEE.DESCRIPTION' | translate: params }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agents -->
+    <div *ngIf="profile === 'agent'" role="tabpanel">
+      <p class="pp-intro">{{ 'LANDING.PRICING.AGENT_SUBTITLE' | translate }}</p>
+      <div class="pp-grid pp-grid--1">
+        <article class="pp-card pp-card--featured">
+          <h3 class="pp-card__name">{{ 'LANDING.PRICING.AGENT_PLAN.TITLE' | translate }}</h3>
+          <p class="pp-card__price pp-card__price--text">{{ 'LANDING.PRICING.AGENT_PLAN.PRICE' | translate }}</p>
+          <p class="pp-card__desc">{{ 'LANDING.PRICING.AGENT_PLAN.DESCRIPTION' | translate: params }}</p>
+          <ul class="pp-list">
+            <li *ngFor="let f of agentFeatures">{{ 'LANDING.PRICING.AGENT_PLAN.FEATURES.' + f | translate: params }}</li>
+          </ul>
+          <table class="pp-tiers">
+            <tr *ngFor="let tier of proTiers; let first = first">
+              <td>
+                <ng-container *ngIf="first">{{ 'LANDING.PRICING.PREMIUM.RANGE_UP_TO' | translate: { max: fcfa(tier.maxRent) } }}</ng-container>
+                <ng-container *ngIf="!first">{{ 'LANDING.PRICING.PREMIUM.RANGE_BETWEEN' | translate: { min: fcfa(tier.minRent), max: fcfa(tier.maxRent) } }}</ng-container>
+              </td>
+              <td class="pp-tiers__price">{{ fcfa(tier.price) }}<small>{{ 'LANDING.PRICING.PREMIUM.PER_MONTH' | translate }}</small></td>
+            </tr>
+          </table>
+          <p class="pp-note">{{ 'LANDING.PRICING.RULE' | translate: params }}</p>
+          <a class="pp-btn pp-btn--gold" [routerLink]="['/', lang, 'onboarding']" [queryParams]="{ type: 'agent' }">
+            {{ 'LANDING.PRICING.AGENT_PLAN.BUTTON' | translate }}
+          </a>
+        </article>
+      </div>
+    </div>
+
+    <!-- Chercheurs de logement -->
+    <div *ngIf="profile === 'chercheur'" role="tabpanel">
+      <p class="pp-intro">{{ 'LANDING.PRICING.SEEKER_SUBTITLE' | translate }}</p>
+      <div class="pp-grid pp-grid--1">
+        <article class="pp-card pp-card--featured">
+          <h3 class="pp-card__name">{{ 'LANDING.PRICING.SEEKER_PLAN.TITLE' | translate }}</h3>
+          <p class="pp-card__price">{{ 'LANDING.PRICING.SEEKER_PLAN.PRICE' | translate }}</p>
+          <p class="pp-card__desc">{{ 'LANDING.PRICING.SEEKER_PLAN.DESCRIPTION' | translate }}</p>
+          <ul class="pp-list">
+            <li *ngFor="let f of seekerFeatures">{{ 'LANDING.PRICING.SEEKER_PLAN.FEATURES.' + f | translate }}</li>
+          </ul>
+          <a class="pp-btn pp-btn--gold" [routerLink]="['/', lang, 'search', 'index']">
+            {{ 'LANDING.PRICING.SEEKER_PLAN.BUTTON' | translate }}
+          </a>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Questions -->
+<section class="pp-section">
+  <div class="pp-wrap pp-faq">
+    <h2 class="pp-h2">{{ 'LANDING.PRICING_PAGE.FAQ_TITLE' | translate }}</h2>
+    <details class="pp-faq__item" open>
+      <summary>{{ 'LANDING.FAQ.QUESTIONS.PAYMENT.QUESTION' | translate }}</summary>
+      <p>{{ 'LANDING.FAQ.QUESTIONS.PAYMENT.ANSWER' | translate }}</p>
+    </details>
+    <details class="pp-faq__item">
+      <summary>{{ 'LANDING.FAQ.QUESTIONS.AGENT_PAYMENT.QUESTION' | translate }}</summary>
+      <p>{{ 'LANDING.FAQ.QUESTIONS.AGENT_PAYMENT.ANSWER' | translate }}</p>
+    </details>
+    <details class="pp-faq__item">
+      <summary>{{ 'LANDING.FAQ.QUESTIONS.SEEKER_PAYMENT.QUESTION' | translate }}</summary>
+      <p>{{ 'LANDING.FAQ.QUESTIONS.SEEKER_PAYMENT.ANSWER' | translate }}</p>
+    </details>
+    <p class="pp-help">
+      {{ 'LANDING.PRICING_PAGE.MORE_QUESTIONS' | translate }}
+      <a [routerLink]="['/', lang, 'support', 'faq']">{{ 'LANDING.PRICING_PAGE.SEE_FAQ' | translate }}</a>
+      ·
+      <a [href]="contact.whatsappLink" target="_blank" rel="noopener">WhatsApp {{ contact.whatsapp }}</a>
+    </p>
+  </div>
+</section>

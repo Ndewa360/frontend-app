@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { AsyncPipe, DecimalPipe, NgIf } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { AsyncPipe, DecimalPipe, NgIf, isPlatformBrowser } from '@angular/common';
+import { AuthTokenState } from '../../store/auth-token/auth-token.state';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Observable, of } from 'rxjs';
@@ -76,12 +77,21 @@ export class SuspendedAccountBannerComponent implements OnInit {
     return currentAppLanguage();
   }
 
-  constructor(private store: Store, private payments: SubscriptionPaymentService, private router: Router) {}
+  constructor(
+    private store: Store,
+    private payments: SubscriptionPaymentService,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: object,
+  ) {}
 
   ngOnInit(): void {
     // Statut d'abonnement chargé dès l'entrée dans l'application (il ne
-    // l'était qu'à l'ouverture de la facturation).
-    if (!this.store.selectSnapshot(SouscriptionState.selectCurrentSubscription)) {
+    // l'était qu'à l'ouverture de la facturation) — pour un utilisateur
+    // connecté seulement : pour un visiteur (pages d'aide publiques, rendu
+    // serveur), la requête répondait 401 et renvoyait vers la connexion.
+    const token = this.store.selectSnapshot(AuthTokenState.selectStateToken);
+    if (isPlatformBrowser(this.platformId) && token?.accessToken
+        && !this.store.selectSnapshot(SouscriptionState.selectCurrentSubscription)) {
       this.store.dispatch(new SouscriptionAction.FetchCurrentSubscription());
     }
   }

@@ -149,8 +149,8 @@ export class HeaderComponent extends BaseComponent implements OnInit {
 
   navigateToPricing(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    // Grille des offres (les anciennes adresses /app/pricing/... n'existaient pas).
-    this.router.navigate([`/${currentLang}/app/facturation/plan/plan-list`]);
+    // Page publique des tarifs par profil (« plan-list » est l'historique des factures).
+    this.router.navigate([`/${currentLang}/home/tarifs`]);
   }
 
   navigateToAdmin(): void {

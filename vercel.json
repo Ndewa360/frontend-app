@@ -16,11 +16,11 @@
       "destination": "/api/index"
     },
     {
-      "source": "/:lang(fr|en)/:page(home|search)",
+      "source": "/:lang(fr|en)/:page(home|search|support)",
       "destination": "/api/index"
     },
     {
-      "source": "/:lang(fr|en)/:page(home|search)/:rest*",
+      "source": "/:lang(fr|en)/:page(home|search|support)/:rest*",
       "destination": "/api/index"
     },
     {

@@ -53,15 +53,6 @@ export class LandingHeaderComponent implements OnInit {
     this.scrollToHomeSection('profiles-section');
   }
 
-  /**
-   * Menu « Tarifs » : section tarifs de la page d'accueil. Le lien
-   * `/home#tarifs` ne faisait qu'ouvrir l'accueil : la page défile dans un
-   * conteneur ngx-scrollbar, que le défilement par fragment d'URL ignore.
-   */
-  scrollToPricing(): void {
-    this.scrollToHomeSection('tarifs');
-  }
-
   /** Ouvre l'accueil si besoin, puis fait défiler jusqu'à la section [id]. */
   private scrollToHomeSection(id: string): void {
     const isOnHome = this.router.url.includes('/home') && !this.router.url.includes('/home/');

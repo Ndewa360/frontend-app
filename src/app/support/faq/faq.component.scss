@@ -1,0 +1,62 @@
+// FAQ : questions dépliables en HTML natif (réponses présentes dans la page).
+.faq-group {
+  margin-bottom: 28px;
+}
+
+.faq-group__title {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.faq-group__list {
+  border: 1px solid var(--cds-border-subtle, #e0e0e0);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--cds-layer, #fff);
+}
+
+.faq-item + .faq-item {
+  border-top: 1px solid var(--cds-border-subtle, #e0e0e0);
+}
+
+.faq-item__question {
+  position: relative;
+  padding: 14px 44px 14px 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+
+  &::after {
+    content: '+';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: rgb(204, 140, 10);
+  }
+
+  &:hover { background: var(--cds-layer-hover, #f4f4f4); }
+  &:focus-visible { outline: 2px solid rgb(204, 140, 10); outline-offset: -2px; }
+}
+
+.faq-item[open] > .faq-item__question::after {
+  content: '–';
+}
+
+.faq-item__answer {
+  padding: 0 16px 16px;
+  line-height: 1.6;
+  color: var(--cds-text-secondary, #525252);
+
+  ::ng-deep a {
+    color: rgb(138, 95, 5);
+    text-decoration: underline;
+    word-break: break-word;
+  }
+}

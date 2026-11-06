@@ -415,7 +415,7 @@ export class ContractViewerModalComponent implements OnInit, OnDestroy {
    */
   getSelectedTemplateName(): string {
     const template = this.availableTemplates.find(t => t._id === this.selectedTemplateId);
-    return template?.name || 'CONTRACT_VIEWER.DEFAULT_TEMPLATE_NAME';
+    return template?.name || this.translate.instant('CONTRACT_VIEWER.DEFAULT_TEMPLATE_NAME');
   }
 
   /**

@@ -2959,6 +2959,30 @@
         "BUSINESS": "Partenariats et offre Gold",
         "FORM": "Écrire via le formulaire de contact"
       }
+    },
+    "PRICING_PAGE": {
+      "TITLE": "Tarifs selon votre profil",
+      "LEAD": "Propriétaire, agent immobilier ou chercheur de logement : chacun ne paie que ce qui le concerne. Gratuit pour démarrer, sans carte bancaire, avec {{trialDays}} jours d'essai.",
+      "PROFILES": {
+        "OWNER": "Propriétaire",
+        "AGENT": "Agent immobilier",
+        "SEEKER": "Chercheur de logement"
+      },
+      "TABLE": {
+        "TITLE": "Qui paie quoi ?",
+        "PROFILE": "Profil",
+        "FREE": "Gratuit",
+        "PAID": "Payant",
+        "OWNER_FREE": "1 bien et jusqu'à {{units}} logements occupés, toutes les fonctionnalités de gestion.",
+        "OWNER_PAID": "Dès le 2e bien ou le {{nextUnit}}e logement occupé : forfait Pro à prix fixe, de {{minPrice}} à {{maxPrice}} par mois selon le total des loyers. Au-delà de {{gold}} de loyers : forfait Gold sur mesure.",
+        "AGENT_FREE": "Même grille que les propriétaires : 1 bien et jusqu'à {{units}} logements occupés, profil d'agence vérifié.",
+        "AGENT_PAID": "Forfait Pro de {{minPrice}} à {{maxPrice}} par mois selon le total des loyers gérés ; Gold sur mesure au-delà de {{gold}}.",
+        "SEEKER_FREE": "Recherche illimitée, filtres, photos et visites 360°.",
+        "SEEKER_PAID": "1 000 FCFA pour 24 heures d'accès aux coordonnées de tous les propriétaires (téléphone, WhatsApp, e-mail)."
+      },
+      "FAQ_TITLE": "Questions sur les tarifs",
+      "MORE_QUESTIONS": "D'autres questions ?",
+      "SEE_FAQ": "Voir toutes les questions fréquentes"
     }
   },
   "SEARCH_MODULE": {
@@ -5135,13 +5159,6 @@
           "FINANCIAL_MANAGEMENT": "Gestion de Finances",
           "LISTING_MANAGEMENT": "Gestion des annonces",
           "BILLING": "Facturation"
-        },
-        "DURATIONS": {
-          "INTRODUCTION": "07:34",
-          "PROPERTY_MANAGEMENT": "10:14",
-          "FINANCIAL_MANAGEMENT": "71:22",
-          "LISTING_MANAGEMENT": "31:11",
-          "BILLING": "41:22"
         }
       },
       "FAQ": {
@@ -5169,12 +5186,14 @@
         "GENERAL": "Général",
         "OWNERS": "Pour les propriétaires",
         "TENANTS": "Pour les locataires",
-        "TECHNICAL_SUPPORT": "Problèmes techniques / Contact support"
+        "TECHNICAL_SUPPORT": "Problèmes techniques / Contact support",
+        "AGENTS": "Pour les agents immobiliers",
+        "BILLING": "Abonnement, paiements et données"
       },
       "GENERAL": {
         "WHAT_IS_NDEWA": {
           "QUESTION": "Qu'est-ce que Ndewa360 ?",
-          "ANSWER": "Ndewa360 est une plateforme de gestion et de location de biens immobiliers, spécialement conçue pour faciliter les recherches de logements étudiants avec une expérience de visite en 360°. Elle permet aussi aux propriétaires de gérer les loyers, les locataires et les finances."
+          "ANSWER": "Ndewa360 est une plateforme camerounaise de gestion locative et de recherche de logements. Les propriétaires, leurs gestionnaires et les agents immobiliers y suivent leurs biens, leurs locataires, les loyers, les reçus et les contrats ; les chercheurs de logement y trouvent des logements disponibles, avec photos et visites 360°."
         },
         "IS_FREE": {
           "QUESTION": "Est-ce que l'utilisation de Ndewa360 est gratuite ?",
@@ -5212,19 +5231,19 @@
         },
         "HOW_TO_RECORD_PAYMENT": {
           "QUESTION": "Comment enregistrer un paiement ?",
-          "ANSWER": "Choisissez le bien concerné puis allez sur la liste des locataires à partir du menu « Locataires » ou sur la liste des unités du menu « Unités », ensuite sur le locataire ou l'unité concernée, puis cliquez sur « Ajouter un paiement ». Vous pouvez y préciser la période, le montant, et autre. <br/><br/> Voir la vidéo : \"Ajouter un paiement – Guide pour débuter\" ➜ <a href=\"https://youtu.be/-xTYP8uuKgk\">https://youtu.be/-xTYP8uuKgk</a>."
+          "ANSWER": "Ouvrez le bien concerné, puis le locataire (menu « Locataires ») ou l'unité (menu « Unités »), et cliquez sur « Ajouter un paiement ». Indiquez le montant, la date et le moyen de paiement : le solde du locataire est recalculé et un reçu PDF est créé. Le locataire peut aussi payer lui-même par Mobile Money avec le lien de paiement de son bail."
         },
         "TENANT_NOTIFICATION": {
           "QUESTION": "Est-ce que le locataire reçoit une notification ?",
-          "ANSWER": "Oui, un email de confirmation est automatiquement envoyé au locataire une fois le paiement enregistré."
+          "ANSWER": "Oui. Dès qu'un paiement est enregistré, le locataire reçoit son reçu par e-mail (si son adresse e-mail est renseignée), et vous recevez une notification."
         },
         "MONTHLY_REVENUE_TRACKING": {
           "QUESTION": "Où puis-je suivre mes revenus mensuels ?",
-          "ANSWER": "Le tableau de bord financier vous affiche tous les paiements, répartis par mois et par propriété. Un récapitulatif des biens de propriétés est tout d'abord disponible sur l'espace de l'ensemble des biens (menu « Biens immobilier »), mais un tableau de bord financier complet est disponible sur le menu « Finances » de chaque bien immobilier"
+          "ANSWER": "Le menu « Bien immobilier » affiche un récapitulatif de tous vos biens. Pour le détail, ouvrez un bien puis son menu « Finances » : paiements répartis par mois, loyers attendus, encaissés et en retard. Un rapport mensuel PDF récapitule aussi vos encaissements chaque mois (Profil › Rapports mensuels)."
         },
         "DOWNLOAD_DOCUMENTS": {
-          "QUESTION": "Est-ce que je peux télécharger un contrat ou une facture ?",
-          "ANSWER": "Oui. Vous pouvez générer automatiquement les contrats et les factures à partir du profil du locataire"
+          "QUESTION": "Est-ce que je peux télécharger un contrat ou un reçu ?",
+          "ANSWER": "Oui. Le contrat de location se génère en PDF depuis le bail du locataire, à partir de vos modèles de contrat. Chaque paiement produit un reçu PDF, téléchargeable depuis l'historique des paiements. Les factures de votre abonnement se trouvent dans « Facturation »."
         }
       },
       "TENANTS": {
@@ -5242,7 +5261,7 @@
         },
         "HOW_TO_CONTACT_OWNER": {
           "QUESTION": "Comment contacter le propriétaire ?",
-          "ANSWER": "Contre un paiement, vous aurez accès à ses coordonnées (téléphone, WhatsApp ou email)"
+          "ANSWER": "Pour 1 000 FCFA, vous accédez pendant 24 heures aux coordonnées complètes (téléphone, WhatsApp, e-mail) de tous les propriétaires. Un seul paiement donne un accès global."
         },
         "HOW_TO_KNOW_AVAILABILITY": {
           "QUESTION": "Comment savoir si un logement est encore disponible ?",
@@ -5260,7 +5279,39 @@
         },
         "HOW_TO_CONTACT_SUPPORT": {
           "QUESTION": "Comment contacter l'assistance ?",
-          "ANSWER": "Via le formulaire dans la page \"Support\", ou par email à <a href=\"mailto:support@ndewa-360.com\">support@ndewa-360.com</a>."
+          "ANSWER": "Par WhatsApp au <a href=\"https://wa.me/237698295368\">+237 698 29 53 68</a>, par e-mail à <a href=\"mailto:support@ndewa-360.com\">support@ndewa-360.com</a>, ou via le formulaire de la page « Support ». Notre équipe parle français et connaît le contexte local."
+        }
+      },
+      "AGENTS": {
+        "HOW_TO_REGISTER": {
+          "QUESTION": "Comment m'inscrire en tant qu'agent immobilier ?",
+          "ANSWER": "Choisissez le profil « Agent » à l'inscription, puis renseignez votre agence (nom, adresse, description, logo) et transmettez vos justificatifs : CNI ou passeport, et carte professionnelle ou licence."
+        },
+        "VALIDATION": {
+          "QUESTION": "Combien de temps prend la validation du profil agent ?",
+          "ANSWER": "Notre équipe examine votre dossier sous 24 à 48 h ouvrables. Vous recevez un e-mail dès que votre profil est approuvé ; en attendant, votre compte est en mode limité."
+        },
+        "PRICING": {
+          "QUESTION": "Combien coûte Ndewa360 pour un agent ?",
+          "ANSWER": "La même grille que pour les propriétaires : gratuit pour 1 bien et jusqu'à 4 logements occupés, puis forfait Pro à prix fixe selon le total des loyers gérés, de 3 000 à 20 000 FCFA par mois. Au-delà de 2 500 000 FCFA de loyers, le forfait Gold est sur mesure."
+        }
+      },
+      "BILLING": {
+        "WHAT_COUNTS": {
+          "QUESTION": "Quels logements sont comptés dans mon forfait ?",
+          "ANSWER": "Seuls les logements occupés au moins 15 jours dans le mois sont comptés. Un logement vide ne vous coûte rien. Le palier est recalculé automatiquement chaque mois."
+        },
+        "SUSPENSION": {
+          "QUESTION": "Que se passe-t-il si une facture reste impayée ?",
+          "ANSWER": "Le compte passe en lecture seule : vous consultez vos biens et téléchargez vos documents, mais ne pouvez plus rien ajouter ni modifier. Il est réactivé automatiquement dès que les factures échues sont réglées (Mobile Money ou portefeuille Ndewa360)."
+        },
+        "SETUP_48H": {
+          "QUESTION": "Pouvez-vous importer mes données existantes ?",
+          "ANSWER": "Oui. Envoyez-nous votre liste (Excel, cahier, photos) : nous installons vos biens, locataires et baux en 48 h. Si votre espace n'est pas prêt 48 h après réception de votre liste, votre premier mois est offert."
+        },
+        "SECURITY": {
+          "QUESTION": "Mes données sont-elles en sécurité ?",
+          "ANSWER": "Vos données sont chiffrées, sauvegardées chaque jour et jamais vendues ni partagées avec un tiers commercial. Vous pouvez les exporter ou demander leur suppression à tout moment depuis votre profil."
         }
       }
     },
@@ -5309,8 +5360,8 @@
         "INTRODUCTION": {
           "TITLE": "Introduction à Ndewa360",
           "TOPIC": "tutoriels vidéo",
-          "PAGE": "Présentation général",
-          "INFO": "Présentation général de l'application."
+          "PAGE": "Présentation générale",
+          "INFO": "Présentation générale de l'application."
         },
         "ACCOUNT_CREATION": {
           "TITLE": "Création de compte",
@@ -5330,7 +5381,7 @@
           "TITLE": "Ajout de bien immobilier",
           "TOPIC": "Gestion de bien",
           "PAGE": "Bien immobilier",
-          "INFO": "Processus de création d'un bien immobiliér dans un localité précise en tenant compte de la ville et du pays.",
+          "INFO": "Processus de création d'un bien immobilier dans une localité précise, en tenant compte de la ville et du pays.",
           "STEPS": [
             "Connectez-vous à votre compte",
             "Cliquer sur 'Bien immobilier'",
@@ -5367,14 +5418,14 @@
             "Cliquer sur 'Ajouter un locataire'",
             "Remplir le formulaire",
             "Soumettre le formulaire",
-            "Voir le locataire nouvellement créée"
+            "Voir le locataire nouvellement créé"
           ]
         },
         "TENANT_ASSIGNMENT": {
           "TITLE": "Assigner un locataire à une unité",
           "TOPIC": "Gestion de location",
           "PAGE": "Location",
-          "INFO": "Processus d'assignation d'un locataire à une unité locative. Elle à pour conséquence de générer un contrat de location entre les deux parties et de les envoyer par mail.",
+          "INFO": "Processus d'assignation d'un locataire à une unité locative. L'assignation génère le contrat de location entre les deux parties et l'envoie par e-mail.",
           "STEPS": [
             "Connectez-vous à votre compte",
             "Cliquer sur 'Bien immobilier'",
@@ -5382,7 +5433,7 @@
             "Cliquer sur 'Nouveau contrat de location'",
             "Remplir le formulaire",
             "Soumettre le formulaire",
-            "Voir l'assignation nouvellement effectué"
+            "Voir l'assignation nouvellement effectuée"
           ]
         },
         "FINANCIAL_ANALYSIS": {

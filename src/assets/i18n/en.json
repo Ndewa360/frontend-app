@@ -2959,6 +2959,30 @@
         "BUSINESS": "Partnerships and Gold plan",
         "FORM": "Write to us via the contact form"
       }
+    },
+    "PRICING_PAGE": {
+      "TITLE": "Pricing by profile",
+      "LEAD": "Owner, real estate agent or home seeker: everyone only pays for what concerns them. Free to start, no credit card, with a {{trialDays}}-day trial.",
+      "PROFILES": {
+        "OWNER": "Owner",
+        "AGENT": "Real estate agent",
+        "SEEKER": "Home seeker"
+      },
+      "TABLE": {
+        "TITLE": "Who pays what?",
+        "PROFILE": "Profile",
+        "FREE": "Free",
+        "PAID": "Paid",
+        "OWNER_FREE": "1 property and up to {{units}} occupied units, every management feature.",
+        "OWNER_PAID": "From the 2nd property or the {{nextUnit}}th occupied unit: fixed-price Pro plan, from {{minPrice}} to {{maxPrice}} per month based on total rent. Above {{gold}} of rent: tailored Gold plan.",
+        "AGENT_FREE": "Same pricing as owners: 1 property and up to {{units}} occupied units, verified agency profile.",
+        "AGENT_PAID": "Pro plan from {{minPrice}} to {{maxPrice}} per month based on total rent managed; tailored Gold above {{gold}}.",
+        "SEEKER_FREE": "Unlimited search, filters, photos and 360° tours.",
+        "SEEKER_PAID": "1,000 FCFA for 24 hours of access to all owners’ contact details (phone, WhatsApp, email)."
+      },
+      "FAQ_TITLE": "Pricing questions",
+      "MORE_QUESTIONS": "More questions?",
+      "SEE_FAQ": "See all frequently asked questions"
     }
   },
   "SEARCH_MODULE": {
@@ -5135,13 +5159,6 @@
           "FINANCIAL_MANAGEMENT": "Financial Management",
           "LISTING_MANAGEMENT": "Listing Management",
           "BILLING": "Billing"
-        },
-        "DURATIONS": {
-          "INTRODUCTION": "07:34",
-          "PROPERTY_MANAGEMENT": "10:14",
-          "FINANCIAL_MANAGEMENT": "71:22",
-          "LISTING_MANAGEMENT": "31:11",
-          "BILLING": "41:22"
         }
       },
       "FAQ": {
@@ -5169,12 +5186,14 @@
         "GENERAL": "General",
         "OWNERS": "For property owners",
         "TENANTS": "For tenants",
-        "TECHNICAL_SUPPORT": "Technical issues / Support contact"
+        "TECHNICAL_SUPPORT": "Technical issues / Support contact",
+        "AGENTS": "For real estate agents",
+        "BILLING": "Subscription, payments and data"
       },
       "GENERAL": {
         "WHAT_IS_NDEWA": {
           "QUESTION": "What is Ndewa360?",
-          "ANSWER": "Ndewa360 is a property management and rental platform, specially designed to facilitate student housing searches with a 360° tour experience. It also allows property owners to manage rents, tenants and finances."
+          "ANSWER": "Ndewa360 is a Cameroonian platform for rental management and home search. Owners, their managers and real estate agents track their properties, tenants, rent, receipts and contracts; home seekers find available homes with photos and 360° tours."
         },
         "IS_FREE": {
           "QUESTION": "Is using Ndewa360 free?",
@@ -5212,19 +5231,19 @@
         },
         "HOW_TO_RECORD_PAYMENT": {
           "QUESTION": "How do I record a payment?",
-          "ANSWER": "Choose the relevant property then go to the tenant list from the \"Tenants\" menu or to the unit list from the \"Units\" menu, then to the relevant tenant or unit, then click on \"Add a payment\". You can specify the period, amount, and more. <br/><br/> Watch the video: \"Add a payment – Beginner's Guide\" → <a href=\"https://youtu.be/-xTYP8uuKgk\">https://youtu.be/-xTYP8uuKgk</a>."
+          "ANSWER": "Open the property, then the tenant (\"Tenants\" menu) or the unit (\"Units\" menu), and click \"Add a payment\". Enter the amount, date and payment method: the tenant's balance is recalculated and a PDF receipt is created. Tenants can also pay by Mobile Money themselves with their lease payment link."
         },
         "TENANT_NOTIFICATION": {
           "QUESTION": "Does the tenant receive a notification?",
-          "ANSWER": "Yes, a confirmation email is automatically sent to the tenant once the payment is recorded."
+          "ANSWER": "Yes. As soon as a payment is recorded, the tenant receives their receipt by email (if their email address is filled in), and you receive a notification."
         },
         "MONTHLY_REVENUE_TRACKING": {
           "QUESTION": "Where can I track my monthly revenue?",
-          "ANSWER": "The financial dashboard shows you all payments, broken down by month and by property. A summary of property assets is first available on the space for all properties (\"Real Estate\" menu), but a complete financial dashboard is available on the \"Finance\" menu of each property"
+          "ANSWER": "The \"Property\" menu shows a summary of all your properties. For details, open a property and its \"Finance\" menu: payments by month, expected, collected and overdue rent. A monthly PDF report also summarises your collections every month (Profile › Monthly reports)."
         },
         "DOWNLOAD_DOCUMENTS": {
-          "QUESTION": "Can I download a contract or invoice?",
-          "ANSWER": "Yes. You can automatically generate contracts and invoices from the tenant's profile"
+          "QUESTION": "Can I download a contract or a receipt?",
+          "ANSWER": "Yes. The lease contract is generated as a PDF from the tenant's lease, using your contract templates. Every payment produces a PDF receipt, downloadable from the payment history. Your subscription invoices are under \"Billing\"."
         }
       },
       "TENANTS": {
@@ -5242,7 +5261,7 @@
         },
         "HOW_TO_CONTACT_OWNER": {
           "QUESTION": "How do I contact the owner?",
-          "ANSWER": "For a payment, you will have access to their contact details (phone, WhatsApp or email)"
+          "ANSWER": "For 1,000 FCFA, you get the full contact details (phone, WhatsApp, email) of all owners for 24 hours. One payment gives global access."
         },
         "HOW_TO_KNOW_AVAILABILITY": {
           "QUESTION": "How do I know if accommodation is still available?",
@@ -5260,7 +5279,39 @@
         },
         "HOW_TO_CONTACT_SUPPORT": {
           "QUESTION": "How do I contact support?",
-          "ANSWER": "Via the form on the \"Support\" page, or by email at <a href=\"mailto:support@ndewa-360.com\">support@ndewa-360.com</a>."
+          "ANSWER": "By WhatsApp at <a href=\"https://wa.me/237698295368\">+237 698 29 53 68</a>, by email at <a href=\"mailto:support@ndewa-360.com\">support@ndewa-360.com</a>, or through the form on the \"Support\" page. Our team speaks French and knows the local context."
+        }
+      },
+      "AGENTS": {
+        "HOW_TO_REGISTER": {
+          "QUESTION": "How do I sign up as a real estate agent?",
+          "ANSWER": "Choose the \"Agent\" profile when signing up, then enter your agency details (name, address, description, logo) and upload your documents: ID card or passport, and professional card or licence."
+        },
+        "VALIDATION": {
+          "QUESTION": "How long does agent profile validation take?",
+          "ANSWER": "Our team reviews your file within 24 to 48 business hours. You receive an email as soon as your profile is approved; meanwhile your account is in limited mode."
+        },
+        "PRICING": {
+          "QUESTION": "How much does Ndewa360 cost for an agent?",
+          "ANSWER": "The same pricing as for owners: free for 1 property and up to 4 occupied units, then a fixed-price Pro plan based on the total rent managed, from 3,000 to 20,000 FCFA per month. Above 2,500,000 FCFA of rent, the Gold plan is tailored."
+        }
+      },
+      "BILLING": {
+        "WHAT_COUNTS": {
+          "QUESTION": "Which units count towards my plan?",
+          "ANSWER": "Only units occupied for at least 15 days in the month are counted. A vacant unit costs you nothing. Your tier is recalculated automatically every month."
+        },
+        "SUSPENSION": {
+          "QUESTION": "What happens if an invoice remains unpaid?",
+          "ANSWER": "The account becomes read-only: you can view your properties and download your documents, but cannot add or edit anything. It is reactivated automatically as soon as overdue invoices are paid (Mobile Money or Ndewa360 wallet)."
+        },
+        "SETUP_48H": {
+          "QUESTION": "Can you import my existing data?",
+          "ANSWER": "Yes. Send us your list (Excel, notebook, photos): we set up your properties, tenants and leases within 48 hours. If your space is not ready 48 hours after we receive your list, your first month is free."
+        },
+        "SECURITY": {
+          "QUESTION": "Is my data safe?",
+          "ANSWER": "Your data is encrypted, backed up daily and never sold or shared with commercial third parties. You can export it or request its deletion at any time from your profile."
         }
       }
     },
@@ -5374,7 +5425,7 @@
           "TITLE": "Assigning a tenant to a unit",
           "TOPIC": "Rental management",
           "PAGE": "Rental",
-          "INFO": "Process of assigning a tenant to a rental unit. This results in generating a rental contract between the two parties and sending them by email.",
+          "INFO": "Process of assigning a tenant to a rental unit. The assignment generates the lease contract between both parties and sends it by email.",
           "STEPS": [
             "Log in to your account",
             "Click on 'Real estate'",

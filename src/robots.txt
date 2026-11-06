@@ -1,0 +1,43 @@
+# Ndewa360 — https://ndewa-360.com
+# Pages publiques, tarifs et centre d'aide : indexables par les moteurs de
+# recherche et les assistants IA. Espaces privés : non indexés.
+
+User-agent: *
+Allow: /
+Disallow: /fr/app/
+Disallow: /en/app/
+Disallow: /fr/admin/
+Disallow: /en/admin/
+Disallow: /fr/auth/reset-password
+Disallow: /en/auth/reset-password
+Disallow: /fr/auth/confirm-email
+Disallow: /en/auth/confirm-email
+Disallow: /fr/payment/
+Disallow: /en/payment/
+Disallow: /assets/i18n/
+
+# Assistants IA : centre d'aide, tarifs et pages publiques autorisés.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Allow: /fr/home
+Allow: /en/home
+Allow: /fr/search
+Allow: /en/search
+Allow: /fr/support
+Allow: /en/support
+Allow: /llms.txt
+Disallow: /fr/app/
+Disallow: /en/app/
+Disallow: /fr/admin/
+Disallow: /en/admin/
+Disallow: /fr/payment/
+Disallow: /en/payment/
+
+Sitemap: https://ndewa-360.com/sitemap.xml

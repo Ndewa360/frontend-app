@@ -11,25 +11,18 @@
             {{ 'SUPPORT.FAQ.BACK_TO_HOME' | translate }}
           </button>
         </div>
-        <div class="app-productive-heading-06 mb-8">
+        <h1 class="app-productive-heading-06 mb-8">
           {{ 'SUPPORT.FAQ.TITLE' | translate }}
-        </div>
-        <ng-container *ngFor="let group of faq">
-          <div class="mb-6">
-            <div class="app-productive-heading-03 mb-2">{{group.groupName}}</div>
-            <div class="app-card app-card--m-0">
-              <div class="app-card__content__fill p-0">
-                <ibm-accordion>
-                  <ng-container *ngFor="let question of group.children">
-                    <ibm-accordion-item [title]="question.title">
-                      <div class="app-body-short-01" [innerHTML]="question.content"></div>
-                    </ibm-accordion-item>
-                  </ng-container>
-                </ibm-accordion>
-              </div>
-            </div>
+        </h1>
+        <section *ngFor="let group of faq" class="faq-group" [attr.id]="group.id">
+          <h2 class="faq-group__title">{{ group.groupName }}</h2>
+          <div class="faq-group__list">
+            <details *ngFor="let question of group.children" class="faq-item" [attr.id]="question.id">
+              <summary class="faq-item__question">{{ question.title }}</summary>
+              <div class="faq-item__answer" [innerHTML]="question.content"></div>
+            </details>
           </div>
-        </ng-container>
+        </section>
       </div>
     </div>
   </ng-scrollbar>

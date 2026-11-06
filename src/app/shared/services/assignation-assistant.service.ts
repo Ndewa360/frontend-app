@@ -58,9 +58,13 @@ export class AssignationAssistantService {
     dateEffet: Date
   ): EcritureComptablePreview[] {
     const ecritures: EcritureComptablePreview[] = [];
-    const montantPaye    = config.paiementInitial.montant;
-    const montantCaution = chambre.shouldPayCaution ? (chambre.cautionPrice || 0) : 0;
-    const montantPourLoyer = Math.max(0, montantPaye - montantCaution);
+    const montantPaye     = Math.max(0, config.paiementInitial.montant || 0);
+    const cautionUnite    = chambre.shouldPayCaution ? (chambre.cautionPrice || 0) : 0;
+    // Caution prise en compte dans l'assistant (0 si décochée), plafonnée à celle de l'unité ;
+    // un versement inférieur à la caution est enregistré comme caution partielle.
+    const cautionDemandee = Math.min(Math.max(0, config.montantCaution ?? cautionUnite), cautionUnite);
+    const montantCaution  = Math.min(montantPaye, cautionDemandee);
+    const montantPourLoyer = montantPaye - montantCaution;
 
     // Miroir exact du backend : pas de DEBIT dette loyer pour NOUVEAU.
     // Le paiement initial est enregistre dans LocationPayment — le moteur
@@ -79,20 +83,20 @@ export class AssignationAssistantService {
     }
 
     // Caution
-    if (chambre.shouldPayCaution && chambre.cautionPrice > 0) {
+    if (cautionUnite > 0) {
       ecritures.push({
         type: TypeEcritureComptable.DETTE_CAUTION,
         libelle: 'Dette caution',
-        montant: chambre.cautionPrice,
+        montant: cautionUnite,
         sens: 'DEBIT',
         compte: 'DETTE_LOCATAIRE',
         description: `Caution requise - Chambre ${chambre.code}`
       });
 
-      if (montantPaye >= montantCaution && montantCaution > 0) {
+      if (montantCaution > 0) {
         ecritures.push({
           type: TypeEcritureComptable.PAIEMENT_CAUTION,
-          libelle: 'Paiement caution',
+          libelle: montantCaution < cautionUnite ? 'Paiement partiel caution' : 'Paiement caution',
           montant: montantCaution,
           sens: 'CREDIT',
           compte: '512000',
@@ -108,8 +112,11 @@ export class AssignationAssistantService {
   // Miroir de AssignationCalculatorService.calculateEcrituresLocataireExistant
   //
   // Regle date d'entree inconnue :
-  //   solde < 0 (arrieres)  -> remonter de ceil(|solde|/loyer) mois dans le passe
+  //   solde < 0 (arrieres)  -> remonter de ceil(|solde|/loyer) - 1 mois (le mois
+  //                            d'entree est du des le 1er jour : n mois dus)
   //   solde >= 0            -> date d'effet
+  // Paiements cumules = du + solde ; un arriere superieur au du devient un
+  // arriere initial du bail.
 
   private genererEcrituresLocataireExistant(
     config: LocataireExistantConfig,
@@ -127,36 +134,19 @@ export class AssignationAssistantService {
     let dateEntreeCalculee: Date;
     if (dateEntree) {
       dateEntreeCalculee = dateEntree;
-    } else if (soldeActuel < 0) {
-      // Arrieres : remonter du nombre de mois d'arrieres
-      const moisArriere = chambre.price > 0 ? Math.ceil(Math.abs(soldeActuel) / chambre.price) : 1;
-      dateEntreeCalculee = new Date(
-        aujourdhui.getFullYear(),
-        aujourdhui.getMonth() - moisArriere,
-        aujourdhui.getDate()
-      );
+    } else if (soldeActuel < 0 && chambre.price > 0) {
+      dateEntreeCalculee = AssignationAssistantService.dateEntreeEstimee(soldeActuel, chambre.price, aujourdhui);
     } else {
       dateEntreeCalculee = dateEffet;
     }
 
-    // Miroir exact du backend : branche dateConnue vs date estimee
-    let montantDuTotal: number;
-    let montantPaye: number;
-
-    if (dateEntree || soldeActuel >= 0) {
-      // Date connue (fournie ou estimee depuis solde >= 0) : calcul depuis la date
-      const moisEcoules = this.calculerMoisDus(dateEntreeCalculee, aujourdhui);
-      montantDuTotal = moisEcoules * chambre.price;
-      montantPaye = montantDuTotal + soldeActuel;
-    } else {
-      // Date inconnue + arrieres : le solde est la source de verite
-      // montantDuTotal = |solde| exactement, montantPaye = 0
-      montantDuTotal = Math.abs(soldeActuel);
-      montantPaye = 0;
-    }
+    // Miroir exact du backend : le solde affiché après l'assignation est celui saisi.
+    const moisLabel = this.calculerMoisDus(dateEntreeCalculee, aujourdhui);
+    const montantDuTotal = moisLabel * chambre.price;
+    let montantPaye = montantDuTotal + soldeActuel;
+    if (montantPaye < 0) montantPaye = 0; // excédent : arriéré initial du bail
 
     // DEBIT : dette de loyer
-    const moisLabel = chambre.price > 0 ? Math.round(montantDuTotal / chambre.price) : 0;
     if (montantDuTotal > 0) {
       ecritures.push({
         type: TypeEcritureComptable.DETTE_AVANCE,
@@ -204,6 +194,18 @@ export class AssignationAssistantService {
     }
 
     return ecritures;
+  }
+
+  /**
+   * Date d'entrée estimée d'un locataire en retard (date inconnue) : (n − 1)
+   * mois avant aujourd'hui, n = ⌈|solde| / loyer⌉, même jour (dernier jour du
+   * mois s'il est plus court). Identique au serveur.
+   */
+  static dateEntreeEstimee(soldeActuel: number, loyer: number, aujourdhui: Date = new Date()): Date {
+    const moisArriere = Math.max(1, Math.ceil(Math.abs(soldeActuel) / loyer));
+    const cible = new Date(aujourdhui.getFullYear(), aujourdhui.getMonth() - (moisArriere - 1), 1);
+    const dernierJour = new Date(cible.getFullYear(), cible.getMonth() + 1, 0).getDate();
+    return new Date(cible.getFullYear(), cible.getMonth(), Math.min(aujourdhui.getDate(), dernierJour));
   }
 
   // ─── Calcul mois dus (regle anniversaire simplifiee cote frontend) ────────

@@ -1,0 +1,228 @@
+// Page Tarifs — charte Ndewa360 : or, noir, blanc cassé.
+:host {
+  --pp-gold: rgb(204, 140, 10);
+  --pp-gold-light: #e9b949;
+  --pp-gold-dark: #8a5f05;
+  --pp-gold-soft: #fbf3df;
+  --pp-ink: #121212;
+  --pp-paper: #faf7f0;
+  --pp-muted: #4f4f4f;
+  --pp-line: #e9e2d2;
+  display: block;
+  background: var(--pp-paper);
+  color: var(--pp-ink);
+}
+
+.pp-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+.pp-hero {
+  padding: 64px 0 48px;
+  text-align: center;
+  color: #fff;
+  background:
+    radial-gradient(circle at 80% 0%, rgba(204, 140, 10, .22), transparent 45%),
+    linear-gradient(160deg, var(--pp-ink) 0%, #1e1e1e 100%);
+}
+
+.pp-eyebrow {
+  margin: 0 0 10px;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--pp-gold-light);
+}
+
+.pp-title { margin: 0 0 14px; font-size: clamp(1.9rem, 4.5vw, 2.8rem); line-height: 1.15; font-weight: 800; color: #fff; }
+.pp-lead { max-width: 720px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6; color: #e6e1d6; }
+
+.pp-section { padding: 56px 0; &--paper { background: #fff; border-top: 1px solid var(--pp-line); border-bottom: 1px solid var(--pp-line); } }
+.pp-h2 { margin: 0 0 20px; font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; }
+.pp-h3 { margin: 40px 0 16px; font-size: 1.25rem; font-weight: 800; }
+.pp-intro { margin: 0 0 24px; font-size: 1.05rem; line-height: 1.6; color: var(--pp-muted); }
+
+// ── Comparatif ─────────────────────────────────────────────────────────────
+.pp-table-wrap { overflow-x: auto; border: 1px solid var(--pp-line); border-radius: 12px; background: #fff; }
+.pp-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+
+  th, td { padding: 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--pp-line); line-height: 1.5; }
+  thead th { background: var(--pp-ink); color: #fff; font-size: .85rem; letter-spacing: .04em; text-transform: uppercase; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+}
+
+.pp-table__profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pp-ink);
+  font-weight: 800;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+
+  i { color: var(--pp-gold); }
+  &:hover { text-decoration: underline; }
+  &:focus-visible { outline: 2px solid var(--pp-gold-dark); outline-offset: 2px; }
+}
+
+// ── Onglets ────────────────────────────────────────────────────────────────
+.pp-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.pp-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--pp-line);
+  border-radius: 999px;
+  background: var(--pp-paper);
+  color: var(--pp-ink);
+  font-weight: 700;
+  cursor: pointer;
+
+  i { color: var(--pp-gold-dark); }
+  &:hover { border-color: var(--pp-gold); }
+  &:focus-visible { outline: 2px solid var(--pp-gold-dark); outline-offset: 2px; }
+  &--active { background: var(--pp-ink); border-color: var(--pp-ink); color: #fff; i { color: var(--pp-gold); } }
+}
+
+// ── Cartes ─────────────────────────────────────────────────────────────────
+.pp-grid { display: grid; gap: 20px; &--3 { grid-template-columns: repeat(3, 1fr); } &--1 { grid-template-columns: minmax(0, 560px); } }
+
+.pp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 28px 24px;
+  border: 1px solid var(--pp-line);
+  border-radius: 16px;
+  background: #fff;
+
+  &--featured { border: 2px solid var(--pp-gold); box-shadow: 0 12px 32px rgba(204, 140, 10, .12); }
+}
+
+.pp-badge {
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--pp-gold);
+  color: var(--pp-ink);
+  font-size: .75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.pp-card__name { margin: 0; font-size: 1.2rem; font-weight: 800; }
+.pp-card__price {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+
+  small { font-size: .85rem; font-weight: 600; color: var(--pp-muted); }
+  &--text { font-size: 1.4rem; }
+}
+.pp-card__desc { margin: 0; line-height: 1.55; color: var(--pp-muted); }
+
+.pp-list {
+  margin: 4px 0 8px;
+  padding-left: 20px;
+  li { margin-bottom: 6px; line-height: 1.5; }
+  li::marker { color: var(--pp-gold); }
+}
+
+.pp-tiers {
+  width: 100%;
+  border-collapse: collapse;
+  td { padding: 8px 0; border-bottom: 1px dashed var(--pp-line); font-size: .92rem; }
+  tr:last-child td { border-bottom: 0; }
+}
+.pp-tiers__price { text-align: right; font-weight: 800; white-space: nowrap; small { font-weight: 600; color: var(--pp-muted); } }
+
+.pp-note { margin: 0; font-size: .85rem; color: var(--pp-muted); line-height: 1.5; }
+
+.pp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  margin-top: auto;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+
+  &:focus-visible { outline: 3px solid var(--pp-gold-dark); outline-offset: 2px; }
+  // Texte noir sur or : contraste ≈ 5:1.
+  &--gold { background: var(--pp-gold); color: var(--pp-ink); &:hover { background: var(--pp-gold-light); } }
+  &--ghost { border: 2px solid var(--pp-ink); color: var(--pp-ink); &:hover { background: var(--pp-gold-soft); } }
+  &--link { min-height: 40px; margin-top: 0; color: var(--pp-gold-dark); }
+}
+
+.pp-rule {
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  border-left: 4px solid var(--pp-gold);
+  border-radius: 0 8px 8px 0;
+  background: var(--pp-gold-soft);
+  line-height: 1.55;
+  i { color: var(--pp-gold-dark); }
+}
+
+.pp-bonus {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--pp-line);
+  border-radius: 12px;
+  background: var(--pp-paper);
+
+  i { margin-top: 3px; font-size: 1.1rem; color: var(--pp-gold-dark); }
+  strong { display: block; margin-bottom: 4px; }
+  p { margin: 0; line-height: 1.5; color: var(--pp-muted); font-size: .92rem; }
+}
+
+.pp-guarantee {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--pp-ink);
+  color: #fff;
+
+  i { font-size: 1.4rem; color: var(--pp-gold); }
+  p { margin: 4px 0 0; color: #e6e1d6; line-height: 1.55; }
+}
+
+// ── Questions ──────────────────────────────────────────────────────────────
+.pp-faq { max-width: 820px; }
+.pp-faq__item {
+  border: 1px solid var(--pp-line);
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 10px;
+
+  summary { padding: 14px 16px; font-weight: 700; cursor: pointer; }
+  p { margin: 0; padding: 0 16px 16px; line-height: 1.6; color: var(--pp-muted); }
+}
+.pp-help { margin-top: 20px; a { color: var(--pp-gold-dark); font-weight: 700; } }
+
+@media (max-width: 960px) {
+  .pp-grid--3 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .pp-wrap { padding: 0 16px; }
+  .pp-section { padding: 40px 0; }
+  .pp-btn { width: 100%; }
+}

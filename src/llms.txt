@@ -1,0 +1,31 @@
+# Ndewa360
+
+> Ndewa360 est une plateforme camerounaise de gestion locative et de recherche de logements (web et application Android). Les propriétaires, leurs gestionnaires et les agents immobiliers y suivent leurs biens, leurs locataires, les loyers, les reçus et les contrats ; les chercheurs de logement y trouvent des logements disponibles, avec photos et visites 360°.
+
+Éditeur : Ndewa360 SARL (en cours de constitution), Tchougo, Bangangté, Région de l'Ouest, Cameroun. Site : https://ndewa-360.com
+Contact : WhatsApp +237 698 29 53 68 · support@ndewa-360.com (assistance) · contact@ndewa-360.com (partenariats, offre Gold).
+
+## Tarifs (offre « Loyers sous contrôle »)
+- Gratuit : 1 bien et jusqu'à 4 logements occupés, toutes les fonctionnalités de gestion. 30 jours d'essai, sans carte bancaire.
+- Pro : dès le 2e bien ou le 5e logement occupé, prix fixe par mois selon le total des loyers : 3 000 FCFA jusqu'à 250 000 FCFA ; 6 000 FCFA jusqu'à 500 000 ; 10 000 FCFA jusqu'à 1 000 000 ; 20 000 FCFA jusqu'à 2 500 000.
+- Gold : sur mesure au-delà de 2 500 000 FCFA de loyers mensuels.
+- Seuls les logements occupés au moins 15 jours dans le mois sont comptés.
+- Agents immobiliers : même grille que les propriétaires, profil d'agence vérifié (validation sous 24 à 48 h ouvrables).
+- Chercheurs de logement : recherche et visites 360° gratuites ; coordonnées de tous les propriétaires pour 1 000 FCFA pendant 24 heures.
+- Facture impayée : compte en lecture seule, réactivé automatiquement au paiement.
+- Installation de vos données en 48 h, ou premier mois offert.
+
+## Pages utiles
+- [Tarifs par profil](https://ndewa-360.com/fr/home/tarifs)
+- [Questions fréquentes](https://ndewa-360.com/fr/support/faq)
+- [Documentation pas à pas](https://ndewa-360.com/fr/support/manual)
+- [Guide de démarrage (vidéos)](https://ndewa-360.com/fr/support/getting-started)
+- [Contacter le support](https://ndewa-360.com/fr/support/support)
+- [Rechercher un logement](https://ndewa-360.com/fr/search/index)
+- [À propos](https://ndewa-360.com/fr/home/about)
+- [Mentions légales](https://ndewa-360.com/fr/home/mentions-legales)
+
+## English
+- [Pricing](https://ndewa-360.com/en/home/tarifs)
+- [FAQ](https://ndewa-360.com/en/support/faq)
+- [Documentation](https://ndewa-360.com/en/support/manual)

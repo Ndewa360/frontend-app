@@ -147,8 +147,10 @@ export function app(injectedDocument?: string): express.Express {
     const url = req.url;
     const isLanding = /^\/[a-z]{2}\/home(\?.*)?$/.test(url) || url === '/';
     const isSearch  = /^\/[a-z]{2}\/search/.test(url);
+    // Pages publiques (tarifs, à propos, contact…) et centre d'aide : indexables.
+    const isPublicInfo = /^\/[a-z]{2}\/(home\/|support)/.test(url);
 
-    if (isLanding) {
+    if (isLanding || isPublicInfo) {
       // Landing : cache 10 minutes CDN, revalidation en arrière-plan
       res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=3600, stale-while-revalidate=86400');
       res.setHeader('X-Robots-Tag', 'index, follow');
@@ -165,10 +167,12 @@ export function app(injectedDocument?: string): express.Express {
     next();
   });
 
-  // SSR uniquement sur les pages publiques critiques (SEO) : landing et recherche.
-  // Les pages privées restent servies en SPA (201 index.html), ce qui réduit les risques runtime serveur.
+  // SSR uniquement sur les pages publiques (SEO) : landing, recherche et centre
+  // d'aide. Le support n'était servi qu'en SPA : sans JavaScript (robots des
+  // moteurs et des assistants IA), la FAQ et la documentation étaient vides.
+  // Les pages privées restent servies en SPA (index.html), ce qui réduit les risques runtime serveur.
   const isSsrRoute = (url: string) =>
-    /^\/[a-z]{2}\/(home|search)(\/.*)?(\?.*)?$/.test(url) ||
+    /^\/[a-z]{2}\/(home|search|support)(\/.*)?(\?.*)?$/.test(url) ||
     url === '/';
   // Budget de rendu court : la page doit répondre vite (<~5 s) même si le rendu
   // tarde à stabiliser (le builder CommonEngine n'a pas de timeout intrinsèque).

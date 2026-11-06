@@ -486,7 +486,10 @@ export class UnitDetailDialogComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   getContactPersonBadge(): string {
-    return this.isPropertyManagedByAgent() ? 'UNIT_DETAIL.CONTACT.VERIFIED_AGENT' : 'UNIT_DETAIL.CONTACT.VERIFIED';
+    // Texte traduit : la clé seule s'affichait telle quelle (« UNIT_DETAIL.CONTACT.VERIFIED_AGENT »).
+    return this.translate.instant(
+      this.isPropertyManagedByAgent() ? 'UNIT_DETAIL.CONTACT.VERIFIED_AGENT' : 'UNIT_DETAIL.CONTACT.VERIFIED',
+    );
   }
 
   getAgencyName(): string {

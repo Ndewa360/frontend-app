@@ -7,6 +7,7 @@ import { LandingAltComponent } from './components/landing-alt/landing-alt.compon
 import { AboutComponent } from './components/about/about.component';
 import { LandingLayoutComponent } from 'src/@youpez/layout/landing/landing-layout/landing-layout.component';
 import { ContactComponent } from './components/contact/contact.component';
+import { PricingPageComponent } from './components/pricing/pricing-page.component';
 import { PrivacyPolicyComponent } from './components/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './components/terms/terms.component';
 import { CookiesComponent } from './components/cookies/cookies.component';
@@ -36,6 +37,17 @@ const routes: Routes = [
       {
         path: 'contact',
         component: ContactComponent,
+        pathMatch: 'full'
+      },
+      {
+        // Tarifs par profil (propriétaire, agent, chercheur de logement)
+        path: 'tarifs',
+        component: PricingPageComponent,
+        pathMatch: 'full'
+      },
+      {
+        path: 'pricing',
+        redirectTo: 'tarifs',
         pathMatch: 'full'
       },
       {

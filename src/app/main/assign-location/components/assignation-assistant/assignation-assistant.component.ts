@@ -630,10 +630,8 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
     if (dateEntreeConnue) {
       dateEffet = this.configFinanciereForm.get('dateEntree').value;
     } else if (typeAssignation === TypeLocataire.EXISTANT && soldeActuel < 0 && this.selectedRoom?.price > 0) {
-      // Meme calcul que le backend : remonter de ceil(|solde|/loyer) mois
-      const moisArriere = Math.ceil(Math.abs(soldeActuel) / this.selectedRoom.price);
-      const aujourd = new Date();
-      dateEffet = new Date(aujourd.getFullYear(), aujourd.getMonth() - moisArriere, aujourd.getDate());
+      // Meme calcul que le backend (n mois dus depuis la date estimee)
+      dateEffet = AssignationAssistantService.dateEntreeEstimee(soldeActuel, this.selectedRoom.price);
     } else {
       dateEffet = new Date();
     }
@@ -1128,9 +1126,9 @@ export class AssignationAssistantComponent implements OnInit, OnDestroy {
       return 'A jour — aucun arriere ni avance';
     } else if (soldeActuel < 0) {
       const moisArriere = Math.ceil(Math.abs(soldeActuel) / prixMensuel);
-      const dateEstimee = new Date();
-      dateEstimee.setMonth(dateEstimee.getMonth() - moisArriere);
-      const dateLabel = dateEstimee.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+      // Même date que celle enregistrée (le mois d'entrée compte dès le 1er jour).
+      const dateEstimee = AssignationAssistantService.dateEntreeEstimee(soldeActuel, prixMensuel);
+      const dateLabel = dateEstimee.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
       return `En retard de ${moisArriere} mois (${Math.abs(soldeActuel).toLocaleString()} FCFA) — date d'entree estimée : ${dateLabel}`;
     } else {
       const moisAvance = Math.floor(soldeActuel / prixMensuel);

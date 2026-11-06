@@ -39,6 +39,13 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Rendu serveur (pages publiques pour les moteurs de recherche) : aucune
+    // session, ni redirection, ni message. Une réponse 401 y renvoyait la page
+    // vers la connexion : le centre d'aide était indexé comme « Votre session a expiré ».
+    if (!this.isBrowser()) {
+      return next.handle(req);
+    }
+
     // Cookies envoyés à l'API : le jeton de rafraîchissement du web est un
     // cookie HttpOnly (posé à la connexion, lu par /user/auth/refresh, effacé
     // à la déconnexion). Il n'est jamais lisible par le JavaScript de la page.
@@ -68,8 +75,9 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
 
     const token = this._store.selectSnapshot(AuthTokenState.selectStateToken);
 
-    // Vérifier si le token existe avant de l'utiliser
-    if (!token) {
+    // Visiteur non connecté : le sélecteur renvoie toujours un objet
+    // ({ accessToken: null, … }), le test portait donc à tort sur l'objet.
+    if (!token?.accessToken && !token?.refreshToken) {
       return this.handleRequestWithoutToken(req, next);
     }
 
@@ -95,7 +103,10 @@ export class AuthTokenInterceptor implements HttpInterceptor, OnDestroy {
       return next.handle(req).pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
-            this.redirectToLogin();
+            // Connexion demandée seulement dans l'espace privé : sur une page
+            // publique (accueil, recherche, tarifs, aide), le visiteur reste
+            // sur sa page.
+            if (/^\/[a-z]{2}\/app(\/|$)/.test(this._router.url)) this.redirectToLogin();
           } else {
             this.reportFailure(error, req);
           }

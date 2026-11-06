@@ -214,10 +214,10 @@ export class LayoutMiniSidebarComponent implements OnInit, OnDestroy {
     this._router.navigate([`/${currentLang}/home/about`]);
   }
 
-  /** Grille des offres (les anciennes adresses /app/pricing/... n'existaient pas). */
+  /** Page publique des tarifs par profil (« plan-list » est l'historique des factures). */
   navigateToPricing(): void {
     const currentLang = this.languageUrlService.getCurrentLanguage();
-    this._router.navigate([`/${currentLang}/app/facturation/plan/plan-list`]);
+    this._router.navigate([`/${currentLang}/home/tarifs`]);
   }
 
   navigateToHome(): void {
